@@ -916,3 +916,16 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,groovy,java,python,git,node,intellij,visualstudio,visualstudiocode
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Keep Gradle Wrapper
+!**/gradle/wrapper/gradle-wrapper.jar
+
+**/build/
+**/.gradle/
+**/node_modules/
+**/dist/
