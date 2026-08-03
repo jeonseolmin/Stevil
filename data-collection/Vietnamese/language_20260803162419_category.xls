@@ -1,0 +1,277 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">베트남어 Vietnamese </th>
+	</tr>
+	
+	<tr>
+		<td> 시내를 가려면  00번 버스(지하철)를 타야합니다.</td>
+		<td>Nếu bạn muốn đi vào nội thành, thì phải đi xe buýt (tàu điện ngầm)số….<span>네우-반-뭔-디-바오-노이 타잉-, 티-반-파이-디-새-뷧 (따우-디엔-응엄) 쏘…</span></td>
+	</tr>
+	
+	<tr>
+		<td>가전제품</td>
+		<td>Đồ điện gia đình.<span>도-디엔-쟈 디잉.</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 버스요금이 다릅니다. </td>
+		<td>Tiền vé xe buýt khác nhau tùy thuộc vào đường đi.<span>띠엔-배-새-뷧-칵-나우-뛰-투억-바오-드엉-디.</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 지하철요금이 다릅니다. </td>
+		<td>Tiền vé tàu điện khác nhau tùy thuộc vào đường đi.<span>띠엔-배-따우-디엔-칵-나우-뛰-투억-바오-드엉-디.</span></td>
+	</tr>
+	
+	<tr>
+		<td>교통카드 충전은 ㅇㅇ에서 해요</td>
+		<td>Nạp tiền thẻ giao thông tại…<span>납-띠엔-태-자오-통- 따이…….</span></td>
+	</tr>
+	
+	<tr>
+		<td>기차</td>
+		<td>Tàu hỏa<span>다우-화.</span></td>
+	</tr>
+	
+	<tr>
+		<td>마트 </td>
+		<td>Siêu thị.<span>씨에우 티.</span></td>
+	</tr>
+	
+	<tr>
+		<td>백화점 </td>
+		<td>Bách hóa.<span>바익 화</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스 </td>
+		<td>Xe buýt.<span>새-뷧.</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스요금은 ㅇㅇ원입니다. </td>
+		<td>Tiền đi xe buýt là….uôn.<span>띠엔-새-뷧-라…….원.</span></td>
+	</tr>
+	
+	<tr>
+		<td>비쌉니다 </td>
+		<td>Đắt.<span>땃.</span></td>
+	</tr>
+	
+	<tr>
+		<td>비행기표는 예매했어요?</td>
+		<td>Bạn đã đặt vé máy bay chưa?<span>반-다-닷-배-마이 바이-즈어?</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내를 가려면 택시를 타야합니다.</td>
+		<td>Nếu bạn định đi vào nội thành thì bạn phải đi taxi.<span>네우-반-뭔-디-바오-노이 타잉-반-파이-디-딱시.</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내버스 ㅇㅇㅇ번을 타세요</td>
+		<td>Đi xe buýt nội thành số<span>디-새-뷧-노이 타잉-쏘….</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장 </td>
+		<td>Chợ.<span>쩌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장은 ㅇㅇ역에 있습니다. </td>
+		<td>Ở ga…..có chợ.<span>어-가-고-쩌……</span></td>
+	</tr>
+	
+	<tr>
+		<td>식료품</td>
+		<td>Thực phẩm<span>특 펌</span></td>
+	</tr>
+	
+	<tr>
+		<td>신용카드</td>
+		<td>Thẻ tín dụng<span>태-띤 중.</span></td>
+	</tr>
+	
+	<tr>
+		<td>신호를 꼭 지키세요</td>
+		<td>Giữ theo tín hiệu đèn giao thông.<span>즈-태오-띤-히에우-댄-자오 통.</span></td>
+	</tr>
+	
+	<tr>
+		<td>쌉니다. </td>
+		<td>Rẻ.<span>래.</span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역 ㅇ번 출구에 있습니다. </td>
+		<td>Ga……cửa ra vào số…..<span>가…..끄어-라-바오-쏘….</span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역에서 ㅇ호선으로 갈아타세요</td>
+		<td>Tại ga…đổi sang đường tàu số….<span>따이 가…..도이-쌍-드엉-따우-쏘……</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디로 가십니까 ?</td>
+		<td>Đi đường nào?<span>디-드엉-나오?</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떻게 지불하시겠습니까 ?</td>
+		<td>Bạn sẽ trả tiền như thế nào?<span>반-새-차-띠엔-느 테 나우?</span></td>
+	</tr>
+	
+	<tr>
+		<td>여기서 가까운 지하철역은 ㅇㅇ 입니다</td>
+		<td>Ở đây gần ga tàu điện ngầm là…..<span>가-떠이-건-가-따우-디엔-응엄-라……...</span></td>
+	</tr>
+	
+	<tr>
+		<td>오른쪽</td>
+		<td>Bên phải.<span>벤-파이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>왼쪽</td>
+		<td>Bên trái.<span>벤- 차이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행 </td>
+		<td>Ngân hàng.<span>응언항</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것은 ㅇㅇ원 입니다. </td>
+		<td>Cái này là…..<span>가이-나이-라……</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것을 사고 싶습니까 ?</td>
+		<td>Bạn  muốn mua cái này à?<span>반-뭔-무어-까이-나이-아?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳은 시내와 멀리 떨어져 있어요</td>
+		<td>Ở đây cách xa với thành phố.<span>어-떠이-까익-싸-버이-타잉-포.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳이 번화가입니다. </td>
+		<td>Chỗ này là phố thương mại.<span>쪼-나이-라-포-트엉 마이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일상용품</td>
+		<td>Đồ dùng sinh hoạt hàng ngày.<span>도중-씽 홧-항 응아이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>자동차가 매우 많습니다.</td>
+		<td>Nhiều ô tô quá.<span>니에우-오 또-과.</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 </td>
+		<td>Tàu điện ngầm.<span>따우-띠엔-응엄.</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 0호선입니다.</td>
+		<td>Tàu điện ngầm đường tàu số 0<span>따우-띠엔-응엄-드엉-따우-쏘-0.</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 탈수 있어요?</td>
+		<td>Bạn có thể đi được tàu điện ngầm không?<span>반-꼬-테-디-드억-따우-디엔-응엄-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>출퇴근이 편리합니다.</td>
+		<td>Đi làm thỏai mái. <span>디-람-토아이-마이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시 </td>
+		<td>Xe taxi<span>새- 딱씨.</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시요금은 비싸니까 버스를 이용하세요</td>
+		<td>Tiền đi taxi đắt lắm hãy đi xe buýt.<span>띠엔-딱시- 닷-람-하이-디-새 뷧.</span></td>
+	</tr>
+	
+	<tr>
+		<td>편의점은 저쪽에 있습니다.</td>
+		<td>Đằng kia có cửa hàng bán lẻ.<span>땅-끼어-꼬-끄어-항-반-래.</span></td>
+	</tr>
+	
+	<tr>
+		<td>필요한 물건이 무엇입니까 ?</td>
+		<td>Bạn cần cái gì?<span>반-껀-까이-지?</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금 </td>
+		<td>Tiền mặt<span>띠엔 -맛.</span></td>
+	</tr>
+	
+	<tr>
+		<td>회사에서 가까운 은행은 ㅇㅇ은행입니다.</td>
+		<td>Ngân hàng gần với công ty là ngân hàng….<span>응언 항-건-버이-꽁디-라-응언 항……</span></td>
+	</tr>
+	
+	<tr>
+		<td>횡단보도를 건널때는 신호등을 잘 보세요.</td>
+		<td>Khi bạn đi ngang qua đường phải nhìn cẩn thận tín hiệu đèn.<span>키-반-디-응앙-과-드엉-파이-닌-껀 턴-띤-히에우-댄.</span></td>
+	</tr>
+	
+	<tr>
+		<td>휴대폰</td>
+		<td>Điện thoại di động<span>디엔 톼이 지 동</span></td>
+	</tr>
+	
+	<tr>
+		<td>OO까지 버스요금이 얼마인가요?</td>
+		<td>Tiền vé xe buýt là bao nhiêu nếu đi đến….<span>띠엔-새-뷧-라-바오 니에우-네우-디-덴….</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

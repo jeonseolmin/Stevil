@@ -1,0 +1,157 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">태국어 Thai </th>
+	</tr>
+	
+	<tr>
+		<td>가족들에게 자주 연락하세요</td>
+		<td>กรุณาติดต่อครอบครัวบ่อยๆ<span>까-루-나-띧-떠-크럽-크루워-버이-버이</span></td>
+	</tr>
+	
+	<tr>
+		<td>공공장소에서 떠들면 안되요</td>
+		<td>ทำเสียงดังในที่สาธารณะไม่ได้<span>탐-씨양-당-나이-티-싸-타-라-나-마이-다이</span></td>
+	</tr>
+	
+	<tr>
+		<td>금식기간입니까 ?</td>
+		<td>เป็นช่วงอดอาหารหรือคะ/ ครับ<span>뻰-추웡-옫-아-한-르-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>기독교</td>
+		<td>คริสเตียน<span>크릿-쓰-띠얀</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 나라에는 어떤 명절이 있습니까?</td>
+		<td>ในประเทศของคุณมีเทศกาลอะไร<span>나이-쁘라-텟-컹-쿤-미-텟-싸-간-아-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>명절에는 부모님과 가족을 방문합니다.</td>
+		<td>ไปเยี่ยมพ่อแม่กับครอบครัวในวันเทศกาล<span>빠이-이얌-퍼-매-깝-크럽-크루워-나이-완-텟-싸-깐</span></td>
+	</tr>
+	
+	<tr>
+		<td>문화적 차이가 있을수 있습니다.</td>
+		<td>มีความแตกต่างระหว่างวัฒนธรรมได้<span>미-쾀-땍-땅-라-왕-왇-타-나-탐-다이</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날</td>
+		<td>วันขึ้นปีใหม่<span>완-큰-삐-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날에는 떡국을 먹습니다.</td>
+		<td>ในวันปีใหม่กินขนมต๊อก<span>나이-완-삐-마이-낀-카-놈-떡</span></td>
+	</tr>
+	
+	<tr>
+		<td>양력</td>
+		<td>ปฎิทินสุริยคติ<span>빠-띠-틴-쑤-리-야-카-띠</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떠한 언어를 사용하시나요?</td>
+		<td>พูดภาษาอะไรหรือคะ/ ครับ<span>푿-파-싸-아-라이-르-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리는 각 나라의 개인의 종교를 다 존중해요.</td>
+		<td>เราเคารพศาสนาของแต่ละประเทศ<span>라우-카우-롭-쌋-싸-나-컹-때-라-쁘라-텟</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력</td>
+		<td>ปฏิทินจันทรคติ<span>빠-띠-틴-짠-타-라-카-띠</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력 8월 15일은 추석입니다.</td>
+		<td>ปฏิทินจันทรคติวันที่ 15 เดือนสิงหาคมเป็นวันชูซอก<span>빠-띠-틴-짠-타-라-카-띠-완-티-씹-하-드안-씽-하-콤-뻰-완-추-석</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교</td>
+		<td>ศาสนาอิสลาม<span>쌋-싸-나-잇-싸-람</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교도입니까 ? </td>
+		<td>เป็นอิสลามด้วยไหมคะ/ ครับ<span>뻰-잇-싸-람-두워이-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>조상들께 제사도 지냅니다.</td>
+		<td>เซ่นไหว่บรรพบุรุษ<span>쎈-와이-반-파-부-룯</span></td>
+	</tr>
+	
+	<tr>
+		<td>종교가 무엇입니까?</td>
+		<td>นับถือศาสนาอะไร<span>납-트-쌋-싸-나-아-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석</td>
+		<td>เทศกาลชูซอก<span>텟-싸-깐-추-석</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석에는 송편을 먹습니다.</td>
+		<td>ในเทศกาลชูซอกกินซงพย็อน<span>나이-텟-싸-깐-추-석-낀-송-편</span></td>
+	</tr>
+	
+	<tr>
+		<td>카톨릭</td>
+		<td>คาทอลิค<span>카-터-릭</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국사람은 손가락질 하는 것을 싫어합니다.</td>
+		<td>คนเกาหลีไม่ชอบการชี้นิ้ว<span>콘-까우-리-마이-첩-깐-치-니우</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에 대해서 어떤 생각을 가지고 있나요?</td>
+		<td>คิดอย่างไรเกี่ยวกับเกาหลีคะ/ ครับ<span>킷-양-라이-끼야우-깝-까우-리-카/ 크랍</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

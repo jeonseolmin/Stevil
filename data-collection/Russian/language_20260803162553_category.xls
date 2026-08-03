@@ -1,0 +1,267 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">러시아어 Russian </th>
+	</tr>
+	
+	<tr>
+		<td>고맙습니다.</td>
+		<td>Спасибо.<span>스파씨바.</span></td>
+	</tr>
+	
+	<tr>
+		<td>그동안 수고하셨습니다 </td>
+		<td>Благодарю за вашу помощь до этого времени.<span>블라가다류 자 바슈 뽀마쉬 도에따바 브레미니.</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 또 뵈요</td>
+		<td>Увидимся.<span>우비짐쌰.</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 오겠습니다. </td>
+		<td>Потом приду.<span>빠똠 쁘리두.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신을 잊지 못할 것 입니다 </td>
+		<td>Я не могу вас забыть.<span>야 니 마구 바스 자븨찌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 상사는 ㅇㅇㅇ 입니다.</td>
+		<td>Ваш начальник ㅇㅇㅇ.<span>바쉬 나촬리닉(크)  ㅇㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 성공을 기원합니다 </td>
+		<td>Я желаю вам успехов.<span>야 젤라유 밤 우스뻬호프.</span></td>
+	</tr>
+	
+	<tr>
+		<td>동료 </td>
+		<td>коллега<span>깔레가</span></td>
+	</tr>
+	
+	<tr>
+		<td>만나서 반갑습니다.</td>
+		<td>Очень приятно.<span>오친 쁘리야뜨나</span></td>
+	</tr>
+	
+	<tr>
+		<td>맛있게 드세요 </td>
+		<td>Приятного аппетита.<span>쁘리야뜨나바 아뻬찌따</span></td>
+	</tr>
+	
+	<tr>
+		<td>먼 길 오시느라고 수고하셨습니다.</td>
+		<td>Благодарю за то что, вы приехали сюда.<span>블라가다류 자또 슈또 븨이 쁘리이에할리 슈다.</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다 </td>
+		<td>Извините.<span>이즈비니쩨.</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다. </td>
+		<td>Извините.<span>이즈비니쩨.</span></td>
+	</tr>
+	
+	<tr>
+		<td>방해해서 미안합니다. </td>
+		<td>Извините за то что, я мешал(а) вам.<span>이즈비니쩨 자 또슈또 야 미솰(라) 밤.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과를 받아주세요 </td>
+		<td>Прошу прошения.<span>쁘라슈 쁘라쉐니야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과하세요.</td>
+		<td>Пожалуйста простите мне<span>빠좔스따 쁘라스찌쩨 므녜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사장님 </td>
+		<td>директор<span>지렉따르</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사하셨습니까 ?</td>
+		<td>Вы обедали?<span>븨이 아베달리?</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사합시다 </td>
+		<td>Давайте покушаем.<span>다바이쩨 빠꾸샤엠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕하세요 ㅇㅇㅇ입니다.</td>
+		<td>Здравствуйте, меня зовут ㅇㅇㅇ.<span>즈드라스트부이쩨, 미냐 자붓  ㅇㅇㅇ</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 가세요 </td>
+		<td>До свидания.<span>다스비다니야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 계세요</td>
+		<td>Всего доброго.<span>프세보도브라바.</span></td>
+	</tr>
+	
+	<tr>
+		<td>앞으로 좋은 관계를 유지할 수 있기를 바랍니다. </td>
+		<td>Мы надеемся поддержать хорошие отношения.<span>므이 나제엠쌰 빠제르좌찌 하로쉬에 아뜨나쉐니야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>약속을 지키지 못해 죄송합니다.</td>
+		<td>Извините за то что, я не сдержал(а) обещание.<span>이즈비니쩨 자 또슈또 야 니 스제르잘(라) 아비쌰니에.</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리 회사에 오신 것을 환영합니다 </td>
+		<td>Мы приветствуем вас.<span>믜이 쁘리벳스트부엠 바스.</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리와 함께 잘 해봅시다.</td>
+		<td>Давайте постараемся.<span>다바이쩨 빠스따라엠싸.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분들에게 인사드리세요 </td>
+		<td>Здоровайтесь с этими людьми.<span>즈다로바이쩨시 쎄찌미 류지미</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분은 함께 일하게 될 ㅇㅇㅇ입니다. </td>
+		<td>Это ваша коллега ㅇㅇㅇ.<span>에따 봐샤 깔레가 ㅇㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분을 소개합니다.</td>
+		<td>Я представлю этого человека.<span>야 쁘리스타블류 에따바 칠라베까.</span></td>
+	</tr>
+	
+	<tr>
+		<td>인사 나누세요</td>
+		<td>Здоровайтесь друг с другом.<span>즈다로바이쩨시 드룩 스드루감.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일찍 주무세요</td>
+		<td>Ложитесь спать рано.<span>라쥐쩨시 스빠찌 라나.</span></td>
+	</tr>
+	
+	<tr>
+		<td>자기소개를 해보세요</td>
+		<td>Скажите пожалуйста о себе.<span>스까쥐쩨 뽜잘스따 아씨베.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 다녀오십시오. </td>
+		<td>Счастливого пути.<span>샤슬리봐바 뿌찌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁드립니다.</td>
+		<td>Заранее спасибо.<span>자라녜 스파씨바.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁합니다. </td>
+		<td>Заранее спасибо.<span>자라녜 스파씨바.</span></td>
+	</tr>
+	
+	<tr>
+		<td>저는 ㅇㅇㅇ회사의 ㅇㅇㅇ입니다.</td>
+		<td>Меня зовут ㅇㅇㅇ. Я работаю в ㅇㅇㅇ.<span>미냐 자붓 ㅇㅇㅇ 야 라보따유 브 ㅇㅇ .</span></td>
+	</tr>
+	
+	<tr>
+		<td>전화해주세요</td>
+		<td>Позвоните.<span>빠즈바니쪠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 주말 보내십시오</td>
+		<td>Проводите выходной день весело.<span>쁘라바지쩨 븨하드노이 젠 베쏄로.</span></td>
+	</tr>
+	
+	<tr>
+		<td>직장동료를 만나면 항상 인사를 하세요</td>
+		<td>Всегда здоровайтесь с коллегами всякий раз при встрече.<span>프씨그다 즈다로바이쩨시 스깔레가미 프샤끼 라스 쁘리프스트레체.</span></td>
+	</tr>
+	
+	<tr>
+		<td>축하합니다.</td>
+		<td>Поздравляю.<span>빠즈드라블랴유.</span></td>
+	</tr>
+	
+	<tr>
+		<td>친절하게 인사하세요</td>
+		<td>Здоровайтесь любезно.<span>즈다로바이쩨시 류베즈나.</span></td>
+	</tr>
+	
+	<tr>
+		<td>편히 쉬십시오 </td>
+		<td>Отдыхайте.<span>아뜨하이쩨</span></td>
+	</tr>
+	
+	<tr>
+		<td>화를 내서 미안합니다.</td>
+		<td>Извините за то что, я обидел(а).<span>이즈비니쩨 자 또슈또 야 아비질(라)</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디 사세요?</td>
+		<td>Где вы живёте?<span>그제 브이 쥐뵤쩨?</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 하루 되세요!</td>
+		<td>Приятного дня<span>쁘리얏나바 드냐</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>
