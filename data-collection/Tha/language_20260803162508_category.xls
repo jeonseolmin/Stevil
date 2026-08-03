@@ -1,0 +1,212 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">태국어 Thai </th>
+	</tr>
+	
+	<tr>
+		<td>가을</td>
+		<td>ฤดูใบไม้ร่วง<span>르-두-바이-마이-루엉</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸리지 않도록 유의하세요</td>
+		<td>โปรดระวังไม่ให้เป็นหวัด<span>쁘롯-라-왕-마이-하이-뻰-왇</span></td>
+	</tr>
+	
+	<tr>
+		<td>겨울</td>
+		<td>ฤดูหนาว<span>르-두-나우</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 나쁩니다. </td>
+		<td>อากาศไม่ดี<span>아-깟-마이-마이-디</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 더워요?</td>
+		<td>อากาศร้อนไหมคะ / ครับ<span>아-깟-런-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 많이 쌀쌀해 졌어요.</td>
+		<td>อากาศเย็นสบาย<span>아-깟-옌-싸-바이</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 좋네요</td>
+		<td>อากาศดีจังเลย<span>아-깟-디-짱-러이</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 추워요?</td>
+		<td>อากาศหนาวมั้ย<span>아-깟-나우-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>내일은 공휴일이니 기숙사에서 쉬도록 해요</td>
+		<td>พรุ่งนี้เป็นวันหยุดให้พักผ่อนที่หอพัก<span>프룽-니-뻰-완-윧-하이-팍-펀-티-허-팍</span></td>
+	</tr>
+	
+	<tr>
+		<td>눈이 옵니다. </td>
+		<td>หิมะตก<span>히-마-똑</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 취미는 무엇입니까?</td>
+		<td>งานอดิเรกของคุณคืออะไร<span>으안-아-디-렉-컹-쿤-크-아-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>동상에 걸리지 않도록 조심하세요</td>
+		<td>โปรดระวังไม่ไปจับรูปปั้น<span>쁘롯-라-왕-마이-빠이-짭-룹-빤</span></td>
+	</tr>
+	
+	<tr>
+		<td>두꺼운 옷이 필요합니까 ?</td>
+		<td>ต้องการเสื้อหนาๆไหมคะ / ครับ<span>떵-깐-쓰아-나-나-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>바람이 붑니다. </td>
+		<td>ลมพัด<span>롬-팓</span></td>
+	</tr>
+	
+	<tr>
+		<td>봄</td>
+		<td>ฤดูใบไม้ผลิ<span>르-두-바이-마이-프리</span></td>
+	</tr>
+	
+	<tr>
+		<td>비가 옵니다 </td>
+		<td>ฝนตก<span>폰-똑</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는 날에는 주로 뭐해요?</td>
+		<td>ในวันพักผ่อนส่วนใหญ่ทำอะไร<span>나이-완-팍-펀-쑤원-야이-탐-아-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는날에 무엇을 하고 싶나요?</td>
+		<td>อยากทำอะไรในวันพักผ่อน<span>약-탐-아-라이-나이-완-팍-펀</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침, 저녁으로 온도차이가 많이납니다.</td>
+		<td>ตอนเช้า, ตอนเย็น อากาศต่างกันมาก<span>떤-차우, 떤-옌-아-깟-땅-깐-막</span></td>
+	</tr>
+	
+	<tr>
+		<td>여름</td>
+		<td>ฤดูร้อน<span>르-두-런</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘은 공휴일입니다. </td>
+		<td>วันนี้เป็นวันหยุด<span>완-니-뻰-완-윧</span></td>
+	</tr>
+	
+	<tr>
+		<td>옷을 따뜻하게 입으세요.</td>
+		<td>กรุณาใส่เสื้อผ้าให้อบอุ่น<span>까-루-나-싸이-쓰아-파-하이-옵-운</span></td>
+	</tr>
+	
+	<tr>
+		<td>운동을 좋아하십니까?</td>
+		<td>ชอบออกกำลังกายไหมคะ / ครับ<span>첩-억-깜-랑-까이-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에 등산하는건 어떻습니까?</td>
+		<td>สุดสัปดาห์นี้จะปีนเขา เป็นยังไง<span>쑫-쌉-다-니-짜-삔-카우-뻰-양-아이</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에는 쉬세요.</td>
+		<td>กรุณาพักผ่อนในสุดสัปดาห์นี้<span>까-루-나-팍-펀-나이-쑫-쌉-다-니</span></td>
+	</tr>
+	
+	<tr>
+		<td>일요일에는 일이 없습니다.</td>
+		<td>วันอาทิตย์ไม่มีงาน<span>완-아-틷-마이-미-으안</span></td>
+	</tr>
+	
+	<tr>
+		<td>좀 더 얇은 옷이 필요한가요 ?</td>
+		<td>ต้องการเสื้อที่บางกว่านี้หน่อยไหม<span>떵-깐-쓰아-티-방-꽈-니-너이-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 뭐할꺼예요?</td>
+		<td>สุดสัปดาห์จะทำอะไร<span>쑫-쌉-다-짜-탐-아-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 친구들과 여행을 하세요</td>
+		<td>ตอนสุดสัปดาห์ขอให้ไปเที่ยวกับเพื่อนของคุณ<span>떤-쑫-쌉-다-커-하이-빠이-티야우-깝-프안-컹-쿤</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 OO를 구경시켜 드릴께요</td>
+		<td>สุดสัปดาห์จะให้พาไปดู 00 ไหมคะ /ครับ<span>쑫-쌉-다-짜-하이-파-빠이-두 00 마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에는 함께 교회에 가면 어때요?</td>
+		<td>ตอนสุดสัปดาห์ไปโบสถ์ด้วยกันดีมั้ย<span>떤-쑫-쌉-다-빠이-볻-둬이-깐-디-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>친구들하고 어디로 놀러가나요?</td>
+		<td>ไปเที่ยวกับเพื่อนๆ ที่ไหน<span>빠이-티야우-깝-프안-프안-티-나이</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에서 가볼만한 산을 알려줄게요&#039;</td>
+		<td>จะบอกภูเขาที่น่าไปในเกาหลีให้<span>짜-벅-푸-카우-티-나-빠이-나이-까우-리-하이</span></td>
+	</tr>
+	
+	<tr>
+		<td>환절기입니다.</td>
+		<td>ช่วงเปลี่ยนฤดูกาล<span>추웡-쁘리안-르-두-깐</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

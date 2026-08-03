@@ -1,0 +1,457 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">중국어 Chinese </th>
+	</tr>
+	
+	<tr>
+		<td>119는 응급할때 전화 하세요</td>
+		<td>	急救电话是119	<span>	지쮸 땐화스 119	</span></td>
+	</tr>
+	
+	<tr>
+		<td>가슴이 아프세요?</td>
+		<td>	胸部疼吗？	<span>	슝부 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>가장 가까운 병원은 ㅇㅇ병원입니다.</td>
+		<td>	最近的医院是OO医院	<span>	쭈이 찐더 이왠스 OO이왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸렸어요?</td>
+		<td>	感冒了吗？	<span>	간모러마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸리지 않도록 조심하세요.</td>
+		<td>	请注意预防感冒 	<span>	칭 쭈이 위팡 간모 	</span></td>
+	</tr>
+	
+	<tr>
+		<td>개인위생을 철저히 해야 아프지 않습니다.</td>
+		<td>	做好个人卫生才能预防疾病	<span>	쭤호 거런웨이성 차이넝 위팡 지삥	</span></td>
+	</tr>
+	
+	<tr>
+		<td>건강검진</td>
+		<td>	体检	<span>	티잰	</span></td>
+	</tr>
+	
+	<tr>
+		<td>건강은 좀 어떠세요?</td>
+		<td>	最近身体怎么样？	<span>	쭈이찐 썬티 전머양 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>건강을 생각하세요</td>
+		<td>	请顾及健康	<span>	칭 꾸지 짼캉	</span></td>
+	</tr>
+	
+	<tr>
+		<td>건강이 무엇보다도 중요해요</td>
+		<td>	健康比什么都重要	<span>	짼캉 비 선머 떠우쭝요	</span></td>
+	</tr>
+	
+	<tr>
+		<td>과로입니다</td>
+		<td>	是过度疲劳	<span>	쓰 꿔뚜 피라우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>규칙적으로 운동을 하세요</td>
+		<td>	定期做健身运动	<span>	띵치 쭤 짼선 윈뚱	</span></td>
+	</tr>
+	
+	<tr>
+		<td>기침을 하세요? </td>
+		<td>	咳嗽吗？	<span>	커써우마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>내과</td>
+		<td>	内科	<span>	네이커	</span></td>
+	</tr>
+	
+	<tr>
+		<td>다친 부위가 어디세요?</td>
+		<td>	受伤部位在哪儿？	<span>	써우상 부웨이 짜이 날 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>담배를 많이 피우면 건강에 해롭고  돈을 모을수 없습니다.</td>
+		<td>	吸烟有害健康，也不能攒钱	<span>	시얜 유하이 짼캉, 예뿌넝 잔챈	</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신을 병원에 데려가겠습니다. </td>
+		<td>	带你去医院	<span>	따이니 취 이왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>등이 아프세요?</td>
+		<td>	背部疼吗？	<span>	뻬이부 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>머리가  아프세요?</td>
+		<td>	头痛吗？	<span>	터우퉁마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>머리가 아플때는 두통약을 먹어요</td>
+		<td>	头痛时服用头痛药	<span>	터우퉁스 푸융 터우퉁요우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>목이 부었나요?</td>
+		<td>	脖子肿了吗？	<span>	붜즈 중러마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>몸살에 걸렸나요 ?</td>
+		<td>	浑身痛吗？	<span>	훈선 퉁마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>무릎이 아프세요?</td>
+		<td>	膝盖疼吗？	<span>	시까이 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>무리하지 마세요</td>
+		<td>	别太勉强了	<span>	베타이 맨챵러	</span></td>
+	</tr>
+	
+	<tr>
+		<td>발가락이 아프세요? </td>
+		<td>	脚趾头疼吗？	<span>	죠우즈터우 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>발이 아프세요?</td>
+		<td>	脚疼吗?	<span>	죠우 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>밤에 아플때는 000로 연락하세요</td>
+		<td>	夜间发病时请联系OOO	<span>	예잰 파삥스 칭랜씨 OOO	</span></td>
+	</tr>
+	
+	<tr>
+		<td>배가  아프세요?</td>
+		<td>	肚子疼吗？	<span>	뚜즈 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>병원에 가야 할 시간입니다.</td>
+		<td>	要去医院了	<span>	요취 이왠러	</span></td>
+	</tr>
+	
+	<tr>
+		<td>병원에 같이가서 치료해 드릴께요</td>
+		<td>	一起去医院接收治疗吧	<span>	이치취 이왠 제써우 쯔랴우바	</span></td>
+	</tr>
+	
+	<tr>
+		<td>비상약은 사무실에 있습니다.</td>
+		<td>	紧急用药在办公室	<span>	진지융요우 짜이 빤궁스	</span></td>
+	</tr>
+	
+	<tr>
+		<td>산부인과</td>
+		<td>	妇产科	<span>	푸찬커	</span></td>
+	</tr>
+	
+	<tr>
+		<td>소화가  안되세요?</td>
+		<td>	不消化吗？	<span>	부샤오화마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>손가락이 아프세요?</td>
+		<td>	手指头疼吗？	<span>	서우즈터우 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>손목을 삐었나요?</td>
+		<td>	扭到手腕了吗？	<span>	뉴또우 서우완러마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>손목이 아프세요?</td>
+		<td>	手腕疼吗？	<span>	서우완 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>손을 깨끗이 씻으세요</td>
+		<td>	请洗好双手	<span>	칭 시호 쐉서우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>수술 동의서가 필요합니다.</td>
+		<td>	需要手术同意书	<span>	쉬요우 서우쑤 퉁이수	</span></td>
+	</tr>
+	
+	<tr>
+		<td>수술을 해야할것 같아요</td>
+		<td>	需要做手术	<span>	쉬요우 쭤 서우쑤	</span></td>
+	</tr>
+	
+	<tr>
+		<td>술을 많이 먹으면 건강에 해롭습니다.</td>
+		<td>	过度饮酒有害健康	<span>	꿔뚜 인쥬 유하이 짼캉	</span></td>
+	</tr>
+	
+	<tr>
+		<td>신종플루를 조심하세요</td>
+		<td>	请注意预防甲型H1N1流感	<span>	칭 쭈이 위팡 쟈싱 H1N1 류간	</span></td>
+	</tr>
+	
+	<tr>
+		<td>아프면 관리자에게 반드시 이야기 하세요</td>
+		<td>	生病时告诉管理员	<span>	성삥스 까오쑤 관리왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>아프면 병원에 가세요</td>
+		<td>	生病了就去医院	<span>	성삥러 쮸취 이왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>안과</td>
+		<td>	眼科	<span>	얜커	</span></td>
+	</tr>
+	
+	<tr>
+		<td>약 드세요</td>
+		<td>	吃药吧	<span>	츠요우바	</span></td>
+	</tr>
+	
+	<tr>
+		<td>약은 시간에 맞추어  복용해야 빨리 낫습니다.</td>
+		<td>	一定要按时吃药	<span>	이띵요 안스 츠요우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>약은 식사후 30분에  물과 함께 꼭 드세요</td>
+		<td>	饭后30分钟吃药	<span>	판허우 30펀중 츠요우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>약은 약국에서 사야해요</td>
+		<td>	请在药店购买药物	<span>	칭 짜이 요우땐 꺼우마이 요우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>어깨가 아프세요?</td>
+		<td>	肩膀疼吗？	<span>	잰방 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디가 아픕니까?</td>
+		<td>	哪里不舒服？	<span>	나리 부수푸 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>얼굴이 창백해 보이네요</td>
+		<td>	脸色看起来好苍白	<span>	랜써 칸치라이 호 창바이	</span></td>
+	</tr>
+	
+	<tr>
+		<td>열이 있나요?</td>
+		<td>	发烧吗？	<span>	파소우마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>열이나면 푹 쉬어야 해요.</td>
+		<td>	发烧需要多休息	<span>	파소우 쉬요우 둬쓔시	</span></td>
+	</tr>
+	
+	<tr>
+		<td>예방접종을 하세요.</td>
+		<td>	做预防接种	<span>	쭤 위팡 제중	</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘부터 입원하셔야 합니다.</td>
+		<td>	从今天开始住院	<span>	충 진탠 카이스 쭈왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘부터 통원치료를 받아야 합니다.</td>
+		<td>	从今天开始接受门诊治疗	<span>	충 진탠 카이스 제써우 먼전쯔랴우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>외과</td>
+		<td>	外科	<span>	와이커	</span></td>
+	</tr>
+	
+	<tr>
+		<td>음주를 줄여주세요</td>
+		<td>	请减少饮酒量	<span>	칭 잰사오 인쥬량	</span></td>
+	</tr>
+	
+	<tr>
+		<td>의료보험에 가입하였으니 병원에 가더라도 치료비가 적게 나옵니다</td>
+		<td>	加入了医疗保险，治疗费不会很高	<span>	쟈루러 이랴오 보우샌, 쯔랴우페이 부후이 헌고우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 계좌로 입금해주세요</td>
+		<td>	往这个账户汇款	<span>	왕 쩌거 짱후 후이콴	</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 병은 전염이 되니 조심하세요</td>
+		<td>	这个病会传染，请小心	<span>	쩌거 삥 후이 촨란, 칭 쇼신	</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 약은 삼일분입니다.</td>
+		<td>	开了三天的药	<span>	카이러 싼탠더 요우	</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳에 싸인을 해주세요</td>
+		<td>	在这里签字	<span>	짜이 쩌리 챈쯔	</span></td>
+	</tr>
+	
+	<tr>
+		<td>이비인후과</td>
+		<td>	耳鼻喉科	<span>	얼비허우커	</span></td>
+	</tr>
+	
+	<tr>
+		<td>임신했나요?</td>
+		<td>	你有身孕吗？	<span>	니유 선윈마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>잠시만 가만히 있으세요</td>
+		<td>	暂时不要动	<span>	짠스 부요우뚱	</span></td>
+	</tr>
+	
+	<tr>
+		<td>잠시만 숨을 참아주세요</td>
+		<td>	暂时屏住呼吸	<span>	짠스 빙쭈후시	</span></td>
+	</tr>
+	
+	<tr>
+		<td>잠잘때는 꼭 씻으세요</td>
+		<td>	睡前一定要清洗	<span>	쑤이챈 이띵요우 칭시 	</span></td>
+	</tr>
+	
+	<tr>
+		<td>장애가 있습니까?</td>
+		<td>	你有残疾吗？	<span>	니유 찬지마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>조금 아플수 있습니다.</td>
+		<td>	会稍微痛	<span>	후이 소우웨이 퉁	</span></td>
+	</tr>
+	
+	<tr>
+		<td>종아리가 아프세요?</td>
+		<td>	小腿疼吗？	<span>	쇼우투이 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>종합검사를 받기를 권유합니다.</td>
+		<td>	建议做综合身体检查	<span>	짼이 쭤 쭝허 썬티 잰차	</span></td>
+	</tr>
+	
+	<tr>
+		<td>종합병원</td>
+		<td>	综合医院	<span>	쭝허 이왠	</span></td>
+	</tr>
+	
+	<tr>
+		<td>컨디션은 어떠세요?</td>
+		<td>	现在的状态如何？	<span>	쌘짜이더 쫭타이 루허 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>콧물이 흐르나요 ?</td>
+		<td>	流鼻涕吗？	<span>	류비티마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>팔이 아프세요? </td>
+		<td>	胳膊疼吗？	<span>	거붜 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>평소 지병이 있나요?</td>
+		<td>	有慢性疾病吗？	<span>	유 만씽 지삥마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>푹 주무셨나요?</td>
+		<td>	睡好觉了吗？	<span>	쑤이호우 쨔오러마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>피곤하십니까?</td>
+		<td>	觉得疲劳吗？	<span>	줴더 피로우마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>항상 건강에 조심하세요</td>
+		<td>	平时多注意身体	<span>	핑스 둬 쭈이 썬티	</span></td>
+	</tr>
+	
+	<tr>
+		<td>허리가 아프세요?</td>
+		<td>	腰疼吗?	<span>	요 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>허벅지가 아프세요?</td>
+		<td>	大腿疼吗？	<span>	따튀이 텅마 ?	</span></td>
+	</tr>
+	
+	<tr>
+		<td>휴식이 필요합니다.</td>
+		<td>	需要休息	<span>	쉬요우 쓔시	</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

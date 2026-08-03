@@ -1,0 +1,212 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">러시아어 Russian </th>
+	</tr>
+	
+	<tr>
+		<td>가을</td>
+		<td>осень<span>오씬</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸리지 않도록 유의하세요</td>
+		<td>Остерегайтесь простуды.<span>아스쩨레가이쩨시 쁘라스뚜듸.</span></td>
+	</tr>
+	
+	<tr>
+		<td>겨울</td>
+		<td>зима<span>지마</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 나쁩니다. </td>
+		<td>Погода плохая.<span>빠고다 쁠라하야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 더워요?</td>
+		<td>Погода жаркая?<span>빠고다 좌르까야?</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 많이 쌀쌀해 졌어요.</td>
+		<td>Погода стала холодной.<span>빠고다 스딸라 할로드노이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 좋네요</td>
+		<td>Погода хорошая.<span>빠고다 하로샤야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 추워요?</td>
+		<td>Погода холодная?<span>빠고다 할로드나야?</span></td>
+	</tr>
+	
+	<tr>
+		<td>내일은 공휴일이니 기숙사에서 쉬도록 해요</td>
+		<td>Завтра выходной день, отдыхайте в общежитии.<span>자프뜨라 브이하드노이 젠 아뜨듸이하이쩨 밥쉐지찌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>눈이 옵니다. </td>
+		<td>Снег идёт.<span>스녝 이죠트.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 취미는 무엇입니까?</td>
+		<td>У вас какое хобби?<span>우 바스 까꼬에 하비?</span></td>
+	</tr>
+	
+	<tr>
+		<td>동상에 걸리지 않도록 조심하세요</td>
+		<td>Остерегайтесь обморожение.<span>아스쩨레가이쪠시 아브마로줴니에.</span></td>
+	</tr>
+	
+	<tr>
+		<td>두꺼운 옷이 필요합니까 ?</td>
+		<td>Вам нужно тёплое платье?<span>밤 누즈나 쪼쁠러에 쁠라찌에?</span></td>
+	</tr>
+	
+	<tr>
+		<td>바람이 붑니다. </td>
+		<td>Ветер дует.<span>베쪠르 두엣트.</span></td>
+	</tr>
+	
+	<tr>
+		<td>봄</td>
+		<td>весна<span>비스나</span></td>
+	</tr>
+	
+	<tr>
+		<td>비가 옵니다 </td>
+		<td>Дождь идёт.<span>도쉿 이죠트.</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는 날에는 주로 뭐해요?</td>
+		<td>Обычно что делаете в выходной день?<span>아븨치나 슈또 젤라에쩨 브이하드노이 젠?</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는날에 무엇을 하고 싶나요?</td>
+		<td>Что хотите делать в выходной день?<span>슈또 하찌쩨 젤라찌 브이하드노이 젠?</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침, 저녁으로 온도차이가 많이납니다.</td>
+		<td>Большое температурное различие между устом и вечером.<span>발쇼에 찜삐라뚜라 라즈리취에 메즈두 우뜨람 이 베췌람.</span></td>
+	</tr>
+	
+	<tr>
+		<td>여름</td>
+		<td>лето<span>레따</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘은 공휴일입니다. </td>
+		<td>Сегодня выходной день.<span>씨보드냐 브이하드노이 젠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>옷을 따뜻하게 입으세요.</td>
+		<td>Одевайтесь тепло.<span>아제바이쩨시 찌쁠로.</span></td>
+	</tr>
+	
+	<tr>
+		<td>운동을 좋아하십니까?</td>
+		<td>Вы любите спорт?<span>븨이 류비쪠 스뽀르트?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에 등산하는건 어떻습니까?</td>
+		<td>Вы можете вместе подняться в горы в конце недели?<span>븨이 모지쩨 브메스쩨 빠드냐짜 브고릐 브깐쩨 니젤리?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에는 쉬세요.</td>
+		<td>Отдыхайте в выходной день.<span>아뜨하이쪠 븨이하드노이 젠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일요일에는 일이 없습니다.</td>
+		<td>В воскресенье нет работы.<span>바스끄레쎄이네 니에트 라보띄.</span></td>
+	</tr>
+	
+	<tr>
+		<td>좀 더 얇은 옷이 필요한가요 ?</td>
+		<td>Вам нужна более тонкая одежда?<span>밤 누즈나 볼례 똔까야 아제즈다?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 뭐할꺼예요?</td>
+		<td>Что будете делать в выходной день?<span>슈또 부지쩨 젤라찌 브이하드노이 젠?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 친구들과 여행을 하세요</td>
+		<td>Путишествуйте с друзьями.<span>뿌찌쉐스트부이쩨 스드루지야미</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 OO를 구경시켜 드릴께요</td>
+		<td>Вместе осмотрим OO в выходной день.<span>브메스쪠 아스모뜨림 OO 브이하드노이 젠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에는 함께 교회에 가면 어때요?</td>
+		<td>Как вы думаете, что вместе идти в церковь в уикэнд?<span>깍 븨이 두마에쩨 슈또 브메스쩨 이찌 쩨르꼽 비켄트?</span></td>
+	</tr>
+	
+	<tr>
+		<td>친구들하고 어디로 놀러가나요?</td>
+		<td>Куда вы поедите с друзьями?<span>꾸다 븨이 빠에지쩨 스 드루지야미?</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에서 가볼만한 산을 알려줄게요&#039;</td>
+		<td>Подскажите, где находится красивая гора?<span>빠드스까지쩨 그제 나호짓짜 끄라씨바야 가라?</span></td>
+	</tr>
+	
+	<tr>
+		<td>환절기입니다.</td>
+		<td>Сейчас переходное время года.<span>씨촤스 뼤레호드노에 브레먀 고다.</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

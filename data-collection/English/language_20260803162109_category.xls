@@ -1,0 +1,267 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">영어 English </th>
+	</tr>
+	
+	<tr>
+		<td>고맙습니다.</td>
+		<td>Thank you<span>땡큐</span></td>
+	</tr>
+	
+	<tr>
+		<td>그동안 수고하셨습니다 </td>
+		<td>Thank you for all of the time and hard work<span>땡큐 포 올 어브 더 타임 엔 하ㄹ드 워ㄹ크</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 또 뵈요</td>
+		<td>See you next time<span>씨 유 넥스트 타임</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 오겠습니다. </td>
+		<td>I will come back again<span>아이 윌 컴 백 어겐</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신을 잊지 못할 것 입니다 </td>
+		<td>I will never forget you<span>아이 윌 네버 폴겟 유</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 상사는 ㅇㅇㅇ 입니다.</td>
+		<td>Your senior is _______________.<span>유얼 씨니얼 이즈 ___________</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 성공을 기원합니다 </td>
+		<td>Best wishes for your success<span>베스트 위쉬즈 포 유어 썩쎄스</span></td>
+	</tr>
+	
+	<tr>
+		<td>동료 </td>
+		<td>Co-worker<span>코워ㄹ커</span></td>
+	</tr>
+	
+	<tr>
+		<td>만나서 반갑습니다.</td>
+		<td>Nice to meet you.<span>나이스 투 밑 츄</span></td>
+	</tr>
+	
+	<tr>
+		<td>맛있게 드세요 </td>
+		<td>Enjoy your meal<span>엔조이 유어 밀</span></td>
+	</tr>
+	
+	<tr>
+		<td>먼 길 오시느라고 수고하셨습니다.</td>
+		<td>Thank you very much for coming<span>땡 큐 베리 머치 포 커밍</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다 </td>
+		<td>I&#039;m sorry<span>아임 쏘뤼</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다. </td>
+		<td>l do apologize<span>아이 두 어팔러자이즈</span></td>
+	</tr>
+	
+	<tr>
+		<td>방해해서 미안합니다. </td>
+		<td>Excuse me for interrupting/bothering<span>엑스큐즈미 포 인터뤕팅/바더륑</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과를 받아주세요 </td>
+		<td>Please accept my apology<span>플리즈 액셉ㅌ 마이 어팔러지</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과하세요.</td>
+		<td>Please forgive me<span>플리즈 폴기브 미 </span></td>
+	</tr>
+	
+	<tr>
+		<td>사장님 </td>
+		<td>Employer<span>임플러이얼</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사하셨습니까 ?</td>
+		<td>Did you eat already?<span>디 쥬 잍 올뤠디?</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사합시다 </td>
+		<td>Let&#039;s eat<span>렛츠 잍</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕하세요 ㅇㅇㅇ입니다.</td>
+		<td>Good morning, my name is _________.<span>굳 모닝, 마이 네임 이즈 ___________</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 가세요 </td>
+		<td>Bye, and have a safe trip<span>바이, 앤 해브 어 쎄이프 트립</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 계세요</td>
+		<td>Goodbye<span>굳바이</span></td>
+	</tr>
+	
+	<tr>
+		<td>앞으로 좋은 관계를 유지할 수 있기를 바랍니다. </td>
+		<td>We hope to maintain a good relationship<span>위 호웁ㅍ 투 메인테인 어 굳 륄레이션쉽 </span></td>
+	</tr>
+	
+	<tr>
+		<td>약속을 지키지 못해 죄송합니다.</td>
+		<td>Please forgive me for breaking the promise<span>플리즈 폴기브 미 포 브레이킹 더 프라미스</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리 회사에 오신 것을 환영합니다 </td>
+		<td>Welcome to our company<span>웰컴 투 아월 컴퍼니</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리와 함께 잘 해봅시다.</td>
+		<td>Let&#039;s work well together<span>렛츠 워ㄹ크 웰 투게덜</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분들에게 인사드리세요 </td>
+		<td>You can greet them<span>유 캔 그맅 뎀</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분은 함께 일하게 될 ㅇㅇㅇ입니다. </td>
+		<td>He/ She is working as _________ .<span>히/쉬 이즈 워ㄹ킹 애즈 ________</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분을 소개합니다.</td>
+		<td>I will introduce you about him/her<span>아이 윌 인트뤄듀스 유 어바웉 힘/헐</span></td>
+	</tr>
+	
+	<tr>
+		<td>인사 나누세요</td>
+		<td>You can exchange greetings<span>유 캔 익스췌인지 그뤼팅스</span></td>
+	</tr>
+	
+	<tr>
+		<td>일찍 주무세요</td>
+		<td>Please sleep early<span>플리즈 슬맆 얼리</span></td>
+	</tr>
+	
+	<tr>
+		<td>자기소개를 해보세요</td>
+		<td>Please introduce yourself<span>플리즈 인트뤄듀스 유얼셀프</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 다녀오십시오. </td>
+		<td>Have a nice trip<span>헤브 어 나이스 트립</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁드립니다.</td>
+		<td>I&#039;m very glad to know you<span>아임 베리 글래드 투 노우 유</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁합니다. </td>
+		<td>l&#039;m very glad to know you<span>아임 베리 글래드 투 노우 유</span></td>
+	</tr>
+	
+	<tr>
+		<td>저는 ㅇㅇㅇ회사의 ㅇㅇㅇ입니다.</td>
+		<td>I am working at _________ company.<span>아이 앰 워ㄹ킹 엇  ________ 캠퍼니</span></td>
+	</tr>
+	
+	<tr>
+		<td>전화해주세요</td>
+		<td>Please call me<span>플리즈 콜 미</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 주말 보내십시오</td>
+		<td>Have a nice weekend<span>헤브 어 나이스 윅캔드</span></td>
+	</tr>
+	
+	<tr>
+		<td>직장동료를 만나면 항상 인사를 하세요</td>
+		<td>Always greet everytime you meet your co-workers<span>올웨이즈 그륕 에브리타임 유 밑 유얼 코-워컬스 </span></td>
+	</tr>
+	
+	<tr>
+		<td>축하합니다.</td>
+		<td>Congratulation<span>컹그레츄레이션</span></td>
+	</tr>
+	
+	<tr>
+		<td>친절하게 인사하세요</td>
+		<td>Kindly say hi/hello<span>카인들리 세이 하이/헬로우</span></td>
+	</tr>
+	
+	<tr>
+		<td>편히 쉬십시오 </td>
+		<td>Please relax<span>플리즈 륄랙스</span></td>
+	</tr>
+	
+	<tr>
+		<td>화를 내서 미안합니다.</td>
+		<td>I&#039;m sorry of getting angry.<span>암 쏘리 어브 게딩 엥그뤼.</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디 사세요?</td>
+		<td>Where do you live?<span>웨어 두 유 리브?</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 하루 되세요!</td>
+		<td>Have a nice day !<span>해브 어 나이스 데이!</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

@@ -1,0 +1,212 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">영어 English </th>
+	</tr>
+	
+	<tr>
+		<td>가을</td>
+		<td>Autumn<span>어텀</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸리지 않도록 유의하세요</td>
+		<td>Be attentive not to be catch by cold<span>비 어텐티브 낱 투 비 캣취 바이 콜드</span></td>
+	</tr>
+	
+	<tr>
+		<td>겨울</td>
+		<td>Winter<span>윈털</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 나쁩니다. </td>
+		<td>The weather is bad<span>더 웨덜 이즈 배드</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 더워요?</td>
+		<td>The weather is hot<span>더 웨덜 이즈 핱</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 많이 쌀쌀해 졌어요.</td>
+		<td>The weather is getting colder<span>더 웨덜 이즈 게딩 콜덜</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 좋네요</td>
+		<td>The weather is nice<span>더 웨덜 이즈 나이스</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 추워요?</td>
+		<td>The weather is cold<span>더 웨덜 이즈 콜드</span></td>
+	</tr>
+	
+	<tr>
+		<td>내일은 공휴일이니 기숙사에서 쉬도록 해요</td>
+		<td>Since tomorrow is holiday, you can rest in the dorm<span>씬스 투머로우 이즈 헐리데이, 아이 닏 투 뤠스트 인 더 돔</span></td>
+	</tr>
+	
+	<tr>
+		<td>눈이 옵니다. </td>
+		<td>It is snowing<span>잍 이즈 스노윙</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 취미는 무엇입니까?</td>
+		<td>What are your hobbies?<span>왓 아 유얼 하비ㅅ?</span></td>
+	</tr>
+	
+	<tr>
+		<td>동상에 걸리지 않도록 조심하세요</td>
+		<td>Avoid from frosbite<span>어보이드 프럼 프러스바잍</span></td>
+	</tr>
+	
+	<tr>
+		<td>두꺼운 옷이 필요합니까 ?</td>
+		<td>Do you need a thick clothes?<span>두 유 니드 어 앀 클로우즈?</span></td>
+	</tr>
+	
+	<tr>
+		<td>바람이 붑니다. </td>
+		<td>It is wind blowing<span>잍 이즈 윈드 브로윙</span></td>
+	</tr>
+	
+	<tr>
+		<td>봄</td>
+		<td>Spring<span>스프링</span></td>
+	</tr>
+	
+	<tr>
+		<td>비가 옵니다 </td>
+		<td>It is raining<span>잍 이즈 뤠이닝</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는 날에는 주로 뭐해요?</td>
+		<td>What are you usually do on your day off?<span>왓 아 유 유줠리 두 언 유얼 데이 어프?</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는날에 무엇을 하고 싶나요?</td>
+		<td>What do you want to do on your day off?<span>왓 두 유 원ㅌ 투 두 언 유얼 데이 어프?</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침, 저녁으로 온도차이가 많이납니다.</td>
+		<td>Morning and evening temperature has lots of difference<span>모닝 앤 이브닝 템퍼러쳘 해즈 랏츠 어브 디퍼런스</span></td>
+	</tr>
+	
+	<tr>
+		<td>여름</td>
+		<td>Summer<span>썸멀</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘은 공휴일입니다. </td>
+		<td>Today is a holiday<span>투데이 이즈 어 헐리데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>옷을 따뜻하게 입으세요.</td>
+		<td>You should wear warm clothes<span>유 슈드 웨얼 웜 클로우즈</span></td>
+	</tr>
+	
+	<tr>
+		<td>운동을 좋아하십니까?</td>
+		<td>Do you like sports? / Do you like to exercise?<span>두 유 라이크 스폴츠?/ 두 유 라잌 투 엑썰사이즈?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에 등산하는건 어떻습니까?</td>
+		<td>How about mountian climbing at this weekend? <span>하우 어바웃 마운틴 클라이밍 앹 디스 위켄드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에는 쉬세요.</td>
+		<td>I&#039;m going to take a rest this weekend<span>아임 고잉 투 테이크 어 뤠스트 디스 위켄드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>일요일에는 일이 없습니다.</td>
+		<td>No work on Sunday<span>노 워ㄹ크 언 썬데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>좀 더 얇은 옷이 필요한가요 ?</td>
+		<td>Do you need a little thinner clothes?<span>두 유 니드 어 리틀 띠널 클로우즈?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 뭐할꺼예요?</td>
+		<td>What are you going to do on weekend?<span>왓 아 유 고잉 투 두 언 위켄드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 친구들과 여행을 하세요</td>
+		<td>You travel with your friends on weekend<span>유 트레블 위드 유얼 프렌즈 언 위켄드</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 OO를 구경시켜 드릴께요</td>
+		<td>I will let you to go for sightseeing in the ________ on weekend<span>아이 윌 렡 츄 투 고 포 사잍씽 인 더 ________ 언 위켄드</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에는 함께 교회에 가면 어때요?</td>
+		<td>How about going to the church together on the weekend? <span>하우 어바웃 고잉 투 더 철취 언 더 위켄드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>친구들하고 어디로 놀러가나요?</td>
+		<td>Where are you hanging out with your friends?<span>웨얼 아 유 행잉 아웉 위드 유어 프렌즈?</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에서 가볼만한 산을 알려줄게요&#039;</td>
+		<td>I will tell you the exciting mountains in Korea<span>아이 윌 텔 유 더 익싸이팅 마운틴ㅅ 인 코리아</span></td>
+	</tr>
+	
+	<tr>
+		<td>환절기입니다.</td>
+		<td>It is a change of season<span>잍 이즈 어 체인지 어브 씨즌</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

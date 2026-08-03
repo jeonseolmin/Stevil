@@ -1,0 +1,202 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">베트남어 Vietnamese </th>
+	</tr>
+	
+	<tr>
+		<td>가까운 은행 통장으로 새로 만듭시다.</td>
+		<td>  Hãy làm sổ tài khoản mới ở ngân hàng gần nhất.<span>하이-람-쏘-따이 콴-머이-어-응언 항-건-넛</span></td>
+	</tr>
+	
+	<tr>
+		<td>같이 은행에 갑시다.</td>
+		<td>Hãy cùng đi ngân hàng.<span>하이-꿍-디-응언 항.</span></td>
+	</tr>
+	
+	<tr>
+		<td>교육장에서 만든 통장이 있으면 저에게 보여주세요.</td>
+		<td>Nếu bạn đã làm sổ ngân hàng tại nơi giáo dục định hướng thì đưa cho tôi xem.<span>네우-반-다-람-쏘-응언 항-따이-너이-쟈오 죽-딩 흐엉-티-드어-쪼-또이-쌤.</span></td>
+	</tr>
+	
+	<tr>
+		<td>다른 외국인근로자에게 송금을 부탁하지 마세요 </td>
+		<td>Đừng nhờ người lao động nước ngoài khác gửi tiền.<span>등-너-응어이-라오 동-느억-응와이-칵-그이-띠엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>도박장 출입하면 월급 하루에 다 날립니다. </td>
+		<td>Nếu ra vào nơi cờ bạc thì trong một ngày sẽ hết cả tháng lương của bạn.<span>네우-라-바오-너이-꺼 박-티-쫑-못-응아이-새-헷-못-탕-르엉-궈-반.</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 낭비하지 마십시오. </td>
+		<td>Đừng lãng phí đồng tiền.<span>등-랑 피-동 띠엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 전부 본국으로 송금하지 마세요 </td>
+		<td>Bạn đừng gửi tất cả tiền về nhà.<span>반-등-그이-떳-까-띠엔-베-냐.</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 펑펑 쓰지 마세요</td>
+		<td>Không sử dụng tiền quá tay.<span>콩-쓰 중-띠엔-꽈-따이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>본국에 송금하려면 은행코드, 받는 사람 및 주소를 정확히 알려주셔야 합니다.</td>
+		<td>Nếu bạn muốn gửi tiền về nhà thì phải viết chính xác mã số ngân hàng, địa chỉ và tên người nhận tiền.<span>네우-반-뭔-그이-띠엔-베-냐-티-파이-비엣-찌잉-삭- 마 쏘-응언 항, 뗀- 바-디어 찌-꾸아-응어이-넌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>본인 생활비를 고려해서 송금하세요.</td>
+		<td>Tính toán tiền sinh hoạt của mình rồi gửi tiền.<span>띵똰-띠엔-씽홧-꾸아-미잉-로이-그이-디엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>비밀번호는 무엇입니까?</td>
+		<td>Số bí mật là số mấy?<span>쏘-비-멋-라-쏘-머이?</span></td>
+	</tr>
+	
+	<tr>
+		<td>송금 수수료가 ㅇㅇ원 입니다. </td>
+		<td>Lệ phí chuyển tiền là…..uôn.<span>레 피-쭈옌-띠엔-라……원.</span></td>
+	</tr>
+	
+	<tr>
+		<td>송금수수료가 비싸요</td>
+		<td>Lệ  phí chuyển tiền đắt quá.<span>레 피-쭈옌-띠엔-닷-꽈.</span></td>
+	</tr>
+	
+	<tr>
+		<td>수수료는 ㅇㅇ 입니다.</td>
+		<td>Lệ phí là….uôn.<span>레 피-라….원.</span></td>
+	</tr>
+	
+	<tr>
+		<td>얼마를 송금할거예요 ?</td>
+		<td>Bạn sẽ gửi bao nhiêu tiền?<span>반-쌔-그이-바오-니에우-띠엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>열심히 힘들게 일해서 번 돈 귀하게 쓰세요. </td>
+		<td>Bạn đã chăm chỉ chịu khó kiếm tiền nên sử dụng tiền một cách chính đáng.<span>반-다-짬 지-찌우 코-끼엠-띠엔-티-넨-쓰 중-띠엔-못-깍-찡당.</span></td>
+	</tr>
+	
+	<tr>
+		<td>월급 본국 송금을 사장님이 대신해 주시길 원하세요?</td>
+		<td>Bạn có muốn giám đốc công ty gửi tiền lương về nhà giúp bạn không? <span>반-꼬-뭔-쟘독-꽁띠-그이-띠엔-베-냐-쥽-반-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>월급날 술마시고 유흥업소에 가지 마세요</td>
+		<td>Vào ngày nhận lương đừng nên uống rượu và đến nơi giải trí.<span>바오-응아이-넌-르엉-등-넨-우엉-르어우-바-덴-너이-쟈이-치.</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행업무를 가르쳐 줄게요.</td>
+		<td>Tôi sẽ chỉ cho bạn cách hoạt động của ngân hàng. <span>또이-쌔-찌-쪼-반-깍-홧 동-꽈-응언 항.</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에 계좌를 개설하세요.</td>
+		<td>Hãy mở tài khoản tại ngân hàng.<span>하이-머-따이-콴-따이-응언 항.</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에서 돈 찾을 수 있나요?</td>
+		<td>Có thể rút tiền tại ngân hàng chứ?<span>꼬-테-룻-띠엔-따이- 응언 항-쯔?</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에서는 먼저 번호표를 뽑으세요</td>
+		<td>Tại ngân hàng, bạn lấy số thứ tự trước tiên.<span>따이-응언 항, 반-러이-쏘-트 뜨-츠억 띠엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 은행은 여기서 너무 멀리 있습니다.</td>
+		<td>Ngân hàng đó rất xa đây.<span>응언 항-도-럿-사-더이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 통장으로 월급을 송금해 줄게요.</td>
+		<td>Tôi sẽ chuyển tiền lương của bạn vào sổ ngân hàng này.<span>또이-새-쭈옌-띠엔-르엉-꾸아-반-바오-쏘-응언 항-나이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>인터넷뱅킹은 수수료가 더 쌉니다.</td>
+		<td>Lệ phí sử dụng internet banking rẻ hơn.<span>레 피-쓰 중- 인 떠 넷-뱅 낑-레-헌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>자동이체로 하겠습니다.</td>
+		<td>Tiền sẽ tự động chuyển.<span>띠엔-쌔-뜨 동-쭈엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>저축을 하세요 </td>
+		<td>Hãy tiết  kiệm tiền.<span>하이-띠엣 끼엠-띠엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>절약해야합니다.</td>
+		<td>Bạn nên tiết kiệm.<span>반-넨-띠엣 께임.</span></td>
+	</tr>
+	
+	<tr>
+		<td>통장 계좌번호를 알고 싶습니다.</td>
+		<td>Tôi muốn biết số tài khoản sổ ngân hàng.<span>또이-뭔-비엣-쏘-따이-콴-쏘 응언 항.</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금은 분실할 위험이 있습니다.</td>
+		<td>Tiền mặt nguy hiểm dễ mất.<span>띠엔-맛-응우이 히엠-제-멋.</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금을 가지고있으면 소비하기 쉽습니다.</td>
+		<td>Nếu giữ tiền mặt thì dễ dàng bị tiêu sài.<span>네우-즈-띠엔-맛-티-제 장-비-띠에우-싸이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금을 찾기가 불편하니 카드를 신청하세요</td>
+		<td>Rút tiền khó khăn thì hãy xin làm thẻ.<span>룻-띠엔-코 칸-티-하이-신-람-태.</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

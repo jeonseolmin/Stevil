@@ -1,0 +1,212 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">베트남어 Vietnamese </th>
+	</tr>
+	
+	<tr>
+		<td>가을</td>
+		<td>Mùa thu<span>무어-투.</span></td>
+	</tr>
+	
+	<tr>
+		<td>감기에 걸리지 않도록 유의하세요</td>
+		<td>Chú ý để không bị cảm.<span>주 이-데-콩-비-감.</span></td>
+	</tr>
+	
+	<tr>
+		<td>겨울</td>
+		<td>Mùa đông<span>무어-동.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 나쁩니다. </td>
+		<td>Thời tiết xấu.<span>터이-띠엣-써우.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 더워요?</td>
+		<td>Thời tiết có nóng không?<span>터이-띠엣-꼬-농-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 많이 쌀쌀해 졌어요.</td>
+		<td>Trời trở  lạnh lên nhiều.<span>처이-처-넨-라잉-니에우.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 좋네요</td>
+		<td>Thời tiết đẹp nhỉ.<span>터이-띠엣-댑-니.</span></td>
+	</tr>
+	
+	<tr>
+		<td>날씨가 추워요?</td>
+		<td>Thời tiết có lạnh không?<span>터이-띠엣-꼬-라잉-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>내일은 공휴일이니 기숙사에서 쉬도록 해요</td>
+		<td>Ngày mai là ngày nghỉ, bạn được nghỉ ngơi ở ký túc xá.<span>응아이-마이-라- 응아이-응이-반-드억-응이-응어이-어-기 뚣 사.</span></td>
+	</tr>
+	
+	<tr>
+		<td>눈이 옵니다. </td>
+		<td>Tuyết rơi.<span>뚜옛-러이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 취미는 무엇입니까?</td>
+		<td>Sở thích của bạn là gì?<span>써 틱-꾸아-반-라-지?</span></td>
+	</tr>
+	
+	<tr>
+		<td>동상에 걸리지 않도록 조심하세요</td>
+		<td>Cẩn thận để không bị rét cóng.<span>껀 턴-데-통-비-렛.</span></td>
+	</tr>
+	
+	<tr>
+		<td>두꺼운 옷이 필요합니까 ?</td>
+		<td>Bạn có cần áo dày không?<span>반-꼬-껀-아우-저이-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>바람이 붑니다. </td>
+		<td>Gió thổi.<span>조-토이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>봄</td>
+		<td>Mùa xuân<span>무어-쑤언.</span></td>
+	</tr>
+	
+	<tr>
+		<td>비가 옵니다 </td>
+		<td>Trời mưa.<span>쩌이-므어.</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는 날에는 주로 뭐해요?</td>
+		<td>Bạn thường làm gì vào ngày nghỉ?<span>반-트엉-람-지-바오-응아이-응이?</span></td>
+	</tr>
+	
+	<tr>
+		<td>쉬는날에 무엇을 하고 싶나요?</td>
+		<td>Bạn muốn làm gì vào ngày  nghỉ?<span>반-뭔-람-지-바오-응아이-응이?</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침, 저녁으로 온도차이가 많이납니다.</td>
+		<td>Nhiệt độ chênh lệch nhiều giữa buổi sáng và buổi tối.<span>니엣 도-쩽렉-니에우-즈어-쌍-바-또이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>여름</td>
+		<td>Mùa hè<span>무어-해.</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘은 공휴일입니다. </td>
+		<td>Hôm nay là ngày nghỉ.<span>홈-나이-라-응아이-응이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>옷을 따뜻하게 입으세요.</td>
+		<td>Hãy mặc áo ấm.<span>하이-막-아우-엄.</span></td>
+	</tr>
+	
+	<tr>
+		<td>운동을 좋아하십니까?</td>
+		<td>Bạn thích thể thao không?<span>반-틱-테 타오-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에 등산하는건 어떻습니까?</td>
+		<td>Cuối tuần này đi chơi núi nhé?<span>꿔이-뚜언-나이-디-쩌이-누이-냬?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이번 주말에는 쉬세요.</td>
+		<td>Cuối tuần này nghỉ.<span>꿔이-뚜언-나이-응이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일요일에는 일이 없습니다.</td>
+		<td>Chủ Nhật không có việc.<span>쭈 넛-콩-꼬-비엑.</span></td>
+	</tr>
+	
+	<tr>
+		<td>좀 더 얇은 옷이 필요한가요 ?</td>
+		<td>Bạn cần áo mỏng hơn à?<span>반-껀-아우-몽-헌-아?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 뭐할꺼예요?</td>
+		<td>Cuối tuần bạn sẽ làm gì?<span>꿔이-두언-반-새-람-지?</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 친구들과 여행을 하세요</td>
+		<td>Hãy đi du lịch với bạn bè vào ngày cuối tuần.<span>하이-디-주 릭-버이-반 배-바오-응아이-꿔이-뚜언.</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에 OO를 구경시켜 드릴께요</td>
+		<td>Cuối tuần tôi sẽ dẫn bạn đi chơi……<span>꿔이-뚜언-또이-새-전-반-디-저이…..</span></td>
+	</tr>
+	
+	<tr>
+		<td>주말에는 함께 교회에 가면 어때요?</td>
+		<td>Cuối tuần này chúng ta cùng nhau đi nhà thờ có được không?<span>꿔이-뚜언-나이- 쭝다- 궁 나우-디-냐 터- 꼬 드억-콩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>친구들하고 어디로 놀러가나요?</td>
+		<td>Bạn đi chơi với các bạn ở đâu đấy?<span>반-디-저이-버이-깟-반- 어-더우-더이?</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에서 가볼만한 산을 알려줄게요&#039;</td>
+		<td>Tôi sẽ nói cho bạn biết núi đáng đi chơi ở Hàn Quốc.<span>또이-새-노이-쪼-반-비엣-누이-당-디-쩌이-어-한 꿕.</span></td>
+	</tr>
+	
+	<tr>
+		<td>환절기입니다.</td>
+		<td>Giao mùa.<span>자오-무어.</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

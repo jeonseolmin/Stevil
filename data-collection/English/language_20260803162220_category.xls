@@ -1,0 +1,162 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">영어 English </th>
+	</tr>
+	
+	<tr>
+		<td>가족들에게 자주 연락하세요</td>
+		<td>Frequently contact to your family.<span>프리퀀틀리 컨택 투 유얼 페밀리</span></td>
+	</tr>
+	
+	<tr>
+		<td>공공장소에서 떠들면 안되요</td>
+		<td>Don’t make a noise in a public place.<span>돈 메잌 어 노이즈 인 어 퍼블릭 플레이스</span></td>
+	</tr>
+	
+	<tr>
+		<td>금식기간입니까 ?</td>
+		<td>Is it a fasting period?<span>이즈 잍 어 패스팅 페리어드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>기독교</td>
+		<td>Christianity<span>크리스체너티</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 나라에는 어떤 명절이 있습니까?</td>
+		<td>What kind of festival days do you have in your country?<span>왓 카인 어브 페스티벌 데이즈 두 유 해브 인 유얼 컨트리?</span></td>
+	</tr>
+	
+	<tr>
+		<td>명절에는 부모님과 가족을 방문합니다.</td>
+		<td>We visit our parents and family during chuseok.<span>위 비짙 아월 페어런츠 앤 패밀리 듀링 추석</span></td>
+	</tr>
+	
+	<tr>
+		<td>문화적 차이가 있을수 있습니다.</td>
+		<td>There would be a possibility of a cultural difference.<span>데얼 우드 비 어 파써빌러티 어브 어 컬춸 디퍼런스</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날</td>
+		<td>New Year Day<span>뉴 이얼 데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날에는 떡국을 먹습니다.</td>
+		<td>We eat rice cake soup (Ddeok-guk) during the New Year Day<span>위 잍 롸이스 케잌 숩(떡-국) 듀링 더 뉴 이얼 데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>양력</td>
+		<td>Solar Calendar<span>쏠럴 캘린덜</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떠한 언어를 사용하시나요?</td>
+		<td>What kind of language are you using? <span>왓 카인 어브 랭귀지 아 유 유징?</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리는 각 나라의 개인의 종교를 다 존중해요.</td>
+		<td>We respect the individual religion in every country.<span>위 뤼스펙트 더 인디비줠 뤼젼 인 애브리 컨트리</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력</td>
+		<td>Lunar Calendar<span>루널 캘린덜</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력 8월 15일은 추석입니다.</td>
+		<td>15th of August is the Chuseok (Lunar Calendar)<span>피프틴쓰  어브 어거스트 이즈 더 추석(루널 캘린덜)</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교</td>
+		<td>Islam<span>이슬람</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교도입니까 ? </td>
+		<td>Are you an Islam?<span>아 유 언 이슬람?</span></td>
+	</tr>
+	
+	<tr>
+		<td>조상들께 제사도 지냅니다.</td>
+		<td>We also helding a memorial ceremony to our ancestors.<span>위 올쏘 헬딩 어 메모리얼 쎄르모니 투 아월 앤쎄스털ㅈ</span></td>
+	</tr>
+	
+	<tr>
+		<td>종교가 무엇입니까?</td>
+		<td>What is your religion?<span>왓 이즈 유얼 륄리젼?</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석</td>
+		<td>Chuseok / Korean Thanksgiving Day<span>추석/ 코리언 땡스기빙 데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석에는 송편을 먹습니다.</td>
+		<td>We eat rice cake during Chuseok.<span>위 잍 롸이스 케잌 듀링 추석</span></td>
+	</tr>
+	
+	<tr>
+		<td>카톨릭</td>
+		<td>Catholic<span>캐톨릭</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국사람은 손가락질 하는 것을 싫어합니다.</td>
+		<td>The Koreans dislike pointing fingers.<span>더 코리언즈 디스라잌 포인팅 핑컬스</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에 대해서 어떤 생각을 가지고 있나요?</td>
+		<td>What do you think about Korea?<span>왓 두 유 띵크 어바웉 코리아?</span></td>
+	</tr>
+	
+	<tr>
+		<td>문화</td>
+		<td>안녕하세요<span></span></td>
+	</tr>
+	
+</table>
+</body>
+</html>
