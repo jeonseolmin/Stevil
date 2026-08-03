@@ -1,0 +1,267 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">베트남어 Vietnamese </th>
+	</tr>
+	
+	<tr>
+		<td>고맙습니다.</td>
+		<td>Xin cảm ơn.<span>신-깜 언.</span></td>
+	</tr>
+	
+	<tr>
+		<td>그동안 수고하셨습니다 </td>
+		<td>Cảm ơn bạn đã cố gắng làm việc trong thời gian qua.<span>깜 언-반-다-꼬 강- 람 비엑-쫑-터이 잔-과.</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 또 뵈요</td>
+		<td>Hẹn gặp lại lần sau.<span>핸-갑-라이-런-싸우.</span></td>
+	</tr>
+	
+	<tr>
+		<td>다음에 오겠습니다. </td>
+		<td>Lần sau tôi sẽ đến.<span>런 사우-또이-새-덴.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신을 잊지 못할 것 입니다 </td>
+		<td>Tôi sẽ không bao giờ quên bạn.<span>또이-새-콩-바오 져-구엔-반.</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 상사는 ㅇㅇㅇ 입니다.</td>
+		<td>Giám đốc của bạn là…….<span>잠독 -꾸아- 반- 라…..</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 성공을 기원합니다 </td>
+		<td>Chúc bạn thành công.<span>쭉-반-타잉 꽁.</span></td>
+	</tr>
+	
+	<tr>
+		<td>동료 </td>
+		<td>Đồng nghiệp<span>동 응이엡</span></td>
+	</tr>
+	
+	<tr>
+		<td>만나서 반갑습니다.</td>
+		<td>Hân hạnh được gặp.<span>헌행 -뜨억- 갑.</span></td>
+	</tr>
+	
+	<tr>
+		<td>맛있게 드세요 </td>
+		<td>Xin mời xơi cơm.<span>신-머이-써이-껌.</span></td>
+	</tr>
+	
+	<tr>
+		<td>먼 길 오시느라고 수고하셨습니다.</td>
+		<td>Bạn đã vất vả do đi từ xa đến.<span>반-다-꽈-벗바-비-파이-디-사.</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다 </td>
+		<td>Tôi xin lỗi.<span>또이-신 로이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>미안합니다. </td>
+		<td>Tôi xin lỗi.<span>또이-신 로이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>방해해서 미안합니다. </td>
+		<td>Xin  lỗi vì đã làm phiền.<span>신 로이-비-다-람-피엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과를 받아주세요 </td>
+		<td>Xin tha thứ cho tôi.<span>신-타 트-쪼-또이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사과하세요.</td>
+		<td>Hãy xin lỗi đi.<span>하이-신 로이-디.</span></td>
+	</tr>
+	
+	<tr>
+		<td>사장님 </td>
+		<td>Giám đốc.<span>잠독.</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사하셨습니까 ?</td>
+		<td>Bạn đã xơi cơm chưa?<span>반-다-안-껌- 쯔어?</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사합시다 </td>
+		<td>Ăn cơm đi nào<span>안-껌-디-나오.</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕하세요 ㅇㅇㅇ입니다.</td>
+		<td>Xin chào, Tôi là…….<span>신 짜오, 또이 라……..</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 가세요 </td>
+		<td>Tạm biệt, đi cẩn thận nhé.<span>땀 비엣- 디- 껀 턴-내.</span></td>
+	</tr>
+	
+	<tr>
+		<td>안녕히 계세요</td>
+		<td>Tạm biệt, ở lại nhé.<span>땀 비엣-어-라이-내.</span></td>
+	</tr>
+	
+	<tr>
+		<td>앞으로 좋은 관계를 유지할 수 있기를 바랍니다. </td>
+		<td>Hy vọng chúng ta giữ được quan hệ tốt trong tương lai.<span>히봉- 쭝따- 즈 -뜨억-관 헤- 똣- 쩡- 뜨엉 라이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>약속을 지키지 못해 죄송합니다.</td>
+		<td>Xin lỗi vì đã thất hứa.<span>신 로이-비-다-텃- 흐어.</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리 회사에 오신 것을 환영합니다 </td>
+		<td>Hoan nghênh bạn đã đến công ty chúng tôi.<span>환응엥 -반- 다- 덴- 꽁띠 -쭝 또이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리와 함께 잘 해봅시다.</td>
+		<td>Chúng ta hãy cùng nhau cố gắng.<span>쭝다- 하이- 꿍- 냐우-꼬 강.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분들에게 인사드리세요 </td>
+		<td>Hãy chào mọi người.<span>하이- 짜오-  모이- 응으어이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분은 함께 일하게 될 ㅇㅇㅇ입니다. </td>
+		<td>…….sẽ làm việc cùng với chúng ta<span>……새 -람 비엑 -꿍- 버이- 쭝따.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이분을 소개합니다.</td>
+		<td>Xin giới thiệu người này.<span>신 -저이 티에우-  응으어이- 나이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>인사 나누세요</td>
+		<td>Hãy chào hỏi nhau.<span>하이- 짜오-호이-나우.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일찍 주무세요</td>
+		<td>Hãy ngủ sớm.<span>하이-응우-썸.</span></td>
+	</tr>
+	
+	<tr>
+		<td>자기소개를 해보세요</td>
+		<td>Hãy giới thiệu về mình.<span>하이- 저이  티에우- 베 -민.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 다녀오십시오. </td>
+		<td>Đi cẩn thận rồi về nhé.<span>디-껀턴-로이-베-냬.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁드립니다.</td>
+		<td> Mong nhận được giúp đỡ.<span>몽 -넌- 드억- 쥽더.</span></td>
+	</tr>
+	
+	<tr>
+		<td>잘 부탁합니다. </td>
+		<td>Xin được giúp đỡ.<span>신- 뜨억- 쥽 떠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>저는 ㅇㅇㅇ회사의 ㅇㅇㅇ입니다.</td>
+		<td>Tôi là……………..của công ty<span>또이 라…….꾸어 - 꽁띠</span></td>
+	</tr>
+	
+	<tr>
+		<td>전화해주세요</td>
+		<td>Hãy gọi điện cho tôi.<span>하이-고이-디엔-쪼-또이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 주말 보내십시오</td>
+		<td>Chúc bạn cuối tuần vui vẻ.<span>쭉-반-꿔이-뚜언-부이 베.</span></td>
+	</tr>
+	
+	<tr>
+		<td>직장동료를 만나면 항상 인사를 하세요</td>
+		<td>Nếu gặp đồng nghiệp bạn luôn nhớ chào hỏi.<span>네우- 갑- 동 응이엡- 반- 루언-녀- 짜오-호이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>축하합니다.</td>
+		<td>Xin chúc mừng.<span>신-쭉 믕.</span></td>
+	</tr>
+	
+	<tr>
+		<td>친절하게 인사하세요</td>
+		<td>Hãy chào hỏi một cách thân thiện.<span>하이-짜오 호이- 못-까익-턴 티엔.</span></td>
+	</tr>
+	
+	<tr>
+		<td>편히 쉬십시오 </td>
+		<td>Hãy nghỉ ngơi cho thoải mái.<span>하이-응이 응어이-톼이 마이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>화를 내서 미안합니다.</td>
+		<td> Xin lỗi vì đã làm bạn bực bội.<span>신 로이-비-다-람-반-븍 보이.</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디 사세요?</td>
+		<td>Nơi nào bạn sống?<span>너이 나오 반 송?</span></td>
+	</tr>
+	
+	<tr>
+		<td>즐거운 하루 되세요!</td>
+		<td>Có một ngày tốt đẹp!<span>꺼 못 응아이 똣 뎁!</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

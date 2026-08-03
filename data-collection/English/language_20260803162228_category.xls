@@ -1,0 +1,282 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">영어 English </th>
+	</tr>
+	
+	<tr>
+		<td>계란</td>
+		<td>Egg<span>에그</span></td>
+	</tr>
+	
+	<tr>
+		<td>골고루 드세요.</td>
+		<td>Eat in balance.<span>잍 밸런슬리</span></td>
+	</tr>
+	
+	<tr>
+		<td>과일을 드십시요</td>
+		<td>Eat a fruit<span>잍 어 플룻</span></td>
+	</tr>
+	
+	<tr>
+		<td>과일을 좋아하십니까?</td>
+		<td>Do you like fruits?<span>두 유 라이크 플룻츠?</span></td>
+	</tr>
+	
+	<tr>
+		<td>국을 드시겠습니까?</td>
+		<td>Do you want soup?<span>두 유 원트 숩?</span></td>
+	</tr>
+	
+	<tr>
+		<td>김치 먹을 수 있어요?</td>
+		<td>Can you eat Kimchi?<span>캔 유 잍 김치?</span></td>
+	</tr>
+	
+	<tr>
+		<td>달다</td>
+		<td>Sweet/Sugary<span>스윝/ 슈거리</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신은 무슨 음식을 좋아하십니까?</td>
+		<td>What kind of food do you like?<span>왓 카인 어브 푸드 두 유 라이크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>돼지고기 먹습니까?</td>
+		<td>Can you eat pork?<span>캔 유 잍 폴크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>라면을 좋아하세요?</td>
+		<td>Do you like noodles?<span>두 유 라이크 누들스?</span></td>
+	</tr>
+	
+	<tr>
+		<td>막걸리</td>
+		<td>Raw Rice Wine (Mackoli)<span>뤄 롸이스 와인(막걸리)</span></td>
+	</tr>
+	
+	<tr>
+		<td>많이 드세요</td>
+		<td>Eat as much as you want.<span>잍 애즈 머취 애즈 유 원ㅌ</span></td>
+	</tr>
+	
+	<tr>
+		<td>매운것도 잘 먹을 수 있어요?</td>
+		<td>Can you eat hot and spicy?<span>캔 유 잍 핱 앤 스파이시?</span></td>
+	</tr>
+	
+	<tr>
+		<td>맥주 한잔 할까요?</td>
+		<td>Do you want to drink beer?<span>두 유 원 투 드륑크 비얼?</span></td>
+	</tr>
+	
+	<tr>
+		<td>맵다</td>
+		<td>Hot/Spicy<span>핱/ 스파이시</span></td>
+	</tr>
+	
+	<tr>
+		<td>먹고 싶은게 있으면 말씀하세요.</td>
+		<td>Tell me if you want to eat something.<span>텔 미 이프 유 원 투 잍 썸띵</span></td>
+	</tr>
+	
+	<tr>
+		<td>무엇이 먹고 싶습니까 ?</td>
+		<td>What do you like to eat?<span>왓 두 유 라잌 투 잍?</span></td>
+	</tr>
+	
+	<tr>
+		<td>물 드세요 </td>
+		<td>Drink a water<span>드륑킹 어 워털</span></td>
+	</tr>
+	
+	<tr>
+		<td>밥 많이 먹었어요?</td>
+		<td>Did you eat much?<span>디 쥬 잍 머취?</span></td>
+	</tr>
+	
+	<tr>
+		<td>배가 고프신가요?</td>
+		<td>Do you feel hungry?<span>두 유 필 헝그뤼?</span></td>
+	</tr>
+	
+	<tr>
+		<td>소주를 좋아하세요?</td>
+		<td>Do you like liquor(soju)?<span>두 유 라이크 리컬(소주)?</span></td>
+	</tr>
+	
+	<tr>
+		<td>쇠고기 먹습니까?</td>
+		<td>Can you eat beef?<span>캔 유 잍 비프?</span></td>
+	</tr>
+	
+	<tr>
+		<td>수저가 여기에 있습니다.</td>
+		<td>The spoon is here<span>더 스푼 이즈 히얼</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사 후 설거지를 깨끗하게 해주세요</td>
+		<td>Wash the dishes after meal<span>워쉬 더 디쉬즈 애프털 밀</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사는 제대로 해 먹고 있나요?</td>
+		<td>Are you eating on time?<span>아 유 이팅 언 타임?</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사를 거르지 않도록 하세요</td>
+		<td>Don’t skip the meal<span>돈 스킵 더 밀</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사를 더 하고 싶은 분은 말씀하세요 </td>
+		<td>Please tell those who still wants to eat more.<span>플리즈 텔 도우즈 후 스틸 원츠 투 잍 모얼</span></td>
+	</tr>
+	
+	<tr>
+		<td>싱겁다</td>
+		<td>Saltless/Bland<span>썰트리스/ 블랜드</span></td>
+	</tr>
+	
+	<tr>
+		<td>쓰다</td>
+		<td>Bitter<span>비털</span></td>
+	</tr>
+	
+	<tr>
+		<td>아주 잘 먹었습니다.</td>
+		<td>I ate quite well.<span>아이 애잍 콰잍 웰</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침 식사 하셨습니까?</td>
+		<td>Did you have your breakfast?<span>디 쥬 해브 유얼 브렠퍼스트?</span></td>
+	</tr>
+	
+	<tr>
+		<td>양이 부족합니까 ?</td>
+		<td>Is it not enough?<span>이즈 잍 낱 이너프?</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떤 반찬을 좋아하십니까?</td>
+		<td>What kind of side dishes do you like?<span>왓 카인 어브 사이드 디쉬즈 두 유 라이크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떤 요리를 잘하시나요 ?</td>
+		<td>What kind of cooking do you cook well?<span>왓 카인 어브 쿠킹 두 유 쿡 웰?</span></td>
+	</tr>
+	
+	<tr>
+		<td>여러분 스스로 음식을 해드십시오. </td>
+		<td>Everybody should cook<span>에브리바디 슈드 쿡</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘 반찬은 ~~ 입니다.</td>
+		<td>The side dish for today is _________.<span>더 사이드 디쉬 포 투데이 이즈_______</span></td>
+	</tr>
+	
+	<tr>
+		<td>요리할줄 아시나요 ?</td>
+		<td>Do you know how to cook?<span>두 유 노우 하우 투 쿡?</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리 오늘 저녁 외식하는게 어때요?</td>
+		<td>How about dining out tonight?<span>하우 어바웉 다이닝 아웉 투나잍?</span></td>
+	</tr>
+	
+	<tr>
+		<td>음식을 남기면 안됩니다. </td>
+		<td>Don&#039;t leave any food.<span>돈 리브 애니 푸드</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 음식이 몸에 좋아요</td>
+		<td>This food is good for health.<span>디스 푸드 이즈 굳 포 핼쓰</span></td>
+	</tr>
+	
+	<tr>
+		<td>전통음식입니다.</td>
+		<td>Traditional food<span>트뤠디셔널 푸드</span></td>
+	</tr>
+	
+	<tr>
+		<td>점심 같이 먹어요.</td>
+		<td>Let&#039;s have lunch together.<span>렛츠 해브 런치 투게덜</span></td>
+	</tr>
+	
+	<tr>
+		<td>제가 맛있는거 해드릴께요.</td>
+		<td>l will prepare yummy food for you<span>아이 윌 프리페얼 여미 푸드 포 유</span></td>
+	</tr>
+	
+	<tr>
+		<td>좋아하는 음식이 있어요?</td>
+		<td>Is there any food you like?<span>이즈 데얼 애니 푸드 유 라이크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>짜다</td>
+		<td>Salty<span>썰티</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국 음식 중 좋아하는 것이 있습니까 ?</td>
+		<td>Is there any Korean food that you like?<span>이즈 데얼 애니 코리언 푸드 댓 츄 라이크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>맛있네요.</td>
+		<td>It&#039;s delicious.<span>잇쯔 딜리시어스</span></td>
+	</tr>
+	
+	<tr>
+		<td>배고파요</td>
+		<td>I&#039;m hungry.<span>아임 헝그리</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

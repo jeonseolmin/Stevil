@@ -1,0 +1,277 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">러시아어 Russian </th>
+	</tr>
+	
+	<tr>
+		<td> 시내를 가려면  00번 버스(지하철)를 타야합니다.</td>
+		<td>Вам надо ехать на ㅇㅇ автобусе(метро), чтобы приехать в центр.<span>밤 나다 이에핫찌 나 ㅇㅇ 아프또부세(미뜨로) 슈또븨이 쁘리이에하찌 브 쩬뜨르.</span></td>
+	</tr>
+	
+	<tr>
+		<td>가전제품</td>
+		<td>бытовая электроника<span>븨이따바야 엘렉뜨로니까</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 버스요금이 다릅니다. </td>
+		<td>Цена автобуса отличается протижением.<span>쩨나 아프또부싸 아뜰리촤엣짜 쁘라찌줴니엠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 지하철요금이 다릅니다. </td>
+		<td>Цена метро отличается протижением.<span>쩨나 미뜨로 아뜰리촤엣짜 쁘라찌제니엠.</span></td>
+	</tr>
+	
+	<tr>
+		<td>교통카드 충전은 ㅇㅇ에서 해요</td>
+		<td>В ㅇㅇ можно подзарядить транспортную карту.<span>브 ㅇㅇ 모즈나 빠드자랴지찌 뜨란스뽀르뜨누유 까르뚜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>기차</td>
+		<td>поезд<span>뽀에즈드</span></td>
+	</tr>
+	
+	<tr>
+		<td>마트 </td>
+		<td>магазин<span>마가진</span></td>
+	</tr>
+	
+	<tr>
+		<td>백화점 </td>
+		<td>универмаг<span>우니베르마크</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스 </td>
+		<td>автобус<span>아프또부스</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스요금은 ㅇㅇ원입니다. </td>
+		<td>Билет автобуса стоит ㅇㅇ вон.<span>빌렛트 아프또부싸 스또잇 ㅇㅇ 본.</span></td>
+	</tr>
+	
+	<tr>
+		<td>비쌉니다 </td>
+		<td>Дорого.<span>도라가</span></td>
+	</tr>
+	
+	<tr>
+		<td>비행기표는 예매했어요?</td>
+		<td>Вы забронировали билет самолёта?<span>븨이 자브라니라발리 빌렛트 싸말료따?</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내를 가려면 택시를 타야합니다.</td>
+		<td>Вам надо ехать на такси, чтобы приехать в центр.<span>밤 나다 이에하찌 나 딱씨 슈또븨이 쁘리이에하찌 브 쪤트르.</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내버스 ㅇㅇㅇ번을 타세요</td>
+		<td>Едите на ㅇㅇㅇ автобусе.<span>에지쩨 나 ㅇㅇ 아프또부스.</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장 </td>
+		<td>рынок<span>릐낙</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장은 ㅇㅇ역에 있습니다. </td>
+		<td>Рынок находится в метро ㅇㅇ.<span>릐낙 나호짓짜 브미뜨로 ㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>식료품</td>
+		<td>продукты<span>쁘라둑띄이</span></td>
+	</tr>
+	
+	<tr>
+		<td>신용카드</td>
+		<td>кредитная карточка<span>끄레지뜨나야 까르또취까</span></td>
+	</tr>
+	
+	<tr>
+		<td>신호를 꼭 지키세요</td>
+		<td>Соблюдайте сигнал объятельно.<span>싸블류다이쩨 씨그날 아비자쪨리나.</span></td>
+	</tr>
+	
+	<tr>
+		<td>쌉니다. </td>
+		<td>Дёшего.<span>죠쉐봐.</span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역 ㅇ번 출구에 있습니다. </td>
+		<td>Это находится в метро ㅇㅇ  ㅇㅇ выхода.<span>에따 나호짓짜 미뜨로 ㅇㅇ ㅇㅇ 븨이호다.</span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역에서 ㅇ호선으로 갈아타세요</td>
+		<td>Сделайте пересадку в ㅇㅇ линию в ㅇㅇ.<span>스젤라이쩨 뼤레싸트꾸 ㅇㅇ 리니유 브 ㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디로 가십니까 ?</td>
+		<td>Куда вы идёте?<span>꾸다 븨이 이죠쩨?</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떻게 지불하시겠습니까 ?</td>
+		<td>Чем хотите платить?<span>쳄 하찌쩨 쁠라찌찌?</span></td>
+	</tr>
+	
+	<tr>
+		<td>여기서 가까운 지하철역은 ㅇㅇ 입니다</td>
+		<td>Отсюда ближашее метро ㅇㅇ.<span>앗쑤다 블리좌쉐 미뜨로 ㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>오른쪽</td>
+		<td>правая сторона<span>쁘라바야 스또라나</span></td>
+	</tr>
+	
+	<tr>
+		<td>왼쪽</td>
+		<td>левая сторона<span>레바야 스또라나</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행 </td>
+		<td>банк<span>반크</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것은 ㅇㅇ원 입니다. </td>
+		<td>Это стоит ㅇㅇ вон.<span>에따 스또잇 ㅇㅇ 본.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것을 사고 싶습니까 ?</td>
+		<td>Вы хотите купить это?<span>븨이 하찌쩨 꾸삐찌 에따?</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳은 시내와 멀리 떨어져 있어요</td>
+		<td>Здесь очень далеко от центра.<span>즈제스 오친 달레꼬 아뜨쩬뜨라.</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳이 번화가입니다. </td>
+		<td>Здесь оживленная улица.<span>즈제스 아쥐블렌나야 울리짜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>일상용품</td>
+		<td>бытовые товары<span>븨이따븨이에 따바릐</span></td>
+	</tr>
+	
+	<tr>
+		<td>자동차가 매우 많습니다.</td>
+		<td>Очень много машин.<span>오친 므노가 마쉰.</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 </td>
+		<td>метро<span>미뜨로</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 0호선입니다.</td>
+		<td>Это метро ㅇㅇ линия.<span>에따 미뜨로 ㅇㅇ 리니야.</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 탈수 있어요?</td>
+		<td>Вы можете ехать на метро?<span>븨이 모지쩨 이에하찌 나미뜨로?</span></td>
+	</tr>
+	
+	<tr>
+		<td>출퇴근이 편리합니다.</td>
+		<td>Удобно ездить на работу.<span>우도브나 에즈지찌 나 라보뚜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시 </td>
+		<td>такси<span>딱씨</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시요금은 비싸니까 버스를 이용하세요</td>
+		<td>Такси дорого, едите на автобусе.<span>딱씨 도라가, 에지쩨 나 아프또부세.</span></td>
+	</tr>
+	
+	<tr>
+		<td>편의점은 저쪽에 있습니다.</td>
+		<td>Кругосуточный магазин находится там.<span>끄루고수또취늬이 마가진 나호짓짜 땀.</span></td>
+	</tr>
+	
+	<tr>
+		<td>필요한 물건이 무엇입니까 ?</td>
+		<td>Что нужно?<span>슈또 누즈나?</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금 </td>
+		<td>наличные деньги<span>날리치늬에 젠기</span></td>
+	</tr>
+	
+	<tr>
+		<td>회사에서 가까운 은행은 ㅇㅇ은행입니다.</td>
+		<td>Ближайший банк от фирмы ㅇㅇ.<span>블리좌쉬 반크 아뜨 퓌르믜 ㅇㅇ.</span></td>
+	</tr>
+	
+	<tr>
+		<td>횡단보도를 건널때는 신호등을 잘 보세요.</td>
+		<td>Внимательно смотрите светофор, перейдя переход.<span>브니마쪨리나 스모뜨리쩨 스베따포르 뻬레이쟈 뻬레호트.</span></td>
+	</tr>
+	
+	<tr>
+		<td>휴대폰</td>
+		<td>сотовый телефон<span>쏘또븨이 찔리뽄</span></td>
+	</tr>
+	
+	<tr>
+		<td>OO까지 버스요금이 얼마인가요?</td>
+		<td>Сколько стоит цена автобуса до ㅇㅇ?<span>스꼴까 스또잇 쪠나 아프또부사 도 ㅇㅇ?</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

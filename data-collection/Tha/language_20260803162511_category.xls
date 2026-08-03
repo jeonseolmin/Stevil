@@ -1,0 +1,277 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">태국어 Thai </th>
+	</tr>
+	
+	<tr>
+		<td> 시내를 가려면  00번 버스(지하철)를 타야합니다.</td>
+		<td>ถ้าจะไปในเมืองให้นั่งรถบัส (รถไฟใต้ดิน) หมายเลข 00<span>타-짜-빠이-나이-므아-하이-낭-롣-밧 (롣-파이-따이-딘) 마이-렉 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>가전제품</td>
+		<td>เครื่องใช้ไฟฟ้า<span>크랑-차이-파이-파</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 버스요금이 다릅니다. </td>
+		<td>ค่ารถต่างกันตามระยะทาง<span>카-롣-땅-깐-땀-라-야-탕</span></td>
+	</tr>
+	
+	<tr>
+		<td>거리에 따라 지하철요금이 다릅니다. </td>
+		<td>ค่ารถไฟใต้ดินต่างกันตามระยะทาง<span>카-롣-파이-따이-딘-땅-깐-땀-라-야-탕</span></td>
+	</tr>
+	
+	<tr>
+		<td>교통카드 충전은 ㅇㅇ에서 해요</td>
+		<td>เติมบัตรโดยสารที่ 00<span>떼음-밧-도이-싼-티 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>기차</td>
+		<td>รถไฟ<span>롯-파이</span></td>
+	</tr>
+	
+	<tr>
+		<td>마트 </td>
+		<td>มาร์ท<span>마-트</span></td>
+	</tr>
+	
+	<tr>
+		<td>백화점 </td>
+		<td>ห้างสรรพสินค้า<span>항-쌉-파-씬-카</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스 </td>
+		<td>รถบัส<span>롯-밧</span></td>
+	</tr>
+	
+	<tr>
+		<td>버스요금은 ㅇㅇ원입니다. </td>
+		<td>ค่ารถบัส 00 วอน<span>카-롯-밧 00 원</span></td>
+	</tr>
+	
+	<tr>
+		<td>비쌉니다 </td>
+		<td>แพง<span>팽</span></td>
+	</tr>
+	
+	<tr>
+		<td>비행기표는 예매했어요?</td>
+		<td>จองตั๋วเครื่องบินหรือยัง<span>쩡-뚜워-크랑-빈-르-양</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내를 가려면 택시를 타야합니다.</td>
+		<td>ถ้าจะไปในเมืองต้องนั่งแท็กซี่<span>타-짜-빠이-나이-므앙-떵-낭-택-씨</span></td>
+	</tr>
+	
+	<tr>
+		<td>시내버스 ㅇㅇㅇ번을 타세요</td>
+		<td>รถบัสในเมือง ให้นั่งรถหมายเลข 000<span>롯-밧-나이-므앙-하이-낭-롯-마이-렉</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장 </td>
+		<td>ตลาด<span>따-랃</span></td>
+	</tr>
+	
+	<tr>
+		<td>시장은 ㅇㅇ역에 있습니다. </td>
+		<td>ตลาดมีสถานี 00<span>따-랃-미-싸-타-니 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>식료품</td>
+		<td>อาหาร<span>아-한</span></td>
+	</tr>
+	
+	<tr>
+		<td>신용카드</td>
+		<td>บัตรเครดิต<span>밧-크레-딧</span></td>
+	</tr>
+	
+	<tr>
+		<td>신호를 꼭 지키세요</td>
+		<td>โปรดรักษาสัญญาณจราจร<span>쁘롯-락-싸-싼-얀-짜-라-쩐</span></td>
+	</tr>
+	
+	<tr>
+		<td>쌉니다. </td>
+		<td>ถูก<span>툭 </span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역 ㅇ번 출구에 있습니다. </td>
+		<td>สถานี 00 ทางออกหมายเลข 0<span>싸-타-니 00 탕-억-마이-렉 0</span></td>
+	</tr>
+	
+	<tr>
+		<td>ㅇㅇ역에서 ㅇ호선으로 갈아타세요</td>
+		<td>โปรดเปลี่ยนรถเป็น 0 ที่สถานี 00<span>쁘롯-쁘리안-롯-뻰 0 티-싸-타-니</span></td>
+	</tr>
+	
+	<tr>
+		<td>어디로 가십니까 ?</td>
+		<td>ไปที่ไหนคะ / ครับ<span>빠이-티-나이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떻게 지불하시겠습니까 ?</td>
+		<td>จะจ่ายอย่างไร<span>짜-짜이-양-라이</span></td>
+	</tr>
+	
+	<tr>
+		<td>여기서 가까운 지하철역은 ㅇㅇ 입니다</td>
+		<td>สถานีรถไฟใต้ดินที่ใกล้ที่นี่คือ 00<span>싸-타-니-롣-파이-따이-딘-티-끄라이-티-니-크 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>오른쪽</td>
+		<td>ด้านขวา<span>단-콰</span></td>
+	</tr>
+	
+	<tr>
+		<td>왼쪽</td>
+		<td>ด้านซ้าย<span>단-싸이</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행 </td>
+		<td>ธนาคาร<span>타-나-칸</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것은 ㅇㅇ원 입니다. </td>
+		<td>นี่ 00 วอน<span>니 00 원</span></td>
+	</tr>
+	
+	<tr>
+		<td>이것을 사고 싶습니까 ?</td>
+		<td>อยากซื้อนี่มั้ย<span>약-쓰-니-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳은 시내와 멀리 떨어져 있어요</td>
+		<td>ที่นี่อยู่ห่างไกลกับเมือง<span>티-니-유-항-끄라이-깝-므앙</span></td>
+	</tr>
+	
+	<tr>
+		<td>이곳이 번화가입니다. </td>
+		<td>ที่นี่คือตัวเมือง<span>티-니-차이-뚜워-므앙</span></td>
+	</tr>
+	
+	<tr>
+		<td>일상용품</td>
+		<td>ของใช้ประจำวัน<span>컹-차이-쁘라-짬-완</span></td>
+	</tr>
+	
+	<tr>
+		<td>자동차가 매우 많습니다.</td>
+		<td>มีรถมาก<span>미-롣-막</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 </td>
+		<td>รถไฟใต้ดิน<span>롣-파이-따이-딘</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 0호선입니다.</td>
+		<td>เป็นสายรถไฟใต้ดิน สาย 0<span>뻰=싸이-롣-파이-따이-딘-싸이 0</span></td>
+	</tr>
+	
+	<tr>
+		<td>지하철 탈수 있어요?</td>
+		<td>นั่งรถไฟใต้ดินไหมคะ/ ครับ<span>낭-롣-파이-따이-딘-뻰-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>출퇴근이 편리합니다.</td>
+		<td>เหมาะกับการเข้าทำงานและการเลิกงาน<span>머-깝-깐-카오-탐-으안-래-깐-르윽-으안</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시 </td>
+		<td>รถแท็กซี่<span>롣-택-시</span></td>
+	</tr>
+	
+	<tr>
+		<td>택시요금은 비싸니까 버스를 이용하세요</td>
+		<td>ค่ารถแท็กซี่แพงดังนั้นโปรดใช้รถบัส<span>카-롣-택-시-팽-당-난-쁘롣-차이-롣-바스</span></td>
+	</tr>
+	
+	<tr>
+		<td>편의점은 저쪽에 있습니다.</td>
+		<td>ร้านสะดวกซื้ออยู่ด้านโน้น<span>란-싸-두웍-쓰-유-단-논</span></td>
+	</tr>
+	
+	<tr>
+		<td>필요한 물건이 무엇입니까 ?</td>
+		<td>ของอะไรที่จำเป็น<span>컹-아-라이-티-짬-뻰</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금 </td>
+		<td>เงินสด<span>으은-쏟</span></td>
+	</tr>
+	
+	<tr>
+		<td>회사에서 가까운 은행은 ㅇㅇ은행입니다.</td>
+		<td>ธนาคารที่อยู่ใกล้ที่นี่คือ ธนาคาร 00<span>타-나-칸-티-유-끄라이-티-니-크-타-나-칸 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>횡단보도를 건널때는 신호등을 잘 보세요.</td>
+		<td>เมื่อข้ามถนนกรุณาดูสัญญาณไฟให้ดี<span>므아-캄-타-논-까-루-나-두-싼-얀-파이-하이-디</span></td>
+	</tr>
+	
+	<tr>
+		<td>휴대폰</td>
+		<td>โทรศัพท์มือถือ<span>토-라-쌉-므-트</span></td>
+	</tr>
+	
+	<tr>
+		<td>OO까지 버스요금이 얼마인가요?</td>
+		<td>ไป 00 ค่ารถเท่าไหร่คะ/ ครับ<span>빠이 00 카-롣-타우-라이</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

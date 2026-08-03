@@ -1,0 +1,206 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">영어 English </th>
+	</tr>
+	
+	<tr>
+		<td>가까운 은행 통장으로 새로 만듭시다.</td>
+		<td>Make a new bankbook in the nearest bank.<span>메이크 어 뉴 뱅크북 인 더 니얼리스트 뱅크</span></td>
+	</tr>
+	
+	<tr>
+		<td>같이 은행에 갑시다.</td>
+		<td>Let&#039;s go together to the bank.<span>렛츠 고 투게덜 투 더 뱅크</span></td>
+	</tr>
+	
+	<tr>
+		<td>교육장에서 만든 통장이 있으면 저에게 보여주세요.</td>
+		<td>Show me the bankbook which you receive in the training area.<span>쇼우 미 더 뱅크북 위치 유 뤼씨브 인 더 트뤠이닝 에어뤼아</span></td>
+	</tr>
+	
+	<tr>
+		<td>다른 외국인근로자에게 송금을 부탁하지 마세요 </td>
+		<td>Don&#039;t entrust the remittance to the other migrant workers.<span>돈 인트뤄스트 더 뤼밑턴스 투 디 아덜 마이그뤈트 워컬스</span></td>
+	</tr>
+	
+	<tr>
+		<td>도박장 출입하면 월급 하루에 다 날립니다. </td>
+		<td>Gambling is a way to lose your salary in one day.<span>갬블링 이즈 어 웨이 투 루즈 유얼 샐러뤼 인 원 데이</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 낭비하지 마십시오. </td>
+		<td>Don’t waste the money.<span>돈 웨이스트 더 머니</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 전부 본국으로 송금하지 마세요 </td>
+		<td>Don&#039;t send all the money to the home country.<span>돈 센드 올 더 머니 투 더 홈 컨트리</span></td>
+	</tr>
+	
+	<tr>
+		<td>돈을 펑펑 쓰지 마세요</td>
+		<td>Don’t over spend money<span>돈 오우벌 스펜드 머니</span></td>
+	</tr>
+	
+	<tr>
+		<td>본국에 송금하려면 은행코드, 받는 사람 및 주소를 정확히 알려주셔야 합니다.</td>
+		<td>It is important to inform the exact information of the bank code, 
+the name of the recipient and the address when doing a transaction.<span>잍 이즈 임폴턴트 투 인폼 더 이그잭트 인폴메이션 어브 더 뱅크 코우드, 
+더 네임 어브 더 뤼씨피언트 앤 더  어드뤠스 웬 두잉 어 트뤤쎅션 </span></td>
+	</tr>
+	
+	<tr>
+		<td>본인 생활비를 고려해서 송금하세요.</td>
+		<td>Consider about the amount for your daily needs 
+before u send the money to your country. <span>컨씨덜 어바웉 디 어마운트 포 유얼 데일리 니즈 
+비포ㄹ 유 샌드 더 머니 투 유얼 컨트리 </span></td>
+	</tr>
+	
+	<tr>
+		<td>비밀번호는 무엇입니까?</td>
+		<td>What is your password?<span>왓 이즈 유얼 패스월드?</span></td>
+	</tr>
+	
+	<tr>
+		<td>송금 수수료가 ㅇㅇ원 입니다. </td>
+		<td>The charge for remittance is ______ won.<span>더 찰쥐 포 뤼밑턴스 이즈 ____원</span></td>
+	</tr>
+	
+	<tr>
+		<td>송금수수료가 비싸요</td>
+		<td>The remittance charge is expensive.<span>더 뤼밑턴스 찰쥐 이즈 잌스펜시브</span></td>
+	</tr>
+	
+	<tr>
+		<td>수수료는 ㅇㅇ 입니다.</td>
+		<td>The charge is _________ won.<span>더 찰쥐 이즈 ________원</span></td>
+	</tr>
+	
+	<tr>
+		<td>얼마를 송금할거예요 ?</td>
+		<td>How much do you want to remit?<span>하우 머치 두 유 원ㅌ 투 뤼미트?</span></td>
+	</tr>
+	
+	<tr>
+		<td>열심히 힘들게 일해서 번 돈 귀하게 쓰세요. </td>
+		<td>Please value the money that you earn in difficulties and hard.<span>플리즈 밸류 더 머니 댓 유 언 인 디피컬티즈 앤 하ㄹ드</span></td>
+	</tr>
+	
+	<tr>
+		<td>월급 본국 송금을 사장님이 대신해 주시길 원하세요?</td>
+		<td>Do you want the employer to send your salary to your country?<span>두 유 원트 더 임플러이얼 투 센드 유얼 샐러뤼 투 유얼 컨트리?</span></td>
+	</tr>
+	
+	<tr>
+		<td>월급날 술마시고 유흥업소에 가지 마세요</td>
+		<td>Don’t drink on your salary day and don’t go to amusement spots.<span>돈 드륑크 언 유얼 샐러뤼 데이 앤 돈 고 투 앤 어뮤즈먼트 스팥ㅊ</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행업무를 가르쳐 줄게요.</td>
+		<td>I will teach you the bank service.<span>아이 윌 티치 유 더 뱅크 썰비스</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에 계좌를 개설하세요.</td>
+		<td>Open the account at the bank.<span>오픈 더 어카운트 앹 더 뱅크</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에서 돈 찾을 수 있나요?</td>
+		<td>Can l withdraw money in the bank?<span>캔 아이 윋드뤄 머니 인 더 뱅크?</span></td>
+	</tr>
+	
+	<tr>
+		<td>은행에서는 먼저 번호표를 뽑으세요</td>
+		<td>Take the ticket number first in the bank.<span>테이크 더 티킽 넘벌 펄스트 인 더 뱅크</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 은행은 여기서 너무 멀리 있습니다.</td>
+		<td>This bank is too far from there.<span>디스 뱅크 이즈 투 팔 프럼 데얼</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 통장으로 월급을 송금해 줄게요.</td>
+		<td>I will remit your monthly salary in this account.<span>아이 윌 뤼밑 유얼 먼쓸리 샐러뤼 인 디스 어카운트</span></td>
+	</tr>
+	
+	<tr>
+		<td>인터넷뱅킹은 수수료가 더 쌉니다.</td>
+		<td>The internet banking charge is cheaper.<span>더 인털넷 뱅킹 찰쥐 이즈 치펄</span></td>
+	</tr>
+	
+	<tr>
+		<td>자동이체로 하겠습니다.</td>
+		<td>I want an automatic transfer.<span>아이 원트 언 어토매틱 트랜스펄</span></td>
+	</tr>
+	
+	<tr>
+		<td>저축을 하세요 </td>
+		<td>You have to save<span>유 해브 투 세이브</span></td>
+	</tr>
+	
+	<tr>
+		<td>절약해야합니다.</td>
+		<td>You must economize.<span>유 머스트 이카너마이즈</span></td>
+	</tr>
+	
+	<tr>
+		<td>통장 계좌번호를 알고 싶습니다.</td>
+		<td>I wanted to know the bank account number.<span>아이 원틷 투 노우 더 뱅크 어카운트 넘벌</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금은 분실할 위험이 있습니다.</td>
+		<td>It has a danger to loss when bringing a cash.<span>잍 해즈 어 댄절 투 러쓰 웬 브링잉 어 캐쉬</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금을 가지고있으면 소비하기 쉽습니다.</td>
+		<td>It is easy to spend when bringing a cash.<span>잍 이즈 이지 투 스펜드 웬 브링잉 어 캐쉬</span></td>
+	</tr>
+	
+	<tr>
+		<td>현금을 찾기가 불편하니 카드를 신청하세요</td>
+		<td>Have an ATM Card to withdraw money easily<span>해브 언 에이티엠 칼-드 투 윋드뤄 머니 이질리</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

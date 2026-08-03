@@ -1,0 +1,282 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">태국어 Thai </th>
+	</tr>
+	
+	<tr>
+		<td>계란</td>
+		<td>ไข่ไก่<span>카이-까이</span></td>
+	</tr>
+	
+	<tr>
+		<td>골고루 드세요.</td>
+		<td>กรุณาทานอย่างสม่ำเสมอ<span>까-루-나-탄-양-싸-맘-싸-머</span></td>
+	</tr>
+	
+	<tr>
+		<td>과일을 드십시요</td>
+		<td>กรุณาทานผลไม้<span>까-루-나-탄-폰-라-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>과일을 좋아하십니까?</td>
+		<td>ชอบผลไม้ไหมคะ/ ครับ<span>첩-탄-폰-라-마이-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>국을 드시겠습니까?</td>
+		<td>จะทานซุปไหมคะ/ ครับ<span>짜-탄-쑵-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>김치 먹을 수 있어요?</td>
+		<td>ทานกิมจิได้ไหมคะ/ ครับ<span>탄-낌-찌-다이-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>달다</td>
+		<td>หวาน<span>완 </span></td>
+	</tr>
+	
+	<tr>
+		<td>당신은 무슨 음식을 좋아하십니까?</td>
+		<td>คุณชอบอาหารอะไรคะ/ ครับ<span>쿤-첩-아-한-아-라이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>돼지고기 먹습니까?</td>
+		<td>ทานเนื้อหมูไหมคะ/ ครับ<span>타-느아-무-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>라면을 좋아하세요?</td>
+		<td>ชอบบะหมี่ไหมคะ/ ครับ<span>첩-바-미-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>막걸리</td>
+		<td>ไวน์ข้าว<span>와이-카우</span></td>
+	</tr>
+	
+	<tr>
+		<td>많이 드세요</td>
+		<td>กรุณาทานเยอะๆ<span>까-루-나-탄-여-여</span></td>
+	</tr>
+	
+	<tr>
+		<td>매운것도 잘 먹을 수 있어요?</td>
+		<td>ทานอาหารเผ็ดเก่งไหมคะ/ ครับ<span>탄-아-한-펟-껭-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>맥주 한잔 할까요?</td>
+		<td>เบียร์สักแก้วไหมคะ/ ครับ<span>비야-싹-깨우-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>맵다</td>
+		<td>เผ็ด<span>펫</span></td>
+	</tr>
+	
+	<tr>
+		<td>먹고 싶은게 있으면 말씀하세요.</td>
+		<td>ถ้ามีของที่อยากทาน กรุณาบอก<span>타-미-컹-티-약-탄-까-루-나-벅</span></td>
+	</tr>
+	
+	<tr>
+		<td>무엇이 먹고 싶습니까 ?</td>
+		<td>อยากทานอะไรคะ/ ครับ<span>약-탄-아-라이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>물 드세요 </td>
+		<td>กรุณาดื่มน้ำ<span>까-루-나-듬-남</span></td>
+	</tr>
+	
+	<tr>
+		<td>밥 많이 먹었어요?</td>
+		<td>ทานข้าวเยอะไหมคะ/ ครับ<span>탄-카우-여-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>배가 고프신가요?</td>
+		<td>ปวดท้องหรือคะ/ ครับ<span>뿌웓-텅-르-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>소주를 좋아하세요?</td>
+		<td>ชอบเหล้าโซจูไหมคะ/ ครับ<span>첩-라우-소-주-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>쇠고기 먹습니까?</td>
+		<td>ทานเนื้อวัวไหมคะ/ ครับ<span>탄-느아-우워-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>수저가 여기에 있습니다.</td>
+		<td>ช้อนกับตะเกียบอยู่ที่นี่<span>천-깝-따-끼얍-유-티-니</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사 후 설거지를 깨끗하게 해주세요</td>
+		<td>หลังทานอาหารแล้วกรุณาล้างจานให้สะอาด<span>랑-탄-아-한-래우-까-루-나-랑-짠-하이-싸-앋</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사는 제대로 해 먹고 있나요?</td>
+		<td>อาหารยังทานปกติอยู่ไหมคะ/ ครับ<span>아-한-양-탄-뽁-까-띠-유-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사를 거르지 않도록 하세요</td>
+		<td>อย่าละเลยต่อมื้อาหาร<span>야-라-러이-떠-므-아-한</span></td>
+	</tr>
+	
+	<tr>
+		<td>식사를 더 하고 싶은 분은 말씀하세요 </td>
+		<td>ท่านใดที่อย่ากทานข้าวอีกกรุณายกมือขึ้น<span>탄-다이-티-약-탄-카우-익-까-루-나-욕-므-큰</span></td>
+	</tr>
+	
+	<tr>
+		<td>싱겁다</td>
+		<td>จืด<span>쯛</span></td>
+	</tr>
+	
+	<tr>
+		<td>쓰다</td>
+		<td>เค็ม<span>켐</span></td>
+	</tr>
+	
+	<tr>
+		<td>아주 잘 먹었습니다.</td>
+		<td>ทานอร่อยมาก<span>탄-아-러이-막</span></td>
+	</tr>
+	
+	<tr>
+		<td>아침 식사 하셨습니까?</td>
+		<td>ทานอาหารเช้าไหมคะ/ ครับ<span>탄-아-한-차우-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>양이 부족합니까 ?</td>
+		<td>ปริมาณไม่เพียงพอหรือคะ/ ครับ<span>빠-리-만-마이-피양-퍼-르-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떤 반찬을 좋아하십니까?</td>
+		<td>ชอบกับข้าวแบบไหนคะ/ ครับ<span>첩-깝-카우-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떤 요리를 잘하시나요 ?</td>
+		<td>ทำอาหารอะไรเก่งคะ/ ครับ<span>탐-아-한-아-라이-껭-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>여러분 스스로 음식을 해드십시오. </td>
+		<td>ขอให้ทุกท่านทำอาหารทานเอง<span>커-하이-툭-탄-탐-아-한-탄-엥</span></td>
+	</tr>
+	
+	<tr>
+		<td>오늘 반찬은 ~~ 입니다.</td>
+		<td>กับข้าววันนี้คือ 00<span>깝-카우-완-니-크 00</span></td>
+	</tr>
+	
+	<tr>
+		<td>요리할줄 아시나요 ?</td>
+		<td>ทำอาหารเป็นไหมคะ/ ครับ<span>탐-아-한-뻰-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리 오늘 저녁 외식하는게 어때요?</td>
+		<td>วันนี้เราทานอาหารเย็นข้างนอกดีไหม<span>완-니-라우-탄-아-한-옌-캉-넉-디-마이</span></td>
+	</tr>
+	
+	<tr>
+		<td>음식을 남기면 안됩니다. </td>
+		<td>เหลืออาหารไม่ได้<span>르아-아-한-마이-다이</span></td>
+	</tr>
+	
+	<tr>
+		<td>이 음식이 몸에 좋아요</td>
+		<td>อาหารนี้ดีต่อร่างกาย<span>아-한-니-디-떠-랑-까이</span></td>
+	</tr>
+	
+	<tr>
+		<td>전통음식입니다.</td>
+		<td>เป็นอาหารตามประเพณี<span>뻰-아-한-땀-쁘라-페-니</span></td>
+	</tr>
+	
+	<tr>
+		<td>점심 같이 먹어요.</td>
+		<td>ทานอาหารกลางวันด้วยกัน<span>탄-아-한-끄랑-완-두워이-깐</span></td>
+	</tr>
+	
+	<tr>
+		<td>제가 맛있는거 해드릴께요.</td>
+		<td>ฉัน/ ผม จะทำของอร่อยให้<span>찬/ 폼-짜-탐-컹-아-러이-하이</span></td>
+	</tr>
+	
+	<tr>
+		<td>좋아하는 음식이 있어요?</td>
+		<td>มีอาหารที่ชอบไหมคะ/ ครับ<span>미-아-한-티-첩-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>짜다</td>
+		<td>เค็ม<span>켐</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국 음식 중 좋아하는 것이 있습니까 ?</td>
+		<td>มีอาหารเกาหลีที่ชอบไหมคะ/ ครับ<span>미-아-한-까우-리-티-첩-마이-카/ 크랍</span></td>
+	</tr>
+	
+	<tr>
+		<td>맛있네요.</td>
+		<td>มันอร่อย<span>아러이</span></td>
+	</tr>
+	
+	<tr>
+		<td>배고파요</td>
+		<td>ฉันหิว<span>잔요오</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>

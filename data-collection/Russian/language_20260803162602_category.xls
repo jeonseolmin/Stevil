@@ -1,0 +1,157 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" dir="ltr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta name="nationality" content="korean" />
+<meta name="content-language" content="kr" />
+<meta name="author" content="한국산업인력공단" />
+<title>자주 쓰는 외국어DB - 자주 쓰는 외국어DB 엑셀파일 다운로드</title>
+
+
+
+
+<script type="text/javascript" charset="utf-8" src="/e9/js/common/wlcollector.js"></script>
+<script type="text/javascript"                       src="/e9/js/common/UserScriptConf.js"></script><!-- weblog -->
+
+
+
+<script type="text/javascript">
+var contextPath = "/e9";
+</script>
+</head>
+<body>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+		<th scope="col">한국어</th>
+		<th scope="col">러시아어 Russian </th>
+	</tr>
+	
+	<tr>
+		<td>가족들에게 자주 연락하세요</td>
+		<td>Часто звоните семье.<span>차스따 즈바니쩨 씸에</span></td>
+	</tr>
+	
+	<tr>
+		<td>공공장소에서 떠들면 안되요</td>
+		<td>На местах общественного пользования нельзя шуметь.<span>나 메스따흐 압쉐스트벤나봐 뽈자바니야 닐자 슈메찌</span></td>
+	</tr>
+	
+	<tr>
+		<td>금식기간입니까 ?</td>
+		<td>Сейчас время участия в голодовке?<span>씨촤스 브레먀 우촤스찌야 갈라도프께?</span></td>
+	</tr>
+	
+	<tr>
+		<td>기독교</td>
+		<td>христианство<span>흐리스찌안스트보</span></td>
+	</tr>
+	
+	<tr>
+		<td>당신의 나라에는 어떤 명절이 있습니까?</td>
+		<td>В вашей стране какой праздник празднуют?<span>봐쉐이 스트라네 까꼬이 쁘라즈드닉 쁘라즈드누유트?</span></td>
+	</tr>
+	
+	<tr>
+		<td>명절에는 부모님과 가족을 방문합니다.</td>
+		<td>В праздники мы посещаем радителей и семью.<span>브쁘라즈드니끼 믜이 빠쉬샤엠 라지쪨레이 이 씸유</span></td>
+	</tr>
+	
+	<tr>
+		<td>문화적 차이가 있을수 있습니다.</td>
+		<td>Можно возникать разница культуры.<span>모즈나 바즈니까찌 라즈니짜 꿀뚜릐.</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날</td>
+		<td>Новый год<span>노븨이 고트</span></td>
+	</tr>
+	
+	<tr>
+		<td>설날에는 떡국을 먹습니다.</td>
+		<td>В новый год едим токкук.<span>브 노븨이 고트 예짐 떡국.</span></td>
+	</tr>
+	
+	<tr>
+		<td>양력</td>
+		<td>солнечный календарь<span>솔네취늬이 깔레다르</span></td>
+	</tr>
+	
+	<tr>
+		<td>어떠한 언어를 사용하시나요?</td>
+		<td>По-каковски вы говорите?<span>빠까꼬프스끼 븨이 가바리쩨?</span></td>
+	</tr>
+	
+	<tr>
+		<td>우리는 각 나라의 개인의 종교를 다 존중해요.</td>
+		<td>Мы уважаем отдельную религию в каждой стране.<span>믜이 우바좌엠 앗젤리누유 릴리기유 브 까즈더이 스뜨라녜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력</td>
+		<td>луный календарь<span>룬늬이 깔레다르</span></td>
+	</tr>
+	
+	<tr>
+		<td>음력 8월 15일은 추석입니다.</td>
+		<td>День урожая пятнадцатого августа по лунному календарю.<span>젠 우라자야 삐트나짜타봐 아부구스따 빠룬나무 깔레다류</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교</td>
+		<td>ислам<span>이스람</span></td>
+	</tr>
+	
+	<tr>
+		<td>이슬람교도입니까 ? </td>
+		<td>Вы ислам?<span>븨이 이스람?</span></td>
+	</tr>
+	
+	<tr>
+		<td>조상들께 제사도 지냅니다.</td>
+		<td>Мы делаем жертвоприношение предкам.<span>믜이 젤라엠 줴르뜨바쁘리나쉐니에 쁘레트깜.</span></td>
+	</tr>
+	
+	<tr>
+		<td>종교가 무엇입니까?</td>
+		<td>У вас какая религия?<span>우 바스 까까야 릴리기야?</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석</td>
+		<td>день урожая<span>젠 우라자야</span></td>
+	</tr>
+	
+	<tr>
+		<td>추석에는 송편을 먹습니다.</td>
+		<td>В день урожая едим Сонгпён.<span>브젠 우라자야 예짐 송편</span></td>
+	</tr>
+	
+	<tr>
+		<td>카톨릭</td>
+		<td>католик<span>까똘릭</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국사람은 손가락질 하는 것을 싫어합니다.</td>
+		<td>Корейцы не любят показывать пальцем.<span>까레이쯰 니 류뱟 빠까즤바찌 빨쳄</span></td>
+	</tr>
+	
+	<tr>
+		<td>한국에 대해서 어떤 생각을 가지고 있나요?</td>
+		<td>Как вы думаете о Корее?<span>깍 븨이 두마에쩨 아 까레에?</span></td>
+	</tr>
+	
+</table>
+</body>
+</html>
