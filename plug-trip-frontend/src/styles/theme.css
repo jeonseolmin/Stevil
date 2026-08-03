@@ -1,0 +1,61 @@
+:root {
+    color-scheme: light;
+
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-soft: #eff6ff;
+    --color-on-primary: #ffffff;
+
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-hover: #f1f5f9;
+    --color-header: rgb(255 255 255 / 92%);
+
+    --color-text: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #94a3b8;
+
+    --color-border: #e2e8f0;
+    --color-border-soft: #f1f5f9;
+    --color-overlay: rgb(15 23 42 / 52%);
+    --color-focus-ring: rgb(37 99 235 / 22%);
+
+    --shadow-button: 0 4px 12px rgb(37 99 235 / 18%);
+    --shadow-button-hover: 0 7px 18px rgb(37 99 235 / 24%);
+    --shadow-sidebar: 12px 0 40px rgb(15 23 42 / 16%);
+
+    --radius-md: 10px;
+    --header-height: 68px;
+
+    --transition-theme:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-primary: #60a5fa;
+    --color-primary-hover: #93c5fd;
+    --color-primary-soft: #172554;
+    --color-on-primary: #07111f;
+
+    --color-bg: #0b1120;
+    --color-surface: #111827;
+    --color-surface-hover: #1e293b;
+    --color-header: rgb(15 23 42 / 92%);
+
+    --color-text: #f8fafc;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #7f8da3;
+
+    --color-border: #263244;
+    --color-border-soft: #1e293b;
+    --color-overlay: rgb(0 0 0 / 68%);
+    --color-focus-ring: rgb(96 165 250 / 28%);
+
+    --shadow-button: 0 4px 14px rgb(0 0 0 / 28%);
+    --shadow-button-hover: 0 7px 20px rgb(0 0 0 / 35%);
+    --shadow-sidebar: 12px 0 40px rgb(0 0 0 / 42%);
+}
