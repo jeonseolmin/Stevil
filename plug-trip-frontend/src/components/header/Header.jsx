@@ -91,7 +91,7 @@ export default function Header() {
                     <NavLink to="/explore">여행지 탐색</NavLink>
                 </nav>
 
-                <div className="header-account">
+                <div className="header-actions">
                     <ThemeToggle />
 
                     <NavLink className="login-link" to="/login">
