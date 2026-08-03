@@ -919,8 +919,8 @@ FodyWeavers.xsd
 
 # Environment variables
 .env
-.env.*
-!.env.example
+.env
+!.env
 
 # Keep Gradle Wrapper
 !**/gradle/wrapper/gradle-wrapper.jar
