@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Header.css";
 import ThemeToggle from "./ThemeToggle.jsx";
+import { useWishlist } from '../../context/WishlistContext';
+import WishlistSidebar from './WishlistSidebar';
 
 const sidebarSections = [
     {
@@ -41,6 +43,8 @@ const sidebarSections = [
 
 export default function Header() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    
+    const { wishlist, setIsWishlistOpen } = useWishlist();
 
     const closeSidebar = () => {
         setIsSidebarOpen(false);
@@ -94,6 +98,16 @@ export default function Header() {
                 <div className="header-actions">
                     <ThemeToggle />
 
+                    {/* 찜 목록 열기 버튼 (로그인 버튼 앞에 배치) */}
+                    <button 
+                        type="button" 
+                        className="header-wish-btn" 
+                        onClick={() => setIsWishlistOpen(true)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+                    >
+                        🤍 <span className="wish-badge" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{wishlist.length}</span>
+                    </button>
+
                     <NavLink className="login-link" to="/login">
                         로그인
                     </NavLink>
@@ -104,53 +118,33 @@ export default function Header() {
                 </div>
             </header>
 
+            {/* 메인 사이드바 오버레이 */}
             <div
-                className={`sidebar-overlay ${
-                    isSidebarOpen ? "sidebar-overlay--visible" : ""
-                }`}
+                className={`sidebar-overlay ${isSidebarOpen ? "sidebar-overlay--visible" : ""}`}
                 onClick={closeSidebar}
                 aria-hidden="true"
             />
 
+            {/* 메인 사이드바 (좌측) */}
             <aside
                 id="main-sidebar"
-                className={`sidebar ${
-                    isSidebarOpen ? "sidebar--open" : ""
-                }`}
+                className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}
                 aria-label="전체 메뉴"
                 aria-hidden={!isSidebarOpen}
             >
+                {/* ... (기존 메인 사이드바 내부 렌더링 코드 유지) ... */}
                 <div className="sidebar-header">
-                    <NavLink
-                        className="sidebar-logo"
-                        to="/"
-                        onClick={closeSidebar}
-                    >
+                    <NavLink className="sidebar-logo" to="/" onClick={closeSidebar}>
                         PLUG·TRIP
                     </NavLink>
-
-                    <button
-                        type="button"
-                        className="sidebar-close-button"
-                        aria-label="전체 메뉴 닫기"
-                        onClick={closeSidebar}
-                    >
+                    <button type="button" className="sidebar-close-button" onClick={closeSidebar}>
                         ×
                     </button>
                 </div>
-
                 <nav className="sidebar-nav">
                     {sidebarSections.map((section, sectionIndex) => (
-                        <section
-                            className="sidebar-section"
-                            key={section.title ?? sectionIndex}
-                        >
-                            {section.title && (
-                                <h2 className="sidebar-section-title">
-                                    {section.title}
-                                </h2>
-                            )}
-
+                        <section className="sidebar-section" key={section.title ?? sectionIndex}>
+                            {section.title && <h2 className="sidebar-section-title">{section.title}</h2>}
                             <div className="sidebar-menu-list">
                                 {section.menus.map((menu) => (
                                     <NavLink
@@ -158,21 +152,9 @@ export default function Header() {
                                         to={menu.to}
                                         end={menu.to === "/"}
                                         onClick={closeSidebar}
-                                        className={({ isActive }) =>
-                                            `sidebar-menu-item ${
-                                                isActive
-                                                    ? "sidebar-menu-item--active"
-                                                    : ""
-                                            }`
-                                        }
+                                        className={({ isActive }) => `sidebar-menu-item ${isActive ? "sidebar-menu-item--active" : ""}`}
                                     >
-                                        <span
-                                            className="sidebar-menu-icon"
-                                            aria-hidden="true"
-                                        >
-                                            {menu.icon}
-                                        </span>
-
+                                        <span className="sidebar-menu-icon" aria-hidden="true">{menu.icon}</span>
                                         <span>{menu.label}</span>
                                     </NavLink>
                                 ))}
@@ -181,6 +163,8 @@ export default function Header() {
                     ))}
                 </nav>
             </aside>
+
+            <WishlistSidebar />
         </>
     );
 }

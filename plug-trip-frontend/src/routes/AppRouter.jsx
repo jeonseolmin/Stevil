@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import RootLayout from "../components/layout/RootLayout.jsx";
 import HomePage from "../pages/homePage/HomePage.jsx";
+import { WishlistProvider } from "../context/WishlistContext.jsx";
 
 function TemporaryPage({ title }) {
     return (
@@ -12,6 +13,7 @@ function TemporaryPage({ title }) {
 
 export default function AppRouter() {
     return (
+        <WishlistProvider>
         <Routes>
             <Route element={<RootLayout />}>
                 <Route path="/" element={<HomePage />} />
@@ -42,5 +44,6 @@ export default function AppRouter() {
 
             <Route path="*" element={<TemporaryPage title="페이지를 찾을 수 없습니다." />} />
         </Routes>
+        </WishlistProvider>
     );
 }
