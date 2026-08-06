@@ -1,0 +1,243 @@
+/* src/components/home/HomeContent.css */
+
+.home-content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: var(--color-bg);
+  transition: var(--transition-theme);
+}
+
+/* ----------------------------------
+   1. 프로모션 배너
+   ---------------------------------- */
+.promo-banner {
+  display: flex;
+  background-color: #00d26a; /* 트립어드바이저 고유 녹색은 테마 변수 외 포인트 컬러로 유지 */
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 60px;
+  min-height: 300px;
+}
+
+.promo-banner-text {
+  flex: 1;
+  padding: 60px 40px;
+  color: #002c1b; /* 다크모드에서도 배너 텍스트는 가독성을 위해 어둡게 고정 */
+}
+
+.promo-banner-text h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.promo-banner-text p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.promo-btn {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 15px 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.promo-banner-img {
+  flex: 1;
+  background-image: url('https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+/* ----------------------------------
+   공통 섹션 타이틀
+   ---------------------------------- */
+.content-section {
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 5px;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+}
+
+/* ----------------------------------
+   2. 카테고리 그리드 (정사각형 카드)
+   ---------------------------------- */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.category-card {
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--radius-md);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.category-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+
+.category-title {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  z-index: 1;
+}
+
+/* ----------------------------------
+   3. 추천 장소 그리드 (세로형 카드)
+   ---------------------------------- */
+.place-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.place-card {
+  cursor: pointer;
+}
+
+.place-img-wrapper {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.place-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.place-card:hover .place-img-wrapper img {
+  transform: scale(1.05);
+}
+
+.heart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  /* 테마 변수를 적용하여 다크모드에서 배경은 어둡게, 아이콘은 밝게 변환 */
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: var(--transition-theme);
+}
+
+/* 마우스를 올렸을 때 빨간색으로 변하는 포인트 효과 */
+.heart-btn:hover {
+  color: #ff385c;
+  border-color: #ff385c;
+}
+
+.place-info {
+  color: var(--color-text);
+}
+
+.place-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.place-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.stars {
+  color: #00aa6c; /* 트립어드바이저 별점 색상 */
+  letter-spacing: -2px;
+}
+
+.reviews {
+  color: var(--color-text-secondary);
+}
+
+.place-category {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* src/components/home/HomeContent.css */
+/* ... (이전 코드 동일, 생략 없이 기존 코드 유지) ... */
+
+/* ----------------------------------
+   4. 기간 한정 이벤트 카드 특화 스타일
+   ---------------------------------- */
+.event-card .place-img-wrapper {
+  position: relative;
+}
+
+/* 행사 기간/D-Day를 보여주는 눈에 띄는 배지 */
+.event-badge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: #ff385c; /* 강렬한 레드 핑크 계열로 시선 집중 */
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+/* 축제 리스트의 위치 정보 텍스트 */
+.event-card .place-category {
+  color: var(--color-primary); /* 프라이머리 테마 색상으로 위치 강조 */
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* 섹션 타이틀과 더보기 버튼 등을 나란히 배치할 때 유용한 Flex 구조 */
+.section-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
