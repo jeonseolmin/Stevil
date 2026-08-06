@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: plug-trip-postgres
+    container_name: stevil-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -20,8 +20,8 @@ services:
 
   backend:
     build:
-      context: ./plugTrip_backend
-    container_name: plug-trip-backend
+      context: stevil-backend
+    container_name: stevil-backend
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
@@ -36,10 +36,10 @@ services:
 
   frontend:
     build:
-      context: ./plug-trip-frontend
+      context: ./stevil-frontend
       args:
         VITE_API_BASE_URL: /api
-    container_name: plug-trip-frontend
+    container_name: stevil-frontend
     restart: unless-stopped
     depends_on:
       - backend
