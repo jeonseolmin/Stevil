@@ -1,7 +1,7 @@
 package com.my.stevil_back.common.security.oauth.info;
 
 import lombok.RequiredArgsConstructor;
-import com.my.stevil_back.user.entity.enumType.ProviderType;
+import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
 import java.util.Map;
 
 @RequiredArgsConstructor

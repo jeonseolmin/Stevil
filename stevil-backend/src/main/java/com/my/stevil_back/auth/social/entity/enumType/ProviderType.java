@@ -1,4 +1,4 @@
-package com.my.stevil_back.user.entity.enumType;
+package com.my.stevil_back.auth.social.entity.enumType;
 
 public enum ProviderType {
     GOOGLE,

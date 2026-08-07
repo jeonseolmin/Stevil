@@ -1,13 +1,21 @@
 package com.my.stevil_back.common.config;
 
+import com.my.stevil_back.common.security.jwt.JwtUtil;
+import com.my.stevil_back.common.security.oauth.handler.OAuth2FailureHandler;
+import com.my.stevil_back.common.security.oauth.handler.OAuth2SuccessHandler;
+import com.my.stevil_back.common.security.oauth.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -101,30 +109,6 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                 );
 
-        LoginFilter loginFilter =
-                new LoginFilter(
-                        authenticationManager(authenticationConfiguration),
-                        jwtUtil
-                );
-
-        loginFilter.setFilterProcessesUrl("/faultfinder/login");
-
-        http
-                .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class
-                );
-
-        http
-                .addFilterAt(
-                        loginFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
-
-        http
-                .sessionManagement((session) ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         // cors 설정
         http
                 .csrf((auth) -> auth.disable());
@@ -135,11 +119,7 @@ public class SecurityConfig {
 
                     config.setAllowedOriginPatterns(
                             List.of(
-                                    "http://localhost:3000",
-                                    "http://54.79.10.188",
-                                    "http://54.79.10.188:*",
-                                    "https://faultfinder.link",
-                                    "https://www.faultfinder.link"
+                                    "http://localhost:3000"
                             )
                     );
 
