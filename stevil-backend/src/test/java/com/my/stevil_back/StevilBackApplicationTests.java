@@ -1,10 +1,10 @@
-package com.my.plugTrip_back;
+package com.my.stevil_back;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PlugTripBackApplicationTests {
+class StevilBackApplicationTests {
 
 	@Test
 	void contextLoads() {
