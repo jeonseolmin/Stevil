@@ -2,7 +2,6 @@ package com.my.stevil_back.user.entity;
 
 import com.my.stevil_back.auth.social.entity.SocialAccount;
 import com.my.stevil_back.common.entity.BaseEntity;
-import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
 import com.my.stevil_back.user.entity.enumType.Sex;
 import com.my.stevil_back.user.entity.enumType.UserRole;
 import jakarta.persistence.*;
@@ -14,16 +13,11 @@ import java.util.List;
 
 @Entity
 @Table(
-        name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_users_provider_provider_id",
-                        columnNames = {"provider", "provider_id"}
-                )
-        }
+        name = "users"
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class User extends BaseEntity {
 
     @Id
@@ -53,16 +47,44 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private ProviderType provider;
-
-    @Column(name = "provider_id", nullable = false, length = 255)
-    private String providerId;
-
     @Column(name = "profile_image", length = 1000)
     private String profileImage;
 
     @OneToMany(mappedBy = "user")
     private List<SocialAccount> socialAccounts = new ArrayList<>();
+
+    @Builder
+    private User(
+            String email,
+            String passwordHash,
+            String nickname,
+            LocalDate birthDate,
+            Sex sex,
+            Double heightCm,
+            UserRole role,
+            String profileImage
+    ) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.sex = sex;
+        this.heightCm = heightCm;
+        this.role = role != null ? role : UserRole.ROLE_USER;
+        this.profileImage = profileImage;
+    }
+
+    public void updateProfile(
+            String nickname,
+            LocalDate birthDate,
+            Sex sex,
+            Double heightCm,
+            String profileImage
+    ) {
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.sex = sex;
+        this.heightCm = heightCm;
+        this.profileImage = profileImage;
+    }
 }

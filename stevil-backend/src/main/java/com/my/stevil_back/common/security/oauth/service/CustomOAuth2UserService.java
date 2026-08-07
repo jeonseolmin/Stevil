@@ -1,5 +1,6 @@
 package com.my.stevil_back.common.security.oauth.service;
 
+import com.my.stevil_back.auth.service.SocialAccountService;
 import com.my.stevil_back.common.security.oauth.info.OAuth2UserInfo;
 import com.my.stevil_back.common.security.oauth.info.OAuth2UserInfoFactory;
 import com.my.stevil_back.user.entity.User;
@@ -15,7 +16,7 @@ import com.my.stevil_back.user.entity.enumType.UserRole;
 @Service @RequiredArgsConstructor
 public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
-
+    private final SocialAccountService socialAccountService;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 
@@ -36,26 +37,27 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
         String providerId = userInfo.getProviderId();
         ProviderType providerType = userInfo.getProviderType();
 
-        User user = userRepository.findByEmail(email)
-                .orElse(null);
+        Optional<SocialAccount> existingAccount =
+                socialAccountService.findAccount(
+                        providerType,
+                        providerId
+                );
 
-        if (user == null) {
-            user = User.builder()
-                    .email(email)
-                    .nickname(name)
-                    .role(UserRole.ROLE_USER)
-                    .provider(providerType)
-                    .providerId(providerId)
-                    .build();
+        User newUser = User.builder()
+                .email(email)
+                .nickname(name)
+                .profileImage(profileImage)
+                .role(UserRole.ROLE_USER)
+                .build();
 
-            userRepository.save(user);
-        } else {
-            if (user.getProvider() == null) {
-                user.setProvider(providerType);
-                user.setProviderId(providerId);
-                userRepository.save(user);
-            }
-        }
+        User savedUser = userRepository.save(newUser);
+
+        socialAccountService.connect(
+                savedUser,
+                providerType,
+                providerId,
+                email
+        );
 
         return new CustomUserDetails(
                 user,
