@@ -4,7 +4,7 @@ import com.my.stevil_back.auth.service.SocialAccountService;
 import com.my.stevil_back.common.security.oauth.info.OAuth2UserInfo;
 import com.my.stevil_back.common.security.oauth.info.OAuth2UserInfoFactory;
 import com.my.stevil_back.user.entity.User;
-import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
+import com.my.stevil_back.auth.social.entity.enumType.ProvideType;
 import com.my.stevil_back.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
