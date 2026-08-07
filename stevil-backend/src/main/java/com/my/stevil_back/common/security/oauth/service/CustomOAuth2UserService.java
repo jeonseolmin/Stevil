@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import com.my.stevil_back.user.entity.enumType.UserRole;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service @RequiredArgsConstructor
@@ -22,13 +22,14 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final SocialAccountService socialAccountService;
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String registrationId =
-                userRequest.getClientRegistration()
-                        .getRegistrationId();
+        String registrationId = userRequest
+                .getClientRegistration()
+                .getRegistrationId();
 
         OAuth2UserInfo userInfo =
                 OAuth2UserInfoFactory.getOAuth2UserInfo(
@@ -39,6 +40,7 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
         String email = userInfo.getEmail();
         String name = userInfo.getName();
         String providerId = userInfo.getProviderId();
+        String profileImage = userInfo.getProfileImage();
         ProviderType providerType = userInfo.getProviderType();
 
         Optional<SocialAccount> existingAccount =
@@ -47,23 +49,30 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
                         providerId
                 );
 
-        User newUser = User.builder()
-                .email(email)
-                .nickname(name)
-                .role(UserRole.ROLE_USER)
-                .build();
+        User user;
 
-        User savedUser = userRepository.save(newUser);
+        if (existingAccount.isPresent()) {
+            user = existingAccount.get().getUser();
+        } else {
+            user = User.builder()
+                    .email(email)
+                    .nickname(name)
+                    .profileImage(profileImage)
+                    .role(UserRole.ROLE_USER)
+                    .build();
 
-        socialAccountService.connect(
-                savedUser,
-                providerType,
-                providerId,
-                email
-        );
+            userRepository.save(user);
+
+            socialAccountService.connect(
+                    user,
+                    providerType,
+                    providerId,
+                    email
+            );
+        }
 
         return new CustomUserDetails(
-                savedUser,
+                user,
                 oAuth2User.getAttributes()
         );
     }

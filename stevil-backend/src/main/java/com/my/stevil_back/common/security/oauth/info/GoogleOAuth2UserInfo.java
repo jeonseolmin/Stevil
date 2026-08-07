@@ -27,4 +27,9 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo{
     public String getName() {
         return String.valueOf(attributes.get("name"));
     }
+
+    @Override
+    public String getProfileImage() {
+        return String.valueOf(attributes.get("profileImage"));
+    }
 }

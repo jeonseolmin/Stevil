@@ -1,6 +1,7 @@
 package com.my.stevil_back.common.security.oauth.handler;
 
 import com.my.stevil_back.common.security.jwt.JwtUtil;
+import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
