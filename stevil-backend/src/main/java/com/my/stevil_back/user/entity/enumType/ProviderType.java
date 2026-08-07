@@ -1,6 +1,6 @@
 package com.my.stevil_back.user.entity.enumType;
 
-public enum ProvideType {
+public enum ProviderType {
     GOOGLE,
     NAVER,
     KAKAO

@@ -1,7 +1,7 @@
 package com.my.stevil_back.user.entity;
 
 import com.my.stevil_back.common.entity.BaseEntity;
-import com.my.stevil_back.user.entity.enumType.ProvideType;
+import com.my.stevil_back.user.entity.enumType.ProviderType;
 import com.my.stevil_back.user.entity.enumType.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    private ProvideType provide;
+    private ProviderType provide;
 
     @Column(name = "provider_id")
     private String providerId;
