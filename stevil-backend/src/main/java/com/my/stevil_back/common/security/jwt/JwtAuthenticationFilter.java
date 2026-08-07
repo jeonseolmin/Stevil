@@ -1,6 +1,6 @@
 package com.my.stevil_back.common.security.jwt;
 
-import com.my.stevil_back.common.security.CustomUserDetails;
+import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.entity.enumType.UserRole;
 import jakarta.servlet.FilterChain;
@@ -46,7 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         User user = User.builder()
                 .email(userEmail)
-                .password("temp")
                 .role(role)
                 .build();
 
