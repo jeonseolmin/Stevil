@@ -1,168 +1,116 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Header.css";
-import ThemeToggle from "./ThemeToggle.jsx";
-import { useWishlist } from '../../context/WishlistContext';
-import WishlistSidebar from './WishlistSidebar';
-
-const sidebarSections = [
-    {
-        title: null,
-        menus: [
-            { to: "/", icon: "⌂", label: "홈" },
-            { to: "/planner", icon: "✦", label: "AI 여행 만들기" },
-            { to: "/explore", icon: "⌖", label: "여행지 탐색" },
-            { to: "/my-trips", icon: "▣", label: "내 여행" },
-        ],
-    },
-    {
-        title: "여행 관리",
-        menus: [
-            { to: "/tools/budget", icon: "₩", label: "여행 경비" },
-            { to: "/tools/checklist", icon: "✓", label: "체크리스트" },
-            { to: "/mypage/bookmarks", icon: "♡", label: "즐겨찾기" },
-        ],
-    },
-    {
-        title: "여행 정보",
-        menus: [
-            { to: "/tools/exchange", icon: "↔", label: "환율" },
-            { to: "/tools/weather", icon: "☀", label: "날씨" },
-            { to: "/community", icon: "◇", label: "커뮤니티" },
-        ],
-    },
-    {
-        title: "계정",
-        menus: [
-            { to: "/notifications", icon: "♢", label: "알림" },
-            { to: "/mypage/profile", icon: "○", label: "마이페이지" },
-            { to: "/login", icon: "→", label: "로그인" },
-        ],
-    },
-];
 
 export default function Header() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    
-    const { wishlist, setIsWishlistOpen } = useWishlist();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
 
-    const closeSidebar = () => {
-        setIsSidebarOpen(false);
+    const closeMenu = () => {
+        setIsMenuOpen(false);
     };
 
     useEffect(() => {
-        const handleKeyDown = (event) => {
+        closeMenu();
+    }, [location.pathname, location.hash]);
+
+    useEffect(() => {
+        if (!isMenuOpen) {
+            return undefined;
+        }
+
+        const handleEscape = (event) => {
             if (event.key === "Escape") {
-                closeSidebar();
+                closeMenu();
             }
         };
 
-        if (isSidebarOpen) {
-            document.body.classList.add("sidebar-open");
-            window.addEventListener("keydown", handleKeyDown);
-        }
+        document.addEventListener("keydown", handleEscape);
 
         return () => {
-            document.body.classList.remove("sidebar-open");
-            window.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener("keydown", handleEscape);
         };
-    }, [isSidebarOpen]);
+    }, [isMenuOpen]);
 
     return (
-        <>
-            <header className="header">
-                <div className="header-start">
-                    <button
-                        type="button"
-                        className="hamburger-button"
-                        aria-label="전체 메뉴 열기"
-                        aria-expanded={isSidebarOpen}
-                        aria-controls="main-sidebar"
-                        onClick={() => setIsSidebarOpen(true)}
-                    >
-                        <span />
-                        <span />
-                        <span />
-                    </button>
+        <header className="site-header">
+            <div className="header-inner">
+                <Link
+                    to="/"
+                    className="header-brand"
+                    aria-label="Stevil 시작 페이지"
+                    onClick={closeMenu}
+                >
+          <span className="brand-symbol" aria-hidden="true">
+            1
+          </span>
 
-                    <NavLink className="header-logo" to="/">
-                        STEVIL
-                    </NavLink>
-                </div>
+                    <span className="brand-name">Stevil</span>
+                </Link>
 
-                <nav className="header-nav" aria-label="주요 메뉴">
-                    <NavLink to="/planner">AI 여행 만들기</NavLink>
-                    <NavLink to="/explore">여행지 탐색</NavLink>
+                <nav
+                    id="header-navigation"
+                    className={`header-navigation ${
+                        isMenuOpen ? "header-navigation--open" : ""
+                    }`}
+                    aria-label="주요 메뉴"
+                >
+                    <a href="/#features" onClick={closeMenu}>
+                        주요 기능
+                    </a>
+
+                    <a href="/#how-it-works" onClick={closeMenu}>
+                        이용 방법
+                    </a>
+
+                    <a href="/#safety" onClick={closeMenu}>
+                        안심 안내
+                    </a>
+
+                    <div className="mobile-header-actions">
+                        <Link
+                            to="/login"
+                            className="header-login-link"
+                            onClick={closeMenu}
+                        >
+                            로그인
+                        </Link>
+
+                        <Link
+                            to="/login"
+                            className="header-start-button"
+                            onClick={closeMenu}
+                        >
+                            시작하기
+                        </Link>
+                    </div>
                 </nav>
 
-                <div className="header-actions">
-                    <ThemeToggle />
-
-                    {/* 찜 목록 열기 버튼 (로그인 버튼 앞에 배치) */}
-                    <button 
-                        type="button" 
-                        className="header-wish-btn" 
-                        onClick={() => setIsWishlistOpen(true)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    >
-                        🤍 <span className="wish-badge" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{wishlist.length}</span>
-                    </button>
-
-                    <NavLink className="login-link" to="/login">
+                <div className="desktop-header-actions">
+                    <Link to="/login" className="header-login-link">
                         로그인
-                    </NavLink>
+                    </Link>
 
-                    <NavLink className="signup-link" to="/signup">
-                        회원가입
-                    </NavLink>
+                    <Link to="/login" className="header-start-button">
+                        시작하기
+                    </Link>
                 </div>
-            </header>
 
-            {/* 메인 사이드바 오버레이 */}
-            <div
-                className={`sidebar-overlay ${isSidebarOpen ? "sidebar-overlay--visible" : ""}`}
-                onClick={closeSidebar}
-                aria-hidden="true"
-            />
-
-            {/* 메인 사이드바 (좌측) */}
-            <aside
-                id="main-sidebar"
-                className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}
-                aria-label="전체 메뉴"
-                aria-hidden={!isSidebarOpen}
-            >
-                {/* ... (기존 메인 사이드바 내부 렌더링 코드 유지) ... */}
-                <div className="sidebar-header">
-                    <NavLink className="sidebar-logo" to="/" onClick={closeSidebar}>
-                        STEVIL
-                    </NavLink>
-                    <button type="button" className="sidebar-close-button" onClick={closeSidebar}>
-                        ×
-                    </button>
-                </div>
-                <nav className="sidebar-nav">
-                    {sidebarSections.map((section, sectionIndex) => (
-                        <section className="sidebar-section" key={section.title ?? sectionIndex}>
-                            {section.title && <h2 className="sidebar-section-title">{section.title}</h2>}
-                            <div className="sidebar-menu-list">
-                                {section.menus.map((menu) => (
-                                    <NavLink
-                                        key={menu.to}
-                                        to={menu.to}
-                                        end={menu.to === "/"}
-                                        onClick={closeSidebar}
-                                        className={({ isActive }) => `sidebar-menu-item ${isActive ? "sidebar-menu-item--active" : ""}`}
-                                    >
-                                        <span className="sidebar-menu-icon" aria-hidden="true">{menu.icon}</span>
-                                        <span>{menu.label}</span>
-                                    </NavLink>
-                                ))}
-                            </div>
-                        </section>
-                    ))}
-                </nav>
-            </aside>
-        </>
+                <button
+                    type="button"
+                    className={`header-menu-button ${
+                        isMenuOpen ? "header-menu-button--open" : ""
+                    }`}
+                    aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+                    aria-expanded={isMenuOpen}
+                    aria-controls="header-navigation"
+                    onClick={() => setIsMenuOpen((previous) => !previous)}
+                >
+                    <span />
+                    <span />
+                    <span />
+                </button>
+            </div>
+        </header>
     );
 }
