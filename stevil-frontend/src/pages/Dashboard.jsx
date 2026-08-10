@@ -1,7 +1,7 @@
 import React from 'react';
 // 우리가 만든 운동 카드 컴포넌트를 불러옵니다.
 import ExerciseCard from '../components/exerciseCard/ExerciseCard'; 
-import '../styles/Dashboard.css'; // 대시보드 전체 레이아웃 CSS (필요시)
+
 
 const Dashboard = () => {
   return (
