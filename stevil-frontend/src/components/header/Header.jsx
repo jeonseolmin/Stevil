@@ -86,7 +86,7 @@ export default function Header() {
                     </button>
 
                     <NavLink className="header-logo" to="/">
-                        PLUG·TRIP
+                        STEVIL
                     </NavLink>
                 </div>
 
@@ -135,7 +135,7 @@ export default function Header() {
                 {/* ... (기존 메인 사이드바 내부 렌더링 코드 유지) ... */}
                 <div className="sidebar-header">
                     <NavLink className="sidebar-logo" to="/" onClick={closeSidebar}>
-                        PLUG·TRIP
+                        STEVIL
                     </NavLink>
                     <button type="button" className="sidebar-close-button" onClick={closeSidebar}>
                         ×
@@ -163,8 +163,6 @@ export default function Header() {
                     ))}
                 </nav>
             </aside>
-
-            <WishlistSidebar />
         </>
     );
 }
