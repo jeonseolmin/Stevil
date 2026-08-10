@@ -34,7 +34,10 @@ public class SecurityUrls {
             "/api/posts/**",
 
             "/api/reports",
-            "/api/reports/**"
+            "/api/reports/**",
+
+            "/api/exercises/**",
+            "/api/exercise-logs/**"
     };
 
     private SecurityUrls() {
