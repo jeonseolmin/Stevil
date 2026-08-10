@@ -15,7 +15,7 @@ const ExerciseCard = () => {
       const startDate = '2026-08-03';
       const endDate = '2026-08-09';
       
-      const response = await axiosInstance.get('/api/exercise-logs/weekly-chart', {
+      const response = await axiosInstance.get('/exercise-logs/weekly-chart', {
         params: {
           userId: userId,
           startDate: startDate,
