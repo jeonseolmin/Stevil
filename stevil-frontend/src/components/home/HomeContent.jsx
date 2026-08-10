@@ -1,4 +1,3 @@
-import React from 'react';
 import { useWishlist } from '../../context/WishlistContext'; // 🔥 찜 목록 Context 불러오기
 import './HomeContent.css';
 

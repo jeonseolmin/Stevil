@@ -1,6 +1,12 @@
 spring:
+
+
   application:
     name: stevil-backend
+
+  jwt:
+    secret: ${JWT_SECRET}
+    access-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
 
   profiles:
     default: local

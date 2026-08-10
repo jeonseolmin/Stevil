@@ -4,9 +4,9 @@ spring:
       on-profile: local
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5434/stevil_db
+    username: stevil_user
+    password: 1234
     driver-class-name: org.postgresql.Driver
 
   security:

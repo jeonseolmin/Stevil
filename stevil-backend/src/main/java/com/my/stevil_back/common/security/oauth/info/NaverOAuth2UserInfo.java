@@ -8,8 +8,15 @@ import java.util.Map;
 public class NaverOAuth2UserInfo implements OAuth2UserInfo {
     private final Map<String, Object> attributes;
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getResponse() {
-        return (Map<String, Object>) attributes.get("response");
+        Object response = attributes.get("response");
+
+        if (response instanceof Map<?, ?> map) {
+            return (Map<String, Object>) map;
+        }
+
+        return Map.of();
     }
 
     @Override
