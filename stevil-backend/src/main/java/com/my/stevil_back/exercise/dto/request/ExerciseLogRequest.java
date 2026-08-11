@@ -1,4 +1,4 @@
-package com.my.stevil_back.exercise.dto;
+package com.my.stevil_back.exercise.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

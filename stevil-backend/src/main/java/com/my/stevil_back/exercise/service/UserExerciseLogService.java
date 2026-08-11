@@ -1,7 +1,8 @@
 package com.my.stevil_back.exercise.service;
 
-import com.my.stevil_back.exercise.dto.ExerciseLogRequest;
-import com.my.stevil_back.exercise.dto.WeeklyChartResponse;
+import com.my.stevil_back.exercise.dto.request.ExerciseLogRequest;
+import com.my.stevil_back.exercise.dto.response.ExerciseLogDetailResponse;
+import com.my.stevil_back.exercise.dto.response.WeeklyChartResponse;
 import com.my.stevil_back.exercise.entity.Exercise;
 import com.my.stevil_back.exercise.entity.ExerciseStatus;
 import com.my.stevil_back.exercise.entity.UserExerciseLog;
@@ -24,22 +25,19 @@ public class UserExerciseLogService {
     private final UserExerciseLogRepository logRepository;
     private final ExerciseRepository exerciseRepository;
 
-
-//  1. 운동 기록 저장 및 칼로리 자동 계산
-
+    //  1. 운동 기록 저장 및 칼로리 자동 계산
     @Transactional
     public void saveExerciseLog(ExerciseLogRequest request) {
-        // 1. 어떤 운동인지 DB에서 조회
         Exercise exercise = exerciseRepository.findById(request.getExerciseId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 운동입니다."));
 
-        // 2. 소모 칼로리 계산 (MET 공식 활용)
         int burnedCalories = 0;
         if (request.getDurationMinutes() != null && exercise.getCaloriesPer10Min() != null) {
-            burnedCalories = (int) ((exercise.getCaloriesPer10Min() / 10.0) * request.getDurationMinutes());
+            // 무산소 운동이라면 세트수를 곱해주고, 유산소면 1을 곱합니다.
+            int sets = (request.getSets() != null && request.getSets() > 0) ? request.getSets() : 1;
+            burnedCalories = (int) ((exercise.getCaloriesPer10Min() / 10.0) * request.getDurationMinutes() * sets);
         }
 
-        // 3. Request DTO의 데이터를 Entity로 변환하여 저장
         UserExerciseLog log = UserExerciseLog.builder()
                 .userId(request.getUserId())
                 .exercise(exercise)
@@ -57,25 +55,25 @@ public class UserExerciseLogService {
         logRepository.save(log);
     }
 
-
-// 2. 주간 칼로리 소모량 차트 데이터 가공
-
+    // 2. 주간 칼로리 소모량 차트 데이터 가공
     public List<WeeklyChartResponse> getWeeklyCalorieChart(Long userId, LocalDate startDate, LocalDate endDate) {
-        // 1. DB에서 해당 기간의 운동 기록을 모두 가져옴
         List<UserExerciseLog> logs = logRepository.findByUserIdAndExerciseDateBetween(userId, startDate, endDate);
 
-        // 2. 날짜별로 그룹화하여 칼로리 합계 계산 (Java 8 Stream 활용)
         Map<LocalDate, Integer> dailyCalories = logs.stream()
-                .filter(log -> log.getBurnedCalories() != null && log.getStatus() == ExerciseStatus.COMPLETED) // 완료된 운동만 합산
+                .filter(log -> log.getBurnedCalories() != null && log.getStatus() == ExerciseStatus.COMPLETED)
                 .collect(Collectors.groupingBy(
                         UserExerciseLog::getExerciseDate,
                         Collectors.summingInt(UserExerciseLog::getBurnedCalories)
                 ));
 
-        // 3. 계산된 결과를 프론트엔드가 그리기 쉬운 DTO 리스트로 변환하여 반환
         return dailyCalories.entrySet().stream()
                 .map(entry -> new WeeklyChartResponse(entry.getKey(), entry.getValue()))
-                .sorted((a, b) -> a.getDate().compareTo(b.getDate())) // 날짜 오름차순 정렬
+                .sorted((a, b) -> a.getDate().compareTo(b.getDate()))
                 .collect(Collectors.toList());
+    } // 💡 기존 메서드는 여기서 딱 닫아줍니다.
+
+    // 💡 3. 새로 추가한 상세 조회 메서드 (괄호 밖으로 꺼내고 logRepository로 이름 맞춤!)
+    public List<ExerciseLogDetailResponse> getDetailedLogs(Long userId, LocalDate startDate, LocalDate endDate) {
+        return logRepository.findDetailedLogs(userId, startDate, endDate);
     }
 }
