@@ -8,9 +8,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ExerciseLogDetailResponse {
     private Long logId;
-    private String exerciseName; // 조인해서 가져올 운동 이름
+    private String exerciseName;
     private Integer durationMinutes;
     private Integer sets;
     private Integer burnedCalories;
     private LocalDate exerciseDate;
+    private String category;
 }

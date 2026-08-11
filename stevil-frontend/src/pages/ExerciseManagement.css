@@ -12,6 +12,68 @@
   margin-bottom: 24px;
 }
 
+/* 통계 컨테이너 */
+.stats-container-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 32px;
+}
+
+.date-range-text {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+/* 일/주/월 보기 버튼 */
+.view-mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.view-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #eee;
+  color: #555;
+  transition: all 0.2s ease-in-out;
+}
+
+.view-btn.active {
+  background: #1abc9c;
+  color: #fff;
+}
+
+/* 데이터 없을 때 표시되는 빈 차트 박스 */
+.default-chart-box {
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px dashed #ddd;
+}
+
+.default-chart-text {
+  margin: 0 0 8px 0;
+  font-weight: bold;
+  color: #555;
+}
+
+/* 원 차트 감싸는 영역 */
+.chart-wrapper {
+  max-width: 350px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 /* 검색 섹션 */
 .search-section {
   display: flex;
@@ -29,12 +91,12 @@
 }
 
 .search-input:focus {
-  border-color: #6c5ce7;
+  border-color: #1abc9c;
 }
 
 .search-btn {
-  padding: 0 24px;
-  background-color: #6c5ce7;
+  padding: 10px 24px;
+  background-color: #1abc9c;
   color: white;
   border: none;
   border-radius: 8px;
@@ -47,6 +109,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .exercise-item {
@@ -66,16 +129,17 @@
   color: #333;
 }
 
-.exercise-info p {
+.exercise-calorie {
   margin: 0;
   font-size: 14px;
-  color: #777;
+  color: #e17055;
+  font-weight: bold;
 }
 
 .select-btn {
   padding: 8px 16px;
-  background-color: #f4f2ff;
-  color: #6c5ce7;
+  background-color: #1abc9c;
+  color: #fff;
   border: none;
   border-radius: 6px;
   font-weight: bold;
@@ -83,7 +147,7 @@
 }
 
 .select-btn:hover {
-  background-color: #e8e4ff;
+  background-color: #16a085;
 }
 
 /* 기록 폼 (선택 시 나타남) */
@@ -92,15 +156,31 @@
   padding: 24px;
   background-color: #fff;
   border-radius: 12px;
-  border: 2px solid #6c5ce7;
+  border: 2px solid #1abc9c;
 }
 
 .record-form-card h3 {
   margin-top: 0;
-  color: #6c5ce7;
+  color: #1abc9c;
+}
+
+.expected-calorie-box {
+  background: #e0f2f1;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  color: #00796b;
+  font-weight: bold;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .form-group {
+  flex: 1;
   margin-bottom: 16px;
 }
 
@@ -112,7 +192,8 @@
   color: #555;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
@@ -123,7 +204,7 @@
 .save-btn {
   width: 100%;
   padding: 14px;
-  background-color: #6c5ce7;
+  background-color: #1abc9c;
   color: white;
   border: none;
   border-radius: 8px;
@@ -131,4 +212,8 @@
   font-weight: bold;
   cursor: pointer;
   margin-top: 10px;
+}
+
+.save-btn:hover {
+  background-color: #16a085;
 }

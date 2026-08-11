@@ -20,30 +20,43 @@ const ExerciseManagement = () => {
   
   const [intensity, setIntensity] = useState('MEDIUM');
   const [condition, setCondition] = useState('NORMAL');
-  const [weeklyLogs, setWeeklyLogs] = useState([]);
+  
+  const [exerciseStats, setExerciseStats] = useState([]);
+  const [viewMode, setViewMode] = useState('WEEKLY'); 
+  const [dateRangeText, setDateRangeText] = useState(''); 
+
+  const isAerobic = selectedExercise?.category?.includes('유산소');
 
   useEffect(() => {
-    fetchWeeklyStats();
-  }, []);
+    fetchStats();
+  }, [viewMode]);
 
-  const fetchWeeklyStats = async () => {
+  const fetchStats = async () => {
     try {
       const userId = 1;
       const today = new Date();
-      const endDate = today.toISOString().split('T')[0];
-      
-      const startDay = new Date(today);
-      startDay.setDate(today.getDate() - 7);
-      const startDate = startDay.toISOString().split('T')[0];
+      let startDay = new Date(today);
 
-      // 원래 사용하시던 정상 동작 API 경로
-      const response = await axiosInstance.get('/exercise-logs/weekly-chart', {
+      if (viewMode === 'DAILY') {
+        startDay = today; 
+      } else if (viewMode === 'WEEKLY') {
+        startDay.setDate(today.getDate() - 7); 
+      } else if (viewMode === 'MONTHLY') {
+        startDay.setDate(today.getDate() - 30); 
+      }
+
+      const endDate = today.toISOString().split('T')[0];
+      const startDate = startDay.toISOString().split('T')[0];
+      
+      setDateRangeText(`${startDate} ~ ${endDate}`);
+
+      const response = await axiosInstance.get('/exercise-logs/details', {
         params: { userId, startDate, endDate }
       });
-      setWeeklyLogs(response.data); 
+      setExerciseStats(response.data); 
     } catch (error) {
       console.error("통계 조회 실패", error);
-      setWeeklyLogs([]);
+      setExerciseStats([]);
     }
   };
 
@@ -58,13 +71,16 @@ const ExerciseManagement = () => {
   };
 
   const handleSaveRecord = async () => {
-    if (!duration || !sets) {
-      alert("운동 시간과 세트 수는 필수 입력 항목입니다!");
+    if (!duration) {
+      alert("운동 시간을 입력해주세요!");
       return;
     }
-
+    if (!isAerobic && !sets) {
+      alert("무산소 운동은 세트 수를 필수로 입력해야 합니다!");
+      return;
+    }
     if (condition === 'PAIN' || condition === 'BAD') {
-      const confirmForce = window.confirm("⚠️ 컨디션이 좋지 않습니다. 무리한 운동은 부상을 유발할 수 있습니다. 정말 기록하시겠습니까?");
+      const confirmForce = window.confirm("컨디션이 좋지 않습니다. 무리한 운동은 부상을 유발할 수 있습니다. 정말 기록하시겠습니까?");
       if (!confirmForce) return;
     }
 
@@ -73,9 +89,9 @@ const ExerciseManagement = () => {
         userId: 1,
         exerciseId: selectedExercise.id,
         durationMinutes: parseInt(duration),
-        sets: parseInt(sets),
-        repsPerSet: repsPerSet ? parseInt(repsPerSet) : null,
-        weightKg: weightKg ? parseFloat(weightKg) : null,
+        sets: isAerobic ? 1 : parseInt(sets),
+        repsPerSet: isAerobic ? null : (repsPerSet ? parseInt(repsPerSet) : null),
+        weightKg: isAerobic ? null : (weightKg ? parseFloat(weightKg) : null),
         memo: memo ? memo : null,
         intensityLevel: intensity,
         conditionStatus: condition,
@@ -84,7 +100,7 @@ const ExerciseManagement = () => {
       };
 
       await axiosInstance.post('http://localhost:8080/api/exercise-logs', recordData);
-      alert('운동 상세 기록이 안전하게 저장되었습니다! 🎉');
+      alert('운동 기록이 저장되었습니다!');
       
       setSelectedExercise(null);
       setKeyword('');
@@ -94,7 +110,7 @@ const ExerciseManagement = () => {
       setRepsPerSet('');
       setWeightKg('');
       setMemo('');
-      fetchWeeklyStats(); 
+      fetchStats(); 
     } catch (error) {
       console.error("저장 실패:", error);
       alert("저장에 실패했습니다.");
@@ -103,19 +119,39 @@ const ExerciseManagement = () => {
 
   const calculateEstimatedCalories = () => {
     if (!selectedExercise) return 0;
-    const calPer10min = selectedExercise.caloriesPer10Min || selectedExercise.caloriesPer10min || 50;
+    const calPer10min = selectedExercise.caloriesPer10Min ?? selectedExercise.caloriesPer10min ?? 50;
     const dur = parseFloat(duration) || 0;
-    const s = parseInt(sets) || 1;
-    return Math.round(((dur / 10) * calPer10min) * s);
+    const baseCal = (dur / 10.0) * calPer10min;
+
+    if (isAerobic) {
+      return Math.floor(baseCal);
+    } else {
+      const s = parseInt(sets) || 1;
+      return Math.floor(baseCal * s);
+    }
   };
 
-  // 💡 주간 통계 데이터를 기반으로 원 그래프 구성
+  const categoryTotals = exerciseStats.reduce((acc, log) => {
+    const cat = log.category || '미분류 운동'; 
+    const cal = log.burnedCalories || log.totalCalories || log.calories || 0;
+    acc[cat] = (acc[cat] || 0) + cal;
+    return acc;
+  }, {});
+
+  const chartLabels = Object.keys(categoryTotals);
+  const chartDataValues = Object.values(categoryTotals);
+
   const chartData = {
-    labels: weeklyLogs.length > 0 ? weeklyLogs.map(log => `${log.date || '운동일'} 기록`) : ['운동 안한 날 (휴식)'],
+    labels: chartLabels.length > 0 ? chartLabels : ['운동 안한 날 (휴식)'],
     datasets: [
       {
-        data: weeklyLogs.length > 0 ? weeklyLogs.map(log => log.totalCalories || log.calories || 100) : [1],
-        backgroundColor: ['#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e', '#55efc4', '#74b9ff', '#e17055'],
+        data: chartLabels.length > 0 ? chartDataValues : [1],
+        backgroundColor: [
+          '#1abc9c', // 청록색
+          '#41b3ff', // 하늘색
+          '#fdcb6e', // 노란색
+          '#6c5ce7'  // 보라색
+        ],
         borderWidth: 1,
       },
     ],
@@ -126,16 +162,12 @@ const ExerciseManagement = () => {
       tooltip: {
         callbacks: {
           title: function(context) {
-            const index = context[0].dataIndex;
-            if (weeklyLogs.length === 0) return '휴식 중';
-            return `📅 날짜: ${weeklyLogs[index].date || '오늘'}`;
+            return chartLabels.length > 0 ? `분류: ${context[0].label}` : '휴식 중';
           },
           label: function(context) {
-            if (weeklyLogs.length === 0) return ' 휴식 중 (운동 기록 없음)';
-            const index = context.dataIndex;
-            const log = weeklyLogs[index];
-            const cal = log.totalCalories || log.calories || 0;
-            return ` 🔥 소모 칼로리: ${cal} kcal`;
+            if (chartLabels.length === 0) return ' 운동 기록 없음';
+            const cal = context.raw;
+            return ` 총 소모: ${cal} kcal`;
           }
         }
       }
@@ -144,22 +176,40 @@ const ExerciseManagement = () => {
 
   return (
     <div className="exercise-page">
-      <h2 className="page-title">📊 본인의 운동 일정 및 상세 관리</h2>
+      <h2 className="page-title">본인의 운동 일정 및 상세 관리</h2>
 
-      <div className="stats-container-card" style={{ background: '#fff', padding: '24px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', marginBottom: '32px' }}>
-        <h3>전체 주간 운동량 및 칼로리 소모량 (원 그래프)</h3>
+      <div className="stats-container-card">
+        <h3>전체 운동량 및 칼로리 소모량 (유산소 vs 무산소)</h3>
+        <p className="date-range-text">{dateRangeText}</p>
         
-        {weeklyLogs.length === 0 ? (
-          <div className="default-chart-box" style={{ padding: '30px', background: '#f9f9f9', borderRadius: '8px', textAlign: 'center', border: '2px dashed #ddd' }}>
-            <p style={{ margin: '0 0 8px 0', fontWeight: 'bold', color: '#555' }}>📈 이번 주 운동 데이터가 없습니다.</p>
-            <span className="sub-text" style={{ color: '#888', fontSize: '14px' }}>차트 틀만 표시됩니다. 아래에서 운동을 기록해 보세요! (휴식 상태)</span>
+        <div className="view-mode-buttons">
+          <button 
+            className={`view-btn ${viewMode === 'DAILY' ? 'active' : ''}`}
+            onClick={() => setViewMode('DAILY')} 
+          >
+            오늘 (일간)
+          </button>
+          <button 
+            className={`view-btn ${viewMode === 'WEEKLY' ? 'active' : ''}`}
+            onClick={() => setViewMode('WEEKLY')} 
+          >
+            최근 7일 (주간)
+          </button>
+          <button 
+            className={`view-btn ${viewMode === 'MONTHLY' ? 'active' : ''}`}
+            onClick={() => setViewMode('MONTHLY')} 
+          >
+            최근 30일 (월간)
+          </button>
+        </div>
+
+        {exerciseStats.length === 0 ? (
+          <div className="default-chart-box">
+            <p className="default-chart-text">📈 선택한 기간의 운동 데이터가 없습니다.</p>
           </div>
         ) : (
-          <div style={{ maxWidth: '350px', margin: '0 auto', textAlign: 'center' }}>
+          <div className="chart-wrapper">
             <Doughnut data={chartData} options={chartOptions} />
-            <p style={{ marginTop: '16px', fontSize: '14px', color: '#666' }}>
-              💡 마우스를 그래프 위에 올리면 상세 소모 칼로리가 나타납니다.
-            </p>
           </div>
         )}
       </div>
@@ -170,7 +220,7 @@ const ExerciseManagement = () => {
           <input 
             type="text" 
             className="search-input"
-            placeholder="운동 검색 (예: 스쿼트, 벤치프레스)"
+            placeholder="운동 검색 (예: 스쿼트, 걷기)"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -179,13 +229,13 @@ const ExerciseManagement = () => {
         </div>
 
         {searchResults.length > 0 && (
-          <div className="result-list" style={{ marginTop: '16px' }}>
+          <div className="result-list">
             {searchResults.map((ex) => (
               <div key={ex.id} className="exercise-item">
-                <div>
+                <div className="exercise-info">
                   <h4>{ex.name}</h4>
-                  <p style={{ color: '#e17055', fontWeight: 'bold' }}>
-                    {ex.category} | 🔥 10분당 소모 칼로리: {ex.caloriesPer10Min ?? ex.caloriesPer10min ?? 50} kcal
+                  <p className="exercise-calorie">
+                    {ex.category} | 10분당 소모 칼로리: {ex.caloriesPer10Min ?? ex.caloriesPer10min ?? 50} kcal
                   </p>
                 </div>
                 <button className="select-btn" onClick={() => setSelectedExercise(ex)}>선택</button>
@@ -198,44 +248,49 @@ const ExerciseManagement = () => {
           <div className="record-form-card">
             <h3>[{selectedExercise.name}] 상세 기록 작성</h3>
             
-            <div style={{ background: '#fff3cd', padding: '12px', borderRadius: '6px', marginBottom: '16px', color: '#856404', fontWeight: 'bold' }}>
-              ⚡ 예상 소모 칼로리: 약 {calculateEstimatedCalories()} kcal 소모 예정
+            <div className="expected-calorie-box">
+              예상 소모 칼로리: 약 {calculateEstimatedCalories()} kcal 소모 예정
             </div>
 
-            <div className="form-row" style={{ display: 'flex', gap: '10px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group">
                 <label>운동 시간 (분)*</label>
                 <input type="number" placeholder="예: 30" value={duration} onChange={(e) => setDuration(e.target.value)} />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>세트 수*</label>
-                <input type="number" placeholder="예: 3" value={sets} onChange={(e) => setSets(e.target.value)} />
-              </div>
+              
+              {!isAerobic && (
+                <div className="form-group">
+                  <label>세트 수*</label>
+                  <input type="number" placeholder="예: 3" value={sets} onChange={(e) => setSets(e.target.value)} />
+                </div>
+              )}
             </div>
 
-            <div className="form-row" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>세트당 횟수 (Reps)</label>
-                <input type="number" placeholder="예: 12" value={repsPerSet} onChange={(e) => setRepsPerSet(e.target.value)} />
+            {!isAerobic && (
+              <div className="form-row">
+                <div className="form-group">
+                  <label>세트당 횟수 (Reps)</label>
+                  <input type="number" placeholder="예: 12" value={repsPerSet} onChange={(e) => setRepsPerSet(e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>중량 (kg)</label>
+                  <input type="number" step="0.5" placeholder="예: 50" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+                </div>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>중량 (kg)</label>
-                <input type="number" step="0.5" placeholder="예: 50" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
-              </div>
-            </div>
+            )}
 
-            <div className="form-row" style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
+            <div className="form-row">
+              <div className="form-group">
                 <label>운동 강도</label>
-                <select value={intensity} onChange={(e) => setIntensity(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
+                <select value={intensity} onChange={(e) => setIntensity(e.target.value)}>
                   <option value="LOW">약함</option>
                   <option value="MEDIUM">보통</option>
                   <option value="HIGH">강함</option>
                 </select>
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-group">
                 <label>오늘의 컨디션</label>
-                <select value={condition} onChange={(e) => setCondition(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '6px' }}>
+                <select value={condition} onChange={(e) => setCondition(e.target.value)}>
                   <option value="GOOD">컨디션 최상</option>
                   <option value="NORMAL">보통</option>
                   <option value="BAD">피로함</option>
@@ -244,7 +299,7 @@ const ExerciseManagement = () => {
               </div>
             </div>
 
-            <div className="form-group" style={{ marginTop: '10px' }}>
+            <div className="form-group">
               <label>운동 메모 / 특이사항 (병원 제공용)</label>
               <input type="text" placeholder="예: 오른쪽 무릎이 살짝 뻐근했음" value={memo} onChange={(e) => setMemo(e.target.value)} />
             </div>
