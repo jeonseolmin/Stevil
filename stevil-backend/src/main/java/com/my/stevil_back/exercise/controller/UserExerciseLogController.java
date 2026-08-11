@@ -1,7 +1,8 @@
 package com.my.stevil_back.exercise.controller;
 
-import com.my.stevil_back.exercise.dto.ExerciseLogRequest;
-import com.my.stevil_back.exercise.dto.WeeklyChartResponse;
+import com.my.stevil_back.exercise.dto.request.ExerciseLogRequest;
+import com.my.stevil_back.exercise.dto.response.ExerciseLogDetailResponse;
+import com.my.stevil_back.exercise.dto.response.WeeklyChartResponse;
 import com.my.stevil_back.exercise.service.UserExerciseLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,5 +43,15 @@ public class UserExerciseLogController {
 
         // 프론트엔드로 리스트 반환
         return ResponseEntity.ok(chartData);
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<List<ExerciseLogDetailResponse>> getExerciseLogDetails(
+            @RequestParam Long userId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+
+        List<ExerciseLogDetailResponse> details = userExerciseLogService.getDetailedLogs(userId, startDate, endDate);
+        return ResponseEntity.ok(details);
     }
 }

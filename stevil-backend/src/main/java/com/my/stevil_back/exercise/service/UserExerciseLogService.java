@@ -1,7 +1,7 @@
 package com.my.stevil_back.exercise.service;
 
-import com.my.stevil_back.exercise.dto.ExerciseLogRequest;
-import com.my.stevil_back.exercise.dto.WeeklyChartResponse;
+import com.my.stevil_back.exercise.dto.request.ExerciseLogRequest;
+import com.my.stevil_back.exercise.dto.response.WeeklyChartResponse;
 import com.my.stevil_back.exercise.entity.Exercise;
 import com.my.stevil_back.exercise.entity.ExerciseStatus;
 import com.my.stevil_back.exercise.entity.UserExerciseLog;

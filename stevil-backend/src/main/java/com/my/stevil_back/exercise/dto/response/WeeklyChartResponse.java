@@ -1,4 +1,4 @@
-package com.my.stevil_back.exercise.dto;
+package com.my.stevil_back.exercise.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
