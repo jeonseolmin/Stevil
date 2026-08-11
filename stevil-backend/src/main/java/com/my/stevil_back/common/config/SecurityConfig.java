@@ -7,8 +7,6 @@ import com.my.stevil_back.common.security.oauth.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,14 +18,12 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final AuthenticationConfiguration authenticationConfiguration;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil,OAuth2SuccessHandler oAuth2SuccessHandler,OAuth2FailureHandler oAuth2FailureHandler,CustomOAuth2UserService customOAuth2UserService) {
-        this.authenticationConfiguration = authenticationConfiguration;
+    public SecurityConfig(JwtUtil jwtUtil,OAuth2SuccessHandler oAuth2SuccessHandler,OAuth2FailureHandler oAuth2FailureHandler,CustomOAuth2UserService customOAuth2UserService) {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.oAuth2FailureHandler = oAuth2FailureHandler;
         this.customOAuth2UserService = customOAuth2UserService;
@@ -35,10 +31,6 @@ public class SecurityConfig {
 
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
