@@ -1,37 +1,29 @@
-import { Routes, Route } from "react-router-dom";
-import RootLayout from "../components/layout/RootLayout";
-import Dashboard from "../pages/Dashboard";
-import ExerciseManagement from "../pages/ExerciseManagement";
-import HomePage from "../pages/homePage/HomePage.jsx";
+import { Route, Routes } from "react-router-dom";
 
-function TemporaryPage({ title }) {
-    return (
-        <section style={{ padding: "40px" }}>
-            <h1>{title}</h1>
-        </section>
-    );
-}
+import RootLayout from "../components/layout/RootLayout";
+import AuthLayout from "../components/layout/auth/AuthLayout.jsx";
+
+import HomePage from "../pages/homePage/HomePage";
+import LoginPage from "../pages/auth/LoginPage.jsx";
+import OnboardingPage from "../pages/onboarding/OnboardingPage";
+import Dashboard from "../pages/Dashboard";
 
 export default function AppRouter() {
     return (
         <Routes>
+            {/* 공통 헤더를 사용하는 화면 */}
             <Route element={<RootLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/exercise" element={<ExerciseManagement />} />
-                <Route
-                    path="/login"
-                    element={<TemporaryPage title="로그인" />}
-                />
-                <Route
-                    path="/signup"
-                    element={<TemporaryPage title="회원가입" />}
-                />
-                <Route
-                    path="*"
-                    element={<TemporaryPage title="페이지를 찾을 수 없습니다." />}
-                />
             </Route>
+
+            {/* 인증 전용 화면 */}
+            <Route element={<AuthLayout />}>
+                <Route path="/login" element={<LoginPage />} />
+            </Route>
+
+            {/* 최초 로그인 후 추가 정보 입력 */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
         </Routes>
     );
 }
