@@ -41,4 +41,4 @@ logging:
   level:
     org.hibernate.SQL: debug
 app:
-  frontend-url: ${FRONTEND_URL}
+  frontend-url: http://localhost:3000

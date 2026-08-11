@@ -1,11 +1,9 @@
 spring:
-
-
   application:
     name: stevil-backend
 
   jwt:
-    secret: ${JWT_SECRET}
+    secret: mySuperSecretKeyForStevilProjectWhichIsVeryLongAndSecure12345!
     access-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
 
   profiles:
