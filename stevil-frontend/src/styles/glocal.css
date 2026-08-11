@@ -1,4 +1,3 @@
-
 @font-face {
     font-family: "Paperlogy";
     src: url("../assets/fonts/Paperlogy-4Regular.ttf") format("truetype");
@@ -8,36 +7,35 @@
 }
 
 @font-face {
-    font-family: "Pretendard";
-    src: url("../assets/fonts/Paperlogy-5Medium.ttf") format("woff2");
+    font-family: "Paperlogy";
+    src: url("../assets/fonts/Paperlogy-5Medium.ttf") format("truetype");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Pretendard";
-    src: url("../assets/fonts/Paperlogy-6SemiBold.ttf") format("woff2");
+    font-family: "Paperlogy";
+    src: url("../assets/fonts/Paperlogy-6SemiBold.ttf") format("truetype");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Pretendard";
-    src: url("../assets/fonts/Paperlogy-7Bold.ttf") format("woff2");
+    font-family: "Paperlogy";
+    src: url("../assets/fonts/Paperlogy-7Bold.ttf") format("truetype");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 
-:root {
-    font-family:
-            "Pretendard",
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
+@font-face {
+    font-family: "Paperlogy";
+    src: url("../assets/fonts/Paperlogy-8ExtraBold.ttf") format("truetype");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
 }
 
 body,
@@ -45,5 +43,10 @@ button,
 input,
 textarea,
 select {
-    font-family: "Paperlogy", sans-serif;
+    font-family:
+            "Paperlogy",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
 }
