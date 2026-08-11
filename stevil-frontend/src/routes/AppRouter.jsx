@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard';
 import ExerciseManagement from '../pages/ExerciseManagement';
+import HomePage from "../pages/homePage/HomePage.jsx";
 
 function TemporaryPage({ title }) {
     return (
@@ -13,7 +14,8 @@ function TemporaryPage({ title }) {
 export default function AppRouter() {
   return (
       <Routes>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<HomePage />} />
+          <Route path="/dashBoard" element={<Dashboard />} />
         <Route path="/exercise" element={<ExerciseManagement />} />
           <Route path="/login" element={<TemporaryPage title="로그인" />} />
           <Route path="/signup" element={<TemporaryPage title="회원가입" />} />

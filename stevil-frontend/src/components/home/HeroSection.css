@@ -481,45 +481,193 @@
     gap: 56px;
   }
 
-  .search-bar-simple {
-    min-height: 58px;
-    padding: 6px 6px 6px 18px;
+  .hero-content {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
   }
 
-  .search-icon {
-    margin-right: 10px;
+  .hero-actions,
+  .hero-benefits {
+    justify-content: center;
   }
 
-  .search-bar-simple input {
-    font-size: 0.95rem;
+  .hero-visual {
+    width: min(100%, 680px);
+    min-height: 560px;
+    margin: 0 auto;
   }
 
-  .search-submit-btn {
-    min-width: auto;
-    padding: 12px 20px;
-    font-size: 0.95rem;
+  .dashboard-preview {
+    width: min(100% - 72px, 500px);
+  }
+
+  .hero-floating-card--record {
+    right: 10px;
+  }
+
+  .hero-floating-card--schedule {
+    left: 10px;
   }
 }
 
-@media (max-width: 430px) {
-  .hero-section-simple {
-    min-height: 390px;
-    padding: 60px 14px;
+/* 모바일 */
+
+@media (max-width: 600px) {
+  .hero-section {
+    padding: 48px 0 76px;
   }
 
-  .hero-title-simple {
-    font-size: 2.15rem;
+  .hero-container {
+    gap: 42px;
   }
 
-  .search-icon {
+  .hero-eyebrow {
+    margin-bottom: 16px;
+
+    font-size: 12px;
+  }
+
+  .hero-title {
+    margin-bottom: 18px;
+
+    font-size: clamp(36px, 11vw, 46px);
+    line-height: 1.17;
+  }
+
+  .hero-description {
+    margin-bottom: 26px;
+
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .hero-desktop-break {
     display: none;
   }
 
-  .search-bar-simple {
-    padding-left: 18px;
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+
+    margin-bottom: 26px;
   }
 
-  .search-submit-btn {
-    padding-inline: 17px;
+  .hero-benefits {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: start;
+    gap: 10px;
+
+    width: fit-content;
+    margin: 0 auto;
+
+    text-align: left;
+  }
+
+  .hero-visual {
+    align-items: flex-start;
+
+    min-height: auto;
+    padding: 16px 0 62px;
+  }
+
+  .dashboard-preview {
+    width: 100%;
+    padding: 18px;
+
+    border-radius: 24px;
+  }
+
+  .preview-header {
+    margin-bottom: 16px;
+  }
+
+  .preview-header strong {
+    font-size: 17px;
+  }
+
+  .preview-progress-card {
+    padding: 17px;
+  }
+
+  .preview-progress-heading strong {
+    font-size: 16px;
+  }
+
+  .preview-record-grid {
+    gap: 7px;
+  }
+
+  .preview-record-card {
+    padding: 11px 9px;
+  }
+
+  .preview-record-card > span:not(.preview-record-icon) {
+    font-size: 9px;
+  }
+
+  .preview-record-card strong {
+    font-size: 16px;
+  }
+
+  .preview-record-icon {
+    width: 27px;
+    height: 27px;
+    margin-bottom: 10px;
+  }
+
+  .preview-schedule-card {
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .preview-schedule-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .hero-floating-card--schedule {
+    display: none;
+  }
+
+  .hero-floating-card--record {
+    right: 8px;
+    bottom: 9px;
+
+    max-width: calc(100% - 16px);
+  }
+
+  .hero-decoration--top {
+    width: 150px;
+    height: 150px;
+  }
+
+  .hero-decoration--bottom {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+@media (max-width: 370px) {
+  .hero-title {
+    font-size: 33px;
+  }
+
+  .preview-weight-row {
+    font-size: 8px;
+  }
+
+  .preview-record-card {
+    padding: 10px 6px;
+  }
+
+  .preview-record-card > span:not(.preview-record-icon) {
+    font-size: 8px;
+  }
+
+  .preview-schedule-dday {
+    padding: 5px 7px;
   }
 }
