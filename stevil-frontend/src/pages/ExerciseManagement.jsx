@@ -134,13 +134,26 @@ const ExerciseManagement = () => {
     if (!selectedExercise) return 0;
     const calPer10min = selectedExercise.caloriesPer10Min ?? selectedExercise.caloriesPer10min ?? 50;
     const dur = parseFloat(duration) || 0;
+    
+    // 1. 기본 칼로리 (운동 시간에 비례)
     const baseCal = (dur / 10.0) * calPer10min;
 
     if (isAerobic) {
+      // 유산소는 시간 비례만 적용
       return Math.floor(baseCal);
     } else {
-      const s = parseInt(sets) || 1;
-      return Math.floor(baseCal * s);
+      // 2. 무산소는 사용자가 입력한 세트, 횟수, 중량을 가져옴
+      const s = parseInt(sets) || 0;
+      const r = parseInt(repsPerSet) || 0;
+      const w = parseFloat(weightKg) || 0;
+      
+      // 3. 총 볼륨(들어올린 총 무게)에 따른 보너스 칼로리 계산
+      // 공식: (세트 x 횟수 x 중량) * 0.02
+      // 예시: 50kg 10회 3세트 = 1500kg 볼륨 -> 30 kcal 추가 소모
+      const volumeBonus = (s * r * w) * 0.02; 
+      
+      // 최종 칼로리 = 시간 비례 + 볼륨 보너스
+      return Math.floor(baseCal + volumeBonus);
     }
   };
 
