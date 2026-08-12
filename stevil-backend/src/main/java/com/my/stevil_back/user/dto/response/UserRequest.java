@@ -1,4 +1,4 @@
-package com.my.stevil_back.user.dto;
+package com.my.stevil_back.user.dto.response;
 
 import lombok.Data;
 

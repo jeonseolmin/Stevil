@@ -1,30 +1,61 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 function OAuthSuccessPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     useEffect(() => {
-        const token = searchParams.get("token");
+        const handleOAuthSuccess = async () => {
+            const token = searchParams.get("token");
 
-        if (!token) {
-            navigate("/login", {
-                replace: true,
-                state: {
-                    errorMessage: "로그인 정보를 확인할 수 없습니다.",
-                },
-            });
-            return;
-        }
+            if (!token) {
+                navigate("/login", {
+                    replace: true,
+                    state: {
+                        errorMessage: "로그인 정보를 확인할 수 없습니다.",
+                    },
+                });
+                return;
+            }
 
-        localStorage.setItem("accessToken", token);
+            localStorage.setItem("accessToken", token);
 
-        /*
-         * 다음 단계에서 /api/users/me를 조회하여
-         * 온보딩 완료 여부에 따라 이동하도록 변경합니다.
-         */
-        navigate("/onboarding", { replace: true });
+            try {
+                const response = await axiosInstance.get("/api/users/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const user = response.data;
+
+                navigate(
+                    user.onboardingCompleted
+                        ? "/dashboard"
+                        : "/onboarding",
+                    { replace: true }
+                );
+            } catch (error) {
+                console.error(
+                    "사용자 정보 조회 실패:",
+                    error.response?.status,
+                    error.response?.data ?? error.message
+                );
+
+                localStorage.removeItem("accessToken");
+
+                navigate("/login", {
+                    replace: true,
+                    state: {
+                        errorMessage: "로그인 처리 중 오류가 발생했습니다.",
+                    },
+                });
+            }
+        };
+
+        handleOAuthSuccess();
     }, [navigate, searchParams]);
 
     return (

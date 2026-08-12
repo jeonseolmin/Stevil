@@ -5,4 +5,15 @@ const axiosInstance = axios.create({
     timeout: 10000,
 });
 
+axiosInstance.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+
 export default axiosInstance;

@@ -1,4 +1,4 @@
-package com.my.stevil_back.user.dto;
+package com.my.stevil_back.user.dto.response;
 
 import com.my.stevil_back.user.entity.enumType.UserRole;
 
@@ -7,6 +7,7 @@ public record UserMeResponse(
         String email,
         String nickname,
         String profileImage,
-        UserRole role
+        UserRole role,
+        boolean onboardingCompleted
 ) {
 }

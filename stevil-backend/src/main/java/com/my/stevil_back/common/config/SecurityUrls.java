@@ -14,7 +14,9 @@ public class SecurityUrls {
             "/login/oauth2/code/**",
 
             "/api/exercises/**",
-            "/api/exercise-logs/**"
+            "/api/exercise-logs/**",
+
+            "/api/users/**"
     };
 
     public static final String[] ADMIN_URLS = {

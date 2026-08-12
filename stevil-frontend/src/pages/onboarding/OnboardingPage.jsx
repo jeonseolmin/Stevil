@@ -167,22 +167,20 @@ export default function OnboardingPage() {
         };
 
         try {
-            const response = await fetch("/api/onboarding", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(requestBody),
-            });
-
-            if (!response.ok) {
-                throw new Error("온보딩 정보를 저장하지 못했습니다.");
-            }
+            await axiosInstance.post("/onboarding", requestBody);
 
             navigate("/dashboard", { replace: true });
         } catch (submitError) {
-            setError(submitError.message);
+            console.error(
+                "온보딩 저장 실패:",
+                submitError.response?.status,
+                submitError.response?.data
+            );
+
+            setError(
+                submitError.response?.data?.message
+                || "온보딩 정보를 저장하지 못했습니다."
+            );
         }
     };
 
@@ -440,6 +438,7 @@ export default function OnboardingPage() {
                                                     name="medicationName"
                                                     value={form.medicationName}
                                                     onChange={updateField}
+                                                    required={form.hasVisitedHospital === true}
                                                 >
                                                     <option value="">선택해 주세요</option>
                                                     <option value="WEGOVY">위고비</option>
@@ -467,6 +466,7 @@ export default function OnboardingPage() {
                                                     name="firstInjectionDate"
                                                     value={form.firstInjectionDate}
                                                     onChange={updateField}
+                                                    required={form.hasVisitedHospital === true}
                                                 />
                                             </label>
 

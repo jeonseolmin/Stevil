@@ -77,7 +77,7 @@ public class User extends BaseEntity {
         this.heightCm = heightCm;
         this.role = role != null ? role : UserRole.ROLE_USER;
         this.profileImage = profileImage;
-        this.onboardingCompleted = onboardingCompleted;
+        this.onboardingCompleted = Boolean.TRUE.equals(onboardingCompleted);
     }
 
     public void updateProfile(
@@ -92,5 +92,17 @@ public class User extends BaseEntity {
         this.sex = sex;
         this.heightCm = heightCm;
         this.profileImage = profileImage;
+    }
+    public void completeOnboarding(
+            String nickname,
+            LocalDate birthDate,
+            Sex sex,
+            Double heightCm
+    ) {
+        this.nickname = nickname;
+        this.birthDate = birthDate;
+        this.sex = sex;
+        this.heightCm = heightCm;
+        this.onboardingCompleted = true;
     }
 }
