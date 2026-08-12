@@ -134,14 +134,8 @@ const ExerciseManagement = () => {
     if (!selectedExercise) return 0;
     const calPer10min = selectedExercise.caloriesPer10Min ?? selectedExercise.caloriesPer10min ?? 50;
     const dur = parseFloat(duration) || 0;
-    const baseCal = (dur / 10.0) * calPer10min;
-
-    if (isAerobic) {
-      return Math.floor(baseCal);
-    } else {
-      const s = parseInt(sets) || 1;
-      return Math.floor(baseCal * s);
-    }
+    
+    return Math.floor((dur / 10.0) * calPer10min); // ✅ 백엔드와 동일하게 시간으로만 계산
   };
 
   const getFilteredChartStats = () => {
