@@ -54,6 +54,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<SocialAccount> socialAccounts = new ArrayList<>();
 
+    @Column(name = "onboarding_completed", nullable = false)
+    private boolean onboardingCompleted = false;
+
     @Builder
     private User(
             String email,
@@ -63,7 +66,8 @@ public class User extends BaseEntity {
             Sex sex,
             Double heightCm,
             UserRole role,
-            String profileImage
+            String profileImage,
+            Boolean onboardingCompleted
     ) {
         this.email = email;
         this.passwordHash = passwordHash;
@@ -73,6 +77,7 @@ public class User extends BaseEntity {
         this.heightCm = heightCm;
         this.role = role != null ? role : UserRole.ROLE_USER;
         this.profileImage = profileImage;
+        this.onboardingCompleted = onboardingCompleted;
     }
 
     public void updateProfile(
