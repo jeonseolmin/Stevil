@@ -1,0 +1,529 @@
+/* 전체 컨테이너 */
+.diet-web-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+  background-color: #f4f7f6;
+  min-height: 100vh;
+}
+
+/* 1. 상단 헤더 & 액션바 */
+.diet-header {
+  margin-bottom: 32px;
+}
+
+.header-title h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 8px 0;
+}
+
+.header-title p {
+  font-size: 15px;
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.action-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.action-btn {
+  padding: 0 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 44px;
+}
+
+.photo-btn {
+  background-color: #eef2ff;
+  color: #3b82f6;
+}
+
+.manual-btn {
+  background-color: #e0f2f1;
+  color: #1abc9c;
+}
+
+/* 2. 대시보드 그리드 (반응형 찌그러짐 방지) */
+.diet-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .diet-grid {
+    grid-template-columns: 1fr 1fr; /* PC에서는 반반 분할 */
+  }
+}
+
+.diet-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.diet-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #222;
+}
+
+.link-text {
+  font-size: 13px;
+  color: #3b82f6;
+  cursor: pointer;
+}
+
+/* 오늘 섭취 칼로리 영역 */
+.calorie-display {
+  margin-bottom: 12px;
+}
+.current-kcal {
+  font-size: 28px;
+  font-weight: 800;
+}
+.current-kcal span {
+  font-size: 16px;
+  font-weight: normal;
+}
+.target-kcal {
+  font-size: 14px;
+  color: #888;
+}
+
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+}
+.progress-bar-fill.blue {
+  height: 100%;
+  border-radius: 4px;
+  background: #3b82f6;
+}
+.percent-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #3b82f6;
+}
+
+.macro-summary {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+}
+.macro-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.macro-label {
+  font-size: 13px;
+  color: #555;
+}
+.macro-percent {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* 알레르기 주의 경고창 */
+.allergy-alert-card {
+  background: #fff9f5;
+  border: 1px solid #ffe8d6;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+.allergy-header {
+  color: #e67e22;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.registered-allergy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #555;
+}
+.tag {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.red-tag {
+  background: #ffeaa7;
+  color: #d35400;
+}
+.blue-tag {
+  background: #eef2ff;
+  color: #3b82f6;
+}
+.detected-allergy p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+.warning-msg {
+  display: inline-block;
+  background: #ff7675;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* 식단 기록 (아침/점심/저녁) */
+.view-mode-buttons button {
+  background: #f1f3f5;
+  border: none;
+  padding: 6px 12px;
+  margin-left: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #555;
+  font-weight: bold;
+}
+.view-mode-buttons button.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.meal-logs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.meal-box {
+  border: 1px solid #f0f0f0;
+  padding: 16px;
+  border-radius: 12px;
+}
+.meal-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.meal-title span {
+  font-weight: normal;
+  color: #888;
+  font-size: 12px;
+  margin-left: 4px;
+}
+.meal-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  height: 34px;
+  overflow: hidden;
+}
+.meal-kcal {
+  font-size: 18px;
+  font-weight: bold;
+}
+.meal-kcal span {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/* 다이어트 레시피 (유튜브 연동) */
+.recipe-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-width: none;
+}
+.recipe-scroll::-webkit-scrollbar {
+  display: none;
+}
+.recipe-card {
+  min-width: 180px;
+  cursor: pointer;
+}
+.thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  background: #ddd;
+}
+.thumbnail-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.recipe-card h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #222;
+}
+.recipe-tags {
+  display: flex;
+  gap: 6px;
+}
+
+/* 영양 섭취 요약 (우측 패널) */
+.nutrient-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.nutrient-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.n-label {
+  width: 60px;
+  font-size: 13px;
+  color: #555;
+}
+.n-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+}
+.n-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.divider {
+  border: 0;
+  border-top: 1px dashed #ddd;
+  margin: 24px 0;
+}
+.nutrient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.detail-row {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+.detail-row .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.detail-row .dot.green {
+  background: #2ecc71;
+}
+.detail-row .dot.orange {
+  background: #e67e22;
+}
+.detail-row .dot.red {
+  background: #e74c3c;
+}
+.detail-row .val {
+  flex: 1;
+  text-align: right;
+  margin-right: 16px;
+  color: #666;
+}
+.detail-row .status {
+  font-weight: bold;
+  width: 40px;
+  text-align: center;
+}
+.detail-row .status.green {
+  color: #2ecc71;
+}
+.detail-row .status.orange {
+  color: #e67e22;
+}
+.detail-row .status.red {
+  color: #e74c3c;
+}
+
+/* 추천 영양 목표 */
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+.goal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.goal-icon {
+  font-size: 24px;
+}
+.goal-label {
+  font-size: 12px;
+  color: #666;
+}
+.goal-item strong {
+  font-size: 16px;
+  color: #111;
+}
+
+/* 하단 2분할 (최근 먹은 음식 & 즐겨찾기) */
+.food-list-container {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.flex-1 {
+  flex: 1;
+  min-width: 250px;
+}
+.food-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.food-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f8f8f8;
+}
+.food-list li:last-child {
+  border-bottom: none;
+}
+.food-list li strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #333;
+}
+.food-list li span {
+  font-size: 12px;
+  color: #888;
+}
+.food-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.food-right span {
+  font-size: 14px;
+  font-weight: bold;
+  color: #111;
+}
+.star-icon {
+  cursor: pointer;
+  color: #ccc;
+  font-size: 18px;
+}
+.star-icon.favorite {
+  color: #f1c40f;
+}
+
+/* 유튜브 모달창 */
+.video-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.video-modal-content {
+  width: 90%;
+  max-width: 800px;
+  height: 60vh;
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.close-btn {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}

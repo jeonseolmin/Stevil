@@ -2,6 +2,7 @@ package com.my.stevil_back.user.entity;
 
 import com.my.stevil_back.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "user_weight")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserWeight extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +33,19 @@ public class UserWeight extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public static UserWeight create(
+            User user,
+            BigDecimal weight,
+            BigDecimal targetWeight
+    ) {
+        UserWeight userWeight = new UserWeight();
+        userWeight.user = user;
+        userWeight.weight = weight;
+        userWeight.targetWeight = targetWeight;
+        userWeight.unit = "kg";
+        userWeight.recordedAt = LocalDateTime.now();
+
+        return userWeight;
+    }
 }

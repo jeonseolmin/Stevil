@@ -14,7 +14,7 @@ public class SecurityUrls {
             "/login/oauth2/code/**",
 
             "/api/exercises/**",
-            "/api/exercise-logs/**"
+            "/api/exercise-logs/**",
     };
 
     public static final String[] ADMIN_URLS = {
@@ -24,6 +24,12 @@ public class SecurityUrls {
     public static final String[] USER_URLS = {
             "/api/users/",
             "/api/users/**",
+
+            "/api/onboarding",
+            "/api/onboarding/**",
+
+            "/api/dashboard",
+            "/api/dashboard/**",
 
             "/api/mypage",
             "/api/mypage/**",
@@ -37,9 +43,7 @@ public class SecurityUrls {
             "/api/posts/**",
 
             "/api/reports",
-            "/api/reports/**"
-
-
+            "/api/reports/**",
     };
 
     private SecurityUrls() {

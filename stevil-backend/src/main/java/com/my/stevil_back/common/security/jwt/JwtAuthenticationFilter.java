@@ -2,7 +2,7 @@ package com.my.stevil_back.common.security.jwt;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.user.entity.User;
-import com.my.stevil_back.user.entity.enumType.UserRole;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,47 +17,54 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
         String authorization = request.getHeader("Authorization");
 
-
-        //헤더 검증
-        if(authorization == null || !authorization.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
+        if (authorization == null
+                || !authorization.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorization.substring(7);
 
-        //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)){
+        if (jwtUtil.isExpired(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         String userEmail = jwtUtil.getEmail(token);
-        UserRole role = UserRole.valueOf(jwtUtil.getRole(token));
 
-        User user = User.builder()
-                .email(userEmail)
-                .role(role)
-                .build();
+        User user = userRepository.findByEmail(userEmail)
+                .orElse(null);
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
+        if (user == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(
-                customUserDetails,
-                null,
-                customUserDetails.getAuthorities()
-        );
+        CustomUserDetails userDetails =
+                new CustomUserDetails(user);
 
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }
