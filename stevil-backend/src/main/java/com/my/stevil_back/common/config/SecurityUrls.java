@@ -25,6 +25,12 @@ public class SecurityUrls {
             "/api/users/",
             "/api/users/**",
 
+            "/api/onboarding",
+            "/api/onboarding/**",
+
+            "/api/dashboard",
+            "/api/dashboard/**",
+
             "/api/mypage",
             "/api/mypage/**",
 
@@ -38,9 +44,6 @@ public class SecurityUrls {
 
             "/api/reports",
             "/api/reports/**",
-
-            "/api/onboarding",
-            "/api/onboarding/**",
     };
 
     private SecurityUrls() {
