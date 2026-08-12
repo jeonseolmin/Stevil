@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./OnboardingPage.css";
+import axiosInstance from "../../api/axiosInstance.js";
 
 const initialForm = {
     name: "",

@@ -23,7 +23,7 @@ function OAuthSuccessPage() {
             localStorage.setItem("accessToken", token);
 
             try {
-                const response = await axiosInstance.get("/api/users/me", {
+                const response = await axiosInstance.get("/users/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

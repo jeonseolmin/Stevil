@@ -1,9 +1,11 @@
 package com.my.stevil_back.common.config;
 
+import com.my.stevil_back.common.security.jwt.JwtAuthenticationFilter;
 import com.my.stevil_back.common.security.jwt.JwtUtil;
 import com.my.stevil_back.common.security.oauth.handler.OAuth2FailureHandler;
 import com.my.stevil_back.common.security.oauth.handler.OAuth2SuccessHandler;
 import com.my.stevil_back.common.security.oauth.service.CustomOAuth2UserService;
+import com.my.stevil_back.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -22,13 +25,20 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public SecurityConfig(JwtUtil jwtUtil,OAuth2SuccessHandler oAuth2SuccessHandler,OAuth2FailureHandler oAuth2FailureHandler,CustomOAuth2UserService customOAuth2UserService) {
+    public SecurityConfig(
+            JwtUtil jwtUtil,
+            UserRepository userRepository,
+            OAuth2SuccessHandler oAuth2SuccessHandler,
+            OAuth2FailureHandler oAuth2FailureHandler,
+            CustomOAuth2UserService customOAuth2UserService
+    ) {
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.oAuth2FailureHandler = oAuth2FailureHandler;
         this.customOAuth2UserService = customOAuth2UserService;
-        this.jwtUtil = jwtUtil;
-
     }
 
 
@@ -128,6 +138,14 @@ public class SecurityConfig {
 
         http
                 .formLogin((auth) -> auth.disable());
+
+        http.addFilterBefore(
+                new JwtAuthenticationFilter(
+                        jwtUtil,
+                        userRepository
+                ),
+                UsernamePasswordAuthenticationFilter.class
+        );
 
         return http.build();
     }
