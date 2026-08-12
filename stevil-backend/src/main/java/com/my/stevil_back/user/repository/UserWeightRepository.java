@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface UserWeightRepository extends JpaRepository<UserWeight, Long> {
     // 특정 유저의 체중 기록 전체를 최신순으로 조회하는 메서드
-    List<UserWeight> findByUserEmailOrderByRecordedAtDesc(Long userEmail);
+    List<UserWeight> findByUserIdOrderByRecordedAtDesc(Long userId);
 }

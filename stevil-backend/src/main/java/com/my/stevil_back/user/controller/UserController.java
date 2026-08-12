@@ -1,7 +1,7 @@
 package com.my.stevil_back.user.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.user.dto.UserMeResponse;
+import com.my.stevil_back.user.dto.response.UserMeResponse;
 import com.my.stevil_back.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +27,10 @@ public class UserController {
                         user.getEmail(),
                         user.getNickname(),
                         user.getProfileImage(),
-                        user.getRole()
+                        user.getRole(),
+                        user.isOnboardingCompleted()
                 )
         );
+
     }
 }

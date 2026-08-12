@@ -8,6 +8,7 @@ import LoginPage from "../pages/auth/LoginPage.jsx";
 import OnboardingPage from "../pages/onboarding/OnboardingPage";
 import Dashboard from "../pages/Dashboard";
 import ExerciseManagement from "../pages/ExerciseManagement.jsx";
+import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 
 export default function AppRouter() {
     return (
@@ -17,6 +18,7 @@ export default function AppRouter() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/exercise" element={<ExerciseManagement />} />
+                <Route path="/oauth-success" element={<OAuthSuccessPage />} />
             </Route>
 
             {/* 인증 전용 화면 */}
