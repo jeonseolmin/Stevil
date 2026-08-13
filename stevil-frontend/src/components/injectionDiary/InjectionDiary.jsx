@@ -14,6 +14,7 @@ const InjectionDiary = () => {
   const [recentLogs, setRecentLogs] = useState([]);
 
   const symptomTags = [
+    { id: 'none', label: '증상 없음' },
     { id: 'nausea', label: '메스꺼움' },
     { id: 'headache', label: '두통' },
     { id: 'fatigue', label: '무기력/피로' },
