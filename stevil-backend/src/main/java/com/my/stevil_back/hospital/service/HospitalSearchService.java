@@ -11,6 +11,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -32,6 +34,7 @@ public class HospitalSearchService {
 
     private final RestClient naverSearchRestClient;
     private final NaverSearchProperties properties;
+    private final ObjectMapper objectMapper;
 
     public List<HospitalResponse> search(
             String keyword,
@@ -48,7 +51,7 @@ public class HospitalSearchService {
         String normalizedKeyword = normalizeKeyword(keyword);
 
         try {
-            NaverLocalSearchResponse response =
+            String responseBody =
                     naverSearchRestClient
                             .get()
                             .uri(uriBuilder -> uriBuilder
@@ -75,7 +78,13 @@ public class HospitalSearchService {
                                     properties.clientSecret()
                             )
                             .retrieve()
-                            .body(NaverLocalSearchResponse.class);
+                            .body(String.class);
+
+            NaverLocalSearchResponse response =
+                    objectMapper.readValue(
+                            responseBody,
+                            NaverLocalSearchResponse.class
+                    );
 
             if (response == null || response.items() == null) {
                 return List.of();
@@ -99,24 +108,19 @@ public class HospitalSearchService {
                     .sorted(comparator)
                     .toList();
 
-        }  catch (RestClientResponseException exception) {
-        log.error(
-                "NAVER API HUB 지역검색 실패: status={}, body={}",
-                exception.getStatusCode(),
-                exception.getResponseBodyAsString(),
-                exception
-        );
+        } catch (JacksonException exception) {
+            log.error(
+                    "NAVER API HUB 응답 변환 실패",
+                    exception
+            );
 
-        throw new ResponseStatusException(
-                HttpStatus.BAD_GATEWAY,
-                "네이버 지역검색 API 오류: "
-                        + exception.getStatusCode()
-                        + " / "
-                        + exception.getResponseBodyAsString(),
-                exception
-        );
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_GATEWAY,
+                    "네이버 지역검색 응답을 처리하지 못했습니다.",
+                    exception
+            );
 
-    } catch (RestClientException exception) {
+        } catch (RestClientResponseException exception) {
         log.error(
                 "NAVER API HUB 연결 실패",
                 exception
