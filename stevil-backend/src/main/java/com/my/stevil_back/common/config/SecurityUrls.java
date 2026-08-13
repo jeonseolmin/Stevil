@@ -31,6 +31,9 @@ public class SecurityUrls {
             "/api/dashboard",
             "/api/dashboard/**",
 
+            "/api/hospitals",
+            "/api/hospitals/**",
+
             "/api/mypage",
             "/api/mypage/**",
 

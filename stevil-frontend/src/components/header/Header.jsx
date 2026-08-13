@@ -132,6 +132,20 @@ export default function Header() {
                     }`}
                     aria-label="주요 메뉴"
                 >
+                    {isLoggedIn && (
+                        <Link
+                            to="/hospitals"
+                            onClick={closeMenu}
+                            className={
+                                location.pathname === "/hospitals"
+                                    ? "header-navigation-link--active"
+                                    : ""
+                            }
+                        >
+                            병원 찾기
+                        </Link>
+                    )}
+
                     <a
                         href="/#features"
                         onClick={closeMenu}

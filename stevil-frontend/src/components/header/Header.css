@@ -353,3 +353,8 @@
         transition: none;
     }
 }
+
+.header-navigation-link--active {
+    color: var(--color-primary-dark) !important;
+    font-weight: 800 !important;
+}
