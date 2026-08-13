@@ -1,5 +1,6 @@
 package com.my.stevil_back.exercise.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 public class ExerciseLogRequest {
     private Long userId;
     private Long exerciseId; // 어떤 운동인지 (예: 스쿼트 ID)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate exerciseDate;
     private String status; // "PLANNED" 또는 "COMPLETED"
 
