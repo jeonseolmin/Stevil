@@ -9,6 +9,7 @@ import OnboardingPage from "../pages/onboarding/OnboardingPage";
 import Dashboard from "../pages/Dashboard";
 import ExerciseManagement from "../pages/ExerciseManagement.jsx";
 import DietManagement from "../components/diet/DietManagement.jsx";
+import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 
 export default function AppRouter() {
@@ -20,6 +21,7 @@ export default function AppRouter() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/exercise" element={<ExerciseManagement />} />
                 <Route path="/diet" element={<DietManagement />} />
+                <Route path="/diary" element={<InjectionDiary />} />
                 <Route path="/oauth-success" element={<OAuthSuccessPage />} />
             </Route>
 

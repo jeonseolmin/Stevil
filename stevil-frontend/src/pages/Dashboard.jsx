@@ -469,7 +469,7 @@ export default function Dashboard() {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    navigate("/symptoms")
+                                    navigate("/diary")
                                 }
                             >
                                 <span className="quick-action-icon">
@@ -547,7 +547,7 @@ export default function Dashboard() {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    navigate("/symptoms")
+                                    navigate("/diary")
                                 }
                             >
                                 증상 기록

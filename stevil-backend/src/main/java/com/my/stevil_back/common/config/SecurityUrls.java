@@ -15,6 +15,8 @@ public class SecurityUrls {
 
             "/api/exercises/**",
             "/api/exercise-logs/**",
+
+            "/api/injections/**"
     };
 
     public static final String[] ADMIN_URLS = {
