@@ -1,14 +1,13 @@
 package com.my.stevil_back.hospital.service;
 
 import com.my.stevil_back.hospital.config.NaverSearchProperties;
-import com.my.stevil_back.hospital.dto.HospitalResponse;
-import com.my.stevil_back.hospital.dto.NaverLocalSearchResponse;
+import com.my.stevil_back.hospital.dto.response.HospitalResponse;
+import com.my.stevil_back.hospital.dto.response.NaverLocalSearchResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.core.JacksonException;

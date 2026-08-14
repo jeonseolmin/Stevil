@@ -1,4 +1,4 @@
-package com.my.stevil_back.hospital.dto;
+package com.my.stevil_back.hospital.dto.response;
 
 import java.util.List;
 
