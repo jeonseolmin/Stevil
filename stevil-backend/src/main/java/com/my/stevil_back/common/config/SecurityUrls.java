@@ -47,6 +47,9 @@ public class SecurityUrls {
 
             "/api/posts/**",
 
+            "/api/community",
+            "/api/community/**",
+
             "/api/reports",
             "/api/reports/**",
     };

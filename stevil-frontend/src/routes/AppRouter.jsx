@@ -12,6 +12,7 @@ import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 import HospitalMapPage from "../pages/HospitalMapPage.jsx";
+import Community from "../components/community/Community.jsx";
 
 export default function AppRouter() {
     return (
@@ -25,6 +26,8 @@ export default function AppRouter() {
                 <Route path="/diary" element={<InjectionDiary />} />
                 <Route path="/oauth-success" element={<OAuthSuccessPage />} />
                 <Route path="/hospitals" element={<HospitalMapPage />}/>
+                <Route path="/community" element={<Community />}/>
+
             </Route>
 
             {/* 인증 전용 화면 */}

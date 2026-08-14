@@ -167,6 +167,13 @@ export default function Header() {
                         안심 안내
                     </a>
 
+                    <a
+                        href="/community"
+                        onClick={closeMenu}
+                    >
+                        커뮤니티
+                    </a>
+
                     <div className="mobile-header-actions">
                         {isLoggedIn ? (
                             <button

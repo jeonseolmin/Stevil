@@ -57,6 +57,10 @@ public class User extends BaseEntity {
     @Column(name = "onboarding_completed", nullable = false)
     private boolean onboardingCompleted = false;
 
+    // 1. 추가: 커뮤니티 신고 기능 등에서 사용할 계정 정지 여부 필드
+    @Column(name = "is_suspended", nullable = false, columnDefinition = "boolean default false")
+    private boolean suspended = false;
+
     @Builder
     private User(
             String email,
@@ -93,6 +97,7 @@ public class User extends BaseEntity {
         this.heightCm = heightCm;
         this.profileImage = profileImage;
     }
+
     public void completeOnboarding(
             String nickname,
             LocalDate birthDate,
@@ -104,5 +109,11 @@ public class User extends BaseEntity {
         this.sex = sex;
         this.heightCm = heightCm;
         this.onboardingCompleted = true;
+    }
+
+
+    // 3. 추가: Lombok 버전에 따라 자동 생성되는 이름이 다를 수 있어 명시적으로 isSuspended() 작성
+    public boolean isSuspended() {
+        return this.suspended;
     }
 }
