@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,14 @@ public class User extends BaseEntity {
     @Column(name = "onboarding_completed", nullable = false)
     private boolean onboardingCompleted = false;
 
-    // 1. 추가: 커뮤니티 신고 기능 등에서 사용할 계정 정지 여부 필드
-    @Column(name = "is_suspended", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "is_suspended", nullable = false)
     private boolean suspended = false;
+
+    @Column(name = "suspended_at")
+    private LocalDateTime suspendedAt;
+
+    @Column(name = "suspension_reason", length = 500)
+    private String suspensionReason;
 
     @Builder
     private User(
@@ -97,7 +103,6 @@ public class User extends BaseEntity {
         this.heightCm = heightCm;
         this.profileImage = profileImage;
     }
-
     public void completeOnboarding(
             String nickname,
             LocalDate birthDate,
@@ -111,9 +116,19 @@ public class User extends BaseEntity {
         this.onboardingCompleted = true;
     }
 
+    public void changeRole(UserRole role) {
+        this.role = role;
+    }
 
-    // 3. 추가: Lombok 버전에 따라 자동 생성되는 이름이 다를 수 있어 명시적으로 isSuspended() 작성
-    public boolean isSuspended() {
-        return this.suspended;
+    public void suspend(String reason) {
+        this.suspended = true;
+        this.suspendedAt = LocalDateTime.now();
+        this.suspensionReason = reason;
+    }
+
+    public void releaseSuspension() {
+        this.suspended = false;
+        this.suspendedAt = null;
+        this.suspensionReason = null;
     }
 }

@@ -1,6 +1,6 @@
 package com.my.stevil_back.hospital.controller;
 
-import com.my.stevil_back.hospital.dto.HospitalResponse;
+import com.my.stevil_back.hospital.dto.response.HospitalResponse;
 import com.my.stevil_back.hospital.service.HospitalSearchService;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
