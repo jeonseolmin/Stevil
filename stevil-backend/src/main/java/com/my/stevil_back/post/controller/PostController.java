@@ -76,14 +76,14 @@ public class PostController {
     }
 
     // 5. 게시글 수정
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<String> updatePost(
             @PathVariable Long id,
             @ModelAttribute PostRequest postRequest,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal CustomUserDetails userDetails // 💡 수정됨
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        postService.updatePost(id, postRequest, file, userDetails.getUserId()); // 💡 수정됨
+        postService.updatePost(id, postRequest, file, userDetails.getUserId());
         return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
     }
 
@@ -91,9 +91,9 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails // 💡 수정됨
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        postService.deletePost(id, userDetails.getUserId()); // 💡 수정됨
+        postService.deletePost(id, userDetails.getUserId());
         return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
     }
 
@@ -101,9 +101,9 @@ public class PostController {
     @PostMapping("/{id}/like")
     public ResponseEntity<Boolean> toggleLike(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails // 💡 수정됨
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        boolean isNowLiked = postService.toggleLike(id, userDetails.getUserId()); // 💡 수정됨
+        boolean isNowLiked = postService.toggleLike(id, userDetails.getUserId());
         return ResponseEntity.ok(isNowLiked);
     }
 }

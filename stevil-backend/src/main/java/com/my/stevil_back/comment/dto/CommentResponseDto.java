@@ -15,7 +15,7 @@ public class CommentResponseDto {
 
     private Long id;
     private String content;
-    private String author;      // 💡 이 필드가 반드시 있어야 합니다!
+    private String author;
     private String authorEmail;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -28,7 +28,6 @@ public class CommentResponseDto {
                 .id(comment.getId())
                 .content(comment.getContent())
 
-                // 💡 핵심: DB에 저장된 닉네임(comment.getAuthor())을 DTO로 쏙 집어넣어 줍니다!
                 .author(comment.getAuthor() != null ? comment.getAuthor() : "익명")
                 .authorEmail(comment.getAuthorEmail())
 

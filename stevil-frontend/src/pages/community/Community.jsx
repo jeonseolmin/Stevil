@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Community.css';
-import axiosInstance from '../../api/axiosInstance'; 
+import axiosInstance from '../../api/axiosInstance.js';
 
 const Community = () => {
   const [viewMode, setViewMode] = useState('LIST'); 
@@ -245,7 +245,7 @@ const Community = () => {
               <span className={`ste-badge ${currentPost.category || '자유'}`}>{currentPost.category || '자유'}</span>
               <h2>{currentPost.title}</h2>
               <div className="ste-meta">
-                <span>{currentPost.author || '익명'}</span>
+                <span className="author">{currentPost.author || '익명'}</span>
                 <span className="dot">·</span>
                 <span>{currentPost.createdAt ? currentPost.createdAt.substring(0, 10) : ''}</span>
                 <span className="dot">·</span>
@@ -271,14 +271,15 @@ const Community = () => {
             <div className="ste-comment-area">
               <h3>댓글 ({comments.length})</h3>
               
-              <div className="ste-comment-input">
+              {/* 메인 댓글 입력창 */}
+              <div className="ste-comment-input-wrapper">
                 <textarea 
                   placeholder="따뜻한 댓글을 남겨주세요."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                 ></textarea>
-                <div className="footer-right">
-                  <button onClick={handleAddComment}>등록</button>
+                <div className="ste-comment-input-footer">
+                  <button className="ste-btn-primary small" onClick={handleAddComment}>등록</button>
                 </div>
               </div>
               
@@ -286,31 +287,36 @@ const Community = () => {
                 {comments.map(comment => {
                   const isReply = comment.parentId !== null;
                   return (
-                    <div key={comment.id} className={`ste-comment-item ${isReply ? 'reply' : ''}`}>
-                      <div className="comment-info">
-                        <span className="author">{isReply ? 'ㄴ ' : ''} {comment.author || '익명'}</span>
-                        <div className="comment-sub">
-                          <span className="date">{comment.createdAt}</span>
-                          <button onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
-                          {!isReply && (
-                            <button onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
-                              답글
-                            </button>
-                          )}
-                        </div>
+                    <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
+                      <div className="comment-header">
+                        <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
+                        <span className="date">{comment.createdAt}</span>
                       </div>
-                      <div className="text">{comment.content}</div>
+                      
+                      <div className="comment-body">
+                        {comment.content}
+                      </div>
 
+                      <div className="comment-actions">
+                        {!isReply && (
+                          <button className="action-btn" onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
+                            답글 달기
+                          </button>
+                        )}
+                        <button className="action-btn danger" onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
+                      </div>
+
+                      {/* 대댓글(답글) 입력창 */}
                       {replyingCommentId === comment.id && (
-                        <div className="ste-reply-input">
+                        <div className="ste-comment-input-wrapper reply-mode">
                           <textarea 
                             placeholder="답글을 남겨주세요."
                             value={replyContent}
                             onChange={(e) => setReplyContent(e.target.value)}
                           ></textarea>
-                          <div className="footer-right">
-                            <button className="sub" onClick={() => setReplyingCommentId(null)}>취소</button>
-                            <button onClick={() => handleAddReply(comment.id)}>답글 등록</button>
+                          <div className="ste-comment-input-footer">
+                            <button className="ste-btn-secondary small" onClick={() => setReplyingCommentId(null)}>취소</button>
+                            <button className="ste-btn-primary small" onClick={() => handleAddReply(comment.id)}>답글 등록</button>
                           </div>
                         </div>
                       )}

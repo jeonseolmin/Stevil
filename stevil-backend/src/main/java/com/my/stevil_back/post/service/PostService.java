@@ -31,17 +31,16 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
 
-    // 1. 게시글 작성 (MultipartFile 추가 및 첨부파일 저장 로직 병합)
+    // 1. 게시글 작성
     public void createPost(PostRequest postRequest, MultipartFile file, Long userId) {
 
-        // 💡 findByEmail 대신 findById를 사용합니다!
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
 
         if (user.isSuspended()) {
             throw new RuntimeException("활동이 정지된 계정입니다. 글을 작성할 수 없습니다.");
         }
-
+        
         Post post = Post.builder()
                 .category(postRequest.getCategory())
                 .title(postRequest.getTitle())
@@ -49,22 +48,15 @@ public class PostService {
                 .author(user.getNickname())
                 .authorEmail(user.getEmail())
                 .notice(postRequest.isNotice())
+                .user(user)
                 .build();
 
-        // 첨부 파일이 넘어왔다면 처리합니다.
+        // 첨부 파일 처리
         if (file != null && !file.isEmpty()) {
             try {
-                // OS(운영체제) 확인 후 저장 경로 자동 설정
                 String os = System.getProperty("os.name").toLowerCase();
-                String uploadDir;
+                String uploadDir = os.contains("win") ? "C:/uploads/" : "/home/ubuntu/uploads/";
 
-                if (os.contains("win")) {
-                    uploadDir = "C:/uploads/"; // 윈도우 환경 (로컬 테스트용)
-                } else {
-                    uploadDir = "/home/ubuntu/uploads/"; // 리눅스 환경 (EC2 배포용)
-                }
-
-                // 폴더가 없으면 자동으로 생성해주는 안전 장치
                 File dir = new File(uploadDir);
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -72,12 +64,9 @@ public class PostService {
 
                 String originalFilename = file.getOriginalFilename();
                 String savedFilename = UUID.randomUUID() + "_" + originalFilename;
-
-                // 물리적 파일 저장
                 File targetFile = new File(uploadDir + savedFilename);
                 file.transferTo(targetFile);
 
-                // 파일 기록(PostFile) 객체 생성
                 PostFile postFile = PostFile.builder()
                         .post(post)
                         .originalFileName(originalFilename)
@@ -86,15 +75,12 @@ public class PostService {
                         .fileSize(file.getSize())
                         .build();
 
-                // 게시글에 파일 기록 연결 (Post 엔티티에 addFile 메서드가 있어야 함!)
                 post.addFile(postFile);
-
             } catch (Exception e) {
                 throw new RuntimeException("파일 업로드 및 기록 실패", e);
             }
         }
 
-        // 게시글(과 연결된 첨부파일들)을 최종 저장합니다.
         postRepository.save(post);
     }
 
@@ -125,27 +111,28 @@ public class PostService {
 
     // 5. 게시글 수정
     @Transactional
-    public void updatePost(Long id, PostRequest postRequest, MultipartFile file, Long userId) { // 💡 String email -> Long userId
+    public void updatePost(Long id, PostRequest postRequest, MultipartFile file, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
 
-        // 작성자 본인인지 확인 (user 객체 비교)
-        if (!post.getUser().getId().equals(userId)) {
-            throw new RuntimeException("글을 수정할 권한이 없습니다.");
+        if (post.getUser() == null || !post.getUser().getId().equals(userId)) {
+            throw new RuntimeException("글을 수정할 권한이 없거나 정보가 누락된 게시글입니다.");
         }
 
-        // 1. 기본 텍스트 정보 업데이트
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
         post.setCategory(postRequest.getCategory());
 
-        // 2. 새로운 파일 교체 로직 (기존과 동일)
+        // 새로운 파일 교체 로직
         if (file != null && !file.isEmpty()) {
             try {
-                post.getFiles().clear();
+                if (post.getFiles() != null) {
+                    post.getFiles().clear();
+                }
+
                 String os = System.getProperty("os.name").toLowerCase();
                 String uploadDir = os.contains("win") ? "C:/uploads/" : "/home/ubuntu/uploads/";
 
@@ -157,7 +144,9 @@ public class PostService {
                 File targetFile = new File(uploadDir + savedFilename);
                 file.transferTo(targetFile);
 
+                // .post(post) 연관관계 누락 복구
                 PostFile postFile = PostFile.builder()
+                        .post(post)
                         .originalFileName(originalFilename)
                         .savedFileName(savedFilename)
                         .fileUrl("/api/uploads/" + savedFilename)
@@ -172,7 +161,7 @@ public class PostService {
     }
 
     // 6. 게시글 삭제
-    public void deletePost(Long id, Long userId) { // 💡 String email -> Long userId
+    public void deletePost(Long id, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
@@ -181,14 +170,14 @@ public class PostService {
 
         boolean isAdmin = String.valueOf(user.getRole()).equals("ROLE_ADMIN");
 
-        if (!isAdmin && !post.getUser().getId().equals(userId)) {
-            throw new RuntimeException("글을 삭제할 권한이 없습니다.");
+        if (!isAdmin && (post.getUser() == null || !post.getUser().getId().equals(userId))) {
+            throw new RuntimeException("글을 삭제할 권한이 없거나 정보가 누락된 게시글입니다.");
         }
 
         postRepository.delete(post);
     }
 
-    // 7. 기존 단방향 좋아요 처리 (사용 안 하시면 삭제하셔도 됩니다)
+    // 7. 기존 단방향 좋아요 처리
     public void likePost(Long id, String email) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -197,7 +186,7 @@ public class PostService {
 
     // 8. 좋아요 토글
     @Transactional
-    public boolean toggleLike(Long postId, Long userId) { // 💡 String email -> Long userId
+    public boolean toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
@@ -229,13 +218,11 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    // 카테고리별로 게시글을 불러오는 로직 추가
     public Page<PostResponse> getPostsByCategory(String category, Pageable pageable) {
         return postRepository.findByCategory(category,pageable)
                 .map(PostResponse::from);
     }
 
-    // 카테고리 및 검색 조건별 조회 로직 추가
     public Page<PostResponse> searchPosts(
             String category,
             String searchType,

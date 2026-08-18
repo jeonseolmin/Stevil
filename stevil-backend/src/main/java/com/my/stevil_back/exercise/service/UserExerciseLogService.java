@@ -79,9 +79,9 @@ public class UserExerciseLogService {
                 .map(entry -> new WeeklyChartResponse(entry.getKey(), entry.getValue()))
                 .sorted((a, b) -> a.getDate().compareTo(b.getDate()))
                 .collect(Collectors.toList());
-    } // 💡 기존 메서드는 여기서 딱 닫아줍니다.
+    } //  기존 메서드는 여기서 딱 닫아줍니다.
 
-    // 💡 3. 새로 추가한 상세 조회 메서드 (괄호 밖으로 꺼내고 logRepository로 이름 맞춤!)
+    // 3. 새로 추가한 상세 조회 메서드 (괄호 밖으로 꺼내고 logRepository로 이름 맞춤!)
     public List<ExerciseLogDetailResponse> getDetailedLogs(Long userId, LocalDate startDate, LocalDate endDate) {
         return logRepository.findDetailedLogs(userId, startDate, endDate);
     }

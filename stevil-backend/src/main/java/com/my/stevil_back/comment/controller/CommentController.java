@@ -31,9 +31,9 @@ public class CommentController {
     public ResponseEntity<String> addComment(
             @PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal CustomUserDetails userDetails // 💡 수정
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        // 💡 getName() 대신 getUserId() (또는 getId()) 사용
+        // getName() 대신 getUserId() (또는 getId()) 사용
         commentService.addComment(id, commentRequestDto, userDetails.getUserId());
         return ResponseEntity.ok("댓글이 성공적으로 작성되었습니다.");
     }
@@ -43,9 +43,8 @@ public class CommentController {
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal CustomUserDetails userDetails // 💡 수정
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        // 💡 userDetails.getUserId() 로 변경
         commentService.updateComment(postId, commentId, commentRequestDto, userDetails.getUserId());
         return ResponseEntity.ok("댓글이 성공적으로 수정되었습니다.");
     }

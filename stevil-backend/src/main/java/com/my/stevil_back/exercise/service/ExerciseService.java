@@ -18,7 +18,7 @@ public class ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final Map<Long, Integer> calorieCache = new ConcurrentHashMap<>();
 
-    // 1. 운동 소모 칼로리 계산 로직 (💡 Integer, Double 래퍼 클래스로 변경하여 Null 방지)
+    // 1. 운동 소모 칼로리 계산 로직 ( Integer, Double 래퍼 클래스로 변경하여 Null 방지)
     public int calculateCalories(Long exerciseId, int durationMinutes, Integer sets, Integer reps, Double weightKg, boolean isAerobic) {
 
         int caloriesPer10Min = calorieCache.computeIfAbsent(exerciseId, id ->

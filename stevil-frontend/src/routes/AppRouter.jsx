@@ -12,7 +12,11 @@ import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 import HospitalMapPage from "../pages/HospitalMapPage.jsx";
-import Community from "../components/community/Community.jsx";
+import Community from "../pages/community/Community.jsx";
+import CommunityList from "../pages/community/CommunityList.jsx";
+import CommunityDetail from "../pages/community/CommunityDetail.jsx";
+import CommunityWrite from "../pages/community/CommunityWrite.jsx";
+import CommunityEdit from "../pages/community/CommunityEdit.jsx";
 
 export default function AppRouter() {
     return (
@@ -25,8 +29,11 @@ export default function AppRouter() {
                 <Route path="/diet" element={<DietManagement />} />
                 <Route path="/diary" element={<InjectionDiary />} />
                 <Route path="/oauth-success" element={<OAuthSuccessPage />} />
-                <Route path="/hospitals" element={<HospitalMapPage />}/>
-                <Route path="/community" element={<Community />}/>
+                <Route path="/hospitals" element={<HospitalMapPage />}/>                
+                <Route path="/community" element={<CommunityList />} />
+                <Route path="/community/write" element={<CommunityWrite />} />
+                <Route path="/community/:id" element={<CommunityDetail />} />
+                <Route path="/community/edit/:id" element={<CommunityEdit />} />
 
             </Route>
 
