@@ -1,39 +1,104 @@
 package com.my.stevil_back.report.controller;
 
-import com.my.stevil_back.report.entity.Report;
+import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.report.dto.*;
+import com.my.stevil_back.report.dto.request.ReportDismissRequest;
+import com.my.stevil_back.report.dto.request.ReportResolveRequest;
+import com.my.stevil_back.report.dto.response.AdminReportResponse;
+import com.my.stevil_back.report.entity.*;
+import com.my.stevil_back.report.entity.enumType.ReportCategory;
+import com.my.stevil_back.report.entity.enumType.ReportStatus;
+import com.my.stevil_back.report.entity.enumType.ReportTargetType;
 import com.my.stevil_back.report.service.AdminReportService;
-import com.my.stevil_back.report.service.ReportService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/api/admin/reports")
 @RequiredArgsConstructor
 public class AdminReportController {
 
-    private final ReportService reportService;
     private final AdminReportService adminReportService;
 
-    // 관리자 전용 신고 내역 전체 조회 API
     @GetMapping
-    public ResponseEntity<List<Report>> getReportList() {
-        List<Report> reports = reportService.getAllReportsForAdmin();
-        return ResponseEntity.ok(reports);
+    public ResponseEntity<Page<AdminReportResponse>> getReports(
+            @RequestParam(required = false) ReportStatus status,
+            @RequestParam(required = false)
+            ReportTargetType targetType,
+            @RequestParam(required = false)
+            ReportCategory category,
+
+            @PageableDefault(
+                    size = 20,
+                    sort = "createdAt",
+                    direction = DESC
+            )
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(
+                adminReportService.getReports(
+                        status,
+                        targetType,
+                        category,
+                        pageable
+                )
+        );
     }
 
-    @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<String> deleteReportedPost(@PathVariable Long postId) {
-        adminReportService.deletePostByAdmin(postId);
-        return ResponseEntity.ok("신고된 게시글이 삭제되었습니다.");
+    @GetMapping("/{reportId}")
+    public ResponseEntity<AdminReportResponse> getReport(
+            @PathVariable Long reportId
+    ) {
+        return ResponseEntity.ok(
+                adminReportService.getReport(reportId)
+        );
     }
 
-    // 📢 2. 신고된 댓글 강제 삭제
-    @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<String> deleteReportedComment(@PathVariable Long commentId) {
-        adminReportService.deleteCommentByAdmin(commentId);
-        return ResponseEntity.ok("신고된 댓글이 삭제되었습니다.");
+    @PatchMapping("/{reportId}/review")
+    public ResponseEntity<AdminReportResponse> startReview(
+            @PathVariable Long reportId
+    ) {
+        return ResponseEntity.ok(
+                adminReportService.startReview(reportId)
+        );
+    }
+
+    @PatchMapping("/{reportId}/resolve")
+    public ResponseEntity<AdminReportResponse> resolve(
+            @AuthenticationPrincipal CustomUserDetails admin,
+            @PathVariable Long reportId,
+            @Valid @RequestBody ReportResolveRequest request
+    ) {
+        return ResponseEntity.ok(
+                adminReportService.resolve(
+                        admin.getUserId(),
+                        reportId,
+                        request.action(),
+                        request.adminNote()
+                )
+        );
+    }
+
+    @PatchMapping("/{reportId}/dismiss")
+    public ResponseEntity<AdminReportResponse> dismiss(
+            @AuthenticationPrincipal CustomUserDetails admin,
+            @PathVariable Long reportId,
+            @Valid @RequestBody ReportDismissRequest request
+    ) {
+        return ResponseEntity.ok(
+                adminReportService.dismiss(
+                        admin.getUserId(),
+                        reportId,
+                        request.adminNote()
+                )
+        );
     }
 }

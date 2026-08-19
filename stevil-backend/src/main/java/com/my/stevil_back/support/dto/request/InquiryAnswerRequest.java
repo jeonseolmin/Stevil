@@ -1,4 +1,4 @@
-package com.my.stevil_back.support.dto.requset;
+package com.my.stevil_back.support.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
