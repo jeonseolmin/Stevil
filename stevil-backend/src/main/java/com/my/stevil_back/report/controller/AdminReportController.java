@@ -1,7 +1,8 @@
 package com.my.stevil_back.report.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.report.dto.*;
+import com.my.stevil_back.report.dto.request.*;
+import com.my.stevil_back.report.dto.response.*;
 import com.my.stevil_back.report.dto.request.ReportDismissRequest;
 import com.my.stevil_back.report.dto.request.ReportResolveRequest;
 import com.my.stevil_back.report.dto.response.AdminReportResponse;
