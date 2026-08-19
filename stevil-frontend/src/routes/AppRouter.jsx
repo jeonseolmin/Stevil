@@ -12,11 +12,15 @@ import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 import HospitalMapPage from "../pages/HospitalMapPage.jsx";
-import Community from "../pages/community/Community.jsx";
 import CommunityList from "../pages/community/CommunityList.jsx";
 import CommunityDetail from "../pages/community/CommunityDetail.jsx";
 import CommunityWrite from "../pages/community/CommunityWrite.jsx";
 import CommunityEdit from "../pages/community/CommunityEdit.jsx";
+import AdminReportsPage from "../pages/admin/AdminReportsPage.jsx";
+import AdminLayout from "../components/layout/admin/AdminLayout.jsx";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage.jsx";
+import WeightRecordPage from "../pages/weight/WeightRecordPage.jsx";
+
 
 export default function AppRouter() {
     return (
@@ -34,12 +38,17 @@ export default function AppRouter() {
                 <Route path="/community/write" element={<CommunityWrite />} />
                 <Route path="/community/:id" element={<CommunityDetail />} />
                 <Route path="/community/edit/:id" element={<CommunityEdit />} />
-
+                <Route path="/weight" element={<WeightRecordPage />}/>
             </Route>
 
             {/* 인증 전용 화면 */}
             <Route element={<AuthLayout />}>
                 <Route path="/login" element={<LoginPage />} />
+            </Route>
+
+            <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="reports" element={<AdminReportsPage />}/>
             </Route>
 
             {/* 최초 로그인 후 추가 정보 입력 */}

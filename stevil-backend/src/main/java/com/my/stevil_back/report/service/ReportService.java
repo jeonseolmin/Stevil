@@ -1,13 +1,13 @@
 package com.my.stevil_back.report.service;
 
-import com.my.stevil_back.report.dto.ReportRequestDto;
+import com.my.stevil_back.report.dto.request.ReportRequestDto;
 import com.my.stevil_back.report.entity.Report;
+import com.my.stevil_back.report.entity.enumType.ReportStatus;
 import com.my.stevil_back.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +37,7 @@ public class ReportService {
                 .targetId(requestDto.getTargetId())
                 .category(requestDto.getCategory())
                 .reason(requestDto.getReason())
+                .status(ReportStatus.PENDING)
                 .build();
 
         reportRepository.save(report);
@@ -44,8 +45,4 @@ public class ReportService {
         return "신고가 정상적으로 접수되었습니다.";
     }
 
-    @Transactional(readOnly = true)
-    public List<Report> getAllReportsForAdmin() {
-        return reportRepository.findAllByOrderByCreatedAtDesc();
-    }
 }

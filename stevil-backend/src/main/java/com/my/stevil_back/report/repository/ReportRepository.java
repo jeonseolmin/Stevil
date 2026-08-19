@@ -1,21 +1,39 @@
 package com.my.stevil_back.report.repository;
 
-import com.my.stevil_back.report.entity.Report;
-import com.my.stevil_back.report.entity.ReportTargetType;
+import com.my.stevil_back.report.entity.*;
+import com.my.stevil_back.report.entity.enumType.ReportCategory;
+import com.my.stevil_back.report.entity.enumType.ReportStatus;
+import com.my.stevil_back.report.entity.enumType.ReportTargetType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+public interface ReportRepository
+        extends JpaRepository<Report, Long> {
 
-public interface ReportRepository extends JpaRepository<Report, Long> {
-
-    // 특정 사용자가 특정 대상(게시글/댓글)을 이미 신고했는지 확인하는 메서드 (중복 신고 차단용)
     boolean existsByReporterEmailAndTargetTypeAndTargetId(
             String reporterEmail,
             ReportTargetType targetType,
             Long targetId
     );
 
-    List<Report> findAllByOrderByCreatedAtDesc();
+    @Query("""
+            SELECT r
+            FROM Report r
+            WHERE (:status IS NULL OR r.status = :status)
+              AND (:targetType IS NULL
+                   OR r.targetType = :targetType)
+              AND (:category IS NULL
+                   OR r.category = :category)
+            """)
+    Page<Report> searchForAdmin(
+            @Param("status") ReportStatus status,
+            @Param("targetType") ReportTargetType targetType,
+            @Param("category") ReportCategory category,
+            Pageable pageable
+    );
 
-    void deleteByTargetTypeAndTargetId(ReportTargetType targetType, Long targetId);
+    long countByStatus(ReportStatus status);
 }

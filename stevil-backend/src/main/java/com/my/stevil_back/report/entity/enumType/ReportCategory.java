@@ -1,4 +1,4 @@
-package com.my.stevil_back.report.entity;
+package com.my.stevil_back.report.entity.enumType;
 
 public enum ReportCategory {
     SPAM,

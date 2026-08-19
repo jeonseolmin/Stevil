@@ -3,7 +3,7 @@ package com.my.stevil_back.admin.controller;
 import com.my.stevil_back.admin.service.AdminInquiryService;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.support.dto.response.AdminInquiryResponse;
-import com.my.stevil_back.support.dto.requset.InquiryAnswerRequest;
+import com.my.stevil_back.support.dto.request.InquiryAnswerRequest;
 import com.my.stevil_back.support.entity.enumType.InquiryCategory;
 import com.my.stevil_back.support.entity.enumType.InquiryStatus;
 import jakarta.validation.Valid;
