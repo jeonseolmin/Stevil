@@ -132,6 +132,20 @@ export default function Header() {
                     }`}
                     aria-label="주요 메뉴"
                 >
+                    {isLoggedIn && (
+                        <Link
+                            to="/hospitals"
+                            onClick={closeMenu}
+                            className={
+                                location.pathname === "/hospitals"
+                                    ? "header-navigation-link--active"
+                                    : ""
+                            }
+                        >
+                            병원 찾기
+                        </Link>
+                    )}
+
                     <a
                         href="/#features"
                         onClick={closeMenu}
@@ -151,6 +165,13 @@ export default function Header() {
                         onClick={closeMenu}
                     >
                         안심 안내
+                    </a>
+
+                    <a
+                        href="/community"
+                        onClick={closeMenu}
+                    >
+                        커뮤니티
                     </a>
 
                     <div className="mobile-header-actions">

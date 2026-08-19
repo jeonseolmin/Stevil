@@ -45,7 +45,7 @@ public class ExerciseController {
         private boolean isAerobic;
     }
 
-    // 💡 2. Map 대신 DTO를 사용하여 바뀐 서비스 파라미터에 맞게 값을 넘겨줌
+    // 2. Map 대신 DTO를 사용하여 바뀐 서비스 파라미터에 맞게 값을 넘겨줌
     @PostMapping("/{id}/calculate-calories")
     public ResponseEntity<Map<String, Integer>> calculateCalories(
             @PathVariable Long id,

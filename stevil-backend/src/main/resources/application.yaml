@@ -15,5 +15,11 @@ spring:
       hibernate:
         format_sql: true
 
+naver:
+  search:
+    client-id: ${NAVER_API_HUB_CLIENT_ID:}
+    client-secret: ${NAVER_API_HUB_CLIENT_SECRET:}
+    base-url: https://naverapihub.apigw.ntruss.com
+
 server:
   port: ${SERVER_PORT:8080}

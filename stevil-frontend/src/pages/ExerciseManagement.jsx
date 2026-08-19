@@ -52,7 +52,7 @@ const ExerciseManagement = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await axiosInstance.get('/users/1'); 
+      const response = await axiosInstance.get('/users/me');
       setCurrentWeight(response.data.weight || 0);
       setTargetWeight(response.data.targetWeight || 0);
     } catch (error) {
@@ -64,7 +64,6 @@ const ExerciseManagement = () => {
 
   const fetchStats = async () => {
     try {
-      const userId = 1;
       const today = new Date();
       const startDay = new Date(today);
       startDay.setDate(today.getDate() - 30); 
@@ -73,7 +72,7 @@ const ExerciseManagement = () => {
       const startDate = startDay.toISOString().split('T')[0];
 
       const response = await axiosInstance.get('/exercise-logs/details', {
-        params: { userId, startDate, endDate }
+        params: { startDate, endDate } 
       });
       setExerciseStats(response.data); 
     } catch (error) {
@@ -85,7 +84,7 @@ const ExerciseManagement = () => {
   const handleSearch = async () => {
     if (!keyword.trim()) return;
     try {
-      const response = await axiosInstance.get(`http://localhost:8080/api/exercises/search?keyword=${keyword}`);
+      const response = await axiosInstance.get(`/exercises/search?keyword=${keyword}`);
       setSearchResults(response.data);
     } catch (error) {
       console.error("검색 실패:", error);
@@ -98,7 +97,6 @@ const ExerciseManagement = () => {
 
     try {
       const recordData = {
-        userId: 1,
         exerciseId: selectedExercise.id,
         exerciseDate: exerciseDate,
         durationMinutes: parseInt(duration),
@@ -114,7 +112,7 @@ const ExerciseManagement = () => {
         inbodyFat: inbodyFat ? parseFloat(inbodyFat) : null,
       };
 
-      await axiosInstance.post('http://localhost:8080/api/exercise-logs', recordData);
+      await axiosInstance.post('/exercise-logs', recordData);
       alert('운동 및 인바디 기록이 성공적으로 저장되었습니다!');
       
       setSelectedExercise(null);

@@ -52,6 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+        if (user.isSuspended()) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(
+                    "{\"message\":\"정지된 계정입니다.\"}"
+            );
+            return;
+        }
 
         CustomUserDetails userDetails =
                 new CustomUserDetails(user);

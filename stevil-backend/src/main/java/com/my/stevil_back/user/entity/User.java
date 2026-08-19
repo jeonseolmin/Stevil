@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,15 @@ public class User extends BaseEntity {
     @Column(name = "onboarding_completed", nullable = false)
     private boolean onboardingCompleted = false;
 
+    @Column(name = "is_suspended", nullable = false)
+    private boolean suspended = false;
+
+    @Column(name = "suspended_at")
+    private LocalDateTime suspendedAt;
+
+    @Column(name = "suspension_reason", length = 500)
+    private String suspensionReason;
+
     @Builder
     private User(
             String email,
@@ -104,5 +114,21 @@ public class User extends BaseEntity {
         this.sex = sex;
         this.heightCm = heightCm;
         this.onboardingCompleted = true;
+    }
+
+    public void changeRole(UserRole role) {
+        this.role = role;
+    }
+
+    public void suspend(String reason) {
+        this.suspended = true;
+        this.suspendedAt = LocalDateTime.now();
+        this.suspensionReason = reason;
+    }
+
+    public void releaseSuspension() {
+        this.suspended = false;
+        this.suspendedAt = null;
+        this.suspensionReason = null;
     }
 }
