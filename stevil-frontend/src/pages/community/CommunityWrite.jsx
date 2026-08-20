@@ -20,6 +20,11 @@ const CommunityWrite = () => {
   const [allowCopy, setAllowCopy] = useState(true);
   const [autoSource, setAutoSource] = useState(true);
 
+  const [showVote, setShowVote] = useState(false);
+  const [voteTitle, setVoteTitle] = useState('');
+  const [voteOptions, setVoteOptions] = useState(['', '']);
+  const [allowMultipleVote, setAllowMultipleVote] = useState(false);
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
@@ -61,6 +66,20 @@ const CommunityWrite = () => {
     }
   };
 
+  const handleAddVoteOption = () => {
+    setVoteOptions([...voteOptions, '']);
+  };
+
+  const handleRemoveVoteOption = (index) => {
+    setVoteOptions(voteOptions.filter((_, i) => i !== index));
+  };
+
+  const handleVoteOptionChange = (index, value) => {
+    const newOptions = [...voteOptions];
+    newOptions[index] = value;
+    setVoteOptions(newOptions);
+  };
+
   const handleSavePost = async () => {
     if (!title.trim() || !content.trim()) return alert("제목과 내용을 입력해주세요.");
 
@@ -76,6 +95,16 @@ const CommunityWrite = () => {
       formData.append('allowCopy', allowCopy);
       formData.append('autoSource', autoSource);
       formData.append('externalLink', externalLink);
+      
+      if (showVote) {
+        if (!voteTitle.trim()) return alert("투표 제목을 입력해주세요.");
+        const validOptions = voteOptions.filter(opt => opt.trim() !== '');
+        if (validOptions.length < 2) return alert("투표 항목은 최소 2개 이상 입력해야 합니다.");
+
+        formData.append('voteTitle', voteTitle);
+        formData.append('allowMultipleVote', allowMultipleVote);
+        validOptions.forEach(opt => formData.append('voteOptions', opt));
+      }
       
       if (selectedFile) {
         formData.append('file', selectedFile);
@@ -133,10 +162,10 @@ const CommunityWrite = () => {
 
           {/* 링크 입력 구역 */}
           <div className="ste-form-group">
-            <label>🔗 외부 링크 첨부</label>
+            <label>링크 첨부</label>
             <input 
               type="text" 
-              placeholder="http:// 또는 https:// 로 시작하는 링크를 입력하세요." 
+              placeholder="http:// 또는 https://로 시작하는 링크를 입력하세요." 
               value={externalLink}
               onChange={(e) => setExternalLink(e.target.value)}
             />
@@ -174,6 +203,56 @@ const CommunityWrite = () => {
                 /> 자동 출처 남기기
               </label>              
             </div>
+          </div>
+
+          <div className="ste-form-group" style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: showVote ? '15px' : '0' }}>
+              <label style={{ margin: 0, fontWeight: 'bold', fontSize: '16px' }}>투표 기능</label>
+              <button className={`ste-btn-${showVote ? 'secondary' : 'primary'} small`} onClick={() => setShowVote(!showVote)}>
+                {showVote ? '투표 취소' : '투표 추가하기'}
+              </button>
+            </div>
+
+            {showVote && (
+              <div className="ste-vote-setup">
+                <input 
+                  type="text" 
+                  placeholder="투표 제목을 입력하세요 (예: 오늘 점심 뭐 먹을까요?)" 
+                  value={voteTitle} 
+                  onChange={(e) => setVoteTitle(e.target.value)} 
+                  style={{ marginBottom: '15px', fontWeight: 'bold' }} 
+                />
+                
+                {voteOptions.map((opt, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                    <input 
+                      type="text" 
+                      placeholder={`항목 ${idx + 1}`} 
+                      value={opt} 
+                      onChange={(e) => handleVoteOptionChange(idx, e.target.value)} 
+                      style={{ flex: 1 }}
+                    />
+                    {voteOptions.length > 2 && (
+                      <button className="ste-btn-danger small" onClick={() => handleRemoveVoteOption(idx)}>삭제</button>
+                    )}
+                  </div>
+                ))}
+                
+                <button className="ste-text-btn" onClick={handleAddVoteOption} style={{ marginTop: '5px', color: '#0ea5e9' }}>+ 항목 추가</button>
+
+                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px dashed #cbd5e1' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '14px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={allowMultipleVote} 
+                      onChange={(e) => setAllowMultipleVote(e.target.checked)} 
+                      style={{ width: '16px', height: '16px', margin: 0 }}
+                    /> 
+                    복수 선택 허용
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 기존 드래그 앤 드롭 UI 유지 */}

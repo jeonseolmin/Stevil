@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,5 +18,8 @@ public class PostRequest {
     private boolean allowCopy;
     private boolean autoSource;
     private String externalLink;
+    private String voteTitle;
+    private List<String> voteOptions;
+    private boolean allowMultipleVote;
 }
 

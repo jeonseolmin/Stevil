@@ -75,4 +75,6 @@ public class Post extends BaseEntity {
     @Column(length = 500)
     private String externalLink;
 
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private PostVote postVote;
 }

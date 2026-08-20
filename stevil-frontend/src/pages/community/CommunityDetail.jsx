@@ -18,9 +18,13 @@ const CommunityDetail = () => {
   const [reportTargetId, setReportTargetId] = useState(null);
   const [reportReason, setReportReason] = useState('');
 
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [hasVoted, setHasVoted] = useState(false);
+
   useEffect(() => {
     fetchPostDetail();
     fetchComments();
+    fetchVoteStatus();
   }, [id]);
 
   const fetchPostDetail = async () => {
@@ -129,7 +133,48 @@ const CommunityDetail = () => {
     }
   };
 
-  // 복사/자동 출처 관리 핸들러
+  const handleVoteOptionSelect = (optionId) => {
+    if (!currentPost.vote.allowMultiple) {
+      setSelectedOptions([optionId]);
+    } else {
+      if (selectedOptions.includes(optionId)) {
+        setSelectedOptions(selectedOptions.filter(id => id !== optionId));
+      } else {
+        setSelectedOptions([...selectedOptions, optionId]);
+      }
+    }
+  };
+
+  const fetchVoteStatus = async () => {
+    try {
+      const response = await axiosInstance.get(`/community/${id}/vote/check`);
+      const votedIds = response.data;
+      
+      // 백엔드에서 내가 고른 항목 ID들을 배열로 보내줬다면?
+      if (votedIds && votedIds.length > 0) {
+        setHasVoted(true);           // 이미 투표함 상태로 변경 -> 즉시 결과창(퍼센트) 뜸!
+        setSelectedOptions(votedIds); // 내가 투표했던 항목 파란색 굵은 글씨로 고정
+      }
+    } catch (error) {
+      console.error("투표 상태 확인 실패", error);
+    }
+  };
+  
+  // 투표 제출 핸들러 (fetchVoteStatus 연동)
+  const handleSubmitVote = async () => {
+    if (selectedOptions.length === 0) return alert("투표할 항목을 선택해주세요.");
+    try {
+      await axiosInstance.post(`/community/${id}/vote`, { optionIds: selectedOptions });
+      alert("투표가 완료되었습니다.");
+      
+      // 투표 완료 후 새로고침 없이 즉시 결과 반영
+      fetchPostDetail(); 
+      fetchVoteStatus(); // 투표했으니 상태 다시 가져와서 결과창으로 전환!
+    } catch (error) {
+      alert(error.response?.data || "투표 처리 중 오류가 발생했습니다.");
+    }
+  };
+
   const handleCopy = (e) => {
     if (currentPost.allowCopy === false) {
       e.preventDefault();
@@ -137,7 +182,6 @@ const CommunityDetail = () => {
       return;
     }
     
-    // 자동 출처 기능이 켜져 있을 때 클립보드 데이터 수정
     if (currentPost.autoSource) {
       const selection = document.getSelection();
       if (selection.toString().length > 0) {
@@ -174,7 +218,6 @@ const CommunityDetail = () => {
             </div>
           </div>
           
-          {/* 복사 방지 CSS(user-select) 및 우클릭(onContextMenu), 복사(onCopy) 제어 적용 */}
           <div 
             className="ste-body"
             style={currentPost.allowCopy === false ? { userSelect: 'none' } : {}}
@@ -184,7 +227,6 @@ const CommunityDetail = () => {
             {currentPost.content}
           </div>
 
-          {/* 외부 링크가 있을 경우 렌더링 */}
           {currentPost.externalLink && (
             <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
               <span style={{ marginRight: '10px' }}><strong>링크 :</strong></span>
@@ -199,7 +241,68 @@ const CommunityDetail = () => {
             </div>
           )}
 
-          {/* 파일 다운로드 및 이미지 렌더링 영역 */}
+          {currentPost.vote && (
+            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: '#fff', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                 {currentPost.vote.title}
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>
+                {currentPost.vote.allowMultiple ? '다중 선택 가능' : '단일 선택'}
+              </p>
+
+              <div className="ste-vote-options" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {currentPost.vote.options.map(option => {
+                  const totalVotes = currentPost.vote.options.reduce((sum, opt) => sum + opt.voteCount, 0);
+                  const percent = totalVotes === 0 ? 0 : Math.round((option.voteCount / totalVotes) * 100);
+                  
+                  return (
+                    <div 
+                      key={option.id} 
+                      onClick={() => !hasVoted && handleVoteOptionSelect(option.id)}
+                      style={{ 
+                        position: 'relative', padding: '12px 16px', borderRadius: '8px', 
+                        border: selectedOptions.includes(option.id) ? '2px solid #0ea5e9' : '1px solid #cbd5e1',
+                        cursor: hasVoted ? 'default' : 'pointer', overflow: 'hidden',
+                        background: selectedOptions.includes(option.id) ? '#f0f9ff' : '#fff',
+                      }}
+                    >
+                      {hasVoted && (
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: '#e0f2fe', zIndex: 1, transition: 'width 0.5s ease' }}></div>
+                      )}
+                      
+                      <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {!hasVoted && (
+                            <input 
+                              type={currentPost.vote.allowMultiple ? "checkbox" : "radio"} 
+                              checked={selectedOptions.includes(option.id)}
+                              readOnly
+                              style={{ width: '16px', height: '16px', margin: 0 }}
+                            />
+                          )}
+                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? 'bold' : 'normal' }}>
+                            {option.content}
+                          </span>
+                        </div>
+                        {hasVoted && (
+                          <span style={{ fontSize: '14px', color: '#0ea5e9', fontWeight: 'bold' }}>
+                            {percent}% ({option.voteCount}명)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!hasVoted && (
+                <button className="ste-btn-primary" onClick={handleSubmitVote} style={{ width: '100%', marginTop: '20px', padding: '12px' }}>
+                  투표하기
+                </button>
+              )}
+            </div>
+          )}
+
           {currentPost.files && currentPost.files.length > 0 && (
             <div className="ste-post-files">
               {currentPost.files.map((file, idx) => {
@@ -231,13 +334,12 @@ const CommunityDetail = () => {
             </div>
           )}
 
-          <div className="ste-like-zone">
+          <div className="ste-like-zone" style={{ margin: '40px 0', textAlign: 'center' }}>
             <button className="ste-like-btn" onClick={handleToggleLike}>
               공감하기 ({currentPost.likeCount || 0})
             </button>
           </div>
 
-          {/* allowComment가 false가 아닐 때(허용일 때)만 댓글 영역 렌더링 */}
           {currentPost.allowComment !== false && (
             <div className="ste-comment-area">
               <h3>댓글 ({comments.length})</h3>
@@ -302,7 +404,6 @@ const CommunityDetail = () => {
         </div>
       </div>
       
-      {/* 신고 모달 창 */}
       {isReportModalOpen && (
         <div className="ste-modal-bg">
           <div className="ste-modal-box">

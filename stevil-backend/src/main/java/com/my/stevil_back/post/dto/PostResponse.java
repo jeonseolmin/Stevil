@@ -36,12 +36,55 @@ public class PostResponse {
 
     private List<FileResponse> files;
 
+    private PostVoteDto vote;
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FileResponse {
         private String originalFileName;
         private String fileUrl;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostVoteDto {
+        private Long id;
+        private String title;
+        private boolean allowMultiple;
+        private List<VoteOptionDto> options;
+
+        public static PostVoteDto from(com.my.stevil_back.post.entity.PostVote postVote) {
+            return PostVoteDto.builder()
+                    .id(postVote.getId())
+                    .title(postVote.getTitle())
+                    .allowMultiple(postVote.isAllowMultiple())
+                    .options(postVote.getOptions().stream()
+                            .map(VoteOptionDto::from)
+                            .collect(Collectors.toList()))
+                    .build();
+        }
+    }
+
+    // 투표 항목 DTO
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VoteOptionDto {
+        private Long id;
+        private String content;
+        private int voteCount;
+
+        public static VoteOptionDto from(com.my.stevil_back.post.entity.VoteOption option) {
+            return VoteOptionDto.builder()
+                    .id(option.getId())
+                    .content(option.getContent())
+                    .voteCount(option.getVoteCount())
+                    .build();
+        }
     }
 
     public static PostResponse from(Post post) {
@@ -64,6 +107,7 @@ public class PostResponse {
                 .allowCopy(post.isAllowCopy())
                 .autoSource(post.isAutoSource())
                 .externalLink(post.getExternalLink())
+                .vote(post.getPostVote() != null ? PostVoteDto.from(post.getPostVote()) : null)
                 .build();
     }
 }
