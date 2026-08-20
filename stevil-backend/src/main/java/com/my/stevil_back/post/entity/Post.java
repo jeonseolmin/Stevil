@@ -62,4 +62,17 @@ public class Post extends BaseEntity {
         this.files.add(postFile);
         postFile.setPost(this);
     }
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean allowComment = true;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean allowCopy = true;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean autoSource = true;
+
+    @Column(length = 500)
+    private String externalLink;
+
 }

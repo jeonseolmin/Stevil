@@ -40,7 +40,7 @@ public class PostService {
         if (user.isSuspended()) {
             throw new RuntimeException("활동이 정지된 계정입니다. 글을 작성할 수 없습니다.");
         }
-        
+
         Post post = Post.builder()
                 .category(postRequest.getCategory())
                 .title(postRequest.getTitle())
@@ -48,6 +48,10 @@ public class PostService {
                 .author(user.getNickname())
                 .authorEmail(user.getEmail())
                 .notice(postRequest.isNotice())
+                .allowComment(postRequest.isAllowComment())
+                .allowCopy(postRequest.isAllowCopy())
+                .autoSource(postRequest.isAutoSource())
+                .externalLink(postRequest.getExternalLink())
                 .user(user)
                 .build();
 
@@ -125,6 +129,10 @@ public class PostService {
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
         post.setCategory(postRequest.getCategory());
+        post.setAllowComment(postRequest.isAllowComment());
+        post.setAllowCopy(postRequest.isAllowCopy());
+        post.setAutoSource(postRequest.isAutoSource());
+        post.setExternalLink(postRequest.getExternalLink());
 
         // 새로운 파일 교체 로직
         if (file != null && !file.isEmpty()) {

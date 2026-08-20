@@ -14,6 +14,12 @@ const CommunityWrite = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // 링크 및 게시글 설정 옵션
+  const [externalLink, setExternalLink] = useState('');
+  const [allowComment, setAllowComment] = useState(true);
+  const [allowCopy, setAllowCopy] = useState(true);
+  const [autoSource, setAutoSource] = useState(true);
+
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
@@ -43,7 +49,6 @@ const CommunityWrite = () => {
     e.stopPropagation();
     setIsDragging(false);
     
-    // 드롭된 파일 가져오기
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setSelectedFile(e.dataTransfer.files[0]);
     }
@@ -65,6 +70,12 @@ const CommunityWrite = () => {
       formData.append('content', content);
       formData.append('category', writeCategory);
       formData.append('isNotice', false);
+      
+      // 백엔드로 설정값 전송
+      formData.append('allowComment', allowComment);
+      formData.append('allowCopy', allowCopy);
+      formData.append('autoSource', autoSource);
+      formData.append('externalLink', externalLink);
       
       if (selectedFile) {
         formData.append('file', selectedFile);
@@ -119,7 +130,53 @@ const CommunityWrite = () => {
               onChange={(e) => setContent(e.target.value)}
             ></textarea>
           </div>
-          {/* 드래그 앤 드롭 UI 적용 구역 */}
+
+          {/* 링크 입력 구역 */}
+          <div className="ste-form-group">
+            <label>🔗 외부 링크 첨부</label>
+            <input 
+              type="text" 
+              placeholder="http:// 또는 https:// 로 시작하는 링크를 입력하세요." 
+              value={externalLink}
+              onChange={(e) => setExternalLink(e.target.value)}
+            />
+          </div>
+
+          {/* 게시글 설정 체크박스 구역 */}
+          <div className="ste-form-group">
+            <label>게시글 부가 설정</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', padding: '10px 0' }}>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '15px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={allowComment} 
+                  onChange={(e) => setAllowComment(e.target.checked)} 
+                  style={{ width: '18px', height: '18px', margin: 0 }}
+                /> 댓글 허용
+              </label>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '15px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={allowCopy} 
+                  onChange={(e) => setAllowCopy(e.target.checked)} 
+                  style={{ width: '18px', height: '18px', margin: 0 }}
+                /> 복사/저장 허용
+              </label>
+              
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '15px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={autoSource} 
+                  onChange={(e) => setAutoSource(e.target.checked)} 
+                  style={{ width: '18px', height: '18px', margin: 0 }}
+                /> 자동 출처 남기기
+              </label>              
+            </div>
+          </div>
+
+          {/* 기존 드래그 앤 드롭 UI 유지 */}
           <div className="ste-form-group">
             <label>첨부파일</label>
             <div 
@@ -147,6 +204,7 @@ const CommunityWrite = () => {
               )}
             </div>
           </div>
+          
           <div className="ste-form-actions">
             <button className="ste-btn-secondary" onClick={() => navigate('/community')}>취소</button>
             <button className="ste-btn-primary" onClick={handleSavePost}>등록하기</button>

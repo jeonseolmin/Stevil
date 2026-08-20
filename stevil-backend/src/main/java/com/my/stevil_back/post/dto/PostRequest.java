@@ -12,5 +12,9 @@ public class PostRequest {
     private String title;
     private String content;
     private boolean notice;
+    private boolean allowComment;
+    private boolean allowCopy;
+    private boolean autoSource;
+    private String externalLink;
 }
 

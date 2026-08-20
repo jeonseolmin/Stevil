@@ -19,6 +19,10 @@ public class PostResponse {
     private String category;
     private String title;
     private String content;
+    private boolean allowComment;
+    private boolean allowCopy;
+    private boolean autoSource;
+    private String externalLink;
 
     private String author;
     private String authorEmail;
@@ -56,6 +60,10 @@ public class PostResponse {
                 .files(post.getFiles() != null ? post.getFiles().stream()
                                                  .map(file -> new FileResponse(file.getOriginalFileName(), file.getFileUrl()))
                                                  .collect(Collectors.toList()) : null)
+                .allowComment(post.isAllowComment())
+                .allowCopy(post.isAllowCopy())
+                .autoSource(post.isAutoSource())
+                .externalLink(post.getExternalLink())
                 .build();
     }
 }

@@ -129,6 +129,25 @@ const CommunityDetail = () => {
     }
   };
 
+  // 복사/자동 출처 관리 핸들러
+  const handleCopy = (e) => {
+    if (currentPost.allowCopy === false) {
+      e.preventDefault();
+      alert("이 게시글은 작성자에 의해 복사가 금지되어 있습니다.");
+      return;
+    }
+    
+    // 자동 출처 기능이 켜져 있을 때 클립보드 데이터 수정
+    if (currentPost.autoSource) {
+      const selection = document.getSelection();
+      if (selection.toString().length > 0) {
+        e.preventDefault();
+        const sourceText = `\n\n출처: Stevil 커뮤니티 - ${window.location.href}`;
+        e.clipboardData.setData('text/plain', selection.toString() + sourceText);
+      }
+    }
+  };
+
   if (!currentPost) return <div className="ste-community-wrapper">로딩중...</div>;
 
   return (
@@ -155,22 +174,40 @@ const CommunityDetail = () => {
             </div>
           </div>
           
-          <div className="ste-body">
+          {/* 복사 방지 CSS(user-select) 및 우클릭(onContextMenu), 복사(onCopy) 제어 적용 */}
+          <div 
+            className="ste-body"
+            style={currentPost.allowCopy === false ? { userSelect: 'none' } : {}}
+            onContextMenu={currentPost.allowCopy === false ? (e) => e.preventDefault() : undefined}
+            onCopy={handleCopy}
+          >
             {currentPost.content}
           </div>
+
+          {/* 외부 링크가 있을 경우 렌더링 */}
+          {currentPost.externalLink && (
+            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <span style={{ marginRight: '10px' }}><strong>링크 :</strong></span>
+              <a 
+                href={currentPost.externalLink.startsWith('http') ? currentPost.externalLink : `https://${currentPost.externalLink}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ color: '#0ea5e9', textDecoration: 'underline', wordBreak: 'break-all' }}
+              >
+                {currentPost.externalLink}
+              </a>
+            </div>
+          )}
 
           {/* 파일 다운로드 및 이미지 렌더링 영역 */}
           {currentPost.files && currentPost.files.length > 0 && (
             <div className="ste-post-files">
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
-                // 스프링부트 백엔드 주소 (포트에 맞게 확인)
                 const fileDownloadUrl = `http://localhost:8080${file.fileUrl}`; 
                 
                 return (
                   <div key={idx} className="ste-file-item" style={{ marginBottom: '20px' }}>
-                    
-                    {/* 1. 이미지일 경우 먼저 사진을 보여줌 */}
                     {isImage && (
                       <div style={{ marginBottom: '10px' }}>
                         <img 
@@ -181,8 +218,6 @@ const CommunityDetail = () => {
                         />
                       </div>
                     )}
-
-                    {/* 2. 이미지 여부와 상관없이 모든 파일에 대해 다운로드 버튼 노출 */}
                     <button 
                       onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
                       className="ste-file-link"
@@ -190,7 +225,6 @@ const CommunityDetail = () => {
                     >
                       첨부파일 다운로드: {file.originalFileName}
                     </button>
-                    
                   </div>
                 );
               })}
@@ -203,61 +237,64 @@ const CommunityDetail = () => {
             </button>
           </div>
 
-          <div className="ste-comment-area">
-            <h3>댓글 ({comments.length})</h3>
-            
-            <div className="ste-comment-input-wrapper">
-              <textarea 
-                placeholder="따뜻한 댓글을 남겨주세요."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              ></textarea>
-              <div className="ste-comment-input-footer">
-                <button className="ste-btn-primary small" onClick={handleAddComment}>등록</button>
+          {/* allowComment가 false가 아닐 때(허용일 때)만 댓글 영역 렌더링 */}
+          {currentPost.allowComment !== false && (
+            <div className="ste-comment-area">
+              <h3>댓글 ({comments.length})</h3>
+              
+              <div className="ste-comment-input-wrapper">
+                <textarea 
+                  placeholder="따뜻한 댓글을 남겨주세요."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                ></textarea>
+                <div className="ste-comment-input-footer">
+                  <button className="ste-btn-primary small" onClick={handleAddComment}>등록</button>
+                </div>
+              </div>
+              
+              <div className="ste-comment-list">
+                {comments.map(comment => {
+                  const isReply = comment.parentId !== null;
+                  return (
+                    <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
+                      <div className="comment-header">
+                        <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
+                        <span className="date">{comment.createdAt}</span>
+                      </div>
+                      
+                      <div className="comment-body">
+                        {comment.content}
+                      </div>
+
+                      <div className="comment-actions">
+                        {!isReply && (
+                          <button className="action-btn" onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
+                            답글 달기
+                          </button>
+                        )}
+                        <button className="action-btn danger" onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
+                      </div>
+
+                      {replyingCommentId === comment.id && (
+                        <div className="ste-comment-input-wrapper reply-mode">
+                          <textarea 
+                            placeholder="답글을 남겨주세요."
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                          ></textarea>
+                          <div className="ste-comment-input-footer">
+                            <button className="ste-btn-secondary small" onClick={() => setReplyingCommentId(null)}>취소</button>
+                            <button className="ste-btn-primary small" onClick={() => handleAddReply(comment.id)}>답글 등록</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            
-            <div className="ste-comment-list">
-              {comments.map(comment => {
-                const isReply = comment.parentId !== null;
-                return (
-                  <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
-                    <div className="comment-header">
-                      <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
-                      <span className="date">{comment.createdAt}</span>
-                    </div>
-                    
-                    <div className="comment-body">
-                      {comment.content}
-                    </div>
-
-                    <div className="comment-actions">
-                      {!isReply && (
-                        <button className="action-btn" onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
-                          답글 달기
-                        </button>
-                      )}
-                      <button className="action-btn danger" onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
-                    </div>
-
-                    {replyingCommentId === comment.id && (
-                      <div className="ste-comment-input-wrapper reply-mode">
-                        <textarea 
-                          placeholder="답글을 남겨주세요."
-                          value={replyContent}
-                          onChange={(e) => setReplyContent(e.target.value)}
-                        ></textarea>
-                        <div className="ste-comment-input-footer">
-                          <button className="ste-btn-secondary small" onClick={() => setReplyingCommentId(null)}>취소</button>
-                          <button className="ste-btn-primary small" onClick={() => handleAddReply(comment.id)}>답글 등록</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          )}
 
           <div className="ste-footer-btns">
             <button className="ste-btn-secondary" onClick={() => navigate('/community')}>목록으로</button>
@@ -265,7 +302,7 @@ const CommunityDetail = () => {
         </div>
       </div>
       
-      {/* 완전히 구현된 신고 모달 창 */}
+      {/* 신고 모달 창 */}
       {isReportModalOpen && (
         <div className="ste-modal-bg">
           <div className="ste-modal-box">
