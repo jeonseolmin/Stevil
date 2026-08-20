@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './DietManagement.css';
 import axiosInstance from '../../api/axiosInstance'; 
 
@@ -54,6 +54,19 @@ const DietManagement = () => {
     }
   };
 
+  // 모달 닫기 및 입력폼 초기화 함수
+  const handleCloseManualModal = () => {
+    setIsManualModalOpen(false);
+    setRecordForm({
+      mealType: '점심',
+      foodName: '',
+      calories: 0,
+      carbs: 0,
+      protein: 0,
+      fat: 0
+    });
+  };
+
   const handleManualSubmit = async () => {
     if (!recordForm.foodName.trim()) {
       return alert("음식명을 입력해주세요!");
@@ -73,8 +86,7 @@ const DietManagement = () => {
       });
 
       alert("식단이 성공적으로 기록되었습니다!");
-      setIsManualModalOpen(false); 
-      setRecordForm({ mealType: '점심', foodName: '', calories: 0, carbs: 0, protein: 0, fat: 0 }); 
+      handleCloseManualModal(); 
       fetchDashboardData(); 
       
     } catch (error) {
@@ -375,7 +387,7 @@ const DietManagement = () => {
 
       {/* 직접 입력 모달 */}
       {isManualModalOpen && (
-        <div className="diet-modal-bg" onClick={() => setIsManualModalOpen(false)}>
+        <div className="diet-modal-bg" onClick={handleCloseManualModal}>
           <div onClick={(e) => e.stopPropagation()} className="diet-modal-box">
             <h3 style={{ marginTop: 0, marginBottom: '20px', fontSize: '20px', fontWeight: '800' }}>식단 직접 입력</h3>
             
@@ -417,7 +429,7 @@ const DietManagement = () => {
             </div>
             
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setIsManualModalBoxOpen(false)} className="diet-btn diet-btn--secondary" style={{ flex: 1 }}>취소</button>
+              <button onClick={handleCloseManualModal} className="diet-btn diet-btn--secondary" style={{ flex: 1 }}>취소</button>
               <button onClick={handleManualSubmit} className="diet-btn diet-btn--primary" style={{ flex: 1 }}>기록 확인</button>
             </div>
           </div>
