@@ -26,8 +26,9 @@ function formatDate(value) {
 
 function getRoleLabel(role) {
     const labels = {
-        USER: "일반 회원",
-        ADMIN: "관리자",
+        ROLE_USER: "일반 회원",
+        ROLE_DOCTOR: "의료진",
+        ROLE_ADMIN: "관리자",
     };
 
     return labels[role] ?? role;
@@ -435,11 +436,15 @@ export default function AdminUsersPage() {
                                                     )
                                                 }
                                             >
-                                                <option value="USER">
+                                                <option value="ROLE_USER">
                                                     일반 회원
                                                 </option>
 
-                                                <option value="ADMIN">
+                                                <option value="ROLE_DOCTOR">
+                                                    의료진
+                                                </option>
+
+                                                <option value="ROLE_ADMIN">
                                                     관리자
                                                 </option>
                                             </select>

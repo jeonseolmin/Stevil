@@ -4,6 +4,7 @@ import {
     useLocation,
     useNavigate,
 } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 import "./Header.css";
 
 export default function Header() {
