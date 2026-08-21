@@ -9,6 +9,11 @@ import "./Header.css";
 export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [userRole, setUserRole] = useState(
+        () => localStorage.getItem("userRole")
+    );
+
+    const isAdmin = userRole === "ROLE_ADMIN";
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(
@@ -21,8 +26,10 @@ export default function Header() {
 
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("userRole");
 
         setIsLoggedIn(false);
+        setUserRole(null);
         closeMenu();
 
         navigate("/", {
@@ -97,6 +104,53 @@ export default function Header() {
             );
         };
     }, [isMenuOpen]);
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setUserRole(null);
+            return;
+        }
+
+        const loadCurrentUser = async () => {
+            try {
+                const response =
+                    await axiosInstance.get("/users/me");
+
+                const role = response.data.role;
+
+                setUserRole(role);
+
+                localStorage.setItem(
+                    "userRole",
+                    role
+                );
+            } catch (error) {
+                console.error(
+                    "헤더 사용자 정보 조회 실패:",
+                    error.response?.status,
+                    error.response?.data ??
+                    error.message
+                );
+
+                if (
+                    error.response?.status === 401 ||
+                    error.response?.status === 403
+                ) {
+                    localStorage.removeItem(
+                        "accessToken"
+                    );
+                    localStorage.removeItem(
+                        "userRole"
+                    );
+
+                    setIsLoggedIn(false);
+                    setUserRole(null);
+                }
+            }
+        };
+
+        loadCurrentUser();
+    }, [isLoggedIn]);
 
     return (
         <header className="site-header">
@@ -176,13 +230,25 @@ export default function Header() {
 
                     <div className="mobile-header-actions">
                         {isLoggedIn ? (
-                            <button
-                                type="button"
-                                className="header-login-link"
-                                onClick={handleLogout}
-                            >
-                                로그아웃
-                            </button>
+                            <>
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="header-admin-button"
+                                        onClick={closeMenu}
+                                    >
+                                        관리자 메뉴
+                                    </Link>
+                                )}
+
+                                <button
+                                    type="button"
+                                    className="header-login-link"
+                                    onClick={handleLogout}
+                                >
+                                    로그아웃
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link
@@ -207,13 +273,24 @@ export default function Header() {
 
                 <div className="desktop-header-actions">
                     {isLoggedIn ? (
-                        <button
-                            type="button"
-                            className="header-login-link"
-                            onClick={handleLogout}
-                        >
-                            로그아웃
-                        </button>
+                        <>
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className="header-admin-button"
+                                >
+                                    관리자 메뉴
+                                </Link>
+                            )}
+
+                            <button
+                                type="button"
+                                className="header-login-link"
+                                onClick={handleLogout}
+                            >
+                                로그아웃
+                            </button>
+                        </>
                     ) : (
                         <>
                             <Link

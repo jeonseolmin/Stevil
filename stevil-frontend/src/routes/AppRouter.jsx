@@ -21,7 +21,7 @@ import AdminLayout from "../components/layout/admin/AdminLayout.jsx";
 import AdminDashboardPage from "../pages/admin/dashboard/AdminDashboardPage.jsx";
 import WeightRecordPage from "../pages/weight/WeightRecordPage.jsx";
 import AdminUsersPage from "../pages/admin/users/AdminUsersPage.jsx";
-import AdminFacilitiesPage from "../pages/admin/facilites/AdminFacilitiesPage.jsx";
+import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.jsx";
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 
