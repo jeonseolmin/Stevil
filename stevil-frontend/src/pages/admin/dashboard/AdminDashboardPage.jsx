@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance from "../../../api/axiosInstance.js";
 import "./AdminDashboardPage.css";
 
 const INITIAL_STATS = {

@@ -11,7 +11,7 @@ import {
     getAdminReports,
     resolveReport,
     startReportReview,
-} from "../../api/adminReportApi";
+} from "../../../api/adminReportApi.js";
 
 import "./AdminReportsPage.css";
 
