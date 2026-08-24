@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
     Link,
+    NavLink,
     useLocation,
     useNavigate,
 } from "react-router-dom";
@@ -187,47 +188,104 @@ export default function Header() {
                     }`}
                     aria-label="주요 메뉴"
                 >
-                    {isLoggedIn && (
-                        <Link
-                            to="/hospitals"
-                            onClick={closeMenu}
-                            className={
-                                location.pathname === "/hospitals"
-                                    ? "header-navigation-link--active"
-                                    : ""
-                            }
-                        >
-                            병원 찾기
-                        </Link>
+                    {isLoggedIn ? (
+                        <>
+                            <NavLink
+                                to="/dashboard"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                대시보드
+                            </NavLink>
+
+                            <NavLink
+                                to="/hospitals"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                병원 찾기
+                            </NavLink>
+
+                            <NavLink
+                                to="/diet"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                식단
+                            </NavLink>
+
+                            <NavLink
+                                to="/exercise"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                운동
+                            </NavLink>
+
+                            <NavLink
+                                to="/diary"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                투약 일지
+                            </NavLink>
+
+                            <NavLink
+                                to="/community"
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                커뮤니티
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <a
+                                href="/#features"
+                                onClick={closeMenu}
+                            >
+                                주요 기능
+                            </a>
+
+                            <a
+                                href="/#how-it-works"
+                                onClick={closeMenu}
+                            >
+                                이용 방법
+                            </a>
+
+                            <a
+                                href="/#safety"
+                                onClick={closeMenu}
+                            >
+                                안심 안내
+                            </a>
+                        </>
                     )}
-
-                    <a
-                        href="/#features"
-                        onClick={closeMenu}
-                    >
-                        주요 기능
-                    </a>
-
-                    <a
-                        href="/#how-it-works"
-                        onClick={closeMenu}
-                    >
-                        이용 방법
-                    </a>
-
-                    <a
-                        href="/#safety"
-                        onClick={closeMenu}
-                    >
-                        안심 안내
-                    </a>
-
-                    <a
-                        href="/community"
-                        onClick={closeMenu}
-                    >
-                        커뮤니티
-                    </a>
 
                     <div className="mobile-header-actions">
                         {isLoggedIn ? (

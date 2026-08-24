@@ -64,7 +64,7 @@
 .header-navigation {
     display: flex;
     align-items: center;
-    gap: 34px;
+    gap: 24px;
 }
 
 .header-navigation > a {
@@ -76,10 +76,7 @@
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-
-    transition:
-            color 160ms ease,
-            opacity 160ms ease;
+    white-space: nowrap;
 }
 
 .header-navigation > a::after {
@@ -96,7 +93,6 @@
     transform: scaleX(0);
     transform-origin: center;
 
-    transition: transform 160ms ease;
 }
 
 .header-navigation > a:hover,
@@ -396,6 +392,11 @@
     color: var(--color-primary-dark) !important;
     font-weight: 800 !important;
 }
+
+.header-navigation-link--active::after {
+    transform: scaleX(1) !important;
+}
+
 @media (max-width: 900px) {
     .mobile-header-actions:has(
         .header-admin-button
