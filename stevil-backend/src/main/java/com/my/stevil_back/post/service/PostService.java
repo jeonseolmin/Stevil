@@ -35,7 +35,7 @@ public class PostService {
     private final VoteRecordRepository voteRecordRepository;
 
     // 1. 게시글 작성
-    public void createPost(PostRequest postRequest, MultipartFile file, Long userId) {
+    public void createPost(PostRequest postRequest, List<MultipartFile> files, Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
@@ -58,7 +58,6 @@ public class PostService {
                 .user(user)
                 .build();
 
-        //  투표 데이터가 들어왔을 경우 투표 엔티티 생성 및 연결
         if (postRequest.getVoteTitle() != null && !postRequest.getVoteTitle().trim().isEmpty()
                 && postRequest.getVoteOptions() != null && !postRequest.getVoteOptions().isEmpty()) {
 
@@ -75,11 +74,10 @@ public class PostService {
                             .build());
                 }
             }
-            post.setPostVote(postVote); // 뼈대 게시글에 투표를 장착!
+            post.setPostVote(postVote);
         }
 
-        // 첨부 파일 처리
-        if (file != null && !file.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             try {
                 String os = System.getProperty("os.name").toLowerCase();
                 String uploadDir = os.contains("win") ? "C:/uploads/" : "/home/ubuntu/uploads/";
@@ -89,20 +87,24 @@ public class PostService {
                     dir.mkdirs();
                 }
 
-                String originalFilename = file.getOriginalFilename();
-                String savedFilename = UUID.randomUUID() + "_" + originalFilename;
-                File targetFile = new File(uploadDir + savedFilename);
-                file.transferTo(targetFile);
+                for (MultipartFile file : files) {
+                    if (file != null && !file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        String savedFilename = UUID.randomUUID() + "_" + originalFilename;
+                        File targetFile = new File(uploadDir + savedFilename);
+                        file.transferTo(targetFile);
 
-                PostFile postFile = PostFile.builder()
-                        .post(post)
-                        .originalFileName(originalFilename)
-                        .savedFileName(savedFilename)
-                        .fileUrl("/api/uploads/" + savedFilename)
-                        .fileSize(file.getSize())
-                        .build();
+                        PostFile postFile = PostFile.builder()
+                                .post(post)
+                                .originalFileName(originalFilename)
+                                .savedFileName(savedFilename)
+                                .fileUrl("/api/uploads/" + savedFilename)
+                                .fileSize(file.getSize())
+                                .build();
 
-                post.addFile(postFile);
+                        post.addFile(postFile);
+                    }
+                }
             } catch (Exception e) {
                 throw new RuntimeException("파일 업로드 및 기록 실패", e);
             }
@@ -138,7 +140,7 @@ public class PostService {
 
     // 5. 게시글 수정
     @Transactional
-    public void updatePost(Long id, PostRequest postRequest, MultipartFile file, Long userId) {
+    public void updatePost(Long id, PostRequest postRequest, List<MultipartFile> files, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
@@ -157,8 +159,8 @@ public class PostService {
         post.setAutoSource(postRequest.isAutoSource());
         post.setExternalLink(postRequest.getExternalLink());
 
-        // 새로운 파일 교체 로직
-        if (file != null && !file.isEmpty()) {
+        // 새로운 파일 교체 로직 (새 파일들이 들어왔을 경우 기존 파일 비우고 새로 등록)
+        if (files != null && !files.isEmpty() && files.stream().anyMatch(f -> !f.isEmpty())) {
             try {
                 if (post.getFiles() != null) {
                     post.getFiles().clear();
@@ -170,21 +172,24 @@ public class PostService {
                 File dir = new File(uploadDir);
                 if (!dir.exists()) dir.mkdirs();
 
-                String originalFilename = file.getOriginalFilename();
-                String savedFilename = UUID.randomUUID() + "_" + originalFilename;
-                File targetFile = new File(uploadDir + savedFilename);
-                file.transferTo(targetFile);
+                for (MultipartFile file : files) {
+                    if (file != null && !file.isEmpty()) {
+                        String originalFilename = file.getOriginalFilename();
+                        String savedFilename = UUID.randomUUID() + "_" + originalFilename;
+                        File targetFile = new File(uploadDir + savedFilename);
+                        file.transferTo(targetFile);
 
-                // .post(post) 연관관계 누락 복구
-                PostFile postFile = PostFile.builder()
-                        .post(post)
-                        .originalFileName(originalFilename)
-                        .savedFileName(savedFilename)
-                        .fileUrl("/api/uploads/" + savedFilename)
-                        .fileSize(file.getSize())
-                        .build();
+                        PostFile postFile = PostFile.builder()
+                                .post(post)
+                                .originalFileName(originalFilename)
+                                .savedFileName(savedFilename)
+                                .fileUrl("/api/uploads/" + savedFilename)
+                                .fileSize(file.getSize())
+                                .build();
 
-                post.addFile(postFile);
+                        post.addFile(postFile);
+                    }
+                }
             } catch (Exception e) {
                 throw new RuntimeException("파일 수정(업로드) 실패", e);
             }
@@ -286,6 +291,7 @@ public class PostService {
 
         return posts.map(PostResponse::from);
     }
+
     @Transactional
     public void submitVote(Long postId, Long userId, List<Long> optionIds) {
         Post post = postRepository.findById(postId)
@@ -294,31 +300,27 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
 
-        com.my.stevil_back.post.entity.PostVote postVote = post.getPostVote();
+        PostVote postVote = post.getPostVote();
         if (postVote == null) {
             throw new RuntimeException("투표가 없는 게시글입니다.");
         }
 
-        // 중복 투표 방지 (이미 이 투표에 참여했는지 확인)
         if (voteRecordRepository.existsByPostVoteIdAndUserId(postVote.getId(), user.getId())) {
             throw new RuntimeException("이미 이 투표에 참여하셨습니다.");
         }
 
-        // 다중 선택 검증 (단일 투표인데 여러 개 골랐을 경우 튕겨냄)
         if (!postVote.isAllowMultiple() && optionIds.size() > 1) {
             throw new RuntimeException("복수 선택이 허용되지 않은 투표입니다.");
         }
 
-        // 선택한 항목들 득표수 1씩 증가시키고 기록 남기기
         for (Long optionId : optionIds) {
-            com.my.stevil_back.post.entity.VoteOption option = postVote.getOptions().stream()
+            VoteOption option = postVote.getOptions().stream()
                     .filter(o -> o.getId().equals(optionId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 투표 항목입니다."));
 
-            option.setVoteCount(option.getVoteCount() + 1); // 득표수 1 증가
+            option.setVoteCount(option.getVoteCount() + 1);
 
-            // 투표했다는 증거(장부) 기록
             com.my.stevil_back.post.entity.VoteRecord record = com.my.stevil_back.post.entity.VoteRecord.builder()
                     .postVote(postVote)
                     .voteOption(option)
@@ -334,10 +336,9 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         if (post.getPostVote() == null) {
-            return java.util.Collections.emptyList(); // 투표가 없는 글이면 빈 리스트 반환
+            return java.util.Collections.emptyList();
         }
 
-        // 장부를 뒤져서 이 유저가 고른 항목 ID들만 쏙쏙 뽑아냄
         return voteRecordRepository.findByPostVoteIdAndUserId(post.getPostVote().getId(), userId)
                 .stream()
                 .map(record -> record.getVoteOption().getId())
