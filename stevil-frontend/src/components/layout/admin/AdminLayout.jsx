@@ -82,7 +82,11 @@ export default function AdminLayout() {
 
     const handleLogout = () => {
         localStorage.removeItem("accessToken");
-        navigate("/login", { replace: true });
+        localStorage.removeItem("userRole");
+
+        navigate("/", {
+            replace: true,
+        });
     };
 
     if (loading) {

@@ -1,0 +1,15 @@
+.home-page {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#features,
+#how-it-works,
+#safety {
+    scroll-margin-top: 90px;
+}
+
+html {
+    scroll-behavior: smooth;
+}

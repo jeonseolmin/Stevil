@@ -1,28 +1,61 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
+
 import {
     Link,
+    NavLink,
     useLocation,
     useNavigate,
 } from "react-router-dom";
+
+import axiosInstance from "../../api/axiosInstance";
+
 import "./Header.css";
 
 export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(
-        () => Boolean(localStorage.getItem("accessToken"))
+    const isPartnershipPage =
+        location.pathname === "/partnership";
+
+    const [userRole, setUserRole] = useState(
+        () => localStorage.getItem("userRole")
     );
+
+    const [isLoggedIn, setIsLoggedIn] =
+        useState(() =>
+            Boolean(
+                localStorage.getItem(
+                    "accessToken"
+                )
+            )
+        );
+
+    const [isMenuOpen, setIsMenuOpen] =
+        useState(false);
+
+    const isAdmin =
+        userRole === "ROLE_ADMIN";
 
     const closeMenu = () => {
         setIsMenuOpen(false);
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem(
+            "accessToken"
+        );
+
+        localStorage.removeItem(
+            "userRole"
+        );
 
         setIsLoggedIn(false);
+        setUserRole(null);
+
         closeMenu();
 
         navigate("/", {
@@ -31,29 +64,53 @@ export default function Header() {
     };
 
     /*
-     * 페이지가 이동될 때:
-     * 1. 모바일 메뉴 닫기
-     * 2. localStorage의 토큰 상태 다시 확인
-     *
-     * OAuthSuccessPage에서 토큰 저장 후 대시보드로 이동하면
-     * Header도 로그인 상태로 변경됩니다.
+     * 페이지 주소나 해시가 바뀌면
+     * 모바일 메뉴를 닫고 로그인 상태를 갱신합니다.
      */
     useEffect(() => {
         closeMenu();
 
         setIsLoggedIn(
-            Boolean(localStorage.getItem("accessToken"))
+            Boolean(
+                localStorage.getItem(
+                    "accessToken"
+                )
+            )
         );
-    }, [location.pathname, location.hash]);
+
+        setUserRole(
+            localStorage.getItem(
+                "userRole"
+            )
+        );
+    }, [
+        location.pathname,
+        location.hash,
+    ]);
 
     /*
-     * 다른 탭에서 로그인 또는 로그아웃했을 때
-     * 현재 탭의 Header도 상태를 갱신합니다.
+     * 다른 브라우저 탭에서 로그인·로그아웃하거나
+     * 권한값이 변경되면 현재 헤더도 갱신합니다.
      */
     useEffect(() => {
-        const handleStorageChange = (event) => {
-            if (event.key === "accessToken") {
-                setIsLoggedIn(Boolean(event.newValue));
+        const handleStorageChange = (
+            event
+        ) => {
+            if (
+                event.key ===
+                "accessToken"
+            ) {
+                setIsLoggedIn(
+                    Boolean(event.newValue)
+                );
+            }
+
+            if (
+                event.key === "userRole"
+            ) {
+                setUserRole(
+                    event.newValue
+                );
             }
         };
 
@@ -71,16 +128,20 @@ export default function Header() {
     }, []);
 
     /*
-     * 모바일 메뉴가 열려 있을 때
-     * Escape 키로 닫을 수 있도록 처리합니다.
+     * 모바일 메뉴가 열렸을 때
+     * Escape 키로 닫습니다.
      */
     useEffect(() => {
         if (!isMenuOpen) {
             return undefined;
         }
 
-        const handleEscape = (event) => {
-            if (event.key === "Escape") {
+        const handleEscape = (
+            event
+        ) => {
+            if (
+                event.key === "Escape"
+            ) {
                 closeMenu();
             }
         };
@@ -98,16 +159,95 @@ export default function Header() {
         };
     }, [isMenuOpen]);
 
+    /*
+     * 로그인한 사용자의 최신 권한을 조회합니다.
+     */
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setUserRole(null);
+            return undefined;
+        }
+
+        let active = true;
+
+        const loadCurrentUser =
+            async () => {
+                try {
+                    const response =
+                        await axiosInstance.get(
+                            "/users/me"
+                        );
+
+                    if (!active) {
+                        return;
+                    }
+
+                    const role =
+                        response.data.role;
+
+                    setUserRole(role);
+
+                    localStorage.setItem(
+                        "userRole",
+                        role
+                    );
+                } catch (error) {
+                    if (!active) {
+                        return;
+                    }
+
+                    console.error(
+                        "헤더 사용자 정보 조회 실패:",
+                        error.response?.status,
+                        error.response?.data ??
+                        error.message
+                    );
+
+                    if (
+                        error.response
+                            ?.status === 401 ||
+                        error.response
+                            ?.status === 403
+                    ) {
+                        localStorage.removeItem(
+                            "accessToken"
+                        );
+
+                        localStorage.removeItem(
+                            "userRole"
+                        );
+
+                        setIsLoggedIn(false);
+                        setUserRole(null);
+                    }
+                }
+            };
+
+        loadCurrentUser();
+
+        return () => {
+            active = false;
+        };
+    }, [isLoggedIn]);
+
     return (
         <header className="site-header">
             <div className="header-inner">
                 <Link
-                    to={isLoggedIn ? "/dashboard" : "/"}
+                    to={
+                        isPartnershipPage
+                            ? "/"
+                            : isLoggedIn
+                                ? "/dashboard"
+                                : "/"
+                    }
                     className="header-brand"
                     aria-label={
-                        isLoggedIn
-                            ? "Stevil 대시보드"
-                            : "Stevil 시작 페이지"
+                        isPartnershipPage
+                            ? "Stevil 홈으로 이동"
+                            : isLoggedIn
+                                ? "Stevil 대시보드"
+                                : "Stevil 시작 페이지"
                     }
                     onClick={closeMenu}
                 >
@@ -130,65 +270,276 @@ export default function Header() {
                             ? "header-navigation--open"
                             : ""
                     }`}
-                    aria-label="주요 메뉴"
+                    aria-label={
+                        isPartnershipPage
+                            ? "제휴 안내 메뉴"
+                            : "주요 메뉴"
+                    }
                 >
-                    {isLoggedIn && (
-                        <Link
-                            to="/hospitals"
-                            onClick={closeMenu}
-                            className={
-                                location.pathname === "/hospitals"
-                                    ? "header-navigation-link--active"
-                                    : ""
-                            }
-                        >
-                            병원 찾기
-                        </Link>
+                    {isPartnershipPage ? (
+                        <>
+                            <Link
+                                to="/partnership#partnership-intro"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    !location.hash ||
+                                    location.hash ===
+                                    "#partnership-intro"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 소개
+                            </Link>
+
+                            <Link
+                                to="/partnership#partnership-target"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-target"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 대상
+                            </Link>
+
+                            <Link
+                                to="/partnership#partnership-process"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-process"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                등록 절차
+                            </Link>
+
+                            <Link
+                                to="/partnership#partnership-information"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-information"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                필요 정보
+                            </Link>
+
+                            <Link
+                                to="/partnership#partnership-notice"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-notice"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                운영 안내
+                            </Link>
+
+                            <Link
+                                to="/partnership#partnership-contact"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-contact"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 문의
+                            </Link>
+                        </>
+                    ) : isLoggedIn ? (
+                        <>
+                            <NavLink
+                                to="/dashboard"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                대시보드
+                            </NavLink>
+
+                            <NavLink
+                                to="/hospitals"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                병원 찾기
+                            </NavLink>
+
+                            <NavLink
+                                to="/diet"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                식단
+                            </NavLink>
+
+                            <NavLink
+                                to="/exercise"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                운동
+                            </NavLink>
+
+                            <NavLink
+                                to="/diary"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                투약 일지
+                            </NavLink>
+
+                            <NavLink
+                                to="/community"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                커뮤니티
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <a
+                                href="/#features"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                주요 기능
+                            </a>
+
+                            <a
+                                href="/#how-it-works"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                이용 방법
+                            </a>
+
+                            <a
+                                href="/#safety"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                안심 안내
+                            </a>
+
+                            <a
+                                href="/#partnership"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                제휴 안내
+                            </a>
+                        </>
                     )}
-
-                    <a
-                        href="/#features"
-                        onClick={closeMenu}
-                    >
-                        주요 기능
-                    </a>
-
-                    <a
-                        href="/#how-it-works"
-                        onClick={closeMenu}
-                    >
-                        이용 방법
-                    </a>
-
-                    <a
-                        href="/#safety"
-                        onClick={closeMenu}
-                    >
-                        안심 안내
-                    </a>
-
-                    <a
-                        href="/community"
-                        onClick={closeMenu}
-                    >
-                        커뮤니티
-                    </a>
 
                     <div className="mobile-header-actions">
                         {isLoggedIn ? (
-                            <button
-                                type="button"
-                                className="header-login-link"
-                                onClick={handleLogout}
-                            >
-                                로그아웃
-                            </button>
+                            <>
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="header-admin-button"
+                                        onClick={
+                                            closeMenu
+                                        }
+                                    >
+                                        관리자 메뉴
+                                    </Link>
+                                )}
+
+                                <button
+                                    type="button"
+                                    className="header-login-link"
+                                    onClick={
+                                        handleLogout
+                                    }
+                                >
+                                    로그아웃
+                                </button>
+                            </>
                         ) : (
                             <>
                                 <Link
                                     to="/login"
                                     className="header-login-link"
-                                    onClick={closeMenu}
+                                    onClick={
+                                        closeMenu
+                                    }
                                 >
                                     로그인
                                 </Link>
@@ -196,7 +547,9 @@ export default function Header() {
                                 <Link
                                     to="/login"
                                     className="header-start-button"
-                                    onClick={closeMenu}
+                                    onClick={
+                                        closeMenu
+                                    }
                                 >
                                     시작하기
                                 </Link>
@@ -206,14 +559,35 @@ export default function Header() {
                 </nav>
 
                 <div className="desktop-header-actions">
-                    {isLoggedIn ? (
-                        <button
-                            type="button"
+                    {isPartnershipPage ? (
+                        <Link
+                            to="/"
                             className="header-login-link"
-                            onClick={handleLogout}
+                            onClick={closeMenu}
                         >
-                            로그아웃
-                        </button>
+                            홈으로
+                        </Link>
+                    ) : isLoggedIn ? (
+                        <>
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className="header-admin-button"
+                                >
+                                    관리자 메뉴
+                                </Link>
+                            )}
+
+                            <button
+                                type="button"
+                                className="header-login-link"
+                                onClick={
+                                    handleLogout
+                                }
+                            >
+                                로그아웃
+                            </button>
+                        </>
                     ) : (
                         <>
                             <Link
@@ -245,11 +619,14 @@ export default function Header() {
                             ? "메뉴 닫기"
                             : "메뉴 열기"
                     }
-                    aria-expanded={isMenuOpen}
+                    aria-expanded={
+                        isMenuOpen
+                    }
                     aria-controls="header-navigation"
                     onClick={() => {
                         setIsMenuOpen(
-                            (previous) => !previous
+                            (previous) =>
+                                !previous
                         );
                     }}
                 >

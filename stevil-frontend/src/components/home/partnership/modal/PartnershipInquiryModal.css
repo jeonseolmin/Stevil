@@ -1,0 +1,636 @@
+
+.partnership-modal-backdrop,
+.partnership-modal-backdrop * {
+    box-sizing: border-box;
+}
+
+.partnership-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(7, 26, 23, 0.68);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    animation:
+        partnership-backdrop-show
+        160ms ease-out;
+}
+
+.partnership-modal {
+    position: relative;
+
+    width: min(100%, 760px);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+
+    color: #183f39;
+    background: #ffffff;
+
+    border: 1px solid rgba(216, 233, 229, 0.92);
+    border-radius: 24px;
+    box-shadow:
+        0 30px 90px rgba(2, 24, 20, 0.3);
+
+    animation:
+        partnership-modal-show
+        190ms ease-out;
+}
+
+.partnership-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+
+    padding: 30px 32px 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f2fbf8 0%,
+            #ffffff 100%
+        );
+
+    border-bottom: 1px solid #e0ece9;
+}
+
+.partnership-modal-header > div {
+    min-width: 0;
+}
+
+.partnership-modal-header > div > span,
+.partnership-modal--success > span {
+    color: #17897c;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+}
+
+.partnership-modal-header h2 {
+    margin: 8px 0 7px;
+
+    color: #173f39;
+    font-size: 1.55rem;
+    letter-spacing: -0.035em;
+}
+
+.partnership-modal-header p {
+    margin: 0;
+
+    color: #6a7e7a;
+    font-size: 0.84rem;
+    line-height: 1.6;
+
+    word-break: keep-all;
+}
+
+.partnership-modal-close {
+    display: grid;
+    flex: 0 0 38px;
+
+    width: 38px;
+    height: 38px;
+    padding: 0;
+
+    place-items: center;
+
+    color: #52706a;
+    font-family: inherit;
+    font-size: 1.45rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    background: #ffffff;
+    border: 1px solid #d9e8e4;
+    border-radius: 11px;
+
+    transition:
+        color 150ms ease,
+        background-color 150ms ease,
+        border-color 150ms ease;
+}
+
+.partnership-modal-close:hover {
+    color: #173f39;
+    background: #edf8f5;
+    border-color: #bcded7;
+}
+
+.partnership-modal-form {
+    padding: 27px 32px 31px;
+}
+
+.partnership-modal-error {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+
+    color: #a83b3b;
+    font-size: 0.82rem;
+    font-weight: 750;
+
+    background: #fff1f1;
+    border: 1px solid #f2cdcd;
+    border-radius: 11px;
+}
+
+/* 시설 유형 */
+
+.partnership-type-field {
+    margin: 0 0 24px;
+    padding: 0;
+
+    border: 0;
+}
+
+.partnership-type-field legend {
+    margin-bottom: 10px;
+
+    color: #36544f;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.partnership-type-field legend strong,
+.partnership-form-field > span strong {
+    margin-left: 3px;
+    color: #d25656;
+}
+
+.partnership-type-options {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.partnership-type-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 0;
+    min-height: 74px;
+    padding: 13px 15px;
+
+    cursor: pointer;
+
+    background: #ffffff;
+    border: 1px solid #d9e7e4;
+    border-radius: 13px;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.partnership-type-option:hover {
+    background: #f5fbf9;
+    border-color: #add8d0;
+}
+
+.partnership-type-option--selected {
+    background: #effaf7;
+    border-color: #35a798;
+    box-shadow:
+        0 0 0 3px rgba(53, 167, 152, 0.1);
+}
+
+.partnership-type-option input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+
+    opacity: 0;
+    pointer-events: none;
+}
+
+.partnership-type-icon {
+    display: grid;
+    flex: 0 0 40px;
+
+    width: 40px;
+    height: 40px;
+
+    place-items: center;
+
+    color: #176b61;
+    font-size: 0.85rem;
+    font-weight: 900;
+
+    background: #dff5f1;
+    border-radius: 11px;
+}
+
+.partnership-type-option > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.partnership-type-option strong {
+    color: #274b45;
+    font-size: 0.9rem;
+}
+
+.partnership-type-option small {
+    color: #80918e;
+    font-size: 0.72rem;
+}
+
+/* 입력 폼 */
+
+.partnership-form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 17px 14px;
+}
+
+.partnership-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.partnership-form-field--full {
+    grid-column: 1 / -1;
+}
+
+.partnership-form-field > span {
+    color: #36544f;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.partnership-form-field input,
+.partnership-form-field textarea {
+    width: 100%;
+    min-width: 0;
+
+    color: #263e3a;
+    font: inherit;
+    font-size: 0.86rem;
+
+    background: #ffffff;
+    border: 1px solid #d8e6e3;
+    border-radius: 11px;
+    outline: none;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background-color 150ms ease;
+}
+
+.partnership-form-field input {
+    height: 46px;
+    padding: 0 14px;
+}
+
+.partnership-form-field textarea {
+    min-height: 120px;
+    padding: 13px 14px;
+
+    line-height: 1.65;
+    resize: vertical;
+}
+
+.partnership-form-field input::placeholder,
+.partnership-form-field textarea::placeholder {
+    color: #9aa9a6;
+}
+
+.partnership-form-field input:hover,
+.partnership-form-field textarea:hover {
+    border-color: #b8d4ce;
+}
+
+.partnership-form-field input:focus,
+.partnership-form-field textarea:focus {
+    background: #fbfefd;
+    border-color: #269b8d;
+    box-shadow:
+        0 0 0 3px rgba(38, 155, 141, 0.11);
+}
+
+.partnership-message-length {
+    align-self: flex-end;
+
+    margin-top: -3px;
+
+    color: #8a9b98;
+    font-size: 0.7rem;
+}
+
+/* 개인정보 동의 */
+
+.partnership-privacy-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+
+    margin-top: 21px;
+    padding: 15px;
+
+    cursor: pointer;
+
+    background: #f5faf8;
+    border: 1px solid #e0ece9;
+    border-radius: 12px;
+}
+
+.partnership-privacy-field input {
+    flex: 0 0 auto;
+
+    width: 17px;
+    height: 17px;
+    margin: 2px 0 0;
+
+    accent-color: #178f81;
+}
+
+.partnership-privacy-field > span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+}
+
+.partnership-privacy-field strong {
+    color: #36544f;
+    font-size: 0.79rem;
+}
+
+.partnership-privacy-field small {
+    color: #7b8d89;
+    font-size: 0.7rem;
+    line-height: 1.55;
+
+    word-break: keep-all;
+}
+
+.partnership-modal-notice {
+    margin-top: 12px;
+    padding: 12px 14px;
+
+    color: #786536;
+    font-size: 0.73rem;
+    line-height: 1.6;
+
+    background: #fff9e9;
+    border: 1px solid #efdfb5;
+    border-radius: 10px;
+
+    word-break: keep-all;
+}
+
+/* 하단 버튼 */
+
+.partnership-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 24px;
+    padding-top: 21px;
+
+    border-top: 1px solid #e2ece9;
+}
+
+.partnership-modal-cancel,
+.partnership-modal-submit,
+.partnership-modal-success-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 0 20px;
+
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 850;
+
+    cursor: pointer;
+
+    border-radius: 11px;
+
+    transition:
+        transform 150ms ease,
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.partnership-modal-cancel {
+    color: #5c706c;
+
+    background: #ffffff;
+    border: 1px solid #d6e4e1;
+}
+
+.partnership-modal-cancel:hover {
+    color: #294b45;
+    background: #f3f8f7;
+    border-color: #bed4cf;
+}
+
+.partnership-modal-submit,
+.partnership-modal-success-button {
+    color: #ffffff;
+
+    background: #137c70;
+    border: 1px solid #137c70;
+    box-shadow:
+        0 9px 20px rgba(19, 124, 112, 0.18);
+}
+
+.partnership-modal-submit:hover,
+.partnership-modal-success-button:hover {
+    background: #0f6b61;
+    border-color: #0f6b61;
+
+    transform: translateY(-1px);
+}
+
+/* 제출 완료 */
+
+.partnership-modal--success {
+    width: min(100%, 470px);
+    padding: 46px 35px 36px;
+
+    text-align: center;
+}
+
+.partnership-modal--success
+.partnership-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+}
+
+.partnership-modal-success-mark {
+    display: grid;
+
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 22px;
+
+    place-items: center;
+
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 900;
+
+    background: #179182;
+    border-radius: 50%;
+    box-shadow:
+        0 13px 30px rgba(23, 145, 130, 0.23);
+}
+
+.partnership-modal--success h2 {
+    margin: 10px 0 12px;
+
+    color: #173f39;
+    font-size: 1.45rem;
+    letter-spacing: -0.035em;
+}
+
+.partnership-modal--success p {
+    margin: 0;
+
+    color: #6b7f7b;
+    font-size: 0.83rem;
+    line-height: 1.75;
+
+    word-break: keep-all;
+}
+
+.partnership-modal-success-button {
+    width: 100%;
+    margin-top: 27px;
+}
+
+/* 애니메이션 */
+
+@keyframes partnership-backdrop-show {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes partnership-modal-show {
+    from {
+        opacity: 0;
+        transform:
+            translateY(14px)
+            scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* 모바일 */
+
+@media (max-width: 600px) {
+    .partnership-modal-backdrop {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .partnership-modal {
+        width: 100%;
+        max-height: 92vh;
+
+        border-right: 0;
+        border-bottom: 0;
+        border-left: 0;
+
+        border-radius: 22px 22px 0 0;
+    }
+
+    .partnership-modal-header {
+        padding: 24px 19px 20px;
+    }
+
+    .partnership-modal-header h2 {
+        font-size: 1.32rem;
+    }
+
+    .partnership-modal-form {
+        padding: 21px 19px 25px;
+    }
+
+    .partnership-type-options,
+    .partnership-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .partnership-form-field--full {
+        grid-column: auto;
+    }
+
+    .partnership-modal-actions {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 0.7fr)
+            minmax(0, 1.3fr);
+    }
+
+    .partnership-modal-cancel,
+    .partnership-modal-submit {
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .partnership-modal--success {
+        width: 100%;
+        padding: 48px 24px 31px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .partnership-modal-backdrop,
+    .partnership-modal {
+        animation: none;
+    }
+
+    .partnership-modal-close,
+    .partnership-modal-cancel,
+    .partnership-modal-submit,
+    .partnership-modal-success-button {
+        transition: none;
+    }
+
+    .partnership-modal-submit:hover,
+    .partnership-modal-success-button:hover {
+        transform: none;
+    }
+}
