@@ -11,6 +11,8 @@ import "./Header.css";
 export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
+    const isPartnershipPage =
+        location.pathname === "/partnership";
     const [userRole, setUserRole] = useState(
         () => localStorage.getItem("userRole")
     );
@@ -108,10 +110,192 @@ export default function Header() {
     }, [isMenuOpen]);
 
     useEffect(() => {
-        if (!isLoggedIn) {
-            setUserRole(null);
-            return;
-        }
+        {isPartnershipPage ? (
+            <>
+                <Link
+                    to="/partnership#partnership-intro"
+                    onClick={closeMenu}
+                    className={
+                        !location.hash ||
+                        location.hash ===
+                        "#partnership-intro"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    제휴 소개
+                </Link>
+
+                <Link
+                    to="/partnership#partnership-target"
+                    onClick={closeMenu}
+                    className={
+                        location.hash ===
+                        "#partnership-target"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    제휴 대상
+                </Link>
+
+                <Link
+                    to="/partnership#partnership-process"
+                    onClick={closeMenu}
+                    className={
+                        location.hash ===
+                        "#partnership-process"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    등록 절차
+                </Link>
+
+                <Link
+                    to="/partnership#partnership-information"
+                    onClick={closeMenu}
+                    className={
+                        location.hash ===
+                        "#partnership-information"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    필요 정보
+                </Link>
+
+                <Link
+                    to="/partnership#partnership-notice"
+                    onClick={closeMenu}
+                    className={
+                        location.hash ===
+                        "#partnership-notice"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    운영 안내
+                </Link>
+
+                <Link
+                    to="/partnership#partnership-contact"
+                    onClick={closeMenu}
+                    className={
+                        location.hash ===
+                        "#partnership-contact"
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    제휴 문의
+                </Link>
+            </>
+        ) : isLoggedIn ? (
+            <>
+                <NavLink
+                    to="/dashboard"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    대시보드
+                </NavLink>
+
+                <NavLink
+                    to="/hospitals"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    병원 찾기
+                </NavLink>
+
+                <NavLink
+                    to="/diet"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    식단
+                </NavLink>
+
+                <NavLink
+                    to="/exercise"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    운동
+                </NavLink>
+
+                <NavLink
+                    to="/diary"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    투약 일지
+                </NavLink>
+
+                <NavLink
+                    to="/community"
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                        isActive
+                            ? "header-navigation-link--active"
+                            : ""
+                    }
+                >
+                    커뮤니티
+                </NavLink>
+            </>
+        ) : (
+            <>
+                <a
+                    href="/#features"
+                    onClick={closeMenu}
+                >
+                    주요 기능
+                </a>
+
+                <a
+                    href="/#how-it-works"
+                    onClick={closeMenu}
+                >
+                    이용 방법
+                </a>
+
+                <a
+                    href="/#safety"
+                    onClick={closeMenu}
+                >
+                    안심 안내
+                </a>
+
+                <a
+                    href="/#partnership"
+                    onClick={closeMenu}
+                >
+                    제휴 안내
+                </a>
+            </>
+        )}
 
         const loadCurrentUser = async () => {
             try {
@@ -158,7 +342,13 @@ export default function Header() {
         <header className="site-header">
             <div className="header-inner">
                 <Link
-                    to={isLoggedIn ? "/dashboard" : "/"}
+                    to={
+                        isPartnershipPage
+                            ? "/"
+                            : isLoggedIn
+                                ? "/dashboard"
+                                : "/"
+                    }
                     className="header-brand"
                     aria-label={
                         isLoggedIn
