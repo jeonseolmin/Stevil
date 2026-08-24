@@ -23,8 +23,15 @@ const CommunityDetail = () => {
   const [hasVoted, setHasVoted] = useState(false);
 
   const [excelPreviews, setExcelPreviews] = useState({});
-
   const [loadingPreviews, setLoadingPreviews] = useState({});
+
+  const formatFileSize = (bytes) => {
+    if (!bytes || bytes === 0) return '';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   useEffect(() => {
     fetchPostDetail();
@@ -45,7 +52,6 @@ const CommunityDetail = () => {
 
   const loadExcelPreview = async (file, idx) => {
     setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
-    
     try {
       const fileUrl = `http://localhost:8080${file.fileUrl}`;
       const response = await fetch(fileUrl);
@@ -278,13 +284,13 @@ const CommunityDetail = () => {
           </div>
 
           {currentPost.externalLink && (
-            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-              <span style={{ marginRight: '10px', color: 'var(--color-text-primary)' }}><strong>링크 :</strong></span>
+            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <span style={{ marginRight: '10px' }}><strong>링크 :</strong></span>
               <a 
                 href={currentPost.externalLink.startsWith('http') ? currentPost.externalLink : `https://${currentPost.externalLink}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                style={{ color: 'var(--color-primary)', textDecoration: 'underline', wordBreak: 'break-all', fontWeight: '600' }}
+                style={{ color: '#0ea5e9', textDecoration: 'underline', wordBreak: 'break-all' }}
               >
                 {currentPost.externalLink}
               </a>
@@ -292,11 +298,11 @@ const CommunityDetail = () => {
           )}
 
           {currentPost.vote && (
-            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: 'var(--color-surface)', borderRadius: '12px', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-small)' }}>
-              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-primary)' }}>
+            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: '#fff', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                  {currentPost.vote.title}
               </h3>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: '13px', marginBottom: '20px', fontWeight: '600' }}>
+              <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>
                 {currentPost.vote.allowMultiple ? '다중 선택 가능' : '단일 선택'}
               </p>
 
@@ -311,13 +317,13 @@ const CommunityDetail = () => {
                       onClick={() => !hasVoted && handleVoteOptionSelect(option.id)}
                       style={{ 
                         position: 'relative', padding: '12px 16px', borderRadius: '8px', 
-                        border: selectedOptions.includes(option.id) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                        border: selectedOptions.includes(option.id) ? '2px solid #0ea5e9' : '1px solid #cbd5e1',
                         cursor: hasVoted ? 'default' : 'pointer', overflow: 'hidden',
-                        background: selectedOptions.includes(option.id) ? 'var(--color-primary-soft)' : 'var(--color-surface)',
+                        background: selectedOptions.includes(option.id) ? '#f0f9ff' : '#fff',
                       }}
                     >
                       {hasVoted && (
-                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: 'var(--color-primary-soft)', zIndex: 1, transition: 'width 0.5s ease', opacity: 0.5 }}></div>
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: '#e0f2fe', zIndex: 1, transition: 'width 0.5s ease' }}></div>
                       )}
                       
                       <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -330,12 +336,12 @@ const CommunityDetail = () => {
                               style={{ width: '16px', height: '16px', margin: 0 }}
                             />
                           )}
-                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? '800' : '600', color: 'var(--color-text-primary)' }}>
+                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? 'bold' : 'normal' }}>
                             {option.content}
                           </span>
                         </div>
                         {hasVoted && (
-                          <span style={{ fontSize: '14px', color: 'var(--color-primary-dark)', fontWeight: '800' }}>
+                          <span style={{ fontSize: '14px', color: '#0ea5e9', fontWeight: 'bold' }}>
                             {percent}% ({option.voteCount}명)
                           </span>
                         )}
@@ -353,39 +359,41 @@ const CommunityDetail = () => {
             </div>
           )}
 
+          {/* 여러 개의 첨부파일 목록 순회 및 용량/미리보기 표시 */}
           {currentPost.files && currentPost.files.length > 0 && (
-            <div className="ste-post-files">
+            <div className="ste-post-files" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px' }}>
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
                 const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null; 
                 const fileDownloadUrl = `http://localhost:8080${file.fileUrl}`; 
+                const fileSizeFormatted = formatFileSize(file.fileSize || file.size);
                 
                 return (
-                  <div key={idx} className="ste-file-item" style={{ marginBottom: '20px' }}>
+                  <div key={idx} className="ste-file-item" style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                     
                     {/* 이미지 미리보기 */}
                     {isImage && (
-                      <div style={{ marginBottom: '10px' }}>
+                      <div style={{ marginBottom: '14px', textAlign: 'center' }}>
                         <img 
                           src={fileDownloadUrl} 
                           alt={file.originalFileName} 
                           className="ste-post-image" 
-                          style={{ maxWidth: '100%', borderRadius: '8px' }}
+                          style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }}
                         />
                       </div>
                     )}
 
-                    {/* 엑셀/CSV 로딩 중 상태 표시 */}
+                    {/* 엑셀/CSV 로딩 상태 표시 */}
                     {isExcel && loadingPreviews[idx] && (
-                      <div style={{ marginBottom: '12px', width: '100%', padding: '16px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)', color: 'var(--color-primary)', fontWeight: '800' }}>
-                        파일을 읽고 미리보기를 생성하는 중입니다...
+                      <div style={{ marginBottom: '12px', padding: '16px', textAlign: 'center', background: '#fff', borderRadius: '8px', color: '#0d9488', fontWeight: 'bold' }}>
+                        ⏳ 데이터를 분석하여 미리보기를 생성하는 중입니다...
                       </div>
                     )}
 
                     {/* 엑셀 파일 미리보기 표 렌더링 */}
                     {isExcel && !loadingPreviews[idx] && excelPreviews[idx] && (
-                      <div style={{ marginBottom: '12px', width: '100%', background: 'var(--color-surface)', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
-                        <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: '800', color: 'var(--color-text-secondary)' }}>
+                      <div style={{ marginBottom: '14px', width: '100%', background: '#fff', borderRadius: '8px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
+                        <div style={{ padding: '8px 12px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', color: '#475569' }}>
                           데이터 미리보기 (상위 15줄)
                         </div>
                         <div style={{ overflowX: 'auto', padding: '12px' }}>
@@ -394,7 +402,7 @@ const CommunityDetail = () => {
                               {excelPreviews[idx].map((row, rowIdx) => (
                                 <tr key={rowIdx}>
                                   {row.map((cell, colIdx) => (
-                                    <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '8px 12px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : 'var(--color-surface)', fontWeight: rowIdx === 0 ? '800' : 'normal', color: 'var(--color-text-primary)' }}>
+                                    <td key={colIdx} style={{ border: '1px solid #e2e8f0', padding: '6px 10px', background: rowIdx === 0 ? '#f8fafc' : '#fff', fontWeight: rowIdx === 0 ? 'bold' : 'normal', color: '#1e293b' }}>
                                       {cell}
                                     </td>
                                   ))}
@@ -406,14 +414,22 @@ const CommunityDetail = () => {
                       </div>
                     )}
 
-                    {/* 다운로드 버튼 */}
-                    <button 
-                      onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
-                      className="ste-file-link"
-                      style={{ cursor: 'pointer', textAlign: 'left', display: 'inline-block' }}
-                    >
-                      첨부파일 다운로드: {file.originalFileName}
-                    </button>
+                    {/* 다운로드 버튼 및 용량 표시 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                      <button 
+                        onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
+                        className="ste-file-link"
+                        style={{ cursor: 'pointer', textAlign: 'left', display: 'inline-block' }}
+                      >
+                        첨부파일 다운로드: {file.originalFileName}
+                      </button>
+                      {fileSizeFormatted && (
+                        <span style={{ fontSize: '13px', fontWeight: '600', color: '#64748b' }}>
+                          용량: {fileSizeFormatted}
+                        </span>
+                      )}
+                    </div>
+
                   </div>
                 );
               })}
