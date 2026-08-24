@@ -24,6 +24,7 @@ import AdminUsersPage from "../pages/admin/users/AdminUsersPage.jsx";
 import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.jsx";
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
+import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
 
 
 export default function AppRouter() {
@@ -43,6 +44,7 @@ export default function AppRouter() {
                 <Route path="/community/:id" element={<CommunityDetail />} />
                 <Route path="/community/edit/:id" element={<CommunityEdit />} />
                 <Route path="/weight" element={<WeightRecordPage />}/>
+                <Route path="/partnership" element={<PartnershipGuidePage />}/>
             </Route>
 
             {/* 인증 전용 화면 */}

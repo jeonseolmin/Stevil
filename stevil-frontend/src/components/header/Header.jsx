@@ -284,6 +284,13 @@ export default function Header() {
                             >
                                 안심 안내
                             </a>
+
+                            <a
+                                href="/#partnership"
+                                onClick={closeMenu}
+                            >
+                                제휴 안내
+                            </a>
                         </>
                     )}
 

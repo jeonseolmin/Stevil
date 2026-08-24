@@ -57,12 +57,12 @@ export default function PartnershipSection() {
                     </div>
 
                     <div className="partnership-actions">
-                        <a
-                            href="mailto:제휴문의이메일을입력하세요"
+                        <Link
+                            to="/partnership"
                             className="partnership-primary-button"
                         >
-                            제휴 문의하기
-                        </a>
+                            제휴 안내 보기
+                        </Link>
 
                         <Link
                             to="/hospitals"
