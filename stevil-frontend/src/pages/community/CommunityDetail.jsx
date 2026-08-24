@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance';
+import * as XLSX from 'xlsx';
 
 const CommunityDetail = () => {
   const { id } = useParams();
@@ -21,11 +22,63 @@ const CommunityDetail = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [hasVoted, setHasVoted] = useState(false);
 
+  const [excelPreviews, setExcelPreviews] = useState({});
+
+  const [loadingPreviews, setLoadingPreviews] = useState({});
+
   useEffect(() => {
     fetchPostDetail();
     fetchComments();
     fetchVoteStatus();
   }, [id]);
+
+  useEffect(() => {
+    if (currentPost && currentPost.files) {
+      currentPost.files.forEach((file, idx) => {
+        const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null;
+        if (isExcel && !excelPreviews[idx]) {
+          loadExcelPreview(file, idx);
+        }
+      });
+    }
+  }, [currentPost]);
+
+  const loadExcelPreview = async (file, idx) => {
+    setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
+    
+    try {
+      const fileUrl = `http://localhost:8080${file.fileUrl}`;
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+
+      let workbook;
+      if (file.originalFileName.toLowerCase().endsWith('.csv')) {
+        let csvText = "";
+        try {
+          csvText = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+        } catch (e) {
+          csvText = new TextDecoder('euc-kr').decode(buffer);
+        }
+        workbook = XLSX.read(csvText, { type: 'string', sheetRows: 15 });
+      } else {
+        workbook = XLSX.read(buffer, { type: 'array', sheetRows: 15 });
+      }
+
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+      setExcelPreviews(prev => ({
+        ...prev,
+        [idx]: jsonData.slice(0, 15) 
+      }));
+    } catch (error) {
+      console.error("엑셀 미리보기 로드 실패:", error);
+    } finally {
+      setLoadingPreviews(prev => ({ ...prev, [idx]: false }));
+    }
+  };
 
   const fetchPostDetail = async () => {
     try {
@@ -150,26 +203,23 @@ const CommunityDetail = () => {
       const response = await axiosInstance.get(`/community/${id}/vote/check`);
       const votedIds = response.data;
       
-      // 백엔드에서 내가 고른 항목 ID들을 배열로 보내줬다면?
       if (votedIds && votedIds.length > 0) {
-        setHasVoted(true);           // 이미 투표함 상태로 변경 -> 즉시 결과창(퍼센트) 뜸!
-        setSelectedOptions(votedIds); // 내가 투표했던 항목 파란색 굵은 글씨로 고정
+        setHasVoted(true);           
+        setSelectedOptions(votedIds); 
       }
     } catch (error) {
       console.error("투표 상태 확인 실패", error);
     }
   };
   
-  // 투표 제출 핸들러 (fetchVoteStatus 연동)
   const handleSubmitVote = async () => {
     if (selectedOptions.length === 0) return alert("투표할 항목을 선택해주세요.");
     try {
       await axiosInstance.post(`/community/${id}/vote`, { optionIds: selectedOptions });
       alert("투표가 완료되었습니다.");
       
-      // 투표 완료 후 새로고침 없이 즉시 결과 반영
       fetchPostDetail(); 
-      fetchVoteStatus(); // 투표했으니 상태 다시 가져와서 결과창으로 전환!
+      fetchVoteStatus(); 
     } catch (error) {
       alert(error.response?.data || "투표 처리 중 오류가 발생했습니다.");
     }
@@ -228,13 +278,13 @@ const CommunityDetail = () => {
           </div>
 
           {currentPost.externalLink && (
-            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-              <span style={{ marginRight: '10px' }}><strong>링크 :</strong></span>
+            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+              <span style={{ marginRight: '10px', color: 'var(--color-text-primary)' }}><strong>링크 :</strong></span>
               <a 
                 href={currentPost.externalLink.startsWith('http') ? currentPost.externalLink : `https://${currentPost.externalLink}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                style={{ color: '#0ea5e9', textDecoration: 'underline', wordBreak: 'break-all' }}
+                style={{ color: 'var(--color-primary)', textDecoration: 'underline', wordBreak: 'break-all', fontWeight: '600' }}
               >
                 {currentPost.externalLink}
               </a>
@@ -242,11 +292,11 @@ const CommunityDetail = () => {
           )}
 
           {currentPost.vote && (
-            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: '#fff', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: 'var(--color-surface)', borderRadius: '12px', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-small)' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-primary)' }}>
                  {currentPost.vote.title}
               </h3>
-              <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '13px', marginBottom: '20px', fontWeight: '600' }}>
                 {currentPost.vote.allowMultiple ? '다중 선택 가능' : '단일 선택'}
               </p>
 
@@ -261,13 +311,13 @@ const CommunityDetail = () => {
                       onClick={() => !hasVoted && handleVoteOptionSelect(option.id)}
                       style={{ 
                         position: 'relative', padding: '12px 16px', borderRadius: '8px', 
-                        border: selectedOptions.includes(option.id) ? '2px solid #0ea5e9' : '1px solid #cbd5e1',
+                        border: selectedOptions.includes(option.id) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
                         cursor: hasVoted ? 'default' : 'pointer', overflow: 'hidden',
-                        background: selectedOptions.includes(option.id) ? '#f0f9ff' : '#fff',
+                        background: selectedOptions.includes(option.id) ? 'var(--color-primary-soft)' : 'var(--color-surface)',
                       }}
                     >
                       {hasVoted && (
-                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: '#e0f2fe', zIndex: 1, transition: 'width 0.5s ease' }}></div>
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: 'var(--color-primary-soft)', zIndex: 1, transition: 'width 0.5s ease', opacity: 0.5 }}></div>
                       )}
                       
                       <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -280,12 +330,12 @@ const CommunityDetail = () => {
                               style={{ width: '16px', height: '16px', margin: 0 }}
                             />
                           )}
-                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? 'bold' : 'normal' }}>
+                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? '800' : '600', color: 'var(--color-text-primary)' }}>
                             {option.content}
                           </span>
                         </div>
                         {hasVoted && (
-                          <span style={{ fontSize: '14px', color: '#0ea5e9', fontWeight: 'bold' }}>
+                          <span style={{ fontSize: '14px', color: 'var(--color-primary-dark)', fontWeight: '800' }}>
                             {percent}% ({option.voteCount}명)
                           </span>
                         )}
@@ -307,10 +357,13 @@ const CommunityDetail = () => {
             <div className="ste-post-files">
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
+                const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null; 
                 const fileDownloadUrl = `http://localhost:8080${file.fileUrl}`; 
                 
                 return (
                   <div key={idx} className="ste-file-item" style={{ marginBottom: '20px' }}>
+                    
+                    {/* 이미지 미리보기 */}
                     {isImage && (
                       <div style={{ marginBottom: '10px' }}>
                         <img 
@@ -321,6 +374,39 @@ const CommunityDetail = () => {
                         />
                       </div>
                     )}
+
+                    {/* 엑셀/CSV 로딩 중 상태 표시 */}
+                    {isExcel && loadingPreviews[idx] && (
+                      <div style={{ marginBottom: '12px', width: '100%', padding: '16px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)', color: 'var(--color-primary)', fontWeight: '800' }}>
+                        파일을 읽고 미리보기를 생성하는 중입니다...
+                      </div>
+                    )}
+
+                    {/* 엑셀 파일 미리보기 표 렌더링 */}
+                    {isExcel && !loadingPreviews[idx] && excelPreviews[idx] && (
+                      <div style={{ marginBottom: '12px', width: '100%', background: 'var(--color-surface)', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+                        <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: '800', color: 'var(--color-text-secondary)' }}>
+                          데이터 미리보기 (상위 15줄)
+                        </div>
+                        <div style={{ overflowX: 'auto', padding: '12px' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                            <tbody>
+                              {excelPreviews[idx].map((row, rowIdx) => (
+                                <tr key={rowIdx}>
+                                  {row.map((cell, colIdx) => (
+                                    <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '8px 12px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : 'var(--color-surface)', fontWeight: rowIdx === 0 ? '800' : 'normal', color: 'var(--color-text-primary)' }}>
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 다운로드 버튼 */}
                     <button 
                       onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
                       className="ste-file-link"
