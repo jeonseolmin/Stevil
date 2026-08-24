@@ -208,7 +208,7 @@ export default function PartnershipGuidePage() {
                 </section>
 
                 <section
-                    id="partnership-information"
+
                     className="partnership-guide-section"
                 >
                     <div
@@ -286,7 +286,10 @@ export default function PartnershipGuidePage() {
                     </div>
                 </section>
 
-                <section className="partnership-guide-section">
+                <section                     
+                    id="partnership-information"
+                    className="partnership-guide-section"
+                >
                     <div className="partnership-guide-container partnership-information-layout">
                         <div>
                             <header className="partnership-guide-heading partnership-guide-heading--left">
