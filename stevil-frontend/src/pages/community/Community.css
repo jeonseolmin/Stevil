@@ -1,0 +1,573 @@
+.ste-community-wrapper {
+  min-height: calc(100vh - 76px);
+  padding: 52px 20px 80px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(32, 191, 169, 0.1),
+      transparent 34%
+    ),
+    var(--color-background);
+  box-sizing: border-box;
+  font-family: inherit; 
+  color: var(--color-text-primary);
+}
+
+.ste-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+
+.ste-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.ste-title {
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.04em;
+}
+
+.ste-subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* 카드 박스 스타일 */
+.ste-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-small);
+  border: 1px solid var(--color-border-light);
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* 메인 버튼 공통 스타일 */
+.ste-btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #ffffff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+.ste-btn-primary:hover {
+  opacity: 0.95;
+}
+
+.ste-btn-secondary {
+  background: var(--color-surface-soft);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  padding: 11px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+.ste-btn-secondary:hover {
+  background: var(--color-surface);
+}
+
+.ste-btn-danger {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ste-btn-danger:hover {
+  background: #dc2626;
+}
+
+/* 작은 사이즈 버튼 */
+.ste-btn-primary.small, .ste-btn-secondary.small {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.ste-text-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 0;
+  color: var(--color-primary-dark);
+}
+.ste-text-btn.danger {
+  color: #ef4444;
+}
+
+/* 툴바 & 탭 */
+.ste-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.ste-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.ste-tab {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.ste-tab.active {
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-small);
+}
+
+.ste-search {
+  display: flex;
+  gap: 8px;
+}
+
+.ste-search input {
+  padding: 10px 14px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  transition: border-color 160ms ease;
+}
+.ste-search input:focus {
+  border-color: var(--color-primary);
+}
+
+.ste-search button {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+}
+
+/* 테이블 레이아웃 */
+.ste-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.ste-th, .ste-tr {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.ste-th {
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  background: var(--color-surface-soft);
+  border-radius: var(--radius-medium);
+  margin-bottom: 8px;
+  border-bottom: none;
+}
+
+.ste-tr {
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+.ste-tr:hover {
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-medium);
+}
+
+.col-cat { width: 100px; text-align: center; }
+.col-title { flex: 1; padding: 0 16px; color: var(--color-text-primary); font-weight: 600; }
+.col-author { width: 120px; text-align: center; color: var(--color-text-secondary); font-weight: 600; }
+.col-date { width: 100px; text-align: center; color: var(--color-text-muted); font-size: 13px; font-weight: 600; }
+
+.ste-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--color-surface-soft);
+  color: var(--color-text-secondary);
+}
+.ste-badge.자유 { background: #e0f2fe; color: #0369a1; }
+.ste-badge.정보 { background: var(--color-primary-soft); color: var(--color-primary-dark); }
+.ste-badge.질문 { background: #fef3c7; color: #b45309; }
+
+.ste-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-text-muted);
+}
+
+/* 상세 보기 영역 */
+.ste-detail-top h2 {
+  font-size: 24px;
+  color: var(--color-text-primary);
+  margin: 12px 0;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.ste-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.ste-meta .author { font-weight: 800; color: var(--color-text-primary); }
+.ste-meta .dot { color: var(--color-border); }
+.right-action { margin-left: auto; }
+
+.ste-body {
+  min-height: 150px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin-bottom: 40px;
+}
+
+.ste-like-zone {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.ste-like-btn {
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-primary-light);
+  color: var(--color-primary-dark);
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+.ste-like-btn:hover {
+  background: var(--color-primary-light);
+}
+
+.ste-comment-area {
+  border-top: 1px solid var(--color-border);
+  padding-top: 30px;
+}
+.ste-comment-area h3 {
+  font-size: 18px;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+
+/* 일체형 댓글 입력 박스 */
+.ste-comment-input-wrapper {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 30px;
+  transition: border-color 160ms ease;
+}
+.ste-comment-input-wrapper:focus-within {
+  border-color: var(--color-primary);
+}
+.ste-comment-input-wrapper textarea {
+  width: 100%;
+  height: 50px;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+.ste-comment-input-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 댓글 리스트 및 아이템 */
+.ste-comment-list {
+  display: flex;
+  flex-direction: column;
+}
+.ste-comment-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.ste-comment-item.is-reply {
+  padding-left: 40px; 
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.comment-header .author {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.comment-header .date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.comment-body {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 14px;
+}
+.action-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.action-btn:hover { color: var(--color-primary-dark); }
+.action-btn.danger:hover { color: #ef4444; }
+
+.ste-comment-input-wrapper.reply-mode {
+  margin-top: 16px;
+  margin-bottom: 0;
+  background: var(--color-surface);
+}
+
+.ste-footer-btns {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+/* 글 작성 폼 */
+.ste-form-group {
+  margin-bottom: 20px;
+}
+.ste-form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+.ste-form-group input, .ste-form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  transition: border-color 160ms ease;
+}
+.ste-form-group input:focus, .ste-form-group select:focus, .ste-textarea:focus {
+  border-color: var(--color-primary);
+}
+.ste-textarea {
+  width: 100%;
+  height: 250px;
+  padding: 14px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+.ste-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* 신고 모달 디자인 */
+.ste-modal-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+.ste-modal-box {
+  background: var(--color-surface);
+  width: 400px;
+  padding: 30px;
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--color-border);
+}
+.ste-modal-box h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: var(--color-text-primary);
+  font-weight: 800;
+}
+.ste-modal-box p {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.ste-modal-box textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.ste-modal-box textarea:focus {
+  border-color: var(--color-primary);
+}
+.ste-modal-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* 글쓰기: 첨부파일 입력 래퍼 */
+.ste-file-upload-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-surface-soft);
+  border: 1px dashed var(--color-border);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.ste-file-input {
+  display: none; 
+}
+
+.ste-file-name {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  flex: 1;
+  font-weight: 600;
+}
+
+.ste-file-clear-btn {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.ste-file-clear-btn:hover {
+  background: #fef2f2;
+}
+
+/* 상세페이지: 첨부파일 표시 영역 */
+.ste-post-files {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: var(--color-surface-soft);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--color-border-light);
+}
+
+.ste-file-item {
+  margin-bottom: 10px;
+}
+.ste-file-item:last-child {
+  margin-bottom: 0;
+}
+
+.ste-post-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: var(--shadow-small);
+}
+
+.ste-file-link {
+  display: inline-block;
+  padding: 8px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 160ms ease;
+}
+.ste-file-link:hover {
+  background: var(--color-primary-soft);
+}

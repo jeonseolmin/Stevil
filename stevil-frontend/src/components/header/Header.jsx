@@ -1,170 +1,640 @@
-import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import "./Header.css";
-import ThemeToggle from "./ThemeToggle.jsx";
-import { useWishlist } from '../../context/WishlistContext';
-import WishlistSidebar from './WishlistSidebar';
+import {
+    useEffect,
+    useState,
+} from "react";
 
-const sidebarSections = [
-    {
-        title: null,
-        menus: [
-            { to: "/", icon: "⌂", label: "홈" },
-            { to: "/planner", icon: "✦", label: "AI 여행 만들기" },
-            { to: "/explore", icon: "⌖", label: "여행지 탐색" },
-            { to: "/my-trips", icon: "▣", label: "내 여행" },
-        ],
-    },
-    {
-        title: "여행 관리",
-        menus: [
-            { to: "/tools/budget", icon: "₩", label: "여행 경비" },
-            { to: "/tools/checklist", icon: "✓", label: "체크리스트" },
-            { to: "/mypage/bookmarks", icon: "♡", label: "즐겨찾기" },
-        ],
-    },
-    {
-        title: "여행 정보",
-        menus: [
-            { to: "/tools/exchange", icon: "↔", label: "환율" },
-            { to: "/tools/weather", icon: "☀", label: "날씨" },
-            { to: "/community", icon: "◇", label: "커뮤니티" },
-        ],
-    },
-    {
-        title: "계정",
-        menus: [
-            { to: "/notifications", icon: "♢", label: "알림" },
-            { to: "/mypage/profile", icon: "○", label: "마이페이지" },
-            { to: "/login", icon: "→", label: "로그인" },
-        ],
-    },
-];
+import {
+    Link,
+    NavLink,
+    useLocation,
+    useNavigate,
+} from "react-router-dom";
+
+import axiosInstance from "../../api/axiosInstance";
+
+import "./Header.css";
 
 export default function Header() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    
-    const { wishlist, setIsWishlistOpen } = useWishlist();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const closeSidebar = () => {
-        setIsSidebarOpen(false);
+    const isPartnershipPage =
+        location.pathname === "/partnership";
+
+    const [userRole, setUserRole] = useState(
+        () => localStorage.getItem("userRole")
+    );
+
+    const [isLoggedIn, setIsLoggedIn] =
+        useState(() =>
+            Boolean(
+                localStorage.getItem(
+                    "accessToken"
+                )
+            )
+        );
+
+    const [isMenuOpen, setIsMenuOpen] =
+        useState(false);
+
+    const isAdmin =
+        userRole === "ROLE_ADMIN";
+
+    const closeMenu = () => {
+        setIsMenuOpen(false);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem(
+            "accessToken"
+        );
+
+        localStorage.removeItem(
+            "userRole"
+        );
+
+        setIsLoggedIn(false);
+        setUserRole(null);
+
+        closeMenu();
+
+        navigate("/", {
+            replace: true,
+        });
+    };
+
+    /*
+     * 페이지 주소나 해시가 바뀌면
+     * 모바일 메뉴를 닫고 로그인 상태를 갱신합니다.
+     */
     useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.key === "Escape") {
-                closeSidebar();
+        closeMenu();
+
+        setIsLoggedIn(
+            Boolean(
+                localStorage.getItem(
+                    "accessToken"
+                )
+            )
+        );
+
+        setUserRole(
+            localStorage.getItem(
+                "userRole"
+            )
+        );
+    }, [
+        location.pathname,
+        location.hash,
+    ]);
+
+    /*
+     * 다른 브라우저 탭에서 로그인·로그아웃하거나
+     * 권한값이 변경되면 현재 헤더도 갱신합니다.
+     */
+    useEffect(() => {
+        const handleStorageChange = (
+            event
+        ) => {
+            if (
+                event.key ===
+                "accessToken"
+            ) {
+                setIsLoggedIn(
+                    Boolean(event.newValue)
+                );
+            }
+
+            if (
+                event.key === "userRole"
+            ) {
+                setUserRole(
+                    event.newValue
+                );
             }
         };
 
-        if (isSidebarOpen) {
-            document.body.classList.add("sidebar-open");
-            window.addEventListener("keydown", handleKeyDown);
-        }
+        window.addEventListener(
+            "storage",
+            handleStorageChange
+        );
 
         return () => {
-            document.body.classList.remove("sidebar-open");
-            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener(
+                "storage",
+                handleStorageChange
+            );
         };
-    }, [isSidebarOpen]);
+    }, []);
+
+    /*
+     * 모바일 메뉴가 열렸을 때
+     * Escape 키로 닫습니다.
+     */
+    useEffect(() => {
+        if (!isMenuOpen) {
+            return undefined;
+        }
+
+        const handleEscape = (
+            event
+        ) => {
+            if (
+                event.key === "Escape"
+            ) {
+                closeMenu();
+            }
+        };
+
+        document.addEventListener(
+            "keydown",
+            handleEscape
+        );
+
+        return () => {
+            document.removeEventListener(
+                "keydown",
+                handleEscape
+            );
+        };
+    }, [isMenuOpen]);
+
+    /*
+     * 로그인한 사용자의 최신 권한을 조회합니다.
+     */
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setUserRole(null);
+            return undefined;
+        }
+
+        let active = true;
+
+        const loadCurrentUser =
+            async () => {
+                try {
+                    const response =
+                        await axiosInstance.get(
+                            "/users/me"
+                        );
+
+                    if (!active) {
+                        return;
+                    }
+
+                    const role =
+                        response.data.role;
+
+                    setUserRole(role);
+
+                    localStorage.setItem(
+                        "userRole",
+                        role
+                    );
+                } catch (error) {
+                    if (!active) {
+                        return;
+                    }
+
+                    console.error(
+                        "헤더 사용자 정보 조회 실패:",
+                        error.response?.status,
+                        error.response?.data ??
+                        error.message
+                    );
+
+                    if (
+                        error.response
+                            ?.status === 401 ||
+                        error.response
+                            ?.status === 403
+                    ) {
+                        localStorage.removeItem(
+                            "accessToken"
+                        );
+
+                        localStorage.removeItem(
+                            "userRole"
+                        );
+
+                        setIsLoggedIn(false);
+                        setUserRole(null);
+                    }
+                }
+            };
+
+        loadCurrentUser();
+
+        return () => {
+            active = false;
+        };
+    }, [isLoggedIn]);
 
     return (
-        <>
-            <header className="header">
-                <div className="header-start">
-                    <button
-                        type="button"
-                        className="hamburger-button"
-                        aria-label="전체 메뉴 열기"
-                        aria-expanded={isSidebarOpen}
-                        aria-controls="main-sidebar"
-                        onClick={() => setIsSidebarOpen(true)}
+        <header className="site-header">
+            <div className="header-inner">
+                <Link
+                    to={
+                        isPartnershipPage
+                            ? "/"
+                            : isLoggedIn
+                                ? "/dashboard"
+                                : "/"
+                    }
+                    className="header-brand"
+                    aria-label={
+                        isPartnershipPage
+                            ? "Stevil 홈으로 이동"
+                            : isLoggedIn
+                                ? "Stevil 대시보드"
+                                : "Stevil 시작 페이지"
+                    }
+                    onClick={closeMenu}
+                >
+                    <span
+                        className="brand-symbol"
+                        aria-hidden="true"
                     >
-                        <span />
-                        <span />
-                        <span />
-                    </button>
+                        1
+                    </span>
 
-                    <NavLink className="header-logo" to="/">
-                        PLUG·TRIP
-                    </NavLink>
-                </div>
+                    <span className="brand-name">
+                        Stevil
+                    </span>
+                </Link>
 
-                <nav className="header-nav" aria-label="주요 메뉴">
-                    <NavLink to="/planner">AI 여행 만들기</NavLink>
-                    <NavLink to="/explore">여행지 탐색</NavLink>
-                </nav>
+                <nav
+                    id="header-navigation"
+                    className={`header-navigation ${
+                        isMenuOpen
+                            ? "header-navigation--open"
+                            : ""
+                    }`}
+                    aria-label={
+                        isPartnershipPage
+                            ? "제휴 안내 메뉴"
+                            : "주요 메뉴"
+                    }
+                >
+                    {isPartnershipPage ? (
+                        <>
+                            <Link
+                                to="/partnership#partnership-intro"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    !location.hash ||
+                                    location.hash ===
+                                    "#partnership-intro"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 소개
+                            </Link>
 
-                <div className="header-actions">
-                    <ThemeToggle />
+                            <Link
+                                to="/partnership#partnership-target"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-target"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 대상
+                            </Link>
 
-                    {/* 찜 목록 열기 버튼 (로그인 버튼 앞에 배치) */}
-                    <button 
-                        type="button" 
-                        className="header-wish-btn" 
-                        onClick={() => setIsWishlistOpen(true)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '5px' }}
-                    >
-                        🤍 <span className="wish-badge" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{wishlist.length}</span>
-                    </button>
+                            <Link
+                                to="/partnership#partnership-process"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-process"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                등록 절차
+                            </Link>
 
-                    <NavLink className="login-link" to="/login">
-                        로그인
-                    </NavLink>
+                            <Link
+                                to="/partnership#partnership-information"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-information"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                필요 정보
+                            </Link>
 
-                    <NavLink className="signup-link" to="/signup">
-                        회원가입
-                    </NavLink>
-                </div>
-            </header>
+                            <Link
+                                to="/partnership#partnership-notice"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-notice"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                운영 안내
+                            </Link>
 
-            {/* 메인 사이드바 오버레이 */}
-            <div
-                className={`sidebar-overlay ${isSidebarOpen ? "sidebar-overlay--visible" : ""}`}
-                onClick={closeSidebar}
-                aria-hidden="true"
-            />
+                            <Link
+                                to="/partnership#partnership-contact"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={
+                                    location.hash ===
+                                    "#partnership-contact"
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                제휴 문의
+                            </Link>
+                        </>
+                    ) : isLoggedIn ? (
+                        <>
+                            <NavLink
+                                to="/dashboard"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                대시보드
+                            </NavLink>
 
-            {/* 메인 사이드바 (좌측) */}
-            <aside
-                id="main-sidebar"
-                className={`sidebar ${isSidebarOpen ? "sidebar--open" : ""}`}
-                aria-label="전체 메뉴"
-                aria-hidden={!isSidebarOpen}
-            >
-                {/* ... (기존 메인 사이드바 내부 렌더링 코드 유지) ... */}
-                <div className="sidebar-header">
-                    <NavLink className="sidebar-logo" to="/" onClick={closeSidebar}>
-                        PLUG·TRIP
-                    </NavLink>
-                    <button type="button" className="sidebar-close-button" onClick={closeSidebar}>
-                        ×
-                    </button>
-                </div>
-                <nav className="sidebar-nav">
-                    {sidebarSections.map((section, sectionIndex) => (
-                        <section className="sidebar-section" key={section.title ?? sectionIndex}>
-                            {section.title && <h2 className="sidebar-section-title">{section.title}</h2>}
-                            <div className="sidebar-menu-list">
-                                {section.menus.map((menu) => (
-                                    <NavLink
-                                        key={menu.to}
-                                        to={menu.to}
-                                        end={menu.to === "/"}
-                                        onClick={closeSidebar}
-                                        className={({ isActive }) => `sidebar-menu-item ${isActive ? "sidebar-menu-item--active" : ""}`}
+                            <NavLink
+                                to="/hospitals"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                병원 찾기
+                            </NavLink>
+
+                            <NavLink
+                                to="/diet"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                식단
+                            </NavLink>
+
+                            <NavLink
+                                to="/exercise"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                운동
+                            </NavLink>
+
+                            <NavLink
+                                to="/diary"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                투약 일지
+                            </NavLink>
+
+                            <NavLink
+                                to="/community"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                커뮤니티
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <a
+                                href="/#features"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                주요 기능
+                            </a>
+
+                            <a
+                                href="/#how-it-works"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                이용 방법
+                            </a>
+
+                            <a
+                                href="/#safety"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                안심 안내
+                            </a>
+
+                            <a
+                                href="/#partnership"
+                                onClick={
+                                    closeMenu
+                                }
+                            >
+                                제휴 안내
+                            </a>
+                        </>
+                    )}
+
+                    <div className="mobile-header-actions">
+                        {isLoggedIn ? (
+                            <>
+                                {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="header-admin-button"
+                                        onClick={
+                                            closeMenu
+                                        }
                                     >
-                                        <span className="sidebar-menu-icon" aria-hidden="true">{menu.icon}</span>
-                                        <span>{menu.label}</span>
-                                    </NavLink>
-                                ))}
-                            </div>
-                        </section>
-                    ))}
-                </nav>
-            </aside>
+                                        관리자 메뉴
+                                    </Link>
+                                )}
 
-            <WishlistSidebar />
-        </>
+                                <button
+                                    type="button"
+                                    className="header-login-link"
+                                    onClick={
+                                        handleLogout
+                                    }
+                                >
+                                    로그아웃
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/login"
+                                    className="header-login-link"
+                                    onClick={
+                                        closeMenu
+                                    }
+                                >
+                                    로그인
+                                </Link>
+
+                                <Link
+                                    to="/login"
+                                    className="header-start-button"
+                                    onClick={
+                                        closeMenu
+                                    }
+                                >
+                                    시작하기
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </nav>
+
+                <div className="desktop-header-actions">
+                    {isPartnershipPage ? (
+                        <Link
+                            to="/"
+                            className="header-login-link"
+                            onClick={closeMenu}
+                        >
+                            홈으로
+                        </Link>
+                    ) : isLoggedIn ? (
+                        <>
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className="header-admin-button"
+                                >
+                                    관리자 메뉴
+                                </Link>
+                            )}
+
+                            <button
+                                type="button"
+                                className="header-login-link"
+                                onClick={
+                                    handleLogout
+                                }
+                            >
+                                로그아웃
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/login"
+                                className="header-login-link"
+                            >
+                                로그인
+                            </Link>
+
+                            <Link
+                                to="/login"
+                                className="header-start-button"
+                            >
+                                시작하기
+                            </Link>
+                        </>
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    className={`header-menu-button ${
+                        isMenuOpen
+                            ? "header-menu-button--open"
+                            : ""
+                    }`}
+                    aria-label={
+                        isMenuOpen
+                            ? "메뉴 닫기"
+                            : "메뉴 열기"
+                    }
+                    aria-expanded={
+                        isMenuOpen
+                    }
+                    aria-controls="header-navigation"
+                    onClick={() => {
+                        setIsMenuOpen(
+                            (previous) =>
+                                !previous
+                        );
+                    }}
+                >
+                    <span />
+                    <span />
+                    <span />
+                </button>
+            </div>
+        </header>
     );
 }
