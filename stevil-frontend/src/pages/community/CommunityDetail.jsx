@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance';
+import * as XLSX from 'xlsx';
 
 const CommunityDetail = () => {
   const { id } = useParams();
@@ -18,10 +19,66 @@ const CommunityDetail = () => {
   const [reportTargetId, setReportTargetId] = useState(null);
   const [reportReason, setReportReason] = useState('');
 
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [hasVoted, setHasVoted] = useState(false);
+
+  const [excelPreviews, setExcelPreviews] = useState({});
+
+  const [loadingPreviews, setLoadingPreviews] = useState({});
+
   useEffect(() => {
     fetchPostDetail();
     fetchComments();
+    fetchVoteStatus();
   }, [id]);
+
+  useEffect(() => {
+    if (currentPost && currentPost.files) {
+      currentPost.files.forEach((file, idx) => {
+        const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null;
+        if (isExcel && !excelPreviews[idx]) {
+          loadExcelPreview(file, idx);
+        }
+      });
+    }
+  }, [currentPost]);
+
+  const loadExcelPreview = async (file, idx) => {
+    setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
+    
+    try {
+      const fileUrl = `http://localhost:8080${file.fileUrl}`;
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+
+      let workbook;
+      if (file.originalFileName.toLowerCase().endsWith('.csv')) {
+        let csvText = "";
+        try {
+          csvText = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+        } catch (e) {
+          csvText = new TextDecoder('euc-kr').decode(buffer);
+        }
+        workbook = XLSX.read(csvText, { type: 'string', sheetRows: 15 });
+      } else {
+        workbook = XLSX.read(buffer, { type: 'array', sheetRows: 15 });
+      }
+
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+      setExcelPreviews(prev => ({
+        ...prev,
+        [idx]: jsonData.slice(0, 15) 
+      }));
+    } catch (error) {
+      console.error("엑셀 미리보기 로드 실패:", error);
+    } finally {
+      setLoadingPreviews(prev => ({ ...prev, [idx]: false }));
+    }
+  };
 
   const fetchPostDetail = async () => {
     try {
@@ -129,6 +186,62 @@ const CommunityDetail = () => {
     }
   };
 
+  const handleVoteOptionSelect = (optionId) => {
+    if (!currentPost.vote.allowMultiple) {
+      setSelectedOptions([optionId]);
+    } else {
+      if (selectedOptions.includes(optionId)) {
+        setSelectedOptions(selectedOptions.filter(id => id !== optionId));
+      } else {
+        setSelectedOptions([...selectedOptions, optionId]);
+      }
+    }
+  };
+
+  const fetchVoteStatus = async () => {
+    try {
+      const response = await axiosInstance.get(`/community/${id}/vote/check`);
+      const votedIds = response.data;
+      
+      if (votedIds && votedIds.length > 0) {
+        setHasVoted(true);           
+        setSelectedOptions(votedIds); 
+      }
+    } catch (error) {
+      console.error("투표 상태 확인 실패", error);
+    }
+  };
+  
+  const handleSubmitVote = async () => {
+    if (selectedOptions.length === 0) return alert("투표할 항목을 선택해주세요.");
+    try {
+      await axiosInstance.post(`/community/${id}/vote`, { optionIds: selectedOptions });
+      alert("투표가 완료되었습니다.");
+      
+      fetchPostDetail(); 
+      fetchVoteStatus(); 
+    } catch (error) {
+      alert(error.response?.data || "투표 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleCopy = (e) => {
+    if (currentPost.allowCopy === false) {
+      e.preventDefault();
+      alert("이 게시글은 작성자에 의해 복사가 금지되어 있습니다.");
+      return;
+    }
+    
+    if (currentPost.autoSource) {
+      const selection = document.getSelection();
+      if (selection.toString().length > 0) {
+        e.preventDefault();
+        const sourceText = `\n\n출처: Stevil 커뮤니티 - ${window.location.href}`;
+        e.clipboardData.setData('text/plain', selection.toString() + sourceText);
+      }
+    }
+  };
+
   if (!currentPost) return <div className="ste-community-wrapper">로딩중...</div>;
 
   return (
@@ -155,22 +268,102 @@ const CommunityDetail = () => {
             </div>
           </div>
           
-          <div className="ste-body">
+          <div 
+            className="ste-body"
+            style={currentPost.allowCopy === false ? { userSelect: 'none' } : {}}
+            onContextMenu={currentPost.allowCopy === false ? (e) => e.preventDefault() : undefined}
+            onCopy={handleCopy}
+          >
             {currentPost.content}
           </div>
 
-          {/* 파일 다운로드 및 이미지 렌더링 영역 */}
+          {currentPost.externalLink && (
+            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+              <span style={{ marginRight: '10px', color: 'var(--color-text-primary)' }}><strong>링크 :</strong></span>
+              <a 
+                href={currentPost.externalLink.startsWith('http') ? currentPost.externalLink : `https://${currentPost.externalLink}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ color: 'var(--color-primary)', textDecoration: 'underline', wordBreak: 'break-all', fontWeight: '600' }}
+              >
+                {currentPost.externalLink}
+              </a>
+            </div>
+          )}
+
+          {currentPost.vote && (
+            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: 'var(--color-surface)', borderRadius: '12px', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-small)' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-primary)' }}>
+                 {currentPost.vote.title}
+              </h3>
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '13px', marginBottom: '20px', fontWeight: '600' }}>
+                {currentPost.vote.allowMultiple ? '다중 선택 가능' : '단일 선택'}
+              </p>
+
+              <div className="ste-vote-options" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {currentPost.vote.options.map(option => {
+                  const totalVotes = currentPost.vote.options.reduce((sum, opt) => sum + opt.voteCount, 0);
+                  const percent = totalVotes === 0 ? 0 : Math.round((option.voteCount / totalVotes) * 100);
+                  
+                  return (
+                    <div 
+                      key={option.id} 
+                      onClick={() => !hasVoted && handleVoteOptionSelect(option.id)}
+                      style={{ 
+                        position: 'relative', padding: '12px 16px', borderRadius: '8px', 
+                        border: selectedOptions.includes(option.id) ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                        cursor: hasVoted ? 'default' : 'pointer', overflow: 'hidden',
+                        background: selectedOptions.includes(option.id) ? 'var(--color-primary-soft)' : 'var(--color-surface)',
+                      }}
+                    >
+                      {hasVoted && (
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', width: `${percent}%`, background: 'var(--color-primary-soft)', zIndex: 1, transition: 'width 0.5s ease', opacity: 0.5 }}></div>
+                      )}
+                      
+                      <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {!hasVoted && (
+                            <input 
+                              type={currentPost.vote.allowMultiple ? "checkbox" : "radio"} 
+                              checked={selectedOptions.includes(option.id)}
+                              readOnly
+                              style={{ width: '16px', height: '16px', margin: 0 }}
+                            />
+                          )}
+                          <span style={{ fontWeight: selectedOptions.includes(option.id) ? '800' : '600', color: 'var(--color-text-primary)' }}>
+                            {option.content}
+                          </span>
+                        </div>
+                        {hasVoted && (
+                          <span style={{ fontSize: '14px', color: 'var(--color-primary-dark)', fontWeight: '800' }}>
+                            {percent}% ({option.voteCount}명)
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!hasVoted && (
+                <button className="ste-btn-primary" onClick={handleSubmitVote} style={{ width: '100%', marginTop: '20px', padding: '12px' }}>
+                  투표하기
+                </button>
+              )}
+            </div>
+          )}
+
           {currentPost.files && currentPost.files.length > 0 && (
             <div className="ste-post-files">
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
-                // 스프링부트 백엔드 주소 (포트에 맞게 확인)
+                const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null; 
                 const fileDownloadUrl = `http://localhost:8080${file.fileUrl}`; 
                 
                 return (
                   <div key={idx} className="ste-file-item" style={{ marginBottom: '20px' }}>
                     
-                    {/* 1. 이미지일 경우 먼저 사진을 보여줌 */}
+                    {/* 이미지 미리보기 */}
                     {isImage && (
                       <div style={{ marginBottom: '10px' }}>
                         <img 
@@ -182,7 +375,38 @@ const CommunityDetail = () => {
                       </div>
                     )}
 
-                    {/* 2. 이미지 여부와 상관없이 모든 파일에 대해 다운로드 버튼 노출 */}
+                    {/* 엑셀/CSV 로딩 중 상태 표시 */}
+                    {isExcel && loadingPreviews[idx] && (
+                      <div style={{ marginBottom: '12px', width: '100%', padding: '16px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)', color: 'var(--color-primary)', fontWeight: '800' }}>
+                        파일을 읽고 미리보기를 생성하는 중입니다...
+                      </div>
+                    )}
+
+                    {/* 엑셀 파일 미리보기 표 렌더링 */}
+                    {isExcel && !loadingPreviews[idx] && excelPreviews[idx] && (
+                      <div style={{ marginBottom: '12px', width: '100%', background: 'var(--color-surface)', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+                        <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: '800', color: 'var(--color-text-secondary)' }}>
+                          데이터 미리보기 (상위 15줄)
+                        </div>
+                        <div style={{ overflowX: 'auto', padding: '12px' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                            <tbody>
+                              {excelPreviews[idx].map((row, rowIdx) => (
+                                <tr key={rowIdx}>
+                                  {row.map((cell, colIdx) => (
+                                    <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '8px 12px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : 'var(--color-surface)', fontWeight: rowIdx === 0 ? '800' : 'normal', color: 'var(--color-text-primary)' }}>
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 다운로드 버튼 */}
                     <button 
                       onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
                       className="ste-file-link"
@@ -190,74 +414,75 @@ const CommunityDetail = () => {
                     >
                       첨부파일 다운로드: {file.originalFileName}
                     </button>
-                    
                   </div>
                 );
               })}
             </div>
           )}
 
-          <div className="ste-like-zone">
+          <div className="ste-like-zone" style={{ margin: '40px 0', textAlign: 'center' }}>
             <button className="ste-like-btn" onClick={handleToggleLike}>
               공감하기 ({currentPost.likeCount || 0})
             </button>
           </div>
 
-          <div className="ste-comment-area">
-            <h3>댓글 ({comments.length})</h3>
-            
-            <div className="ste-comment-input-wrapper">
-              <textarea 
-                placeholder="따뜻한 댓글을 남겨주세요."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-              ></textarea>
-              <div className="ste-comment-input-footer">
-                <button className="ste-btn-primary small" onClick={handleAddComment}>등록</button>
+          {currentPost.allowComment !== false && (
+            <div className="ste-comment-area">
+              <h3>댓글 ({comments.length})</h3>
+              
+              <div className="ste-comment-input-wrapper">
+                <textarea 
+                  placeholder="따뜻한 댓글을 남겨주세요."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                ></textarea>
+                <div className="ste-comment-input-footer">
+                  <button className="ste-btn-primary small" onClick={handleAddComment}>등록</button>
+                </div>
+              </div>
+              
+              <div className="ste-comment-list">
+                {comments.map(comment => {
+                  const isReply = comment.parentId !== null;
+                  return (
+                    <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
+                      <div className="comment-header">
+                        <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
+                        <span className="date">{comment.createdAt}</span>
+                      </div>
+                      
+                      <div className="comment-body">
+                        {comment.content}
+                      </div>
+
+                      <div className="comment-actions">
+                        {!isReply && (
+                          <button className="action-btn" onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
+                            답글 달기
+                          </button>
+                        )}
+                        <button className="action-btn danger" onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
+                      </div>
+
+                      {replyingCommentId === comment.id && (
+                        <div className="ste-comment-input-wrapper reply-mode">
+                          <textarea 
+                            placeholder="답글을 남겨주세요."
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                          ></textarea>
+                          <div className="ste-comment-input-footer">
+                            <button className="ste-btn-secondary small" onClick={() => setReplyingCommentId(null)}>취소</button>
+                            <button className="ste-btn-primary small" onClick={() => handleAddReply(comment.id)}>답글 등록</button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            
-            <div className="ste-comment-list">
-              {comments.map(comment => {
-                const isReply = comment.parentId !== null;
-                return (
-                  <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
-                    <div className="comment-header">
-                      <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
-                      <span className="date">{comment.createdAt}</span>
-                    </div>
-                    
-                    <div className="comment-body">
-                      {comment.content}
-                    </div>
-
-                    <div className="comment-actions">
-                      {!isReply && (
-                        <button className="action-btn" onClick={() => setReplyingCommentId(replyingCommentId === comment.id ? null : comment.id)}>
-                          답글 달기
-                        </button>
-                      )}
-                      <button className="action-btn danger" onClick={() => openReportModal('COMMENT', comment.id)}>신고</button>
-                    </div>
-
-                    {replyingCommentId === comment.id && (
-                      <div className="ste-comment-input-wrapper reply-mode">
-                        <textarea 
-                          placeholder="답글을 남겨주세요."
-                          value={replyContent}
-                          onChange={(e) => setReplyContent(e.target.value)}
-                        ></textarea>
-                        <div className="ste-comment-input-footer">
-                          <button className="ste-btn-secondary small" onClick={() => setReplyingCommentId(null)}>취소</button>
-                          <button className="ste-btn-primary small" onClick={() => handleAddReply(comment.id)}>답글 등록</button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          )}
 
           <div className="ste-footer-btns">
             <button className="ste-btn-secondary" onClick={() => navigate('/community')}>목록으로</button>
@@ -265,7 +490,6 @@ const CommunityDetail = () => {
         </div>
       </div>
       
-      {/* 완전히 구현된 신고 모달 창 */}
       {isReportModalOpen && (
         <div className="ste-modal-bg">
           <div className="ste-modal-box">

@@ -5,10 +5,12 @@ import com.my.stevil_back.post.dto.PostResponse;
 import com.my.stevil_back.post.entity.Post;
 import com.my.stevil_back.post.entity.PostFile;
 import com.my.stevil_back.post.entity.PostLike;
+import com.my.stevil_back.post.entity.PostVote;
+import com.my.stevil_back.post.entity.VoteOption;
 import com.my.stevil_back.post.repository.PostLikeRepository;
 import com.my.stevil_back.post.repository.PostRepository;
+import com.my.stevil_back.post.repository.VoteRecordRepository;
 import com.my.stevil_back.user.entity.User;
-import com.my.stevil_back.user.entity.enumType.UserRole;
 import com.my.stevil_back.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
+    private final VoteRecordRepository voteRecordRepository;
 
     // 1. 게시글 작성
     public void createPost(PostRequest postRequest, MultipartFile file, Long userId) {
@@ -40,7 +43,7 @@ public class PostService {
         if (user.isSuspended()) {
             throw new RuntimeException("활동이 정지된 계정입니다. 글을 작성할 수 없습니다.");
         }
-        
+
         Post post = Post.builder()
                 .category(postRequest.getCategory())
                 .title(postRequest.getTitle())
@@ -48,8 +51,32 @@ public class PostService {
                 .author(user.getNickname())
                 .authorEmail(user.getEmail())
                 .notice(postRequest.isNotice())
+                .allowComment(postRequest.isAllowComment())
+                .allowCopy(postRequest.isAllowCopy())
+                .autoSource(postRequest.isAutoSource())
+                .externalLink(postRequest.getExternalLink())
                 .user(user)
                 .build();
+
+        //  투표 데이터가 들어왔을 경우 투표 엔티티 생성 및 연결
+        if (postRequest.getVoteTitle() != null && !postRequest.getVoteTitle().trim().isEmpty()
+                && postRequest.getVoteOptions() != null && !postRequest.getVoteOptions().isEmpty()) {
+
+            PostVote postVote = PostVote.builder()
+                    .post(post)
+                    .title(postRequest.getVoteTitle())
+                    .allowMultiple(postRequest.isAllowMultipleVote())
+                    .build();
+
+            for (String optionContent : postRequest.getVoteOptions()) {
+                if (optionContent != null && !optionContent.trim().isEmpty()) {
+                    postVote.addOption(VoteOption.builder()
+                            .content(optionContent)
+                            .build());
+                }
+            }
+            post.setPostVote(postVote); // 뼈대 게시글에 투표를 장착!
+        }
 
         // 첨부 파일 처리
         if (file != null && !file.isEmpty()) {
@@ -125,6 +152,10 @@ public class PostService {
         post.setTitle(postRequest.getTitle());
         post.setContent(postRequest.getContent());
         post.setCategory(postRequest.getCategory());
+        post.setAllowComment(postRequest.isAllowComment());
+        post.setAllowCopy(postRequest.isAllowCopy());
+        post.setAutoSource(postRequest.isAutoSource());
+        post.setExternalLink(postRequest.getExternalLink());
 
         // 새로운 파일 교체 로직
         if (file != null && !file.isEmpty()) {
@@ -254,5 +285,62 @@ public class PostService {
         }
 
         return posts.map(PostResponse::from);
+    }
+    @Transactional
+    public void submitVote(Long postId, Long userId, List<Long> optionIds) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
+
+        com.my.stevil_back.post.entity.PostVote postVote = post.getPostVote();
+        if (postVote == null) {
+            throw new RuntimeException("투표가 없는 게시글입니다.");
+        }
+
+        // 중복 투표 방지 (이미 이 투표에 참여했는지 확인)
+        if (voteRecordRepository.existsByPostVoteIdAndUserId(postVote.getId(), user.getId())) {
+            throw new RuntimeException("이미 이 투표에 참여하셨습니다.");
+        }
+
+        // 다중 선택 검증 (단일 투표인데 여러 개 골랐을 경우 튕겨냄)
+        if (!postVote.isAllowMultiple() && optionIds.size() > 1) {
+            throw new RuntimeException("복수 선택이 허용되지 않은 투표입니다.");
+        }
+
+        // 선택한 항목들 득표수 1씩 증가시키고 기록 남기기
+        for (Long optionId : optionIds) {
+            com.my.stevil_back.post.entity.VoteOption option = postVote.getOptions().stream()
+                    .filter(o -> o.getId().equals(optionId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 투표 항목입니다."));
+
+            option.setVoteCount(option.getVoteCount() + 1); // 득표수 1 증가
+
+            // 투표했다는 증거(장부) 기록
+            com.my.stevil_back.post.entity.VoteRecord record = com.my.stevil_back.post.entity.VoteRecord.builder()
+                    .postVote(postVote)
+                    .voteOption(option)
+                    .user(user)
+                    .build();
+            voteRecordRepository.save(record);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getVotedOptionIds(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        if (post.getPostVote() == null) {
+            return java.util.Collections.emptyList(); // 투표가 없는 글이면 빈 리스트 반환
+        }
+
+        // 장부를 뒤져서 이 유저가 고른 항목 ID들만 쏙쏙 뽑아냄
+        return voteRecordRepository.findByPostVoteIdAndUserId(post.getPostVote().getId(), userId)
+                .stream()
+                .map(record -> record.getVoteOption().getId())
+                .toList();
     }
 }

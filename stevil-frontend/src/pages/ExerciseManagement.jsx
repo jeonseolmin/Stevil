@@ -132,25 +132,15 @@ const ExerciseManagement = () => {
     if (!selectedExercise) return 0;
     const calPer10min = selectedExercise.caloriesPer10Min ?? selectedExercise.caloriesPer10min ?? 50;
     const dur = parseFloat(duration) || 0;
-    
-    // 1. 기본 칼로리 (운동 시간에 비례)
     const baseCal = (dur / 10.0) * calPer10min;
 
     if (isAerobic) {
-      // 유산소는 시간 비례만 적용
       return Math.floor(baseCal);
     } else {
-      // 2. 무산소는 사용자가 입력한 세트, 횟수, 중량을 가져옴
       const s = parseInt(sets) || 0;
       const r = parseInt(repsPerSet) || 0;
       const w = parseFloat(weightKg) || 0;
-      
-      // 3. 총 볼륨(들어올린 총 무게)에 따른 보너스 칼로리 계산
-      // 공식: (세트 x 횟수 x 중량) * 0.02
-      // 예시: 50kg 10회 3세트 = 1500kg 볼륨 -> 30 kcal 추가 소모
       const volumeBonus = (s * r * w) * 0.02; 
-      
-      // 최종 칼로리 = 시간 비례 + 볼륨 보너스
       return Math.floor(baseCal + volumeBonus);
     }
   };
@@ -169,7 +159,7 @@ const ExerciseManagement = () => {
         return d >= weekAgoStr && d <= todayStr;
       });
     }
-    return exerciseStats; // MONTHLY
+    return exerciseStats;
   };
 
   const chartStats = getFilteredChartStats();
@@ -179,7 +169,7 @@ const ExerciseManagement = () => {
     const todayStr = today.toISOString().split('T')[0];
     
     if (viewMode === 'DAILY') {
-      return `${selectedSummaryDate}`; // 선택된 날짜 출력!
+      return `${selectedSummaryDate}`;
     } else if (viewMode === 'WEEKLY') {
       const weekAgo = new Date();
       weekAgo.setDate(today.getDate() - 7);
@@ -206,7 +196,7 @@ const ExerciseManagement = () => {
     labels: chartLabels.length > 0 ? chartLabels : ['운동 안한 날 (휴식)'],
     datasets: [{
       data: chartLabels.length > 0 ? chartDataValues : [1],
-      backgroundColor: ['#1abc9c', '#41d9ff', '#fdcb6e', '#3b82f6'],
+      backgroundColor: ['#2b9d8f', '#38bdf8', '#fbbf24', '#818cf8'],
       borderWidth: 1,
     }],
   };
@@ -245,242 +235,240 @@ const ExerciseManagement = () => {
   };
 
   return (
-    <div className="exercise-web-container">
-      
-      <header className="dashboard-header">
-        <div className="header-text">
-          <h1 className="main-title">내 운동 다이어리</h1>
-          <p className="sub-title">오늘의 운동과 신체 변화를 기록하고 관리하세요.</p>
-        </div>
-        <div className="goal-banner">
-          <div className="goal-info">
-            <span className="goal-badge">현재 목표</span>
-            <h3>{targetWeight}kg 감량</h3>
-            <p>현재 체중: {currentWeight}kg (남은 목표: {(currentWeight - targetWeight).toFixed(1)}kg)</p>
+    <div className="exercise-page">
+      <div className="exercise-container">
+        
+        <header className="dashboard-header">
+          <div className="header-text">
+            <h1 className="main-title">내 운동 다이어리</h1>
+            <p className="sub-title">오늘의 운동과 신체 변화를 기록하고 관리하세요.</p>
           </div>
-          <div className="recommendation-box">
-            <h4>💡 AI 맞춤 추천</h4>
-            <p>{randomQuote}</p>
+          <div className="goal-banner">
+            <div className="goal-info">
+              <span className="goal-badge">현재 목표</span>
+              <h3>{targetWeight}kg 감량</h3>
+              <p>현재 체중: {currentWeight}kg (남은 목표: {(currentWeight - targetWeight).toFixed(1)}kg)</p>
+            </div>
+            <div className="recommendation-box">
+              <h4>AI 맞춤 추천</h4>
+              <p>{randomQuote}</p>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <section className="daily-overview-section">
-        <div className="calendar-strip">
-          <button className="nav-btn" onClick={() => {
-            const d = new Date(selectedSummaryDate);
-            d.setDate(d.getDate() - 1);
-            setSelectedSummaryDate(d.toISOString().split('T')[0]);
-            setViewMode('DAILY'); 
-          }}>&lt;</button>
-          <div className="dates-container">
-            {generateDateStrip().map((d) => (
-              <div 
-                key={d.fullDate} 
-                className={`date-item ${d.fullDate === selectedSummaryDate ? 'active' : ''}`}
-                onClick={() => {
-                  setSelectedSummaryDate(d.fullDate);
-                  setViewMode('DAILY'); 
-                }}
-              >
-                <span className="d-num">{d.dateNum}</span>
-                <span className="d-str">{d.dayStr}</span>
-              </div>
-            ))}
-          </div>
-          <button className="nav-btn" onClick={() => {
-            const d = new Date(selectedSummaryDate);
-            d.setDate(d.getDate() + 1);
-            setSelectedSummaryDate(d.toISOString().split('T')[0]);
-            setViewMode('DAILY');
-          }}>&gt;</button>
-        </div>
-
-        <div className="daily-summary-header">
-          <h3>선택한 날짜의 운동 요약 ({selectedSummaryDate})</h3>
-        </div>
-
-        <div className="daily-summary-grid">
-          <div className="summary-card">
-            <div className="sum-title"><span style={{color: '#1abc9c'}}></span> 소모 칼로리</div>
-            <div className="sum-value">{dailyCalories} <span>kcal</span></div>
-            <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyCalories/500 * 100, 100)}%`, background: '#1abc9c'}}></div></div>
-          </div>
-          <div className="summary-card">
-            <div className="sum-title"><span style={{color: '#3b82f6'}}></span> 운동 시간</div>
-            <div className="sum-value">{dailyDuration} <span>분</span></div>
-            <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyDuration/60 * 100, 100)}%`, background: '#3b82f6'}}></div></div>
-          </div>
-          <div className="summary-card">
-            <div className="sum-title"><span style={{color: '#9b59b6'}}></span> 총 수행 세트</div>
-            <div className="sum-value">{dailySets} <span>세트</span></div>
-            <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailySets/20 * 100, 100)}%`, background: '#9b59b6'}}></div></div>
-          </div>
-          <div className="summary-card">
-            <div className="sum-title"><span style={{color: '#f39c12'}}></span> 남은 목표 체중</div>
-            <div className="sum-value">{(currentWeight - targetWeight).toFixed(1)} <span>kg</span></div>
-            <div className="progress-bar"><div className="fill" style={{width: '70%', background: '#f39c12'}}></div></div>
-          </div>
-        </div>
-
-        <div className="daily-record-list-container">
-          <div className="record-list-header">
-            <h4>운동 기록</h4>
-            <span className="more-btn">더보기 &gt;</span>
-          </div>
-          
-          {dailyLogs.length === 0 ? (
-            <div className="empty-record-text">이 날짜에 기록된 운동이 없습니다.</div>
-          ) : (
-            <div className="record-list-body">
-              {dailyLogs.map((log, idx) => (
-                <div key={idx} className="daily-record-item">
-                  <div className="item-left">
-                    <div className="item-icon" style={{ background: log.category?.includes('유산소') ? '#e0f2f1' : '#f3e5f5' }}>
-                      {log.category?.includes('유산소') ? '🏃' : '🏋️‍♂️'}
-                    </div>
-                    <div className="item-info">
-                      <div className="item-name">{log.exerciseName || '운동'}</div>
-                      <div className="item-date">{selectedSummaryDate}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="item-center">
-                    <div className="val-box">{log.durationMinutes || 0} 분</div>
-                    <div className="val-box">{log.burnedCalories || 0} kcal</div>
-                    <div className="val-box">{log.sets ? `${log.sets} 세트` : '—'}</div>
-                  </div>
-                  
-                  <div className="item-right">
-                    &gt;
-                  </div>
+        <section className="daily-overview-section">
+          <div className="calendar-strip">
+            <button className="nav-btn" onClick={() => {
+              const d = new Date(selectedSummaryDate);
+              d.setDate(d.getDate() - 1);
+              setSelectedSummaryDate(d.toISOString().split('T')[0]);
+              setViewMode('DAILY'); 
+            }}>&lt;</button>
+            <div className="dates-container">
+              {generateDateStrip().map((d) => (
+                <div 
+                  key={d.fullDate} 
+                  className={`date-item ${d.fullDate === selectedSummaryDate ? 'active' : ''}`}
+                  onClick={() => {
+                    setSelectedSummaryDate(d.fullDate);
+                    setViewMode('DAILY'); 
+                  }}
+                >
+                  <span className="d-num">{d.dateNum}</span>
+                  <span className="d-str">{d.dayStr}</span>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </section>
+            <button className="nav-btn" onClick={() => {
+              const d = new Date(selectedSummaryDate);
+              d.setDate(d.getDate() + 1);
+              setSelectedSummaryDate(d.toISOString().split('T')[0]);
+              setViewMode('DAILY');
+            }}>&gt;</button>
+          </div>
 
-      <div className="dashboard-grid">
-        <div className="left-panel">
-          <div className="card">
-            <div className="card-header">
-              <h3>전체 운동량 (유산소 vs 무산소)</h3>
-              <div className="view-mode-buttons">
-                <button className={viewMode === 'DAILY' ? 'active' : ''} onClick={() => setViewMode('DAILY')}>일간</button>
-                <button className={viewMode === 'WEEKLY' ? 'active' : ''} onClick={() => setViewMode('WEEKLY')}>주간</button>
-                <button className={viewMode === 'MONTHLY' ? 'active' : ''} onClick={() => setViewMode('MONTHLY')}>월간</button>
-              </div>
+          <div className="daily-summary-header">
+            <h3>선택한 날짜의 운동 요약 ({selectedSummaryDate})</h3>
+          </div>
+
+          <div className="daily-summary-grid">
+            <div className="summary-card">
+              <div className="sum-title">소모 칼로리</div>
+              <div className="sum-value">{dailyCalories} <span>kcal</span></div>
+              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyCalories/500 * 100, 100)}%`, background: 'var(--color-primary)'}}></div></div>
+            </div>
+            <div className="summary-card">
+              <div className="sum-title">운동 시간</div>
+              <div className="sum-value">{dailyDuration} <span>분</span></div>
+              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyDuration/60 * 100, 100)}%`, background: '#38bdf8'}}></div></div>
+            </div>
+            <div className="summary-card">
+              <div className="sum-title">총 수행 세트</div>
+              <div className="sum-value">{dailySets} <span>세트</span></div>
+              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailySets/20 * 100, 100)}%`, background: '#818cf8'}}></div></div>
+            </div>
+            <div className="summary-card">
+              <div className="sum-title">남은 목표 체중</div>
+              <div className="sum-value">{(currentWeight - targetWeight).toFixed(1)} <span>kg</span></div>
+              <div className="progress-bar"><div className="fill" style={{width: '70%', background: '#fbbf24'}}></div></div>
+            </div>
+          </div>
+
+          <div className="daily-record-list-container">
+            <div className="record-list-header">
+              <h4>운동 기록</h4>
+              <span className="more-btn">더보기 &gt;</span>
             </div>
             
-            <p className="date-range">{dateRangeText}</p>
-
-            {chartStats.length === 0 ? (
-              <div className="empty-chart">
-                <p>선택한 기간의 운동 데이터가 없습니다.</p>
-              </div>
+            {dailyLogs.length === 0 ? (
+              <div className="empty-record-text">이 날짜에 기록된 운동이 없습니다.</div>
             ) : (
-              <div className="chart-wrapper">
-                <Doughnut data={chartData} options={chartOptions} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="right-panel">
-          <div className="card">
-            <h3>운동 검색 및 새로운 기록</h3>
-            <div className="search-box">
-              <input 
-                type="text" 
-                placeholder="운동 검색 (예: 벤치프레스, 걷기)"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              <button onClick={handleSearch}>검색</button>
-            </div>
-
-            {searchResults.length > 0 && (
-              <div className="search-results">
-                {searchResults.map((ex) => (
-                  <div key={ex.id} className="result-item">
-                    <div>
-                      <strong>{ex.name}</strong>
-                      <span>{ex.category} | 10분당 {ex.caloriesPer10Min ?? 50} kcal</span>
+              <div className="record-list-body">
+                {dailyLogs.map((log, idx) => (
+                  <div key={idx} className="daily-record-item">
+                    <div className="item-left">
+                      <div className="item-info">
+                        <div className="item-name">{log.exerciseName || '운동'}</div>
+                        <div className="item-date">{selectedSummaryDate}</div>
+                      </div>
                     </div>
-                    <button onClick={() => setSelectedExercise(ex)}>선택</button>
+                    
+                    <div className="item-center">
+                      <div className="val-box">{log.durationMinutes || 0} 분</div>
+                      <div className="val-box">{log.burnedCalories || 0} kcal</div>
+                      <div className="val-box">{log.sets ? `${log.sets} 세트` : '—'}</div>
+                    </div>
+                    
+                    <div className="item-right">&gt;</div>
                   </div>
                 ))}
               </div>
             )}
+          </div>
+        </section>
 
-            {selectedExercise && (
-              <div className="record-form">
-                <div className="form-header">
-                  <h4>[{selectedExercise.name}] 기록 작성</h4>
-                  <div className="calorie-badge">{calculateEstimatedCalories()} kcal 소모 예정</div>
+        <div className="dashboard-grid">
+          <div className="left-panel">
+            <div className="card">
+              <div className="card-header">
+                <h3>전체 운동량 (유산소 vs 무산소)</h3>
+                <div className="view-mode-buttons">
+                  <button className={viewMode === 'DAILY' ? 'active' : ''} onClick={() => setViewMode('DAILY')}>일간</button>
+                  <button className={viewMode === 'WEEKLY' ? 'active' : ''} onClick={() => setViewMode('WEEKLY')}>주간</button>
+                  <button className={viewMode === 'MONTHLY' ? 'active' : ''} onClick={() => setViewMode('MONTHLY')}>월간</button>
                 </div>
+              </div>
+              
+              <p className="date-range">{dateRangeText}</p>
 
-                <div className="input-group">
-                  <label> 운동 일정 (날짜)</label>
-                  <input type="date" value={exerciseDate} onChange={(e) => setExerciseDate(e.target.value)} />
+              {chartStats.length === 0 ? (
+                <div className="empty-chart">
+                  <p>선택한 기간의 운동 데이터가 없습니다.</p>
                 </div>
+              ) : (
+                <div className="chart-wrapper">
+                  <Doughnut data={chartData} options={chartOptions} />
+                </div>
+              )}
+            </div>
+          </div>
 
-                <div className="form-row">
-                  <div className="input-group">
-                    <label>운동 시간 (분)*</label>
-                    <input type="number" placeholder="예: 30" value={duration} onChange={(e) => setDuration(e.target.value)} />
-                  </div>
-                  {!isAerobic && (
-                    <div className="input-group">
-                      <label>세트 수*</label>
-                      <input type="number" placeholder="예: 3" value={sets} onChange={(e) => setSets(e.target.value)} />
+          <div className="right-panel">
+            <div className="card">
+              <h3>운동 검색 및 새로운 기록</h3>
+              <div className="search-box">
+                <input 
+                  type="text" 
+                  placeholder="운동 검색 (예: 벤치프레스, 걷기)"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <button onClick={handleSearch}>검색</button>
+              </div>
+
+              {searchResults.length > 0 && (
+                <div className="search-results">
+                  {searchResults.map((ex) => (
+                    <div key={ex.id} className="result-item">
+                      <div>
+                        <strong>{ex.name}</strong>
+                        <span>{ex.category} | 10분당 {ex.caloriesPer10Min ?? 50} kcal</span>
+                      </div>
+                      <button onClick={() => setSelectedExercise(ex)}>선택</button>
                     </div>
-                  )}
+                  ))}
                 </div>
+              )}
 
-                {!isAerobic && (
+              {selectedExercise && (
+                <div className="record-form">
+                  <div className="form-header">
+                    <h4>[{selectedExercise.name}] 기록 작성</h4>
+                    <div className="calorie-badge">{calculateEstimatedCalories()} kcal 소모 예정</div>
+                  </div>
+
+                  <div className="input-group">
+                    <label>운동 일정 (날짜)</label>
+                    <input type="date" value={exerciseDate} onChange={(e) => setExerciseDate(e.target.value)} />
+                  </div>
+
                   <div className="form-row">
                     <div className="input-group">
-                      <label>세트당 횟수</label>
-                      <input type="number" placeholder="예: 12" value={repsPerSet} onChange={(e) => setRepsPerSet(e.target.value)} />
+                      <label>운동 시간 (분)*</label>
+                      <input type="number" placeholder="예: 30" value={duration} onChange={(e) => setDuration(e.target.value)} />
+                    </div>
+                    {!isAerobic && (
+                      <div className="input-group">
+                        <label>세트 수*</label>
+                        <input type="number" placeholder="예: 3" value={sets} onChange={(e) => setSets(e.target.value)} />
+                      </div>
+                    )}
+                  </div>
+
+                  {!isAerobic && (
+                    <div className="form-row">
+                      <div className="input-group">
+                        <label>세트당 횟수</label>
+                        <input type="number" placeholder="예: 12" value={repsPerSet} onChange={(e) => setRepsPerSet(e.target.value)} />
+                      </div>
+                      <div className="input-group">
+                        <label>중량 (kg)</label>
+                        <input type="number" step="0.5" placeholder="예: 50" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+                      </div>
+                    </div>
+                  )}
+
+                  <hr className="divider" />
+                  <h5 className="section-subtitle">인바디 및 컨디션 기록</h5>
+                  
+                  <div className="form-row">
+                    <div className="input-group">
+                      <label>측정 체중 (kg)</label>
+                      <input type="number" step="0.1" placeholder={`기존: ${currentWeight}kg`} value={inbodyWeight} onChange={(e) => setInbodyWeight(e.target.value)} />
                     </div>
                     <div className="input-group">
-                      <label>중량 (kg)</label>
-                      <input type="number" step="0.5" placeholder="예: 50" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+                      <label>골격근량 (kg)</label>
+                      <input type="number" step="0.1" placeholder="예: 32.1" value={inbodyMuscle} onChange={(e) => setInbodyMuscle(e.target.value)} />
+                    </div>
+                    <div className="input-group">
+                      <label>체지방률 (%)</label>
+                      <input type="number" step="0.1" placeholder="예: 18.5" value={inbodyFat} onChange={(e) => setInbodyFat(e.target.value)} />
                     </div>
                   </div>
-                )}
 
-                <hr className="divider" />
-                <h5 className="section-subtitle">인바디 및 컨디션 기록</h5>
-                
-                <div className="form-row">
                   <div className="input-group">
-                    <label>측정 체중 (kg)</label>
-                    <input type="number" step="0.1" placeholder={`기존: ${currentWeight}kg`} value={inbodyWeight} onChange={(e) => setInbodyWeight(e.target.value)} />
+                    <label>운동 내용 및 특이사항 (메모)</label>
+                    <input type="text" placeholder="예: 스쿼트 시 무릎 통증 약간 있음" value={memo} onChange={(e) => setMemo(e.target.value)} />
                   </div>
-                  <div className="input-group">
-                    <label>골격근량 (kg)</label>
-                    <input type="number" step="0.1" placeholder="예: 32.1" value={inbodyMuscle} onChange={(e) => setInbodyMuscle(e.target.value)} />
-                  </div>
-                  <div className="input-group">
-                    <label>체지방률 (%)</label>
-                    <input type="number" step="0.1" placeholder="예: 18.5" value={inbodyFat} onChange={(e) => setInbodyFat(e.target.value)} />
-                  </div>
+
+                  <button className="submit-btn" onClick={handleSaveRecord}>일정 및 기록 저장하기</button>
                 </div>
-
-                <div className="input-group">
-                  <label>운동 내용 및 특이사항 (메모)</label>
-                  <input type="text" placeholder="예: 스쿼트 시 무릎 통증 약간 있음" value={memo} onChange={(e) => setMemo(e.target.value)} />
-                </div>
-
-                <button className="submit-btn" onClick={handleSaveRecord}>일정 및 기록 저장하기</button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );

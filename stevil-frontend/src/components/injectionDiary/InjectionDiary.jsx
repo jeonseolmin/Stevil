@@ -22,19 +22,15 @@ const InjectionDiary = () => {
     { id: 'dizziness', label: '어지러움' },
     { id: 'palpitation', label: '심박수 증가' },
     { id: 'etc', label: '기타' }
-
   ];
 
-  // 컴포넌트 마운트 시 최근 기록 조회
   useEffect(() => {
     fetchLogs();
   }, []);
 
-  // 1. GET: 백엔드에서 최근 기록 불러오기
   const fetchLogs = async () => {
     try {
       const response = await axiosInstance.get(`http://localhost:8080/api/injections/recent`);
-      
       if (Array.isArray(response.data)) {
         setRecentLogs(response.data);
       } else {
@@ -46,7 +42,6 @@ const InjectionDiary = () => {
     }
   };
 
-  // 증상 태그 선택 토글 함수
   const toggleSymptom = (label) => {
     if (selectedSymptoms.includes(label)) {
       setSelectedSymptoms(selectedSymptoms.filter(s => s !== label));
@@ -55,7 +50,6 @@ const InjectionDiary = () => {
     }
   };
 
-  // 2. POST: 백엔드에 새로운 주사 일기 저장하기
   const handleSave = async () => {
     if (!dosage || !injectionSite) {
       alert('투여 용량과 부위를 입력해주세요.');
@@ -72,7 +66,6 @@ const InjectionDiary = () => {
       };
 
       await axiosInstance.post(`http://localhost:8080/api/injections`, payload);
-      
       alert('오늘의 주사 일기가 성공적으로 저장되었습니다!');
       
       setDosage(''); 
@@ -86,10 +79,8 @@ const InjectionDiary = () => {
     }
   };
 
-  // 리포트 상단 요약 통계 계산 (최신 기록 기준)
   const currentDosage = recentLogs.length > 0 ? recentLogs[0].dosage : 0;
   
-  // 가장 많이 나타난 증상 찾기
   const getMostFrequentSymptom = () => {
     if (recentLogs.length === 0) return '없음';
     const counts = {};
@@ -107,14 +98,12 @@ const InjectionDiary = () => {
   return (
     <div className="medical-web-container">
       
-      {/* 상단 헤더 */}
       <header className="dashboard-header">
         <div className="header-text">
           <h1 className="main-title">주사 및 컨디션 일기</h1>
           <p className="sub-title">투여 기록과 증상을 메모하여 진료 시 담당 의사에게 보여주세요.</p>
         </div>
         
-        {/* 모드 전환 토글 */}
         <div className="mode-toggle">
           <button 
             className={`toggle-btn ${viewMode === 'RECORD' ? 'active' : ''}`}
@@ -132,7 +121,6 @@ const InjectionDiary = () => {
       </header>
 
       {viewMode === 'RECORD' ? (
-        /* 1. 환자 기록 모드 (RECORD) */
         <div className="dashboard-grid">
           <div className="left-panel">
             <div className="card">
@@ -164,7 +152,7 @@ const InjectionDiary = () => {
               <hr className="divider" />
 
               <div className="form-group">
-                <label>🩺 오늘의 주요 증상 (다중 선택 가능)</label>
+                <label>오늘의 주요 증상 (다중 선택 가능)</label>
                 <div className="symptom-tags-container">
                   {symptomTags.map(tag => (
                     <button
@@ -205,7 +193,7 @@ const InjectionDiary = () => {
               <h3>최근 나의 컨디션 흐름</h3>
               <div className="mini-timeline">
                 {recentLogs.length === 0 ? (
-                  <p style={{color: '#888', fontSize: '14px'}}>아직 기록된 주사 일기가 없습니다.</p>
+                  <p style={{color: 'var(--color-text-muted)', fontSize: '14px'}}>아직 기록된 주사 일기가 없습니다.</p>
                 ) : (
                   recentLogs.slice(0, 5).map((log, idx) => (
                     <div key={idx} className="timeline-item">
@@ -253,7 +241,7 @@ const InjectionDiary = () => {
           <div className="card report-table-card">
             <h3>전체 상세 기록</h3>
             {recentLogs.length === 0 ? (
-              <p style={{textAlign: 'center', padding: '30px', color: '#888'}}>기록된 데이터가 없습니다.</p>
+              <p style={{textAlign: 'center', padding: '30px', color: 'var(--color-text-muted)'}}>기록된 데이터가 없습니다.</p>
             ) : (
               <table className="doctor-report-table">
                 <thead>

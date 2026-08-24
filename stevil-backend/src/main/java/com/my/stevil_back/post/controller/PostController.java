@@ -3,6 +3,7 @@ package com.my.stevil_back.post.controller;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.post.dto.PostRequest;
 import com.my.stevil_back.post.dto.PostResponse;
+import com.my.stevil_back.post.dto.VoteRequest;
 import com.my.stevil_back.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -105,5 +106,34 @@ public class PostController {
     ) {
         boolean isNowLiked = postService.toggleLike(id, userDetails.getUserId());
         return ResponseEntity.ok(isNowLiked);
+    }
+
+    @PostMapping("/{id}/vote")
+    public ResponseEntity<?> submitVote(
+            @PathVariable Long id,
+            @RequestBody VoteRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        try {
+            // 회원님이 만들어두신 getUserId() 메서드를 바로 사용!
+            postService.submitVote(id, userDetails.getUserId(), request.getOptionIds());
+            return ResponseEntity.ok().body("투표가 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}/vote/check")
+    public ResponseEntity<List<Long>> checkVoteStatus(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        // 비회원이거나 로그인 정보가 없으면 투표 안 한 걸로 처리(빈 리스트)
+        if (userDetails == null) {
+            return ResponseEntity.ok(java.util.Collections.emptyList());
+        }
+
+        List<Long> votedOptionIds = postService.getVotedOptionIds(id, userDetails.getUserId());
+        return ResponseEntity.ok(votedOptionIds);
     }
 }

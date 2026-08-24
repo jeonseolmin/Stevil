@@ -16,10 +16,15 @@ import CommunityList from "../pages/community/CommunityList.jsx";
 import CommunityDetail from "../pages/community/CommunityDetail.jsx";
 import CommunityWrite from "../pages/community/CommunityWrite.jsx";
 import CommunityEdit from "../pages/community/CommunityEdit.jsx";
-import AdminReportsPage from "../pages/admin/AdminReportsPage.jsx";
+import AdminReportsPage from "../pages/admin/reports/AdminReportsPage.jsx";
 import AdminLayout from "../components/layout/admin/AdminLayout.jsx";
-import AdminDashboardPage from "../pages/admin/AdminDashboardPage.jsx";
+import AdminDashboardPage from "../pages/admin/dashboard/AdminDashboardPage.jsx";
 import WeightRecordPage from "../pages/weight/WeightRecordPage.jsx";
+import AdminUsersPage from "../pages/admin/users/AdminUsersPage.jsx";
+import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.jsx";
+import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
+import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
+import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
 
 
 export default function AppRouter() {
@@ -39,6 +44,7 @@ export default function AppRouter() {
                 <Route path="/community/:id" element={<CommunityDetail />} />
                 <Route path="/community/edit/:id" element={<CommunityEdit />} />
                 <Route path="/weight" element={<WeightRecordPage />}/>
+                <Route path="/partnership" element={<PartnershipGuidePage />}/>
             </Route>
 
             {/* 인증 전용 화면 */}
@@ -48,7 +54,11 @@ export default function AppRouter() {
 
             <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
-                <Route path="reports" element={<AdminReportsPage />}/>
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="facilities" element={<AdminFacilitiesPage />} />
+                <Route path="reports" element={<AdminReportsPage />} />
+                <Route path="inquiries" element={<AdminInquiriesPage />} />
+                <Route path="contents" element={<AdminContentsPage />} />
             </Route>
 
             {/* 최초 로그인 후 추가 정보 입력 */}
