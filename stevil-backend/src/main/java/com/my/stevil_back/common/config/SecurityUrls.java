@@ -15,6 +15,9 @@ public class SecurityUrls {
 
             "/api/exercises/**",
 
+            "/api/community",
+            "/api/community/**"
+
     };
 
     public static final String[] ADMIN_URLS = {
@@ -44,9 +47,6 @@ public class SecurityUrls {
             "/api/answer/**",
 
             "/api/posts/**",
-
-            "/api/community",
-            "/api/community/**",
 
             "/api/reports",
             "/api/reports/**",
