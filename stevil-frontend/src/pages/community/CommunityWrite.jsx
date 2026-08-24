@@ -18,6 +18,8 @@ const CommunityWrite = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [excelPreview, setExcelPreview] = useState(null);
 
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
   const [externalLink, setExternalLink] = useState('');
   const [allowComment, setAllowComment] = useState(true);
   const [allowCopy, setAllowCopy] = useState(true);
@@ -29,7 +31,15 @@ const CommunityWrite = () => {
   const [allowMultipleVote, setAllowMultipleVote] = useState(false);
 
   const processFile = async (file) => {
-    // 1. 용량 제한 (500MB)
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'xlsx', 'xls', 'csv', 'txt', 'pdf', 'docx', 'doc', 'ppt', 'pptx'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      alert(`업로드가 불가능한 파일 형식입니다.\n허용: 이미지 및 일반 문서 파일 (png, jpg, xlsx, txt 등)\n차단: 프로그램 및 압축 파일 (exe, zip 등)`);
+      clearFile();
+      return;
+    }
+
     const MAX_SIZE = 500 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
       alert(`파일 용량은 500MB를 초과할 수 없습니다. (현재 파일: ${(file.size / 1024 / 1024).toFixed(1)}MB)`);
@@ -41,13 +51,12 @@ const CommunityWrite = () => {
     setImagePreview(null);
     setExcelPreview(null);
 
-    // 2. 이미지 미리보기 처리
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setImagePreview(url);
     } 
-    // 3. 엑셀/CSV 파일 처리
     else if (file.name.match(/\.(xlsx|xls|csv)$/i)) {
+      setIsPreviewLoading(true);
       try {
         const buffer = await file.arrayBuffer();
         let workbook;
@@ -59,19 +68,21 @@ const CommunityWrite = () => {
           } catch (e) {
             csvText = new TextDecoder('euc-kr').decode(buffer);
           }
-          workbook = XLSX.read(csvText, { type: 'string' });
+          workbook = XLSX.read(csvText, { type: 'string', sheetRows: 15 });
         } else {
-          workbook = XLSX.read(buffer, { type: 'array' });
+          workbook = XLSX.read(buffer, { type: 'array', sheetRows: 15 });
         }
 
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        setExcelPreview(jsonData.slice(0, 15)); // 렌더링 최적화를 위해 상위 15줄만 표시
+        setExcelPreview(jsonData.slice(0, 15)); 
       } catch (error) {
         console.error("엑셀/CSV 파싱 에러:", error);
         alert("파일을 읽는 중 오류가 발생했습니다.");
+      } finally {
+        setIsPreviewLoading(false);
       }
     }
   };
@@ -297,6 +308,7 @@ const CommunityWrite = () => {
                   type="file" 
                   id="file-upload" 
                   className="ste-file-input" 
+                  accept=".png,.jpg,.jpeg,.xlsx,.xls,.csv,.txt,.pdf,.docx,.doc,.ppt,.pptx"
                   onChange={handleFileChange}
                   ref={fileInputRef}
                 />
@@ -317,7 +329,14 @@ const CommunityWrite = () => {
                 </div>
               )}
 
-              {excelPreview && (
+              {/* 엑셀/CSV 로딩 중 상태 표시 */}
+              {isPreviewLoading && (
+                <div style={{ marginTop: '16px', width: '100%', padding: '16px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)', color: 'var(--color-primary)', fontWeight: '800' }}>
+                  파일을 읽고 미리보기를 생성하는 중입니다...
+                </div>
+              )}
+
+              {excelPreview && !isPreviewLoading && (
                 <div style={{ marginTop: '16px', width: '100%', background: '#fff', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
                   <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
                     데이터 미리보기 (상위 15줄)
