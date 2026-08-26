@@ -219,7 +219,7 @@ export default function Dashboard() {
         dashboard.nickname?.trim() || "사용자";
 
     const hasEnoughChartData =
-        dashboard.recentWeights?.length >= 2;
+        (dashboard.recentWeights?.length ?? 0) >= 2;
 
     return (
         <div className="dashboard-page">
