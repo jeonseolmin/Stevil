@@ -24,10 +24,6 @@ const ADMIN_MENU = [
         label: "병원·약국",
     },
     {
-        path: "/admin/partnership-inquiries",
-        label: "제휴 문의",
-    },
-    {
         path: "/admin/reports",
         label: "신고 관리",
     },

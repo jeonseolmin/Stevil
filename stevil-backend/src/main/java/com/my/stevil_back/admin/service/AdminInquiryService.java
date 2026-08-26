@@ -26,12 +26,74 @@ public class AdminInquiryService {
             String keyword,
             Pageable pageable
     ) {
-        return inquiryRepository.searchForAdmin(
-                status,
-                category,
-                normalizeKeyword(keyword),
-                pageable
-        ).map(AdminInquiryResponse::from);
+        String normalizedKeyword =
+                normalize(keyword);
+
+        Page<Inquiry> result;
+
+        if (normalizedKeyword != null) {
+
+            result = inquiryRepository.searchByKeyword(
+                    normalizedKeyword,
+                    status,
+                    category,
+                    pageable
+            );
+
+        } else if (
+                status != null &&
+                        category != null
+        ) {
+
+            result =
+                    inquiryRepository
+                            .findByStatusAndCategory(
+                                    status,
+                                    category,
+                                    pageable
+                            );
+
+        } else if (status != null) {
+
+            result =
+                    inquiryRepository
+                            .findByStatus(
+                                    status,
+                                    pageable
+                            );
+
+        } else if (category != null) {
+
+            result =
+                    inquiryRepository
+                            .findByCategory(
+                                    category,
+                                    pageable
+                            );
+
+        } else {
+
+            result =
+                    inquiryRepository
+                            .findAll(pageable);
+        }
+
+        return result.map(
+                AdminInquiryResponse::from
+        );
+    }
+
+    private String normalize(
+            String value
+    ) {
+        if (
+                value == null ||
+                        value.isBlank()
+        ) {
+            return null;
+        }
+
+        return value.trim();
     }
 
     public AdminInquiryResponse getInquiry(Long inquiryId) {

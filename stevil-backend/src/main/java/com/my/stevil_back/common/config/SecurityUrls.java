@@ -16,12 +16,14 @@ public class SecurityUrls {
             "/api/exercises/**",
 
             "/api/community",
-            "/api/community/**"
+            "/api/community/**",
 
+            "/api/partnership-inquiries"
     };
 
     public static final String[] ADMIN_URLS = {
-            "/api/admin/**"
+            "/api/admin/**",
+
     };
 
     public static final String[] USER_URLS = {

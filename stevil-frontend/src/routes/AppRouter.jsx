@@ -25,7 +25,6 @@ import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.j
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 import PartnershipGuidePage from "../pages/partnership/guide/PartnershipGuidePage.jsx";
-import AdminPartnershipInquiriesPage from "../pages/partnership/inquiry/AdminPartnershipInquiriesPage.jsx";
 
 
 export default function AppRouter() {
@@ -59,8 +58,8 @@ export default function AppRouter() {
                 <Route path="facilities" element={<AdminFacilitiesPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route
-                    path="partnership-inquiries"
-                    element={<AdminPartnershipInquiriesPage />}
+                    path="inquiries"
+                    element={<AdminInquiriesPage />}
                 />
                 <Route path="contents" element={<AdminContentsPage />} />
             </Route>
