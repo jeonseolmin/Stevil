@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 import PartnershipInquiryModal from
-        "../../components/home/partnership/modal/PartnershipInquiryModal.jsx";
+        "../../../components/home/partnership/modal/PartnershipInquiryModal.jsx";
 
 import "./PartnershipGuidePage.css";
 

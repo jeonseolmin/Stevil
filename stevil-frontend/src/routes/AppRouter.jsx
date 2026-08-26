@@ -24,7 +24,8 @@ import AdminUsersPage from "../pages/admin/users/AdminUsersPage.jsx";
 import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.jsx";
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
-import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
+import PartnershipGuidePage from "../pages/partnership/guide/PartnershipGuidePage.jsx";
+import AdminPartnershipInquiriesPage from "../pages/partnership/inquiry/AdminPartnershipInquiriesPage.jsx";
 
 
 export default function AppRouter() {
@@ -57,7 +58,10 @@ export default function AppRouter() {
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="facilities" element={<AdminFacilitiesPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
-                <Route path="inquiries" element={<AdminInquiriesPage />} />
+                <Route
+                    path="partnership-inquiries"
+                    element={<AdminPartnershipInquiriesPage />}
+                />
                 <Route path="contents" element={<AdminContentsPage />} />
             </Route>
 
