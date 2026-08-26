@@ -4,6 +4,9 @@ import axiosInstance from '../../api/axiosInstance';
 
 const DietManagement = () => {
   const [keyword, setKeyword] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const [viewMode, setViewMode] = useState('DAILY'); 
   
   const [dashboardData, setDashboardData] = useState(null);
@@ -42,6 +45,76 @@ const DietManagement = () => {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (keyword.trim()) {
+        fetchFoodSearchAPI(keyword);
+      } else {
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [keyword]);
+
+  const parseFoodData = (item) => {
+    const parseNum = (val) => {
+      const num = Number(val);
+      return isNaN(num) ? 0 : Math.round(num); 
+    };
+
+    return {
+      name: item.DESC_KOR || item.desc_kor || item.FOOD_NM_KR || item.food_nm_kr || '이름 없음',
+      kcal: parseNum(item.NUTR_CONT1 || item.nutr_cont1 || item.AMT_NUM1),
+      carbs: parseNum(item.NUTR_CONT2 || item.nutr_cont2 || item.AMT_NUM7), 
+      protein: parseNum(item.NUTR_CONT3 || item.nutr_cont3 || item.AMT_NUM3),
+      fat: parseNum(item.NUTR_CONT4 || item.nutr_cont4 || item.AMT_NUM4),
+      servingSize: item.SERVING_WT || item.serving_wt || item.SERVING_SIZE || item.serving_size || '100', 
+    };
+  };
+
+  const fetchFoodSearchAPI = async (searchWord) => {
+    setIsSearching(true);
+    try {
+      const response = await axiosInstance.get(`/diet/food/search?keyword=${searchWord}`);
+      
+      let data = response.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch(e) {}
+      }
+      
+      console.log("✅ 백엔드에서 넘어온 API 원본 데이터:", data);
+
+      let items = [];
+      if (data?.body?.items) {
+        items = Array.isArray(data.body.items) ? data.body.items : (data.body.items.item || []);
+      }
+      
+      setSearchResults(items);
+    } catch (error) {
+      console.error("음식 검색 실패", error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSelectSearchedFood = (foodData) => {
+    const parsed = parseFoodData(foodData); // 💡 파싱 함수 거치기
+
+    setRecordForm({
+      mealType: '점심',
+      foodName: parsed.name,
+      calories: Number(parsed.kcal) || 0,
+      carbs: Number(parsed.carbs) || 0,    
+      protein: Number(parsed.protein) || 0,  
+      fat: Number(parsed.fat) || 0       
+    });
+    
+    setKeyword('');
+    setSearchResults([]);
+    setIsManualModalOpen(true); 
+  };
+
   const fetchDashboardData = async () => {
     try {
       const response = await axiosInstance.get('/diet/dashboard');
@@ -54,7 +127,6 @@ const DietManagement = () => {
     }
   };
 
-  // 모달 닫기 및 입력폼 초기화 함수
   const handleCloseManualModal = () => {
     setIsManualModalOpen(false);
     setRecordForm({
@@ -130,29 +202,67 @@ const DietManagement = () => {
     <div className="diet-page">
       <div className="diet-container">
         
-        {/* 상단 헤더 영역 */}
         <header className="diet-header">
           <div>
             <h1>식단 관리</h1>
             <p>알레르기와 영양을 함께 관리하세요.</p>
           </div>
           <div className="diet-action-bar">
-            <div className="diet-search-wrapper">
+            
+            <div className="diet-search-wrapper" style={{ position: 'relative' }}>
               <span className="diet-search-icon">🔍</span>
-              <input type="text" placeholder="음식명 검색" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+              <input 
+                type="text" 
+                placeholder="음식명 검색 (예: 닭가슴살)" 
+                value={keyword} 
+                onChange={(e) => setKeyword(e.target.value)} 
+              />
+              
+              {isSearching && (
+                <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', color: '#0ea5e9', fontWeight: 'bold' }}>
+                  검색중...
+                </span>
+              )}
+
+              {/* 검색 결과 드롭다운 */}
+              {searchResults.length > 0 && (
+                <ul style={{ 
+                    position: 'absolute', top: '100%', left: 0, right: 0, background: '#fff', 
+                    border: '1px solid #cbd5e1', borderRadius: '8px', maxHeight: '250px', 
+                    overflowY: 'auto', zIndex: 100, listStyle: 'none', padding: 0, margin: '4px 0 0 0', 
+                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
+                }}>
+                  {searchResults.map((item, idx) => {
+                      const parsed = parseFoodData(item); 
+
+                        return (
+                          <li 
+                          key={idx} 
+                            onClick={() => handleSelectSearchedFood(item)}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+                            style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                          >
+                    <strong style={{ fontSize: '14px', color: '#0f172a' }}>{parsed.name}</strong>
+                    <span style={{ color: '#64748b', fontSize: '12px' }}>
+                      <strong style={{color: '#0ea5e9'}}>[{parsed.servingSize} 기준]</strong> {parsed.kcal}kcal | 탄: {parsed.carbs}g · 단: {parsed.protein}g · 지: {parsed.fat}g
+                    </span>
+                  </li>
+                  );
+              })}
+            </ul>
+            )}
             </div>
+
             <button className="diet-btn diet-btn--secondary">사진 등록</button>
             <button className="diet-btn diet-btn--primary" onClick={() => setIsManualModalOpen(true)}>직접 입력</button>
           </div>
         </header>
 
-        {/* 메인 2단 그리드 영역 */}
         <div className="diet-grid">
           
-          {/* 왼쪽 패널 */}
           <div className="diet-left-panel">
             
-            {/* 오늘 섭취 칼로리 카드 */}
             <div className="diet-card">
               <div className="diet-card-header">
                 <h3>오늘 섭취 칼로리</h3>
@@ -182,7 +292,6 @@ const DietManagement = () => {
               </div>
             </div>
 
-            {/* 알레르기 주의 경고 카드 */}
             {hasAllergyWarning && (
               <div className="diet-allergy-card">
                 <strong style={{color: '#ef4444', display: 'block', marginBottom: '10px', fontSize: '16px'}}>알레르기 주의</strong>
@@ -193,7 +302,6 @@ const DietManagement = () => {
               </div>
             )}
 
-            {/* 오늘의 식단 기록 카드 */}
             <div className="diet-card">
               <div className="diet-card-header">
                 <h3>오늘의 식단 기록</h3>
@@ -224,7 +332,6 @@ const DietManagement = () => {
               </div>
             </div>
 
-            {/* 다이어트 식단 레시피 (유튜브 썸네일) 카드 */}
             <div className="diet-card">
               <div className="diet-card-header">
                 <h3>다이어트 식단 레시피</h3>
@@ -260,10 +367,8 @@ const DietManagement = () => {
 
           </div>
 
-          {/* 오른쪽 패널 */}
           <div className="diet-right-panel">
             
-            {/* 영양 섭취 요약 카드 */}
             <div className="diet-card">
               <h3>영양 섭취 요약</h3>
               <div className="diet-nutrient-bars">
@@ -302,7 +407,6 @@ const DietManagement = () => {
               </div>
             </div>
 
-            {/* 추천 영양 목표 카드 */}
             <div className="diet-card">
               <div className="diet-card-header">
                 <h3>추천 영양 목표</h3>
@@ -333,7 +437,6 @@ const DietManagement = () => {
         </div>
       </div>
 
-      {/* 칼로리 상세 분석 모달 */}
       {isDetailModalOpen && (
         <div className="diet-modal-bg" onClick={() => setIsDetailModalOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="diet-modal-box">
@@ -364,7 +467,6 @@ const DietManagement = () => {
         </div>
       )}
 
-      {/* 유튜브 영상 재생 모달 */}
       {activeVideoId && (
         <div className="diet-modal-bg" onClick={() => setActiveVideoId(null)}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: '#000', borderRadius: '16px', overflow: 'hidden', width: '800px', maxWidth: '90%', position: 'relative', boxShadow: 'var(--shadow-medium)' }}>
@@ -385,7 +487,6 @@ const DietManagement = () => {
         </div>
       )}
 
-      {/* 직접 입력 모달 */}
       {isManualModalOpen && (
         <div className="diet-modal-bg" onClick={handleCloseManualModal}>
           <div onClick={(e) => e.stopPropagation()} className="diet-modal-box">

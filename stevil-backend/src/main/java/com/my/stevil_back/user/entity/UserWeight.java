@@ -39,12 +39,22 @@ public class UserWeight extends BaseEntity {
             BigDecimal weight,
             BigDecimal targetWeight
     ) {
+        return create(user, weight, targetWeight, LocalDateTime.now());
+    }
+
+    // 2. 프론트엔드의 측정 시간을 반영하는 메서드
+    public static UserWeight create(
+            User user,
+            BigDecimal weight,
+            BigDecimal targetWeight,
+            LocalDateTime recordedAt
+    ) {
         UserWeight userWeight = new UserWeight();
         userWeight.user = user;
         userWeight.weight = weight;
         userWeight.targetWeight = targetWeight;
         userWeight.unit = "kg";
-        userWeight.recordedAt = LocalDateTime.now();
+        userWeight.recordedAt = recordedAt != null ? recordedAt : LocalDateTime.now();
 
         return userWeight;
     }
