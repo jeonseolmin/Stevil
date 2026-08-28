@@ -9,7 +9,8 @@ spring:
 
   jwt:
     secret: mySuperSecretKeyForStevilProjectWhichIsVeryLongAndSecure12345!
-    access-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
+    access-expiration: 1800000
+    refresh-expiration: 1209600000
 
   profiles:
     default: local
