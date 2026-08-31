@@ -67,6 +67,9 @@ public class User extends BaseEntity {
     @Column(name = "suspension_reason", length = 500)
     private String suspensionReason;
 
+    @Column(length = 100)
+    private String bio; // 한 줄 소개
+
     @Builder
     private User(
             String email,
@@ -130,5 +133,9 @@ public class User extends BaseEntity {
         this.suspended = false;
         this.suspendedAt = null;
         this.suspensionReason = null;
+    }
+
+    public void updateBio(String bio) {
+        this.bio = bio;
     }
 }

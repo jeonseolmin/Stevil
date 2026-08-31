@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance';
 import * as XLSX from 'xlsx';
+import ProfileCardModal from '../profile/ProfileCardModal'; 
 
 const CommunityDetail = () => {
   const { id } = useParams();
@@ -24,6 +25,8 @@ const CommunityDetail = () => {
 
   const [excelPreviews, setExcelPreviews] = useState({});
   const [loadingPreviews, setLoadingPreviews] = useState({});
+
+  const [selectedUserEmail, setSelectedUserEmail] = useState(null); 
 
   const formatFileSize = (bytes) => {
     if (!bytes || bytes === 0) return '';
@@ -258,7 +261,18 @@ const CommunityDetail = () => {
             <span className={`ste-badge ${currentPost.category || '자유'}`}>{currentPost.category || '자유'}</span>
             <h2>{currentPost.title}</h2>
             <div className="ste-meta">
-              <span className="author">{currentPost.author || '익명'}</span>
+              <span 
+                className="author" 
+                style={{ cursor: currentPost.author !== '익명' ? 'pointer' : 'default', textDecoration: currentPost.author !== '익명' ? 'underline' : 'none' }}
+                onClick={() => {
+                    const targetEmail = currentPost.authorEmail; 
+                    if (targetEmail && currentPost.author !== '익명') {
+                        setSelectedUserEmail(targetEmail);
+                    }
+                }}
+              >
+                {currentPost.author || '익명'}
+              </span>
               <span className="dot">·</span>
               <span>{currentPost.createdAt ? currentPost.createdAt.substring(0, 10) : ''}</span>
               <span className="dot">·</span>
@@ -359,7 +373,6 @@ const CommunityDetail = () => {
             </div>
           )}
 
-          {/* 여러 개의 첨부파일 목록 순회 및 용량/미리보기 표시 */}
           {currentPost.files && currentPost.files.length > 0 && (
             <div className="ste-post-files" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px' }}>
               {currentPost.files.map((file, idx) => {
@@ -370,8 +383,6 @@ const CommunityDetail = () => {
                 
                 return (
                   <div key={idx} className="ste-file-item" style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                    
-                    {/* 이미지 미리보기 */}
                     {isImage && (
                       <div style={{ marginBottom: '14px', textAlign: 'center' }}>
                         <img 
@@ -383,14 +394,12 @@ const CommunityDetail = () => {
                       </div>
                     )}
 
-                    {/* 엑셀/CSV 로딩 상태 표시 */}
                     {isExcel && loadingPreviews[idx] && (
                       <div style={{ marginBottom: '12px', padding: '16px', textAlign: 'center', background: '#fff', borderRadius: '8px', color: '#0d9488', fontWeight: 'bold' }}>
                         ⏳ 데이터를 분석하여 미리보기를 생성하는 중입니다...
                       </div>
                     )}
 
-                    {/* 엑셀 파일 미리보기 표 렌더링 */}
                     {isExcel && !loadingPreviews[idx] && excelPreviews[idx] && (
                       <div style={{ marginBottom: '14px', width: '100%', background: '#fff', borderRadius: '8px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
                         <div style={{ padding: '8px 12px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', color: '#475569' }}>
@@ -414,7 +423,6 @@ const CommunityDetail = () => {
                       </div>
                     )}
 
-                    {/* 다운로드 버튼 및 용량 표시 */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                       <button 
                         onClick={() => handleFileDownload(fileDownloadUrl, file.originalFileName)} 
@@ -429,7 +437,6 @@ const CommunityDetail = () => {
                         </span>
                       )}
                     </div>
-
                   </div>
                 );
               })}
@@ -463,7 +470,18 @@ const CommunityDetail = () => {
                   return (
                     <div key={comment.id} className={`ste-comment-item ${isReply ? 'is-reply' : ''}`}>
                       <div className="comment-header">
-                        <span className="author">{isReply ? '↳ ' : ''}{comment.author || '익명'}</span>
+                        <span 
+                            className="author"
+                            style={{ cursor: comment.author !== '익명' ? 'pointer' : 'default', textDecoration: comment.author !== '익명' ? 'underline' : 'none' }}
+                            onClick={() => {
+                                const targetEmail = comment.authorEmail;
+                                if (targetEmail && comment.author !== '익명') {
+                                    setSelectedUserEmail(targetEmail);
+                                }
+                            }}
+                        >
+                            {isReply ? '↳ ' : ''}{comment.author || '익명'}
+                        </span>
                         <span className="date">{comment.createdAt}</span>
                       </div>
                       
@@ -522,6 +540,13 @@ const CommunityDetail = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {selectedUserEmail && (
+        <ProfileCardModal 
+            targetUserEmail={selectedUserEmail} 
+            onClose={() => setSelectedUserEmail(null)} 
+        />
       )}
     </div>
   );

@@ -63,10 +63,6 @@ export default function Header() {
         });
     };
 
-    /*
-     * 페이지 주소나 해시가 바뀌면
-     * 모바일 메뉴를 닫고 로그인 상태를 갱신합니다.
-     */
     useEffect(() => {
         closeMenu();
 
@@ -88,10 +84,6 @@ export default function Header() {
         location.hash,
     ]);
 
-    /*
-     * 다른 브라우저 탭에서 로그인·로그아웃하거나
-     * 권한값이 변경되면 현재 헤더도 갱신합니다.
-     */
     useEffect(() => {
         const handleStorageChange = (
             event
@@ -127,10 +119,6 @@ export default function Header() {
         };
     }, []);
 
-    /*
-     * 모바일 메뉴가 열렸을 때
-     * Escape 키로 닫습니다.
-     */
     useEffect(() => {
         if (!isMenuOpen) {
             return undefined;
@@ -159,9 +147,6 @@ export default function Header() {
         };
     }, [isMenuOpen]);
 
-    /*
-     * 로그인한 사용자의 최신 권한을 조회합니다.
-     */
     useEffect(() => {
         if (!isLoggedIn) {
             setUserRole(null);
@@ -522,6 +507,15 @@ export default function Header() {
                                     </Link>
                                 )}
 
+                                {/* 💡 모바일 메뉴 액션 영역의 로그아웃 옆에 마이페이지 추가 */}
+                                <Link
+                                    to="/mypage"
+                                    className="header-login-link"
+                                    onClick={closeMenu}
+                                >
+                                    마이페이지
+                                </Link>
+
                                 <button
                                     type="button"
                                     className="header-login-link"
@@ -577,6 +571,15 @@ export default function Header() {
                                     관리자 메뉴
                                 </Link>
                             )}
+
+                            {/* 💡 데스크톱 액션 영역의 로그아웃 옆에 마이페이지 추가 */}
+                            <Link
+                                to="/mypage"
+                                className="header-login-link"
+                                onClick={closeMenu}
+                            >
+                                마이페이지
+                            </Link>
 
                             <button
                                 type="button"

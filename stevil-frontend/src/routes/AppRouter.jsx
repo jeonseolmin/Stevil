@@ -25,6 +25,7 @@ import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.j
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
+import MyPage from "../pages/mypage/MyPage.jsx";
 
 
 export default function AppRouter() {
@@ -45,6 +46,7 @@ export default function AppRouter() {
                 <Route path="/community/edit/:id" element={<CommunityEdit />} />
                 <Route path="/weight" element={<WeightRecordPage />}/>
                 <Route path="/partnership" element={<PartnershipGuidePage />}/>
+                <Route path="/mypage" element={<MyPage />} />
             </Route>
 
             {/* 인증 전용 화면 */}
