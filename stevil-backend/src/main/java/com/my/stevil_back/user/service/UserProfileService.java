@@ -2,6 +2,7 @@ package com.my.stevil_back.user.service;
 
 import com.my.stevil_back.comment.repository.CommentRepository;
 import com.my.stevil_back.post.repository.PostRepository;
+import com.my.stevil_back.medical.repository.InjectionLogRepository;
 import com.my.stevil_back.user.dto.response.UserProfileResponse;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.repository.UserRepository;
@@ -17,9 +18,9 @@ import java.time.LocalDate;
 public class UserProfileService {
 
     private final UserRepository userRepository;
-
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final InjectionLogRepository injectionLogRepository;
 
     public UserProfileResponse getProfileByEmail(String email) {
         User user = userRepository.findByEmail(email)
@@ -29,7 +30,7 @@ public class UserProfileService {
                 ? user.getCreatedAt().toLocalDate()
                 : LocalDate.now();
 
-        int medicationDays = 120; // 임시 데이터
+        int medicationDays = (int) injectionLogRepository.countByUserId(user.getId());
 
         int postCount = (int) postRepository.countByAuthorEmail(email);
         int commentCount = (int) commentRepository.countByAuthorEmail(email);
@@ -50,8 +51,6 @@ public class UserProfileService {
     public void updateUserBio(String email, String bio) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
-        // User 엔티티에 만들어둔 updateBio 메서드 호출 (없다면 user.setBio(bio) 사용)
         user.updateBio(bio);
     }
 }
