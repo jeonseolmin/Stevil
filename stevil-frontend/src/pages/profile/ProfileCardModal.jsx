@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import './ProfileCardModal.css';
 import axiosInstance from '../../api/axiosInstance'; 
 
 export default function ProfileCardModal({ targetUserEmail, onClose }) {
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [reportReason, setReportReason] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -24,6 +27,28 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
             fetchProfile();
         }
     }, [targetUserEmail, onClose]);
+
+    const submitUserReport = async () => {
+        if (!reportReason.trim()) return alert("신고 사유를 입력해주세요.");
+
+        try {
+            await axiosInstance.post('/reports', {
+                targetType: 'USER', // 유저 신고 타입
+                targetId: profile.id, // 유저 ID (백엔드 구조에 따라 profile.id 또는 profile.userId)
+                category: 'ETC',
+                reason: reportReason
+            });
+            alert('사용자 신고가 정상적으로 접수되었습니다.');
+            setIsReportModalOpen(false);
+            setReportReason('');
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                alert(error.response.data);
+            } else {
+                alert('신고 처리 중 오류가 발생했습니다.');
+            }
+        }
+    };
 
     if (isLoading) {
         return (
@@ -78,12 +103,30 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
                     <button className="action-btn" onClick={() => alert('1:1 대화 연결 기능 준비중!')}>
                         1:1 대화하기
                     </button>
-                    <button className="action-btn report-btn" onClick={() => alert('신고 접수 기능 준비중!')}>
+                    <button className="action-btn report-btn" onClick={() => setIsReportModalOpen(true)}>
                         회원신고
                     </button>
                 </div>
 
             </div>
+
+            {isReportModalOpen && (
+                <div className="ste-modal-bg" onClick={(e) => e.stopPropagation()}>
+                    <div className="ste-modal-box">
+                        <h3>사용자 신고</h3>
+                        <p>규정에 위반되는 사용자격인지 확인 후 운영자에게 전달됩니다.</p>
+                        <textarea 
+                            placeholder="신고 사유를 상세히 입력해주세요 (예: 부적절한 프로필, 욕설 등)"
+                            value={reportReason}
+                            onChange={(e) => setReportReason(e.target.value)}
+                        ></textarea>
+                        <div className="ste-modal-btns">
+                            <button className="ste-btn-secondary" onClick={() => setIsReportModalOpen(false)}>취소</button>
+                            <button className="ste-btn-danger" onClick={submitUserReport}>신고 접수</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
