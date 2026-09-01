@@ -9,6 +9,10 @@ import com.my.stevil_back.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.my.stevil_back.post.dto.PostResponse;
+import org.springframework.data.domain.PageRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 
@@ -52,5 +56,13 @@ public class UserProfileService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         user.updateBio(bio);
+    }
+
+    public List<PostResponse> getMyPosts(String email) {
+        // 최신순으로 10개만 가져옵니다. (더 많이 필요하면 숫자를 늘려주세요)
+        return postRepository.findByAuthorEmailOrderByIdDesc(email, PageRequest.of(0, 10))
+                .stream()
+                .map(PostResponse::from)
+                .collect(Collectors.toList());
     }
 }

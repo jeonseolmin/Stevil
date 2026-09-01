@@ -1,12 +1,15 @@
 package com.my.stevil_back.user.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.post.dto.PostResponse;
 import com.my.stevil_back.user.dto.response.UserProfileResponse;
 import com.my.stevil_back.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -37,5 +40,13 @@ public class UserProfileController {
 
         userProfileService.updateUserBio(userDetails.getEmail(), request.get("bio"));
         return ResponseEntity.ok("소개가 업데이트되었습니다.");
+    }
+
+    @GetMapping("/me/posts")
+    public ResponseEntity<List<PostResponse>> getMyPosts(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        List<PostResponse> myPosts = userProfileService.getMyPosts(userDetails.getEmail());
+        return ResponseEntity.ok(myPosts);
     }
 }
