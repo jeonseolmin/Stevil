@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -43,10 +44,11 @@ public class UserProfileController {
     }
 
     @GetMapping("/me/posts")
-    public ResponseEntity<List<PostResponse>> getMyPosts(
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Page<PostResponse>> getMyPosts(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page) { // 기본값 0 (1페이지)
 
-        List<PostResponse> myPosts = userProfileService.getMyPosts(userDetails.getEmail());
+        Page<PostResponse> myPosts = userProfileService.getMyPosts(userDetails.getEmail(), page);
         return ResponseEntity.ok(myPosts);
     }
 }

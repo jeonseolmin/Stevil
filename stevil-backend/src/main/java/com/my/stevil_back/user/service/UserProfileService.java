@@ -13,6 +13,8 @@ import com.my.stevil_back.post.dto.PostResponse;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 
@@ -58,11 +60,9 @@ public class UserProfileService {
         user.updateBio(bio);
     }
 
-    public List<PostResponse> getMyPosts(String email) {
-        // 최신순으로 10개만 가져옵니다. (더 많이 필요하면 숫자를 늘려주세요)
-        return postRepository.findByAuthorEmailOrderByIdDesc(email, PageRequest.of(0, 10))
-                .stream()
-                .map(PostResponse::from)
-                .collect(Collectors.toList());
+    public Page<PostResponse> getMyPosts(String email, int page) {
+        // page 파라미터를 받아 한 페이지당 10개씩 최신순으로 가져옵니다.
+        return postRepository.findByAuthorEmailOrderByIdDesc(email, PageRequest.of(page, 10))
+                .map(PostResponse::from); // Page 객체는 stream 없이 바로 map()을 쓸 수 있습니다!
     }
 }

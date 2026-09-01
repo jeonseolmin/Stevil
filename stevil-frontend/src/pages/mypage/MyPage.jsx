@@ -5,34 +5,52 @@ import './MyPage.css';
 
 export default function MyPage() {
     const navigate = useNavigate();
+    
+    // 프로필 및 게시글 상태
     const [profile, setProfile] = useState(null);
-    const [myPosts, setMyPosts] = useState([]); // 💡 내가 쓴 글 상태 추가
+    const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    
+    // 💡 페이지네이션 상태 관리 추가
+    const [currentPage, setCurrentPage] = useState(0); 
+    const [totalPages, setTotalPages] = useState(0);
 
     const [isEditingBio, setIsEditingBio] = useState(false);
     const [bioInput, setBioInput] = useState('');
 
+    // 1. 처음 렌더링될 때 프로필 정보만 딱 한 번 불러옵니다.
     useEffect(() => {
-        fetchMyData();
+        fetchMyProfile();
     }, []);
 
-    // 💡 프로필 정보와 내가 쓴 글 목록을 동시에 불러오도록 수정
-    const fetchMyData = async () => {
+    // 2. 💡 현재 페이지(currentPage) 번호가 바뀔 때마다 게시글 목록만 새로 불러옵니다.
+    useEffect(() => {
+        fetchMyPosts(currentPage);
+    }, [currentPage]);
+
+    const fetchMyProfile = async () => {
         try {
-            const [profileRes, postsRes] = await Promise.all([
-                axiosInstance.get('/users/profile/me'),
-                axiosInstance.get('/users/me/posts') // 추가한 API 호출
-            ]);
-            
-            setProfile(profileRes.data);
-            setBioInput(profileRes.data.bio || '');
-            setMyPosts(postsRes.data);
+            const response = await axiosInstance.get('/users/profile/me');
+            setProfile(response.data);
+            setBioInput(response.data.bio || '');
         } catch (error) {
             console.error("마이페이지 정보 로드 실패", error);
             alert("로그인이 필요하거나 정보를 불러올 수 없습니다.");
             navigate('/login');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    // 💡 게시글 페이징 조회 API 
+    const fetchMyPosts = async (page) => {
+        try {
+            const response = await axiosInstance.get(`/users/me/posts?page=${page}`);
+            // Spring Page 객체는 배열을 content 안에 담아주고, 전체 페이지 수를 totalPages로 줍니다.
+            setMyPosts(response.data.content);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error("게시글 로드 실패", error);
         }
     };
 
@@ -131,31 +149,66 @@ export default function MyPage() {
 
                     <hr className="mypage-divider" />
 
-                    {/* 💡 추가된 영역: 내가 작성한 글 관리 */}
+                    {/* 내가 작성한 글 관리 */}
                     <div className="mypage-section">
                         <div className="section-header">
                             <h3>내가 작성한 글</h3>
                         </div>
                         
                         {myPosts.length > 0 ? (
-                            <ul className="mypage-post-list">
-                                {myPosts.map(post => (
-                                    <li 
-                                        key={post.id} 
-                                        className="mypage-post-item" 
-                                        onClick={() => navigate(`/community/${post.id}`)}
-                                    >
-                                        <div className="post-item-main">
-                                            <span className="post-category">[{post.category || '자유'}]</span>
-                                            <span className="post-title">{post.title}</span>
+                            <>
+                                <ul className="mypage-post-list">
+                                    {myPosts.map(post => (
+                                        <li 
+                                            key={post.id} 
+                                            className="mypage-post-item" 
+                                            onClick={() => navigate(`/community/${post.id}`)}
+                                        >
+                                            <div className="post-item-main">
+                                                <span className="post-category">[{post.category || '자유'}]</span>
+                                                <span className="post-title">{post.title}</span>
+                                            </div>
+                                            <div className="post-item-meta">
+                                                <span>{post.createdAt ? post.createdAt.substring(0, 10) : ''}</span>
+                                                <span>조회 {post.viewCount || 0}</span>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                {/* 💡 페이지네이션 버튼 렌더링 영역 */}
+                                {totalPages > 1 && (
+                                    <div className="mypage-pagination">
+                                        <button
+                                            className="page-nav-btn"
+                                            disabled={currentPage === 0}
+                                            onClick={() => setCurrentPage(prev => prev - 1)}
+                                        >
+                                            이전
+                                        </button>
+
+                                        <div className="page-numbers">
+                                            {Array.from({ length: totalPages }, (_, i) => (
+                                                <button
+                                                    key={i}
+                                                    className={`page-num-btn ${currentPage === i ? 'active' : ''}`}
+                                                    onClick={() => setCurrentPage(i)}
+                                                >
+                                                    {i + 1}
+                                                </button>
+                                            ))}
                                         </div>
-                                        <div className="post-item-meta">
-                                            <span>{post.createdAt ? post.createdAt.substring(0, 10) : ''}</span>
-                                            <span>조회 {post.viewCount || 0}</span>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
+
+                                        <button
+                                            className="page-nav-btn"
+                                            disabled={currentPage >= totalPages - 1}
+                                            onClick={() => setCurrentPage(prev => prev + 1)}
+                                        >
+                                            다음
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <p className="empty-text">아직 작성한 글이 없습니다.</p>
                         )}
