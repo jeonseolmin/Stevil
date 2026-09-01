@@ -1,29 +1,32 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
+import ChatModal from '../chat/ChatModal'; 
 import './MyPage.css'; 
 
 export default function MyPage() {
     const navigate = useNavigate();
     
-    // 프로필 및 게시글 상태
     const [profile, setProfile] = useState(null);
     const [myPosts, setMyPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     
-    // 💡 페이지네이션 상태 관리 추가
     const [currentPage, setCurrentPage] = useState(0); 
     const [totalPages, setTotalPages] = useState(0);
 
     const [isEditingBio, setIsEditingBio] = useState(false);
     const [bioInput, setBioInput] = useState('');
 
-    // 1. 처음 렌더링될 때 프로필 정보만 딱 한 번 불러옵니다.
+    const [chatRooms, setChatRooms] = useState([]);
+    const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [selectedTargetNickname, setSelectedTargetNickname] = useState('');
+
+    // 1. 처음 렌더링될 때 프로필 정보를 먼저 불러옵니다.
     useEffect(() => {
         fetchMyProfile();
     }, []);
 
-    // 2. 💡 현재 페이지(currentPage) 번호가 바뀔 때마다 게시글 목록만 새로 불러옵니다.
+    // 2. 현재 페이지가 바뀔 때마다 게시글 목록 새로 불러오기
     useEffect(() => {
         fetchMyPosts(currentPage);
     }, [currentPage]);
@@ -33,6 +36,7 @@ export default function MyPage() {
             const response = await axiosInstance.get('/users/profile/me');
             setProfile(response.data);
             setBioInput(response.data.bio || '');
+            fetchMyChatRooms(response.data.nickname);
         } catch (error) {
             console.error("마이페이지 정보 로드 실패", error);
             alert("로그인이 필요하거나 정보를 불러올 수 없습니다.");
@@ -42,11 +46,20 @@ export default function MyPage() {
         }
     };
 
-    // 💡 게시글 페이징 조회 API 
+
+    const fetchMyChatRooms = async (nickname) => {
+        if (!nickname) return;
+        try {
+            const response = await axiosInstance.get(`/chat/rooms?myNickname=${nickname}`); 
+            setChatRooms(response.data);
+        } catch (error) {
+            console.error("채팅방 목록 로드 실패", error);
+        }
+    };
+
     const fetchMyPosts = async (page) => {
         try {
             const response = await axiosInstance.get(`/users/me/posts?page=${page}`);
-            // Spring Page 객체는 배열을 content 안에 담아주고, 전체 페이지 수를 totalPages로 줍니다.
             setMyPosts(response.data.content);
             setTotalPages(response.data.totalPages);
         } catch (error) {
@@ -64,6 +77,11 @@ export default function MyPage() {
             console.error("소개 업데이트 실패", error);
             alert("소개글 수정 중 오류가 발생했습니다.");
         }
+    };
+
+    const openChatRoom = (roomId, targetNickname) => {
+        setSelectedRoomId(roomId);
+        setSelectedTargetNickname(targetNickname);
     };
 
     if (isLoading) return <div className="mypage-wrapper">로딩중...</div>;
@@ -149,6 +167,41 @@ export default function MyPage() {
 
                     <hr className="mypage-divider" />
 
+                    {/* 내 채팅방 목록 영역 */}
+                    <div className="mypage-section">
+                        <div className="section-header">
+                            <h3>내 채팅방 목록</h3>
+                        </div>
+                        
+                        {chatRooms.length > 0 ? (
+                            <ul className="mypage-post-list">
+                                {chatRooms.map(room => (
+                                    <li 
+                                        key={room.roomId} 
+                                        className="mypage-post-item" 
+                                        onClick={() => openChatRoom(room.roomId, room.targetNickname)}
+                                    >
+                                        <div className="post-item-main">
+                                            <span className="post-title" style={{ fontWeight: '700' }}>
+                                                {room.targetNickname} 님과의 대화
+                                            </span>
+                                            <span style={{ display: 'block', fontSize: '13px', color: '#64748b', marginTop: '6px' }}>
+                                                {room.lastMessage || '대화 내역이 없습니다.'}
+                                            </span>
+                                        </div>
+                                        <div className="post-item-meta">
+                                            <span>{room.lastMessageTime}</span>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="empty-text">참여 중인 대화가 없습니다. 커뮤니티에서 대화를 시작해보세요!</p>
+                        )}
+                    </div>
+
+                    <hr className="mypage-divider" />
+
                     {/* 내가 작성한 글 관리 */}
                     <div className="mypage-section">
                         <div className="section-header">
@@ -176,7 +229,7 @@ export default function MyPage() {
                                     ))}
                                 </ul>
 
-                                {/* 💡 페이지네이션 버튼 렌더링 영역 */}
+                                {/* 페이지네이션 */}
                                 {totalPages > 1 && (
                                     <div className="mypage-pagination">
                                         <button
@@ -216,6 +269,18 @@ export default function MyPage() {
 
                 </div>
             </div>
+
+            {selectedRoomId && (
+                <ChatModal 
+                    roomId={selectedRoomId}
+                    myNickname={profile.nickname}
+                    targetNickname={selectedTargetNickname} 
+                    onClose={() => {
+                        setSelectedRoomId(null);
+                        fetchMyChatRooms(profile.nickname);
+                    }}
+                />
+            )}
         </div>
     );
 }

@@ -16,7 +16,9 @@ public class SecurityUrls {
             "/api/exercises/**",
 
             "/api/community",
-            "/api/community/**"
+            "/api/community/**",
+
+            "/ws-stomp/**"
 
     };
 

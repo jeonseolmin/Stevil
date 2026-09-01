@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './ProfileCardModal.css';
+import ChatModal from '../chat/ChatModal';
 import axiosInstance from '../../api/axiosInstance'; 
 
 export default function ProfileCardModal({ targetUserEmail, onClose }) {
@@ -8,6 +9,10 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [reportReason, setReportReason] = useState('');
+
+    const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+    const [chatRoomId, setChatRoomId] = useState(null);
+    const [myNickname, setMyNickname] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -34,7 +39,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
         try {
             await axiosInstance.post('/reports', {
                 targetType: 'USER', // 유저 신고 타입
-                targetId: profile.id, // 유저 ID (백엔드 구조에 따라 profile.id 또는 profile.userId)
+                targetId: profile.id, // 유저 ID
                 category: 'ETC',
                 reason: reportReason
             });
@@ -47,6 +52,20 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
             } else {
                 alert('신고 처리 중 오류가 발생했습니다.');
             }
+        }
+    };
+
+    const handleStartChat = async () => {
+        try {
+            const meRes = await axiosInstance.get('/users/profile/me');
+            const nick = meRes.data.nickname;
+            setMyNickname(nick);
+
+            const roomRes = await axiosInstance.post(`/chat/room?myNickname=${nick}&targetNickname=${profile.nickname}`);
+            setChatRoomId(roomRes.data);
+            setIsChatModalOpen(true);
+        } catch (error) {
+            alert("대화를 시작할 수 없습니다.");
         }
     };
 
@@ -100,7 +119,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
                 </div>
 
                 <div className="profile-bottom">
-                    <button className="action-btn" onClick={() => alert('1:1 대화 연결 기능 준비중!')}>
+                    <button className="action-btn" onClick={handleStartChat}>
                         1:1 대화하기
                     </button>
                     <button className="action-btn report-btn" onClick={() => setIsReportModalOpen(true)}>
@@ -126,6 +145,15 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {isChatModalOpen && chatRoomId && (
+                <ChatModal 
+                    roomId={chatRoomId}
+                    myNickname={myNickname}
+                    targetNickname={profile.nickname}
+                    onClose={() => setIsChatModalOpen(false)}
+                />
             )}
         </div>
     );
