@@ -69,10 +69,10 @@ public class PostController {
     @PostMapping
     public ResponseEntity<String> writePost(
             @ModelAttribute PostRequest postRequest,
-            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "file", required = false) List<MultipartFile> files, // 💡 단일에서 List로 변경
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        postService.createPost(postRequest, file, userDetails.getUserId());
+        postService.createPost(postRequest, files, userDetails.getUserId()); // 💡 서비스 호출부도 files로 전달
         return ResponseEntity.ok("게시글이 성공적으로 등록되었습니다.");
     }
 
@@ -81,10 +81,10 @@ public class PostController {
     public ResponseEntity<String> updatePost(
             @PathVariable Long id,
             @ModelAttribute PostRequest postRequest,
-            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam(value = "file", required = false) List<MultipartFile> files, // 💡 단일에서 List로 변경
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        postService.updatePost(id, postRequest, file, userDetails.getUserId());
+        postService.updatePost(id, postRequest, files, userDetails.getUserId()); // 💡 서비스 호출부도 files로 전달
         return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
     }
 

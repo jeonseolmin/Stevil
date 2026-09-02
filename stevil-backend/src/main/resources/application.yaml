@@ -9,7 +9,8 @@ spring:
 
   jwt:
     secret: mySuperSecretKeyForStevilProjectWhichIsVeryLongAndSecure12345!
-    access-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
+    access-expiration: 1800000
+    refresh-expiration: 1209600000
 
   profiles:
     default: local
@@ -25,6 +26,11 @@ naver:
     client-id: ${NAVER_API_HUB_CLIENT_ID:}
     client-secret: ${NAVER_API_HUB_CLIENT_SECRET:}
     base-url: https://naverapihub.apigw.ntruss.com
+
+food:
+  api:
+    key: "9deb2f7d4304fe4a23865fb2c185c97355831fd327796c9f656b362ebb3458b0"
+    url: "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02"
 
 server:
   port: ${SERVER_PORT:8080}
