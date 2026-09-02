@@ -61,13 +61,13 @@
 }
 
 .hospital-location-button:hover {
-    background: #dff5f1;
+    background: var(--color-primary-soft);
     border-color: var(--color-primary);
 }
 
 .hospital-location-button:focus-visible {
     outline: 3px solid
-    rgba(58, 189, 177, 0.25);
+    rgba(57, 135, 106, 0.25);
     outline-offset: 3px;
 }
 
@@ -108,7 +108,7 @@
     border-color: var(--color-primary);
     box-shadow:
             0 0 0 3px
-            rgba(58, 189, 177, 0.15);
+            rgba(57, 135, 106, 0.15);
 }
 
 .hospital-search button {
@@ -131,7 +131,7 @@
 
 .hospital-search button:focus-visible {
     outline: 3px solid
-    rgba(58, 189, 177, 0.25);
+    rgba(57, 135, 106, 0.25);
     outline-offset: 3px;
 }
 
@@ -240,7 +240,7 @@
 
 .hospital-card:focus-visible {
     outline: 3px solid
-    rgba(58, 189, 177, 0.25);
+    rgba(57, 135, 106, 0.25);
     outline-offset: 2px;
 }
 

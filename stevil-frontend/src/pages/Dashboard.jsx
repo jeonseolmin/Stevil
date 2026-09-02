@@ -16,6 +16,7 @@ import { Line } from "react-chartjs-2";
 import axiosInstance from "../api/axiosInstance";
 import DashboardChatWidget from "../components/rag/DashboardChatWidget";
 import "./Dashboard.css";
+import "./DashboardRefresh.css";
 
 ChartJS.register(
     CategoryScale,
@@ -47,14 +48,16 @@ function formatDate(dateTime) {
     }).format(new Date(dateTime));
 }
 
-export default function Dashboard() {
+export default function Dashboard({ previewData = null }) {
     const navigate = useNavigate();
 
-    const [dashboard, setDashboard] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const preview = import.meta.env.DEV && previewData !== null;
+    const [dashboard, setDashboard] = useState(preview ? previewData : null);
+    const [isLoading, setIsLoading] = useState(!preview);
     const [error, setError] = useState("");
 
     useEffect(() => {
+        if (preview) return;
         const fetchDashboard = async () => {
             try {
                 setIsLoading(true);
@@ -100,7 +103,7 @@ export default function Dashboard() {
         };
 
         fetchDashboard();
-    }, [navigate]);
+    }, [navigate, preview]);
 
     const chartData = useMemo(() => {
         const recentWeights = dashboard?.recentWeights ?? [];
@@ -224,22 +227,22 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-page">
-            <DashboardChatWidget />
+            <DashboardChatWidget preview={preview} />
             <div className="dashboard-container">
                 <section className="dashboard-welcome">
                     <div>
                         <span className="dashboard-eyebrow">
-                            TODAY
+                            MY HEALTH JOURNEY
                         </span>
 
                         <h1>
-                            {displayName}님,
+                            {displayName}님,{" "}
                             <br />
-                            오늘도 건강한 하루 보내세요.
+                            나를 위한 작은 변화.
                         </h1>
 
                         <p>
-                            작은 기록이 건강한 변화를 만듭니다.
+                            오늘의 기록부터, 궁금한 건강 정보까지 함께해요.
                         </p>
                     </div>
 

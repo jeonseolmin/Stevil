@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import WegovyChatPage from "../../pages/rag/WegovyChatPage";
 import "./DashboardChatWidget.css";
 
-export default function DashboardChatWidget() {
+export default function DashboardChatWidget({ preview = false }) {
     const [params] = useSearchParams();
     const [openedOnce, setOpenedOnce] = useState(() => params.get("chat") === "wegovy");
     const [open, setOpen] = useState(() => params.get("chat") === "wegovy");
@@ -39,7 +39,7 @@ export default function DashboardChatWidget() {
         {createPortal(<dialog ref={dialog} id="dashboard-wegovy-chat" className="dashboard-chat-dialog" aria-labelledby="dashboard-chat-title"
             onCancel={(event) => { event.preventDefault(); setOpen(false); }}>
             <div className="dashboard-chat-dialog__top"><span id="dashboard-chat-title">STEVIL · 건강 질문</span><button type="button" aria-label="위고비 도우미 닫기" onClick={() => setOpen(false)} autoFocus>×</button></div>
-            {openedOnce && <WegovyChatPage embedded />}
+            {openedOnce && <WegovyChatPage embedded preview={preview} />}
         </dialog>, document.body)}
     </>;
 }

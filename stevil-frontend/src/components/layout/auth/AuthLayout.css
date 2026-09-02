@@ -11,7 +11,7 @@
     background:
             radial-gradient(
                     circle at 12% 15%,
-                    rgba(32, 191, 169, 0.14),
+                    rgba(57, 135, 106, 0.14),
                     transparent 30%
             ),
             radial-gradient(
@@ -29,7 +29,7 @@
     content: "";
     pointer-events: none;
 
-    border: 1px solid rgba(32, 191, 169, 0.12);
+    border: 1px solid rgba(57, 135, 106, 0.12);
     border-radius: 50%;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .auth-logo:focus-visible {
-    outline: 3px solid rgba(32, 191, 169, 0.22);
+    outline: 3px solid rgba(57, 135, 106, 0.22);
     outline-offset: 6px;
     border-radius: 6px;
 }

@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { lazy, Suspense } from "react";
+const DesignPreview = import.meta.env.DEV ? lazy(() => import("../pages/preview/DesignPreview")) : null;
 
 import RootLayout from "../components/layout/RootLayout";
 import AuthLayout from "../components/layout/auth/AuthLayout.jsx";
@@ -31,6 +33,7 @@ import MyPage from "../pages/mypage/MyPage.jsx";
 export default function AppRouter() {
     return (
         <Routes>
+            {import.meta.env.DEV && <Route path="/__design" element={<Suspense fallback={<p>디자인 준비 중…</p>}><DesignPreview /></Suspense>} />}
             {/* 공통 헤더를 사용하는 화면 */}
             <Route element={<RootLayout />}>
                 <Route path="/" element={<HomePage />} />

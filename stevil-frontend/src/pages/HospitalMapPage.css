@@ -68,7 +68,7 @@
 
 .hospital-search input:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(58, 189, 177, 0.15);
+    box-shadow: 0 0 0 3px rgba(57, 135, 106, 0.15);
 }
 
 .hospital-search button {

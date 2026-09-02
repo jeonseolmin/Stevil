@@ -15,7 +15,7 @@
 
 .admin-users-heading > div:first-child > span,
 .admin-user-modal header span {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.13em;
@@ -23,20 +23,20 @@
 
 .admin-users-heading h1 {
     margin: 8px 0 6px;
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: clamp(1.7rem, 3vw, 2.3rem);
 }
 
 .admin-users-heading p {
     margin: 0;
-    color: #718783;
+    color: var(--color-text-muted);
     line-height: 1.6;
 }
 
 .admin-users-count {
     min-width: 145px;
     padding: 18px 22px;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 18px;
     background: #ffffff;
     box-shadow: 0 8px 24px rgba(24, 58, 55, 0.06);
@@ -45,12 +45,12 @@
 .admin-users-count span {
     display: block;
     margin-bottom: 5px;
-    color: #718783;
+    color: var(--color-text-muted);
     font-size: 0.82rem;
 }
 
 .admin-users-count strong {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 1.65rem;
 }
 
@@ -58,7 +58,7 @@
     display: flex;
     gap: 10px;
     padding: 18px;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 20px;
     background: #ffffff;
     box-shadow: 0 8px 26px rgba(24, 58, 55, 0.06);
@@ -71,13 +71,13 @@
     gap: 10px;
     min-width: 0;
     padding: 0 15px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 12px;
     background: #f8fbfa;
 }
 
 .admin-users-search-input span {
-    color: #718783;
+    color: var(--color-text-muted);
     font-size: 1.35rem;
 }
 
@@ -88,7 +88,7 @@
     border: 0;
     outline: 0;
     background: transparent;
-    color: #173c38;
+    color: var(--color-text-primary);
     font: inherit;
 }
 
@@ -96,16 +96,16 @@
     padding: 0 24px;
     border: 0;
     border-radius: 12px;
-    background: #159987;
+    background: var(--color-primary);
     color: #ffffff;
     font-weight: 800;
     cursor: pointer;
 }
 
 .admin-users-search .admin-users-reset-button {
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     background: #ffffff;
-    color: #617773;
+    color: var(--color-text-secondary);
 }
 
 .admin-users-error {
@@ -130,7 +130,7 @@
 
 .admin-users-table-card {
     overflow: hidden;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 22px;
     background: #ffffff;
     box-shadow: 0 10px 30px rgba(24, 58, 55, 0.07);
@@ -148,9 +148,9 @@
 
 .admin-users-table th {
     padding: 16px 18px;
-    border-bottom: 1px solid #dcebe8;
-    background: #f5faf9;
-    color: #617773;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-text-secondary);
     font-size: 0.8rem;
     font-weight: 800;
     text-align: left;
@@ -159,8 +159,8 @@
 
 .admin-users-table td {
     padding: 17px 18px;
-    border-bottom: 1px solid #edf3f1;
-    color: #47625e;
+    border-bottom: 1px solid var(--color-surface-soft);
+    color: var(--color-text-secondary);
     font-size: 0.9rem;
     vertical-align: middle;
 }
@@ -190,8 +190,8 @@
     height: 42px;
     place-items: center;
     border-radius: 14px;
-    background: #ddf4ef;
-    color: #118777;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
     font-weight: 900;
 }
 
@@ -202,12 +202,12 @@
 }
 
 .admin-user-identity strong {
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-user-identity small {
     margin-top: 3px;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-user-identity em {
@@ -219,11 +219,11 @@
 
 .admin-user-role-select {
     padding: 9px 30px 9px 11px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     outline: none;
     background: #ffffff;
-    color: #47625e;
+    color: var(--color-text-secondary);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 700;
@@ -249,8 +249,8 @@
 
 .admin-user-badge--complete,
 .admin-user-badge--active {
-    background: #e2f6f1;
-    color: #118777;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
 }
 
 .admin-user-badge--waiting {
@@ -282,9 +282,9 @@
 }
 
 .admin-user-detail-button {
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     background: #ffffff;
-    color: #47625e;
+    color: var(--color-text-secondary);
 }
 
 .admin-user-suspend-button {
@@ -296,7 +296,7 @@
 .admin-user-release-button {
     border: 1px solid #bfe2db;
     background: #eefaf7;
-    color: #118777;
+    color: var(--color-primary-dark);
 }
 
 .admin-users-state {
@@ -306,12 +306,12 @@
     align-content: center;
     gap: 10px;
     padding: 40px;
-    color: #718783;
+    color: var(--color-text-muted);
     text-align: center;
 }
 
 .admin-users-state strong {
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-users-state p {
@@ -321,8 +321,8 @@
 .admin-users-spinner {
     width: 34px;
     height: 34px;
-    border: 3px solid #d9eeea;
-    border-top-color: #159987;
+    border: 3px solid var(--color-primary-soft);
+    border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: admin-users-spin 0.75s linear infinite;
 }
@@ -339,15 +339,15 @@
     justify-content: center;
     gap: 18px;
     padding: 18px;
-    border-top: 1px solid #edf3f1;
+    border-top: 1px solid var(--color-surface-soft);
 }
 
 .admin-users-pagination button {
     padding: 9px 16px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     background: #ffffff;
-    color: #47625e;
+    color: var(--color-text-secondary);
     font-weight: 700;
     cursor: pointer;
 }
@@ -361,11 +361,11 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-users-pagination strong {
-    color: #159987;
+    color: var(--color-primary);
 }
 
 .admin-users-pagination em {
@@ -399,12 +399,12 @@
     justify-content: space-between;
     gap: 20px;
     padding: 24px 26px;
-    border-bottom: 1px solid #e7efed;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .admin-user-modal header h2 {
     margin: 7px 0 0;
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-user-modal header button {
@@ -414,8 +414,8 @@
     place-items: center;
     border: 0;
     border-radius: 10px;
-    background: #f1f6f5;
-    color: #617773;
+    background: var(--color-surface-soft);
+    color: var(--color-text-secondary);
     font-size: 1.4rem;
     cursor: pointer;
 }
@@ -433,20 +433,20 @@
     height: 58px;
     place-items: center;
     border-radius: 18px;
-    background: #ddf4ef;
-    color: #118777;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
     font-size: 1.3rem;
     font-weight: 900;
 }
 
 .admin-user-detail-profile strong {
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: 1.05rem;
 }
 
 .admin-user-detail-profile p {
     margin: 4px 0 0;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-user-detail-list {
@@ -455,9 +455,9 @@
     gap: 1px;
     margin: 0 26px 24px;
     overflow: hidden;
-    border: 1px solid #e4edeb;
+    border: 1px solid var(--color-border-light);
     border-radius: 16px;
-    background: #e4edeb;
+    background: var(--color-border-light);
 }
 
 .admin-user-detail-list div {
@@ -467,13 +467,13 @@
 
 .admin-user-detail-list dt {
     margin-bottom: 6px;
-    color: #829490;
+    color: var(--color-text-muted);
     font-size: 0.75rem;
 }
 
 .admin-user-detail-list dd {
     margin: 0;
-    color: #294944;
+    color: var(--color-text-primary);
     font-weight: 700;
 }
 
@@ -503,12 +503,12 @@
 .admin-user-suspension-guide {
     margin: 0;
     padding: 24px 26px 6px;
-    color: #617773;
+    color: var(--color-text-secondary);
     line-height: 1.6;
 }
 
 .admin-user-suspension-guide strong {
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-user-reason-field {
@@ -519,7 +519,7 @@
 .admin-user-reason-field > span {
     display: block;
     margin-bottom: 9px;
-    color: #294944;
+    color: var(--color-text-primary);
     font-weight: 800;
 }
 
@@ -534,24 +534,24 @@
     min-height: 140px;
     padding: 14px;
     resize: vertical;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 13px;
     outline: none;
-    color: #294944;
+    color: var(--color-text-primary);
     font: inherit;
     line-height: 1.6;
     box-sizing: border-box;
 }
 
 .admin-user-reason-field textarea:focus {
-    border-color: #159987;
-    box-shadow: 0 0 0 3px rgba(21, 153, 135, 0.12);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(57, 135, 106, 0.12);
 }
 
 .admin-user-reason-field small {
     display: block;
     margin-top: 7px;
-    color: #829490;
+    color: var(--color-text-muted);
     text-align: right;
 }
 
@@ -560,7 +560,7 @@
     justify-content: flex-end;
     gap: 9px;
     padding: 18px 26px;
-    border-top: 1px solid #e7efed;
+    border-top: 1px solid var(--color-border-light);
 }
 
 .admin-user-modal-actions button {
@@ -571,9 +571,9 @@
 }
 
 .admin-user-modal-actions button:first-child {
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     background: #ffffff;
-    color: #617773;
+    color: var(--color-text-secondary);
 }
 
 .admin-user-modal-actions button:last-child {

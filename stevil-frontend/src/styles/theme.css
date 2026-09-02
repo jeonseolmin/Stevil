@@ -1,39 +1,40 @@
 :root {
     /* Stevil 브랜드 색상 */
-    --color-primary: #3abdb1;
-    --color-primary-dark: #0f7d72;
-    --color-primary-light: #20bfa9;
-    --color-primary-soft: #e8f8f5;
+    --color-primary: #39876a;
+    --color-primary-dark: #235f4b;
+    --color-primary-light: #a8cfb9;
+    --color-primary-soft: #eaf2e5;
 
     /* 배경 색상 */
-    --color-background: #f8faf9;
+    --color-background: #f5f7f4;
     --color-surface: #ffffff;
-    --color-surface-soft: #f1f7f5;
+    --color-surface-soft: #f4f6f1;
+    --color-surface-warm: #f7f4ed;
 
     /* 글자 색상 */
-    --color-text-primary: #183a37;
-    --color-text-secondary: #526966;
-    --color-text-muted: #7d918e;
+    --color-text-primary: #243e32;
+    --color-text-secondary: #586e61;
+    --color-text-muted: #728176;
     --color-text-white: #ffffff;
 
     /* 선과 상태 색상 */
-    --color-border: #dce9e6;
-    --color-border-light: #e8f0ee;
+    --color-border: #dce6da;
+    --color-border-light: #e6ece5;
     --color-success: #168c63;
     --color-warning: #e6a23c;
     --color-danger: #dc5a5a;
     --color-info: #397cc9;
 
     /* 그림자 */
-    --shadow-small: 0 6px 18px rgba(24, 58, 55, 0.07);
-    --shadow-medium: 0 14px 36px rgba(24, 58, 55, 0.1);
-    --shadow-large: 0 24px 60px rgba(24, 58, 55, 0.14);
-    --shadow-primary: 0 12px 28px rgba(18, 143, 130, 0.2);
+    --shadow-small: 0 5px 24px rgba(35, 68, 51, 0.035);
+    --shadow-medium: 0 14px 36px rgba(35, 68, 51, 0.07);
+    --shadow-large: 0 24px 60px rgba(35, 68, 51, 0.13);
+    --shadow-primary: 0 10px 26px rgba(35, 95, 75, 0.16);
 
     /* 모서리 */
     --radius-small: 10px;
     --radius-medium: 16px;
-    --radius-large: 24px;
+    --radius-large: 22px;
     --radius-extra-large: 36px;
     --radius-round: 999px;
 

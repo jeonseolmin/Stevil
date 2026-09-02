@@ -1,5 +1,7 @@
 .dashboard-chat-launcher { position: fixed; right: 28px; bottom: 26px; z-index: 90; display: flex; align-items: center; gap: 12px; padding: 15px 21px; color: white; background: var(--color-primary-dark); border-radius: 20px; box-shadow: var(--shadow-primary); cursor: pointer; text-align: left; font-weight: 700; }
 .dashboard-chat-launcher small { display: block; font-size: 11px; font-weight: 400; margin-top: 3px; opacity: .9; }
+.dashboard-chat-launcher { background:#235f4b; border:1px solid #ffffff40; border-radius:50px; padding:15px 24px; box-shadow:0 8px 32px #143e3528; }
+.dashboard-chat-launcher > svg { background:#ffffff14; padding:8px; width:40px; height:40px; border-radius:50%; }
 .dashboard-chat-launcher:focus-visible, .dashboard-chat-dialog__top button:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 4px; }
 .dashboard-chat-dialog { position: fixed; inset: auto 24px 24px auto; margin: 0; padding: 0; width: min(500px, calc(100vw - 32px)); height: min(780px, calc(100dvh - 48px)); max-height: none; max-width: none; border: 1px solid var(--color-border); border-radius: 24px; overflow: hidden; background: var(--color-surface); color: var(--color-text-primary); box-shadow: var(--shadow-large); }
 .dashboard-chat-dialog[open] { display: flex; flex-direction: column; }
@@ -21,4 +23,19 @@
 .wegovy-chat--embedded .wegovy-chat__examples strong { font-size: 11px; }
 .wegovy-chat--embedded .wegovy-chat__composer { flex-shrink: 0; padding: 12px 16px; }
 .wegovy-chat--embedded .wegovy-chat__composer > p { font-size: 10px; }
+.dashboard-chat-dialog { border-color:#e1e9df; box-shadow:0 28px 100px #183d3430; }
+.dashboard-chat-dialog__top { padding:12px 20px 3px; color:#6e8d7c; }
+.wegovy-chat--embedded .wegovy-chat__toolbar { padding:14px 20px 20px; }
+.wegovy-chat--embedded .wegovy-chat__avatar { background:#e8f1e6; color:#3b765b; }
+.wegovy-chat--embedded .wegovy-chat__embedded-notice { background:#f3f6ee; padding:10px 20px; color:#71816c; }
+.wegovy-chat--embedded .wegovy-chat__messages { background:#fcfdf9; padding:28px 22px; }
+.wegovy-chat--embedded .wegovy-chat__welcome-icon { background:#eaf2e3; color:#5e886a; width:54px; height:54px; border-radius:18px; }
+.wegovy-chat--embedded .wegovy-chat__welcome h2 { font-size:24px; color:#254634; line-height:1.4; letter-spacing:-.04em; }
+.wegovy-chat--embedded .wegovy-chat__welcome > p { color:#7a887b; font-size:13px; line-height:1.8; }
+.wegovy-chat--embedded .wegovy-chat__examples button { background:#fff; border:1px solid #e4ebdf; padding:16px 25px 16px 14px; border-radius:14px; }
+.wegovy-chat--embedded .wegovy-chat__examples button:hover { background:#f1f6ec; border-color:#adc3a5; }
+.wegovy-chat--embedded .wegovy-chat__examples strong { font-size:12px; line-height:1.6; }
+.wegovy-chat--embedded .wegovy-chat__composer { padding:16px 20px; border-top:1px solid #e8eee1; }
+.wegovy-chat--embedded .wegovy-chat__question { background:#28654f; }
+.wegovy-chat--embedded .wegovy-chat__send-row button { background:#28654f; }
 @media (max-width: 560px) { .dashboard-chat-launcher { bottom: 18px; right: 16px; padding: 13px 16px; font-size: 13px; } .dashboard-chat-dialog { inset: auto 8px 8px; width: calc(100vw - 16px); height: calc(100dvh - 16px); border-radius: 20px; } .wegovy-chat--embedded .wegovy-chat__examples { grid-template-columns: 1fr 1fr; } }

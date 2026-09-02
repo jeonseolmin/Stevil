@@ -1,0 +1,12 @@
+.design-preview { margin: auto; transition: max-width .2s; }
+.design-preview--compact { max-width: 760px; }
+.design-preview-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 5%; background:#173f38; color:#fff; font-size:12px; }
+.design-preview-bar b { color:#a7e7d2; margin-right:12px; font-size:10px; letter-spacing:.1em; }
+.design-preview-bar button { border:1px solid #80b8a5; background:transparent; color:#fff; padding:7px 12px; border-radius:20px; cursor:pointer; white-space:nowrap; }
+.design-preview-nav { height:80px; padding:0 max(24px, calc((100% - 1120px)/2)); display:flex; align-items:center; gap:65px; background:#fff; border-bottom:1px solid #e9efeb; }
+.design-preview-logo { font-size:30px; letter-spacing:-2px; color:#164b3c; font-weight:800; text-decoration:none; }
+.design-preview-logo span { color:#54b99a; font-size:10px; margin-left:3px; }
+.design-preview-nav nav { display:flex; gap:28px; font-size:13px; color:#89938e; }
+.design-preview-nav nav strong { color:#227b60; }
+.design-preview-user { margin-left:auto; background:#e7f2ed; color:#286d57; border-radius:50%; padding:11px 14px; font-size:13px; }
+@media(max-width:600px) { .design-preview-nav { height:65px; gap:20px; } .design-preview-nav nav span { display:none; } .design-preview-bar { font-size:10px; } .design-preview-bar b { display:block; margin-bottom:4px; } }

@@ -1,0 +1,50 @@
+/* A quieter canvas keeps the numbers and daily actions in focus. */
+.dashboard-page { background:#f5f7f4; padding:38px 24px 110px; }
+.dashboard-container { width:min(100%,1120px); }
+.dashboard-welcome { margin-bottom:28px; gap:20px; }
+.dashboard-eyebrow { font-size:10px; letter-spacing:.18em; color:#608879; margin-bottom:12px; }
+.dashboard-welcome h1 { font-size:clamp(26px,3.3vw,37px); font-weight:600; line-height:1.35; margin-bottom:10px; color:#203e34; }
+.dashboard-welcome h1 br { display:none; }
+.dashboard-welcome p { font-size:14px; color:#7b8981; }
+.dashboard-profile-placeholder,.dashboard-profile-image { width:58px; height:58px; border:3px solid white; box-shadow:0 4px 20px #183e3510; }
+.dashboard-profile-placeholder { background:#e1ede5; color:#487c65; font-size:21px; }
+.dashboard-weight-summary,.dashboard-panel,.dashboard-daily-section { border:1px solid #e6ece5; border-radius:22px; padding:26px; box-shadow:0 5px 24px #23443304; }
+.dashboard-section-heading { margin-bottom:22px; }
+.dashboard-section-heading span { color:#769083; font-size:11px; font-weight:500; letter-spacing:.03em; }
+.dashboard-section-heading h2 { color:#243e32; font-size:19px; font-weight:600; }
+.dashboard-text-button { color:#40795e; font-size:12px; border:1px solid #dce9de; padding:10px 15px; border-radius:30px; }
+.weight-card-grid { gap:14px; }
+.weight-card { border:0; border-radius:17px; min-height:162px; padding:23px; background:#f4f6f1; }
+.weight-card:nth-child(3) { background:#f7f4ed; }
+.weight-card--primary { background:linear-gradient(120deg,#23674f,#39876a); position:relative; overflow:hidden; }
+.weight-card--primary::after { content:""; position:absolute; width:180px; height:180px; border:1px solid #ffffff18; border-radius:50%; right:-55px; top:-58px; box-shadow:0 0 0 25px #ffffff06,0 0 0 50px #ffffff04; pointer-events:none; }
+.weight-card > span { font-size:12px; margin-bottom:18px; font-weight:500; }
+.weight-card strong { font-size:38px; font-weight:600; font-variant-numeric:tabular-nums; }
+.weight-card strong small { font-size:13px; font-weight:400; margin-left:7px; opacity:.7; }
+.weight-card p { font-size:11px; }
+.dashboard-progress-card { border:0; padding:20px 2px 2px; margin-top:3px; }
+.dashboard-progress-info span { font-size:12px; font-weight:400; }
+.dashboard-progress-info strong { color:#397958; font-size:13px; }
+.dashboard-progress-track { height:6px; background:#edf2e9; }
+.dashboard-progress-track span { background:#74a68a; }
+.dashboard-content-grid { gap:20px; grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr); }
+.dashboard-panel { min-width:0; }
+.dashboard-chart { height:265px; min-width:0; width:100%; position:relative; }
+.quick-action-list { gap:8px; }
+.quick-action-list > button { background:#fafbf8; padding:13px; border:1px solid #eef1e9; }
+.quick-action-icon { color:#578869; background:#edf3e9; width:36px; height:36px; border-radius:11px; }
+.quick-action-list strong { font-size:13px; font-weight:600; }
+.quick-action-list small { font-size:11px; }
+.quick-action-list b { font-weight:400; color:#709b7e; }
+.daily-card { background:#fafbf8; border:1px solid #eef1e9; border-radius:16px; padding:20px; }
+.daily-card h3 { font-size:16px; }
+.daily-card p { font-size:12px; }
+.daily-card-status { color:#748d79; font-weight:500; font-size:10px; background:#eef4e9; }
+.daily-card button { background:#eaf1e5; color:#457553; font-size:12px; font-weight:600; }
+.dashboard-medical-notice { background:transparent; border:0; padding:5px 4px; color:#879389; }
+.dashboard-medical-notice strong { font-size:11px; }
+.dashboard-medical-notice p { font-size:11px; }
+.dashboard-page button:focus-visible { outline:3px solid #44896c; outline-offset:3px; }
+@media(max-width:800px) { .dashboard-content-grid { grid-template-columns:minmax(0,1fr); } .dashboard-welcome h1 br { display:block; } }
+@media(max-width:560px) { .dashboard-page { padding:26px 16px 120px; } .dashboard-profile-placeholder,.dashboard-profile-image { display:none; } .dashboard-weight-summary,.dashboard-panel,.dashboard-daily-section { padding:19px; border-radius:18px; } .weight-card-grid { grid-template-columns:1fr; gap:10px; } .weight-card { min-height:0; padding:18px; } .weight-card > span { margin-bottom:10px; } .weight-card strong { font-size:32px; } .dashboard-text-button { padding:9px 11px; font-size:11px; } .daily-card-grid { grid-template-columns:1fr; } }
+@media(prefers-reduced-motion:reduce) { .dashboard-progress-track span,.quick-action-list > button { transition:none; } }

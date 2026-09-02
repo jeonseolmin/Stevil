@@ -4,6 +4,7 @@ import "./styles/theme.css";
 import "./styles/glocal.css";
 import "./index.css";
 import App from './App.jsx'
+import "./styles/site-refresh.css";
 import {BrowserRouter} from "react-router-dom";
 
 

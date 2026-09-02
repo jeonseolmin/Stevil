@@ -31,7 +31,8 @@ function AnswerText({ text, messageIndex, sources }) {
     });
 }
 
-export default function WegovyChatPage({ embedded = false }) {
+export default function WegovyChatPage({ embedded = false, preview = false }) {
+    const designPreview = import.meta.env.DEV && preview;
     const [question, setQuestion] = useState("");
     const [messages, setMessages] = useState([]);
     const [status, setStatus] = useState(null);
@@ -43,11 +44,12 @@ export default function WegovyChatPage({ embedded = false }) {
     const conversation = useRef(null);
 
     useEffect(() => {
+        if (designPreview) return;
         let active = true;
         getRagStatus().then((data) => { if (active) setStatus(data); })
             .catch((err) => { if (active) setError(err.message); });
         return () => { active = false; };
-    }, []);
+    }, [designPreview]);
 
     useEffect(() => {
         if (conversation.current) conversation.current.scrollTop = conversation.current.scrollHeight;
@@ -67,7 +69,10 @@ export default function WegovyChatPage({ embedded = false }) {
         setPending(text);
         setError("");
         try {
-            const response = await askRag(text);
+            const response = designPreview ? {
+                answer: "궁금한 점을 편하게 남겨 주세요. 실제 서비스에서는 관련 자료를 찾아 답변과 출처를 함께 안내해 드려요.\n\n이 답변은 대화창의 모양을 확인하기 위한 디자인 예시입니다.",
+                sources: [], mode: "design_preview", notice: "디자인 미리보기 · 실제 검색이나 API 요청은 전송하지 않았습니다.",
+            } : await askRag(text);
             setMessages((previous) => [...previous, { question: text, ...response }]);
             setQuestion("");
         } catch (err) {
