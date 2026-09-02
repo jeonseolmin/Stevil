@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance, {
+    clearAccessToken,
+    setAccessToken,
+} from "../../api/axiosInstance";
 
-import axiosInstance from "../../api/axiosInstance";
 
 function OAuthSuccessPage() {
     const navigate = useNavigate();
@@ -30,24 +33,9 @@ function OAuthSuccessPage() {
                     );
                 }
 
-                /*
-                 * 현재 단계에서는 기존 구조와의
-                 * 호환성을 위해 Access Token만
-                 * localStorage에 유지합니다.
-                 *
-                 * 다음 단계에서 이것도 메모리 저장 방식으로
-                 * 변경할 예정입니다.
-                 */
-                localStorage.setItem(
-                    "accessToken",
-                    accessToken
-                );
 
-                /*
-                 * 새 Access Token이 저장됐으므로
-                 * /users/me 요청부터는 axios interceptor가
-                 * Authorization 헤더에 Token을 붙입니다.
-                 */
+                setAccessToken(accessToken);
+
                 const userResponse =
                     await axiosInstance.get(
                         "/users/me"
@@ -112,9 +100,7 @@ function OAuthSuccessPage() {
                     error.message
                 );
 
-                localStorage.removeItem(
-                    "accessToken"
-                );
+                clearAccessToken();
 
                 localStorage.removeItem(
                     "userRole"

@@ -1,4 +1,5 @@
 import {
+    useCallback,
     useEffect,
     useState,
 } from "react";
@@ -10,7 +11,9 @@ import {
     useNavigate,
 } from "react-router-dom";
 
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance, {
+    clearAccessToken,
+} from "../../api/axiosInstance";
 
 import "./Header.css";
 
@@ -21,18 +24,23 @@ export default function Header() {
     const isPartnershipPage =
         location.pathname === "/partnership";
 
-    const [userRole, setUserRole] = useState(
-        () => localStorage.getItem("userRole")
-    );
-
+    /*
+     * Access Token은 더 이상 localStorage에 저장하지 않습니다.
+     *
+     * 로그인 여부는 실제 서버의 /users/me 응답으로 판단합니다.
+     */
     const [isLoggedIn, setIsLoggedIn] =
+        useState(false);
+
+    const [userRole, setUserRole] =
         useState(() =>
-            Boolean(
-                localStorage.getItem(
-                    "accessToken"
-                )
+            localStorage.getItem(
+                "userRole"
             )
         );
+
+    const [isAuthChecking, setIsAuthChecking] =
+        useState(true);
 
     const [isMenuOpen, setIsMenuOpen] =
         useState(false);
@@ -40,77 +48,190 @@ export default function Header() {
     const isAdmin =
         userRole === "ROLE_ADMIN";
 
-    const closeMenu = () => {
+    const closeMenu = useCallback(() => {
         setIsMenuOpen(false);
-    };
+    }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem(
-            "accessToken"
-        );
+    /*
+     * 현재 사용자 인증 상태 확인
+     *
+     * Access Token이 메모리에 있으면 그대로 사용합니다.
+     *
+     * F5 등으로 Access Token이 사라졌다면
+     * axios interceptor가:
+     *
+     * /users/me
+     *      ↓ 401
+     * /auth/refresh
+     *      ↓
+     * 새 Access Token
+     *      ↓
+     * /users/me 재요청
+     *
+     * 을 자동 처리합니다.
+     */
+    const checkAuthentication =
+        useCallback(async () => {
+            try {
+                const response =
+                    await axiosInstance.get(
+                        "/users/me"
+                    );
 
-        localStorage.removeItem(
-            "userRole"
-        );
+                const role =
+                    response.data.role;
 
-        setIsLoggedIn(false);
-        setUserRole(null);
+                setIsLoggedIn(true);
+                setUserRole(role);
 
-        closeMenu();
+                /*
+                 * userRole은 인증 수단이 아니라
+                 * 화면 표시 편의를 위한 값입니다.
+                 *
+                 * 실제 권한 검사는 백엔드
+                 * Spring Security가 담당합니다.
+                 */
+                if (role) {
+                    localStorage.setItem(
+                        "userRole",
+                        role
+                    );
+                } else {
+                    localStorage.removeItem(
+                        "userRole"
+                    );
+                }
+            } catch (error) {
+                /*
+                 * Refresh Token까지 유효하지 않다면
+                 * 실제 로그아웃 상태입니다.
+                 */
+                setIsLoggedIn(false);
+                setUserRole(null);
 
-        navigate("/", {
-            replace: true,
-        });
+                clearAccessToken();
+
+                localStorage.removeItem(
+                    "userRole"
+                );
+
+                /*
+                 * 로그인하지 않은 상태에서
+                 * /users/me가 401인 것은 정상적인 경우이므로
+                 * 필요 이상으로 콘솔 에러를 남기지 않습니다.
+                 */
+                if (
+                    error.response?.status !== 401 &&
+                    error.response?.status !== 403
+                ) {
+                    console.error(
+                        "헤더 사용자 정보 조회 실패:",
+                        error.response?.status,
+                        error.response?.data ??
+                        error.message
+                    );
+                }
+            } finally {
+                setIsAuthChecking(false);
+            }
+        }, []);
+
+    /*
+     * 로그아웃
+     *
+     * 1. 서버 Refresh Token revoke
+     * 2. HttpOnly Refresh Cookie 삭제
+     * 3. 메모리 Access Token 제거
+     * 4. 프론트 로그인 상태 초기화
+     */
+    const handleLogout = async () => {
+        try {
+            await axiosInstance.post(
+                "/auth/logout"
+            );
+        } catch (error) {
+            console.error(
+                "로그아웃 요청 실패:",
+                error.response?.status,
+                error.response?.data ??
+                error.message
+            );
+        } finally {
+            clearAccessToken();
+
+            localStorage.removeItem(
+                "userRole"
+            );
+
+            setIsLoggedIn(false);
+            setUserRole(null);
+
+            closeMenu();
+
+            navigate("/", {
+                replace: true,
+            });
+        }
     };
 
     /*
-     * 페이지 주소나 해시가 바뀌면
-     * 모바일 메뉴를 닫고 로그인 상태를 갱신합니다.
+     * URL이 변경되면 모바일 메뉴를 닫습니다.
      */
     useEffect(() => {
         closeMenu();
-
-        setIsLoggedIn(
-            Boolean(
-                localStorage.getItem(
-                    "accessToken"
-                )
-            )
-        );
-
-        setUserRole(
-            localStorage.getItem(
-                "userRole"
-            )
-        );
     }, [
         location.pathname,
         location.hash,
+        closeMenu,
     ]);
 
     /*
-     * 다른 브라우저 탭에서 로그인·로그아웃하거나
-     * 권한값이 변경되면 현재 헤더도 갱신합니다.
+     * 앱 진입 / 페이지 이동 시 인증 상태 확인
+     *
+     * 특히 F5 후에는 Access Token이 메모리에서
+     * 사라져 있으므로 Refresh Token을 이용해
+     * 인증 상태를 복원합니다.
+     */
+    useEffect(() => {
+        let active = true;
+
+        const verifyAuthentication =
+            async () => {
+                if (!active) {
+                    return;
+                }
+
+                await checkAuthentication();
+            };
+
+        verifyAuthentication();
+
+        return () => {
+            active = false;
+        };
+    }, [
+        location.pathname,
+        checkAuthentication,
+    ]);
+
+    /*
+     * 다른 탭에서 userRole 값이 변경되는 경우
+     * 현재 탭의 화면 표시도 갱신합니다.
+     *
+     * 실제 인증 여부는 여전히 /users/me가 결정합니다.
      */
     useEffect(() => {
         const handleStorageChange = (
             event
         ) => {
             if (
-                event.key ===
-                "accessToken"
-            ) {
-                setIsLoggedIn(
-                    Boolean(event.newValue)
-                );
-            }
-
-            if (
                 event.key === "userRole"
             ) {
                 setUserRole(
                     event.newValue
                 );
+
+                checkAuthentication();
             }
         };
 
@@ -125,10 +246,10 @@ export default function Header() {
                 handleStorageChange
             );
         };
-    }, []);
+    }, [checkAuthentication]);
 
     /*
-     * 모바일 메뉴가 열렸을 때
+     * 모바일 메뉴가 열려 있을 때
      * Escape 키로 닫습니다.
      */
     useEffect(() => {
@@ -157,78 +278,10 @@ export default function Header() {
                 handleEscape
             );
         };
-    }, [isMenuOpen]);
-
-    /*
-     * 로그인한 사용자의 최신 권한을 조회합니다.
-     */
-    useEffect(() => {
-        if (!isLoggedIn) {
-            setUserRole(null);
-            return undefined;
-        }
-
-        let active = true;
-
-        const loadCurrentUser =
-            async () => {
-                try {
-                    const response =
-                        await axiosInstance.get(
-                            "/users/me"
-                        );
-
-                    if (!active) {
-                        return;
-                    }
-
-                    const role =
-                        response.data.role;
-
-                    setUserRole(role);
-
-                    localStorage.setItem(
-                        "userRole",
-                        role
-                    );
-                } catch (error) {
-                    if (!active) {
-                        return;
-                    }
-
-                    console.error(
-                        "헤더 사용자 정보 조회 실패:",
-                        error.response?.status,
-                        error.response?.data ??
-                        error.message
-                    );
-
-                    if (
-                        error.response
-                            ?.status === 401 ||
-                        error.response
-                            ?.status === 403
-                    ) {
-                        localStorage.removeItem(
-                            "accessToken"
-                        );
-
-                        localStorage.removeItem(
-                            "userRole"
-                        );
-
-                        setIsLoggedIn(false);
-                        setUserRole(null);
-                    }
-                }
-            };
-
-        loadCurrentUser();
-
-        return () => {
-            active = false;
-        };
-    }, [isLoggedIn]);
+    }, [
+        isMenuOpen,
+        closeMenu,
+    ]);
 
     return (
         <header className="site-header">
@@ -508,7 +561,7 @@ export default function Header() {
                     )}
 
                     <div className="mobile-header-actions">
-                        {isLoggedIn ? (
+                        {isAuthChecking ? null : isLoggedIn ? (
                             <>
                                 {isAdmin && (
                                     <Link
@@ -563,11 +616,13 @@ export default function Header() {
                         <Link
                             to="/"
                             className="header-login-link"
-                            onClick={closeMenu}
+                            onClick={
+                                closeMenu
+                            }
                         >
                             홈으로
                         </Link>
-                    ) : isLoggedIn ? (
+                    ) : isAuthChecking ? null : isLoggedIn ? (
                         <>
                             {isAdmin && (
                                 <Link
