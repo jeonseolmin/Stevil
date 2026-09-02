@@ -26,7 +26,7 @@ def load_env(path=None):
         if not line or line.startswith('#') or '=' not in line:
             continue
         name, value = line.split('=', 1)
-        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL'):
+        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL', 'RAG_DATABASE_URL'):
             value = value.strip()
             if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
                 value = value[1:-1]
@@ -240,7 +240,7 @@ def answer(corpus, question, model=None):
     return response
 
 
-def serve(corpus, port, model):
+def serve(corpus, port, model, host='127.0.0.1'):
     class Handler(BaseHTTPRequestHandler):
         def send(self, code, data, mime='application/json; charset=utf-8'):
             body = data if isinstance(data, bytes) else json.dumps(data, ensure_ascii=False).encode()
@@ -280,7 +280,7 @@ def serve(corpus, port, model):
             pass  # Do not log health questions.
 
     print(f'http://127.0.0.1:{port} | chunks={len(corpus.docs)} | preview={corpus.preview}', flush=True)
-    ThreadingHTTPServer(('127.0.0.1', port), Handler).serve_forever()
+    ThreadingHTTPServer((host, port), Handler).serve_forever()
 
 
 if __name__ == '__main__':
@@ -288,6 +288,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--preview', action='store_true', help='Use unreviewed MFDS files for local development')
     parser.add_argument('--port', type=int, default=8091)
+    parser.add_argument('--host', default='127.0.0.1')
     parser.add_argument('--model', default=os.environ.get('GEMINI_MODEL'), help='Gemini model ID; requires GEMINI_API_KEY')
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--build-index', action='store_true', help='Create cached document embeddings, then exit')
@@ -295,7 +296,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     corpus = Corpus(preview=args.preview)
     if not args.bm25_only:
-        corpus.hybrid = HybridSearch(corpus, VectorIndex(corpus.docs))
+        if os.environ.get('RAG_DATABASE_URL') and not args.build_index:
+            from postgres_store import PostgresIndex
+            index = PostgresIndex(corpus.docs)
+        else:
+            index = VectorIndex(corpus.docs)
+        corpus.hybrid = HybridSearch(corpus, index)
     if args.build_index:
         if args.bm25_only:
             parser.error('--build-index cannot be used with --bm25-only')
@@ -303,4 +309,4 @@ if __name__ == '__main__':
     elif args.check:
         print(json.dumps({'chunks': len(corpus.docs), 'sources': corpus.status}, ensure_ascii=False, indent=2))
     else:
-        serve(corpus, args.port, args.model)
+        serve(corpus, args.port, args.model, args.host)
