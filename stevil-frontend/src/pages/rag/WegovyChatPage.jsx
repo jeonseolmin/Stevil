@@ -31,7 +31,7 @@ function AnswerText({ text, messageIndex, sources }) {
     });
 }
 
-export default function WegovyChatPage() {
+export default function WegovyChatPage({ embedded = false }) {
     const [question, setQuestion] = useState("");
     const [messages, setMessages] = useState([]);
     const [status, setStatus] = useState(null);
@@ -79,19 +79,20 @@ export default function WegovyChatPage() {
         }
     }
 
-    return <section className="wegovy-chat">
+    return <section className={`wegovy-chat${embedded ? ' wegovy-chat--embedded' : ''}`}>
         <div className="wegovy-chat__container">
-            <header className="wegovy-chat__heading">
+            {!embedded && <header className="wegovy-chat__heading">
                 <span className="wegovy-chat__eyebrow">STEVIL GUIDE</span>
                 <h1>궁금한 위고비, 근거와 함께</h1>
                 <p>투약 중 궁금한 점을 물어보고, 답변의 출처까지 확인해 보세요.</p>
-            </header>
+            </header>}
             <div className="wegovy-chat__layout">
                 <div className="wegovy-chat__panel">
                     <div className="wegovy-chat__toolbar">
-                        <div className="wegovy-chat__identity"><span className="wegovy-chat__avatar"><Mark /></span><div><strong>위고비 도우미</strong><small>자료를 찾아 함께 알려드려요</small></div></div>
+                        <div className="wegovy-chat__identity"><span className="wegovy-chat__avatar"><Mark /></span><div><strong>위고비 AI 도우미</strong><small>궁금한 점을 편하게 물어보세요</small></div></div>
                         <button className="wegovy-chat__reset" disabled={!messages.length || loading} onClick={() => { setMessages([]); setError(""); setQuestion(""); input.current?.focus(); }}>새 대화 ↗</button>
                     </div>
+                    {embedded && <p className="wegovy-chat__embedded-notice">투약 결정은 의료진과 상의해 주세요.{status?.preview && ' · 검토 전 자료 미리보기'}</p>}
                     <div className="wegovy-chat__messages" ref={conversation} role="log" aria-label="위고비 질문과 답변" aria-live="polite" tabIndex={0}>
                         {!messages.length && !loading && <div className="wegovy-chat__welcome">
                             <span className="wegovy-chat__welcome-icon"><Mark book /></span>
@@ -125,10 +126,10 @@ export default function WegovyChatPage() {
                         <p>질문마다 독립적으로 검색해요. 이름 등 개인정보는 입력하지 마세요.</p>
                     </div>
                 </div>
-                <aside className="wegovy-chat__aside">
+                {!embedded && <aside className="wegovy-chat__aside">
                     <section className="wegovy-chat__guide"><span className="wegovy-chat__guide-icon"><Mark book /></span><h2>출처를 확인할 수 있는 답변</h2><p>답변의 숫자를 누르면 참고한 원문과 문서 정보를 확인할 수 있어요.</p><ul><li><strong>국내 허가사항부터</strong><span>일반적인 질문은 식약처 자료를 찾아요.</span></li><li><strong>더 궁금한 내용까지</strong><span>미국·유럽 기준이나 연구가 궁금하다면 질문에 함께 적어 주세요.</span></li><li><strong>원문과 함께 확인</strong><span>해외 기준은 국내 허가사항과 다를 수 있어요.</span></li></ul></section>
                     <section className="wegovy-chat__care"><h2>이용 전 확인해 주세요</h2><p>답변은 정보 제공을 위한 참고 자료예요. 투약 여부와 용량 변경은 의료진과 상의해 주세요.</p>{status?.preview && <span className="wegovy-chat__preview">검토 전 자료를 사용하는 미리보기</span>}{status && !status.generation_ready && <p>현재는 관련 원문을 찾아 보여드려요.</p>}<small>대화는 이 화면에서만 유지되며 새로고침하면 사라집니다.</small></section>
-                </aside>
+                </aside>}
             </div>
         </div>
     </section>;

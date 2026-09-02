@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import RootLayout from "../components/layout/RootLayout";
 import AuthLayout from "../components/layout/auth/AuthLayout.jsx";
@@ -26,7 +26,6 @@ import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx"
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 import PartnershipGuidePage from "../pages/partnership/guide/PartnershipGuidePage.jsx";
 import MyPage from "../pages/mypage/MyPage.jsx";
-import WegovyChatPage from "../pages/rag/WegovyChatPage.jsx";
 
 
 export default function AppRouter() {
@@ -48,7 +47,7 @@ export default function AppRouter() {
                 <Route path="/weight" element={<WeightRecordPage />}/>
                 <Route path="/partnership" element={<PartnershipGuidePage />}/>
                 <Route path="/mypage" element={<MyPage />} />
-                <Route path="/wegovy-chat" element={<WegovyChatPage />} />
+                <Route path="/wegovy-chat" element={<Navigate to="/dashboard?chat=wegovy" replace />} />
             </Route>
 
             {/* 인증 전용 화면 */}

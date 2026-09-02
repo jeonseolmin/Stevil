@@ -14,6 +14,7 @@ import {
 import { Line } from "react-chartjs-2";
 
 import axiosInstance from "../api/axiosInstance";
+import DashboardChatWidget from "../components/rag/DashboardChatWidget";
 import "./Dashboard.css";
 
 ChartJS.register(
@@ -223,6 +224,7 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-page">
+            <DashboardChatWidget />
             <div className="dashboard-container">
                 <section className="dashboard-welcome">
                     <div>

@@ -53,6 +53,17 @@ class RagTests(unittest.TestCase):
                 response = answer(Corpus(preview=True), '임신', 'test-model')
             self.assertEqual(response['mode'], expected)
 
+    def test_gemini_receives_shared_prompt_and_source_metadata(self):
+        from io import BytesIO
+        from prompts import SYSTEM_PROMPT
+        body = {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [{'text': '함께 확인해 볼게요. [1]'}]}}]}
+        with patch.dict('os.environ', {'GEMINI_API_KEY': 'test-only'}), patch('app.urlopen', return_value=BytesIO(json.dumps(body).encode())) as api:
+            answer(Corpus(preview=True), '임신', 'test-model')
+        payload = json.loads(api.call_args.args[0].data)
+        self.assertEqual(payload['systemInstruction']['parts'][0]['text'], SYSTEM_PROMPT)
+        evidence = json.loads(payload['contents'][0]['parts'][0]['text'])['evidence']
+        self.assertTrue(all('jurisdiction' in doc and 'review_status' in doc for doc in evidence))
+
 
 if __name__ == '__main__':
     unittest.main()
