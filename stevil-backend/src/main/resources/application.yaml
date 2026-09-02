@@ -20,6 +20,14 @@ spring:
       hibernate:
         format_sql: true
 
+  ai:
+    google:
+      gemini:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: gemini-3.6-flash
+
 naver:
   search:
     client-id: ${NAVER_API_HUB_CLIENT_ID:}
