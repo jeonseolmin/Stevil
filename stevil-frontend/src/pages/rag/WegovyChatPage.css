@@ -1,0 +1,19 @@
+.wegovy-chat { max-width: 900px; margin: 40px auto; padding: 24px; line-height: 1.7; color: #203e35; }
+.wegovy-chat h1 { margin: 6px 0; font-size: 32px; }
+.wegovy-chat__eyebrow { color: #287454; font-weight: 700; }
+.wegovy-chat__notice { padding: 18px; background: #fff3d5; border-radius: 12px; margin: 24px 0; }
+.wegovy-chat__notice p { margin-bottom: 0; }
+.wegovy-chat__message { margin: 20px 0; padding: 24px; background: #fff; border: 1px solid #dce5df; border-radius: 16px; overflow-wrap: anywhere; }
+.wegovy-chat__message h2 { font-size: 20px; margin-top: 0; }
+.wegovy-chat__answer, .wegovy-chat__excerpt { white-space: pre-wrap; }
+.wegovy-chat__source { border-top: 1px solid #dce5df; padding: 14px 0; font-size: 14px; }
+.wegovy-chat__source summary { cursor: pointer; font-weight: 600; }
+.wegovy-chat__source a { color: #176749; text-decoration: underline; }
+.wegovy-chat__excerpt { max-height: 420px; overflow: auto; background: #f5f8f6; padding: 12px; }
+.wegovy-chat__form { display: grid; gap: 12px; }
+.wegovy-chat__form textarea { width: 100%; resize: vertical; padding: 14px; border: 1px solid #98b3a5; border-radius: 12px; }
+.wegovy-chat__form button { justify-self: end; border: 0; background: #216c4e; color: white; padding: 12px 24px; border-radius: 10px; cursor: pointer; }
+.wegovy-chat__form button:disabled { opacity: .55; cursor: default; }
+.wegovy-chat__help { color: #626e68; font-size: 13px; }
+.wegovy-chat__error { color: #a52929; }
+@media (max-width: 600px) { .wegovy-chat { margin: 16px auto; padding: 16px; } .wegovy-chat__message { padding: 16px; } }

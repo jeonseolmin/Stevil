@@ -329,6 +329,13 @@ export default function Header() {
                             : "주요 메뉴"
                     }
                 >
+                    <NavLink
+                        to="/wegovy-chat"
+                        onClick={closeMenu}
+                        className={({ isActive }) => isActive ? "header-navigation-link--active" : ""}
+                    >
+                        위고비 질문
+                    </NavLink>
                     {isPartnershipPage ? (
                         <>
                             <Link

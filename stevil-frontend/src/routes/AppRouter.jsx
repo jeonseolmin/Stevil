@@ -24,8 +24,9 @@ import AdminUsersPage from "../pages/admin/users/AdminUsersPage.jsx";
 import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.jsx";
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
-import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
+import PartnershipGuidePage from "../pages/partnership/guide/PartnershipGuidePage.jsx";
 import MyPage from "../pages/mypage/MyPage.jsx";
+import WegovyChatPage from "../pages/rag/WegovyChatPage.jsx";
 
 
 export default function AppRouter() {
@@ -47,6 +48,7 @@ export default function AppRouter() {
                 <Route path="/weight" element={<WeightRecordPage />}/>
                 <Route path="/partnership" element={<PartnershipGuidePage />}/>
                 <Route path="/mypage" element={<MyPage />} />
+                <Route path="/wegovy-chat" element={<WegovyChatPage />} />
             </Route>
 
             {/* 인증 전용 화면 */}
