@@ -18,6 +18,8 @@ public class SecurityUrls {
             "/api/community",
             "/api/community/**",
 
+            "/ws-stomp/**"
+
             "/api/partnership-inquiries"
     };
 

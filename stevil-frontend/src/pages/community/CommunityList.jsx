@@ -9,6 +9,9 @@ const CommunityList = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [posts, setPosts] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
   const categories = [
     { id: 'ALL', label: '전체' },
     { id: '자유', label: '자유게시판' },
@@ -17,13 +20,13 @@ const CommunityList = () => {
   ];
 
   useEffect(() => {
-    fetchPosts();
-  }, [selectedCategory]);
+    fetchPosts(currentPage);
+  }, [selectedCategory, currentPage]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (pageToFetch = currentPage) => {
     try {
       const params = {
-        page: 0,
+        page: pageToFetch,
         size: 10,
         category: selectedCategory === 'ALL' ? '' : selectedCategory
       };
@@ -34,11 +37,23 @@ const CommunityList = () => {
       }
 
       const response = await axiosInstance.get('/community', { params });
-      setPosts(response.data.content || response.data);
+
+      if (response.data && response.data.content) {
+        setPosts(response.data.content);
+        setTotalPages(response.data.totalPages);
+      } else {
+        setPosts(response.data || []);
+        setTotalPages(1);
+      }
     } catch (error) {
       console.error("게시글 조회 실패", error);
       setPosts([]);
     }
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(0);
+    fetchPosts(0);
   };
 
   return (
@@ -61,7 +76,11 @@ const CommunityList = () => {
                 <button 
                   key={cat.id} 
                   className={`ste-tab ${selectedCategory === cat.id ? 'active' : ''}`}
-                  onClick={() => { setSelectedCategory(cat.id); setSearchKeyword(''); }}
+                  onClick={() => { 
+                    setSelectedCategory(cat.id); 
+                    setSearchKeyword(''); 
+                    setCurrentPage(0);
+                  }}
                 >
                   {cat.label}
                 </button>
@@ -73,9 +92,9 @@ const CommunityList = () => {
                 placeholder="검색어를 입력하세요" 
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && fetchPosts()}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <button onClick={fetchPosts}>검색</button>
+              <button onClick={handleSearch}>검색</button>
             </div>
           </div>
 
@@ -99,6 +118,39 @@ const CommunityList = () => {
             ))}
             {posts.length === 0 && <div className="ste-empty">등록된 게시글이 없습니다.</div>}
           </div>
+
+          {totalPages > 0 && (
+            <div className="ste-pagination">
+              <button
+                className="ste-page-nav-btn"
+                disabled={currentPage === 0}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+              >
+                이전
+              </button>
+
+              <div className="ste-page-numbers">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    className={`ste-page-num-btn ${currentPage === i ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(i)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                className="ste-page-nav-btn"
+                disabled={currentPage >= totalPages - 1}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+              >
+                다음
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
