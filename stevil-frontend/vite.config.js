@@ -15,8 +15,9 @@ export default defineConfig({
         proxyTimeout: 100000,
       },
       "/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
+        target: "http://127.0.0.1:8080",
+        // Keep the browser host so Spring recognizes this as a same-origin request.
+        changeOrigin: false,
       },
     },
   },

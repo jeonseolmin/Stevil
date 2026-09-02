@@ -3,6 +3,7 @@ import axios from "axios";
 let accessToken = null;
 let isRefreshing = false;
 let refreshQueue = [];
+const apiBaseUrl = import.meta.env.DEV ? "/api" : (import.meta.env.VITE_API_BASE_URL || "/api");
 
 export const setAccessToken = (token) => {
     accessToken = token;
@@ -13,9 +14,7 @@ export const clearAccessToken = () => {
 };
 
 const axiosInstance = axios.create({
-    baseURL:
-        import.meta.env.VITE_API_BASE_URL ||
-        "/api",
+    baseURL: apiBaseUrl,
     timeout: 10000,
     withCredentials: true,
 });
@@ -81,11 +80,7 @@ axiosInstance.interceptors.response.use(
              */
             const response =
                 await axios.post(
-                    `${
-                        import.meta.env
-                            .VITE_API_BASE_URL ||
-                        "/api"
-                    }/auth/refresh`,
+                    `${apiBaseUrl}/auth/refresh`,
                     null,
                     {
                         withCredentials: true,

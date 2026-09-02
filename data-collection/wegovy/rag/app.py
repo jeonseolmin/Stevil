@@ -12,6 +12,8 @@ import re
 from urllib.request import Request, urlopen
 from hybrid import HybridSearch, VectorIndex
 from prompts import SYSTEM_PROMPT
+from planner import make_plan
+from food_catalog import FoodUnavailable
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTIONS = {'_ee_doc': '효능효과', '_ud_doc': '용법용량', '_nb_doc': '사용상의 주의사항'}
@@ -27,7 +29,7 @@ def load_env(path=None):
         if not line or line.startswith('#') or '=' not in line:
             continue
         name, value = line.split('=', 1)
-        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL', 'RAG_DATABASE_URL'):
+        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL', 'RAG_DATABASE_URL', 'FOOD_SAFETY_API_KEY'):
             value = value.strip()
             if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
                 value = value[1:-1]
@@ -254,7 +256,7 @@ def serve(corpus, port, model, host='127.0.0.1'):
             self.send(404, {'error': 'Not found'})
 
         def do_POST(self):
-            if self.path != '/api/chat':
+            if self.path not in ('/api/chat', '/api/plan'):
                 return self.send(404, {'error': 'Not found'})
             if self.headers.get('Origin') not in (None, f'http://127.0.0.1:{port}', f'http://localhost:{port}',
                                                  'http://localhost:3000', 'http://127.0.0.1:3000'):
@@ -264,6 +266,15 @@ def serve(corpus, port, model, host='127.0.0.1'):
                 if not 0 < length <= 16384:
                     raise ValueError()
                 data = json.loads(self.rfile.read(length))
+                if self.path == '/api/plan':
+                    try:
+                        return self.send(200, make_plan(data, model))
+                    except FoodUnavailable as error:
+                        return self.send(503, {'error': str(error), 'code': 'FOOD_NOT_READY'})
+                    except (ValueError, KeyError, TypeError):
+                        return self.send(400, {'error': '입력 정보 또는 AI 계획 형식을 확인해 주세요.'})
+                    except (OSError, RuntimeError, IndexError):
+                        return self.send(503, {'error': 'AI 계획을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.'})
                 question = data.get('question') if isinstance(data, dict) else None
                 if not isinstance(question, str) or not 2 <= len(question.strip()) <= 1000:
                     raise ValueError()

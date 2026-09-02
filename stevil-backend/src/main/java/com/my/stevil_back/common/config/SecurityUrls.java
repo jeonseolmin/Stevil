@@ -29,6 +29,8 @@ public class SecurityUrls {
     };
 
     public static final String[] USER_URLS = {
+            "/api/planner/**",
+            "/api/planner",
             "/api/users/",
             "/api/users/**",
 

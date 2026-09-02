@@ -15,6 +15,7 @@ import { Line } from "react-chartjs-2";
 
 import axiosInstance from "../api/axiosInstance";
 import DashboardChatWidget from "../components/rag/DashboardChatWidget";
+import WeeklyPlanner from "../components/planner/WeeklyPlanner";
 import "./Dashboard.css";
 import "./DashboardRefresh.css";
 
@@ -494,6 +495,7 @@ export default function Dashboard({ previewData = null }) {
                     </article>
                 </section>
 
+                <WeeklyPlanner preview={preview} />
                 <section className="dashboard-daily-section">
                     <div className="dashboard-section-heading">
                         <div>

@@ -15,6 +15,7 @@ import axiosInstance, {
 } from "../../api/axiosInstance";
 
 import "./Header.css";
+import { logout } from "../../api/authApi";
 
 export default function Header() {
     const location = useLocation();
@@ -148,13 +149,7 @@ export default function Header() {
      */
     const handleLogout = async () => {
         try {
-            await axiosInstance.post(
-                "/auth/logout"
-            );
-            clearAccessToken();
-            localStorage.removeItem("userRole");
-            // Discard in-flight user/refresh requests and all in-memory auth state.
-            window.location.replace("/");
+            await logout();
         } catch (error) {
             console.error(
                 "로그아웃 요청 실패:",

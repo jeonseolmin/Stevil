@@ -1,0 +1,112 @@
+.weekly-planner { margin:0 0 24px; padding:28px; background:#fff; border:1px solid var(--color-border-light); border-radius:22px; color:var(--color-text-primary); }
+.planner-heading { display:flex; justify-content:space-between; align-items:center; gap:24px; }
+.planner-eyebrow { font-size:10px; letter-spacing:.16em; color:#6b8b73; }
+.planner-heading h2 { font-size:23px; font-weight:600; margin:10px 0; letter-spacing:-.04em; }
+.planner-heading p { color:var(--color-text-muted); font-size:13px; line-height:1.7; margin:0; }
+.weekly-planner button { cursor:pointer; }
+.weekly-planner button:disabled { opacity:.5; cursor:default; }
+.planner-primary { background:var(--color-primary-dark); color:white; border-radius:24px; padding:12px 18px; font-size:12px; white-space:nowrap; }
+.planner-secondary { background:var(--color-primary-soft); color:var(--color-primary-dark); border-radius:12px; padding:10px 14px; font-size:12px; }
+.planner-demo { font-size:11px; padding:9px 12px; margin:18px 0 0; background:#f6f2e7; color:#776949; border-radius:8px; }
+.planner-week-nav { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:24px; padding:16px 0; border-top:1px solid #edf0e8; }
+.planner-week-nav > div { display:flex; align-items:center; gap:15px; }
+.planner-week-nav button { width:30px; height:30px; background:#f3f6ef; border-radius:50%; font-size:21px; }
+.planner-week-nav strong { font-size:13px; font-variant-numeric:tabular-nums; }
+.planner-week-nav > span { font-size:11px; color:#768374; }
+.planner-status,.planner-help { font-size:12px; color:var(--color-text-muted); line-height:1.7; }
+.planner-error { padding:12px; background:#fff2ef; border-radius:10px; color:#a4473c; font-size:13px; }
+.planner-error button { background:transparent; text-decoration:underline; color:inherit; }
+.planner-legend { display:flex; gap:15px; align-items:center; font-size:11px; margin:20px 0 12px; }
+.planner-legend span:nth-child(1) { color:#8c703d; }.planner-legend span:nth-child(2) { color:#397650; }.planner-legend span:nth-child(3) { color:#858982; }
+.planner-legend small { margin-left:auto; color:#82907e; }
+.planner-calendar { overflow:auto; border:1px solid #e6ece1; border-radius:14px; }
+.planner-calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(125px,1fr)); min-width:875px; }
+.planner-day { min-width:0; padding:10px 8px; border-right:1px solid #e9eee3; min-height:230px; }
+.planner-day:last-child { border-right:0; }
+.planner-day h3 { display:flex; align-items:center; gap:8px; font-size:19px; font-weight:500; margin:4px 0 16px; }
+.planner-day h3 span { font-size:11px; color:#81907b; }
+.planner-event { margin-bottom:8px; border-radius:10px; padding:10px; border:1px solid #eee8d8; background:#faf6eb; }
+.planner-event--exercise { background:#eef5e9; border-color:#deead5; }
+.planner-event > button { display:block; background:none; width:100%; padding:0; text-align:left; color:inherit; }
+.planner-event small,.planner-fixed small { display:block; font-size:10px; color:#79816d; font-variant-numeric:tabular-nums; margin-bottom:7px; }
+.planner-event strong { display:block; font-size:12px; font-weight:500; line-height:1.6; overflow-wrap:anywhere; }
+.planner-event em { display:block; font-size:10px; font-style:normal; margin-top:5px; color:#648265; }
+.planner-event label { display:flex; gap:5px; margin-top:10px; align-items:center; font-size:10px; color:#74816c; }
+.planner-event input { accent-color:#397650; }.planner-event--done strong { text-decoration:line-through; opacity:.65; }
+.planner-fixed { background:#f2f3f0; padding:10px; margin-bottom:8px; font-size:11px; border-radius:10px; color:#7b8377; }
+.planner-no-event { font-size:11px; color:#9ba496; margin:45px 0; text-align:center; }
+.planner-settings,.planner-editor { background:#f8faf5; padding:20px; border:1px solid #e6ece1; border-radius:14px; margin:18px 0; }
+.weekly-planner fieldset { border:0; padding:0; margin:0 0 20px; min-width:0; }
+.weekly-planner legend,.planner-editor h3 { font-size:14px; font-weight:600; margin:0 0 16px; }
+.planner-form-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
+.planner-settings label:not(.planner-consent),.planner-editor label { display:flex; flex-direction:column; gap:8px; font-size:12px; }
+.planner-settings :is(input:not([type=checkbox]),select,textarea),.planner-editor :is(input,select,textarea) { width:100%; min-width:0; border:1px solid #dce6d7; border-radius:9px; padding:10px; background:white; font-size:13px; }
+.planner-settings textarea,.planner-editor textarea { resize:vertical; min-height:75px; }
+.planner-days { display:flex; gap:10px; flex-wrap:wrap; margin:15px 0; }
+.planner-days label { flex-direction:row!important; align-items:center; padding:8px 10px; background:#eaf1e4; border-radius:8px; }
+.planner-days input,.planner-consent input { accent-color:#397650; }
+.planner-busy-row { display:grid; grid-template-columns:80px 1fr 105px 105px 30px; gap:8px; margin-bottom:9px; align-items:center; }
+.planner-busy-row button { background:none; font-size:22px; color:#99776a; }
+.planner-consent { display:flex; align-items:flex-start; gap:8px; font-size:11px; line-height:1.8; margin-bottom:16px; }
+.planner-consent input { margin-top:4px; }
+.planner-editor-actions { display:flex; justify-content:space-between; margin-top:12px; }
+.planner-editor-actions button { padding:8px 12px; border-radius:9px; background:#eaf0e4; color:#40674a; font-size:12px; }
+.planner-notices { margin-top:15px; color:#857753; font-size:12px; line-height:1.8; }
+.planner-footer { display:flex; justify-content:space-between; align-items:center; gap:22px; margin-top:20px; }
+.planner-footer p { max-width:650px; margin:0; font-size:11px; color:#87917f; line-height:1.8; }
+@media(max-width:700px) { .weekly-planner { padding:19px; }.planner-heading,.planner-footer { align-items:flex-start; flex-direction:column; gap:14px; }.planner-heading h2 { font-size:21px; }.planner-form-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.planner-busy-row { grid-template-columns:1fr 1fr; }.planner-week-nav { align-items:flex-start; flex-direction:column; }.planner-legend small { display:none; }.planner-settings { padding:14px; } }
+@media(max-width:420px) { .planner-form-grid { grid-template-columns:1fr; }.planner-week-nav > div { gap:8px; }.planner-week-nav strong { font-size:12px; } }
+
+.planner-food-source { background: var(--color-primary-soft, #eaf2e5); padding: 16px; border-radius: 14px; margin-bottom: 16px; overflow-wrap: anywhere; }
+.planner-food-source dl { display:flex; gap:16px; flex-wrap:wrap; }
+.planner-food-source dd { margin:4px 0; font-weight:600; }
+
+.planner-macros { display:flex; gap:10px; margin:12px 0; flex-wrap:wrap; }
+.planner-macros > span { display:flex; flex:1; min-width:75px; flex-direction:column; gap:5px; padding:12px; border-radius:12px; background:#edf3ed; color:#335345; font-size:12px; }
+.planner-macros b { font-size:20px; font-variant-numeric:tabular-nums; }
+.planner-macros--compact { gap:5px; margin:8px 0 2px; }
+.planner-macros--compact > span { min-width:0; padding:0; background:transparent; gap:2px; font-size:10px; }
+.planner-macros--compact b { font-size:12px; overflow-wrap:anywhere; }
+.planner-exercise-windows { margin:16px 0; padding:16px; background:#f4f7f2; border-radius:14px; }
+.planner-exercise-window { display:flex; gap:12px; align-items:center; margin-top:10px; }
+.planner-exercise-window label { min-width:0; flex:1; }
+.planner-exercise-window strong { white-space:nowrap; }
+
+.planner-day-heading { display:flex; align-items:center; justify-content:space-between; gap:4px; margin:4px 0 16px; flex-wrap:wrap; }
+.planner-day-heading h3 { margin:0; font-size:17px; gap:5px; }
+.planner-day-calories { color:#58745f; font-size:10px; font-weight:600; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.planner-event { position:relative; padding:12px 10px; border:0; border-left:3px solid #ddcba0; border-radius:7px; background:#faf8f1; }
+.planner-event--exercise { border-left-color:#8cba91; background:#f0f6ed; }
+.planner-event > button { padding-right:15px; min-height:49px; }
+.planner-event strong { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:12px; line-height:1.5; }
+.planner-event label { position:absolute; right:7px; top:10px; margin:0; padding:2px; }
+.planner-event small { margin-bottom:5px; font-size:10px; }
+.planner-event input[type=checkbox] { width:13px; height:13px; margin:0; }
+.planner-fixed { padding:10px; border-radius:7px; background:#f4f5f2; }
+.planner-calorie-note { font-size:10px; color:#899084; margin:10px 0 0; line-height:1.6; }
+.planner-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+.planner-detail { padding:24px; background:white; border:1px solid #e3eae0; border-radius:18px; box-shadow:0 6px 24px #28493106; }
+.planner-detail-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+.planner-detail-kicker { color:#7c8b79; font-size:11px; letter-spacing:.03em; }
+.planner-detail-heading h3 { font-size:20px; letter-spacing:-.03em; margin:8px 0 0; line-height:1.5; }
+.planner-detail-close { width:32px; height:32px; flex-shrink:0; border-radius:50%; background:#f2f5ef; color:#73816c; font-size:23px; }
+.planner-detail-nutrients { display:flex; align-items:stretch; gap:12px; margin:20px 0 8px; }
+.planner-energy { min-width:120px; border-radius:12px; background:#285e49; color:#fff; padding:16px; display:flex; flex-direction:column; justify-content:center; gap:10px; }
+.planner-energy > span { font-size:11px; opacity:.8; }
+.planner-energy strong { font-size:25px; font-weight:600; font-variant-numeric:tabular-nums; }
+.planner-energy small { font-size:11px; font-weight:400; }
+.planner-detail-nutrients .planner-macros { flex:1; margin:0; }
+.planner-detail-nutrients .planner-macros > span { padding:16px; justify-content:center; background:#f5f7f2; min-width:50px; }
+.planner-detail-caption { color:#87917f; font-size:11px; margin:10px 0 20px; }
+.planner-detail-disclosure { border-top:1px solid #edf0e9; padding:14px 0; font-size:12px; line-height:1.8; }
+.planner-detail-disclosure summary { cursor:pointer; color:#51694f; font-weight:500; }
+.planner-detail-disclosure p { color:#7a8573; margin:12px 0; overflow-wrap:anywhere; }
+.planner-detail-disclosure a { color:#35775a; }
+.planner-detail-meta { display:flex; gap:24px; flex-wrap:wrap; color:#798572; }
+.planner-detail-meta b { color:#485f44; margin-left:8px; font-weight:500; }
+.planner-edit-disclosure { padding-bottom:0; }
+.planner-edit-disclosure fieldset { margin:14px 0 0; }
+.planner-workout-summary { margin:20px 0; font-size:13px; color:#698061; line-height:1.8; }
+.planner-workout-summary > span { padding:5px 10px; border-radius:8px; background:#eff5e9; font-size:11px; }
+@media(max-width:600px) { .planner-detail { padding:18px; }.planner-detail-nutrients { flex-direction:column; }.planner-energy { flex-direction:row; align-items:center; justify-content:space-between; }.planner-detail-nutrients .planner-macros > span { padding:12px; }.planner-detail-heading h3 { font-size:18px; } }
