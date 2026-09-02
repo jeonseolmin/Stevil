@@ -59,6 +59,12 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+        http.exceptionHandling(exception -> exception
+                .defaultAuthenticationEntryPointFor(
+                        (request, response, cause) -> response.setStatus(401),
+                        request -> request.getServletPath().startsWith("/api/"))
+        );
+
 //        http
 //                .exceptionHandling(exception -> exception
 //                        .authenticationEntryPoint((request, response, authException) -> {

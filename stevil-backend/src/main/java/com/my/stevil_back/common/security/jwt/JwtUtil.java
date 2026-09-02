@@ -68,7 +68,7 @@ public class JwtUtil {
         try {
             getClaims(token);
             return false;
-        } catch (ExpiredJwtException e) {
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
             return true;
         }
     }

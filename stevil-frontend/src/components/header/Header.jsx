@@ -8,7 +8,6 @@ import {
     Link,
     NavLink,
     useLocation,
-    useNavigate,
 } from "react-router-dom";
 
 import axiosInstance, {
@@ -18,7 +17,6 @@ import axiosInstance, {
 import "./Header.css";
 
 export default function Header() {
-    const navigate = useNavigate();
     const location = useLocation();
 
     const isPartnershipPage =
@@ -77,6 +75,10 @@ export default function Header() {
                     await axiosInstance.get(
                         "/users/me"
                     );
+
+                if (!response.data || typeof response.data !== "object" || !response.data.id || !response.data.role) {
+                    throw new Error("인증된 사용자 정보가 아닙니다.");
+                }
 
                 const role =
                     response.data.role;
@@ -149,6 +151,10 @@ export default function Header() {
             await axiosInstance.post(
                 "/auth/logout"
             );
+            clearAccessToken();
+            localStorage.removeItem("userRole");
+            // Discard in-flight user/refresh requests and all in-memory auth state.
+            window.location.replace("/");
         } catch (error) {
             console.error(
                 "로그아웃 요청 실패:",
@@ -156,21 +162,7 @@ export default function Header() {
                 error.response?.data ??
                 error.message
             );
-        } finally {
-            clearAccessToken();
-
-            localStorage.removeItem(
-                "userRole"
-            );
-
-            setIsLoggedIn(false);
-            setUserRole(null);
-
-            closeMenu();
-
-            navigate("/", {
-                replace: true,
-            });
+            window.alert("로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.");
         }
     };
 
@@ -194,6 +186,9 @@ export default function Header() {
      */
     useEffect(() => {
         let active = true;
+
+        // The callback page owns token rotation until navigation completes.
+        if (location.pathname === "/oauth-success") return;
 
         const verifyAuthentication =
             async () => {

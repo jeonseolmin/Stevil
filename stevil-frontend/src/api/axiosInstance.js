@@ -24,7 +24,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        if (accessToken) {
+        if (config.url === "/auth/logout") {
+            delete config.headers.Authorization;
+        } else if (accessToken) {
             config.headers.Authorization =
                 `Bearer ${accessToken}`;
         }
@@ -43,6 +45,7 @@ axiosInstance.interceptors.response.use(
         if (
             error.response?.status !== 401 ||
             originalRequest?._retry ||
+            originalRequest?.url === "/auth/logout" ||
             originalRequest?.url ===
             "/auth/refresh"
         ) {
@@ -91,6 +94,10 @@ axiosInstance.interceptors.response.use(
 
             const newAccessToken =
                 response.data.accessToken;
+
+            if (typeof newAccessToken !== "string" || !newAccessToken) {
+                throw new Error("유효한 로그인 토큰을 받지 못했습니다.");
+            }
 
             setAccessToken(
                 newAccessToken

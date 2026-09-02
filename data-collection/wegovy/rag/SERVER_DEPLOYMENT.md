@@ -36,6 +36,16 @@ Keep the server's PostgreSQL image change when deploying future application chan
 
 If reverting only the PostgreSQL image is needed, use the backed-up Compose configuration with the existing volume after investigating the failure. The original Alpine image has no vector extension, so RAG vector queries will not work after that rollback. Do not delete volumes or restore the dump over a live database without a separate recovery plan.
 
-## Remaining deployment work
+## Dashboard deployment (2026-09-02)
 
-Connect the production frontend through an authenticated backend/proxy, add usage limits, and complete source/answer review before exposing the preview API publicly. The existing public frontend and Spring backend continue running independently.
+The dashboard includes the floating Wegovy assistant. `/wegovy-chat` redirects to `/dashboard?chat=wegovy`. The frontend uses the existing access-token/refresh flow for `/rag-api/` requests. Nginx checks `/api/users/me` before forwarding to the private RAG service and limits requests per IP to 6/minute with a burst of 3. Anonymous access returns 401. Gemini credentials remain on the server.
+
+The production Nginx OAuth routes are preserved. `nginx-rag.conf.fragment` is the RAG server-block fragment; the HTTP context also needs `limit_req_zone $binary_remote_addr zone=rag_requests:10m rate=6r/m;` as shown in the frontend Nginx config. RAG and frontend must share `stevil_default`. Always use `-p stevil-rag` with the RAG Compose file to update the existing service.
+
+Frontend and RAG code/image backups are in `/home/ubuntu/stevil-rag/backups/dashboard-*/`. Deployment only recreates frontend and RAG containers; existing backend and PostgreSQL stay running. Source/answer review is still pending and preview labels remain visible. A complete logged-in browser check requires a user session.
+
+## Authentication compatibility repair
+
+The new frontend requires the cookie-based `/api/auth/refresh` backend; the old backend redirected with a token in the callback URL and was incompatible. Deploy both versions together. API authentication failures must return 401 rather than an HTML login redirect. The header now validates the user response and leaves token rotation to the OAuth callback page during login.
+
+Before the backend upgrade, a database dump and code/config backups were saved under `/home/ubuntu/stevil-rag/backups/auth-*/`. The server's `application-prod.yaml` had `ddl-auto: create` and a malformed multiline `FRONTEND_URL` placeholder; these were corrected to `update` and a single-line placeholder. Never restore `create` when restarting against production data. The server Compose environment now sets `SPRING_JWT_REFRESH_EXPIRATION: 1209600000` (14 days); local application settings already include this value. Preserve these server settings on future deployments.
