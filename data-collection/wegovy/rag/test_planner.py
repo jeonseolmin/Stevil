@@ -33,13 +33,14 @@ class PlannerTest(unittest.TestCase):
         workouts=[e for e in schedule(p,suggestions())['events'] if e['kind']=='EXERCISE' and e['start'].startswith('2026-09-07')]
         self.assertEqual(len(workouts),1)
         self.assertGreaterEqual(workouts[0]['start'][11:],'09:00')
-        self.assertLessEqual(workouts[0]['end'][11:],'10:00')
+        self.assertEqual(workouts[0]['start'][11:],'09:00')
+        self.assertEqual(workouts[0]['end'][11:],'10:00')
         p['busySlots']=[dict(day=0,start='09:00',end='10:00')]
         result=schedule(p,suggestions())
         self.assertFalse(any(e['kind']=='EXERCISE' and e['start'].startswith('2026-09-07') for e in result['events']))
         self.assertTrue(result['notices'])
     def test_short_and_duplicate_windows_rejected(self):
-        p=preferences();p['exerciseWindows']=[dict(day=0,start='09:00',end='09:15')]
+        p=preferences();p['exerciseWindows']=[dict(day=0,start='09:00',end='09:05')]
         with self.assertRaises(ValueError):validate_preferences(p)
         p['exerciseWindows']=[dict(day=0,start='09:00',end='10:00')]*2
         with self.assertRaises(ValueError):validate_preferences(p)

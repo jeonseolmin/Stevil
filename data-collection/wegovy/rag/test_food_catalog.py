@@ -8,6 +8,23 @@ from planner import ground_suggestions
 
 
 class FoodTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.nutrient_root = Path(directory.name)
+        patcher = patch('food_catalog.NUTRIENT_ROOT', self.nutrient_root)
+        patcher.start(); self.addCleanup(patcher.stop)
+
+    def test_new_food_compositions_are_used_without_nutrition_goal(self):
+        self.nutrient_root.joinpath('foods.sqlite3').touch()
+        catalog = self.catalog()
+        meals = [dict(RCP_SEQ='meal:'+str(i), RCP_NM='조합 '+str(i)) for i in range(24)]
+        with patch('food_catalog.NutrientCatalog') as nutrient:
+            nutrient.return_value.retrieve_meals.return_value = meals
+            selected = catalog.retrieve({})
+        self.assertEqual(len(selected),40)
+        self.assertEqual(selected[16:], meals)
+
     def catalog(self, sample=False):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)

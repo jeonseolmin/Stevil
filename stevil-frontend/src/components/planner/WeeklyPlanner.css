@@ -110,3 +110,22 @@
 .planner-workout-summary { margin:20px 0; font-size:13px; color:#698061; line-height:1.8; }
 .planner-workout-summary > span { padding:5px 10px; border-radius:8px; background:#eff5e9; font-size:11px; }
 @media(max-width:600px) { .planner-detail { padding:18px; }.planner-detail-nutrients { flex-direction:column; }.planner-energy { flex-direction:row; align-items:center; justify-content:space-between; }.planner-detail-nutrients .planner-macros > span { padding:12px; }.planner-detail-heading h3 { font-size:18px; } }
+
+.planner-nutrition-today { margin:20px 0; padding:20px; border-radius:16px; background:#f5f8f2; }
+.planner-nutrition-today header { display:flex; gap:12px; justify-content:space-between; flex-wrap:wrap; font-size:13px; }
+.planner-nutrition-today header span { color:#81917a; font-size:11px; }
+.planner-nutrition-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:16px 0; }
+.planner-nutrition-cards > div { display:flex; flex-direction:column; gap:7px; }
+.planner-nutrition-cards span,.planner-nutrition-cards em { font-size:11px; color:#7b8873; font-style:normal; }
+.planner-nutrition-cards b { font-size:23px; color:#315b45; }.planner-nutrition-cards small { font-size:11px; font-weight:400; }
+.planner-ratio-bar { display:flex; height:7px; border-radius:8px; overflow:hidden; gap:2px; }.planner-ratio-bar span:nth-child(1) { background:#c4ac72; }.planner-ratio-bar span:nth-child(2) { background:#518966; }.planner-ratio-bar span:nth-child(3) { background:#b7cfa7; }
+.planner-nutrition-today > p { font-size:11px; color:#7a8871; }
+.planner-goal-settings { padding:16px; margin:0 0 20px; border:1px solid #dce6d7; border-radius:12px; }.planner-goal-settings > label { flex-direction:row!important; align-items:flex-start; }.planner-goal-settings .planner-form-grid { margin-top:16px; }
+@media(max-width:500px) { .planner-nutrition-cards { grid-template-columns:1fr; }.planner-nutrition-cards > div { padding-bottom:10px; border-bottom:1px solid #e5eadd; } }
+
+.planner-day-select { display:flex; align-items:center; gap:5px; padding:4px 6px; border-radius:8px; background:transparent; color:inherit; font:inherit; }.planner-day-select[aria-pressed=true] { background:#e8f1e2; color:#315e42; }.planner-day-select:focus-visible { outline:2px solid #518966; outline-offset:2px; }
+.planner-meal-components { display:grid; gap:8px; margin:16px 0; }
+.planner-meal-components details { padding:12px 14px; background:#f5f8f2; border-radius:10px; font-size:12px; }
+.planner-meal-components summary { cursor:pointer; display:flex; justify-content:space-between; gap:12px; color:#3c6149; }
+.planner-meal-components summary span { overflow-wrap:anywhere; }.planner-meal-components summary b { white-space:nowrap; }
+.planner-meal-components p { color:#73816b; font-size:11px; overflow-wrap:anywhere; }.planner-meal-components a { color:#35775a; }

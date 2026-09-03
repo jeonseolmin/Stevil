@@ -18,6 +18,7 @@ import static com.my.stevil_back.planner.PlannerTypes.*;
 
 @Service
 public class PlannerService {
+    private static final org.slf4j.Logger log=org.slf4j.LoggerFactory.getLogger(PlannerService.class);
     private final WeeklyPlanRepository repository;
     private final EntityManager em;
     private final ObjectMapper json;
@@ -38,10 +39,12 @@ public class PlannerService {
             if(last!=null && last.isAfter(now.minusSeconds(100))) throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,"계획 생성 후 잠시 기다려 주세요.");
             return now;
         });
+        String stage="connection";
         try {
             var request=HttpRequest.newBuilder(generator).timeout(Duration.ofSeconds(95)).header("Content-Type","application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(p))).build();
             var response=client.send(request,HttpResponse.BodyHandlers.ofString());
+            stage="response";
             if(response.body().length()>400_000) throw new IllegalStateException();
             if(response.statusCode()!=200) {
                 var failure=json.readTree(response.body());
@@ -49,6 +52,7 @@ public class PlannerService {
                     throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,failure.path("error").asText());
                 throw new IllegalStateException();
             }
+            stage="validation";
             var draft=json.readValue(response.body(),Draft.class);
             if(draft==null || !validator.validate(draft).isEmpty()) throw new IllegalStateException();
             PlannerValidation.events(p,draft.events());
@@ -57,10 +61,16 @@ public class PlannerService {
             requests.remove(userId,now);
             throw error;
         } catch(InterruptedException error) {
+            requests.remove(userId,now);
             Thread.currentThread().interrupt();
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"계획 생성을 완료하지 못했습니다.");
         } catch(Exception error) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"AI 계획을 생성하지 못했습니다. 연결 상태를 확인해 주세요.");
+            requests.remove(userId,now);
+            // No health inputs, model response, credentials or exception bodies in logs.
+            log.warn("Planner generation failed: stage={}, type={}",stage,error.getClass().getSimpleName());
+            if("validation".equals(stage)) throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,"생성된 식단의 형식이나 영양정보 검증에 실패했습니다. 다시 생성해 주세요.");
+            if("response".equals(stage)) throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"AI 생성 서비스에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"AI 생성 서비스에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.");
         }
     }
     @Transactional(readOnly=true)

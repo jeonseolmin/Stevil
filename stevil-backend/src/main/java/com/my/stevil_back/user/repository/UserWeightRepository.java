@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UserWeightRepository
         extends JpaRepository<UserWeight, Long> {
+    Optional<UserWeight> findFirstByUserIdAndRecordedAtLessThanEqualOrderByRecordedAtDescIdDesc(
+            Long userId, java.time.LocalDateTime recordedAt);
 
     // 사용자의 전체 체중 기록을 최신순으로 조회
     List<UserWeight> findByUserIdOrderByRecordedAtDesc(

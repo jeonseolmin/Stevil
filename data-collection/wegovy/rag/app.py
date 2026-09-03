@@ -29,7 +29,7 @@ def load_env(path=None):
         if not line or line.startswith('#') or '=' not in line:
             continue
         name, value = line.split('=', 1)
-        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL', 'RAG_DATABASE_URL', 'FOOD_SAFETY_API_KEY'):
+        if name.strip() in ('GEMINI_API_KEY', 'GEMINI_MODEL', 'RAG_DATABASE_URL', 'FOOD_SAFETY_API_KEY', 'FOOD_NUTRITION_API_KEY'):
             value = value.strip()
             if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
                 value = value[1:-1]

@@ -1,0 +1,105 @@
+{
+  "events": [
+    {
+      "id": "daebe9ab-612b-4fa1-bec6-22fe418d7ebd",
+      "kind": "MEAL",
+      "title": "오곡밥 + 오징어채조림 + 호박오가리나물무침",
+      "details": "밥·단백질 반찬·채소를 조합했어요. 표시된 양은 제안량이며, 영양정보는 각 음식의 원문 기준량에 비례해 계산했어요. 같은 이름이라도 실제 재료와 조리법에 따라 달라집니다.",
+      "start": "2026-09-13T08:00",
+      "end": "2026-09-13T08:30",
+      "intensity": "",
+      "completed": false,
+      "foodEvidence": {
+        "recipeId": "meal:911a40fe412b082ba386afc3",
+        "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+        "retrievedAt": "2026-09-03T01:41:38.528429+00:00",
+        "ingredients": "오곡밥 200.0g\n오징어채조림 100.0g\n호박오가리나물무침 80.0g",
+        "servingWeight": "380.0",
+        "nutrition": {
+          "INFO_ENG": "712.80",
+          "INFO_CAR": "108.39",
+          "INFO_PRO": "37.99",
+          "INFO_FAT": "13.95",
+          "INFO_NA": "2701.20"
+        },
+        "fingerprint": "911a40fe412b082ba386afc3f79ca1676927a27128e6843c8701fb634a3b0085",
+        "components": [
+          {
+            "foodId": "D301-027000000-0001",
+            "name": "오곡밥",
+            "role": "staple",
+            "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+            "retrievedAt": "2026-09-03T01:41:38.528429+00:00",
+            "basisWeight": "100.0",
+            "servingWeight": "200.0",
+            "nutrition": {
+              "INFO_ENG": "156.000",
+              "INFO_CAR": "32.93",
+              "INFO_PRO": "4.78",
+              "INFO_FAT": "0.52",
+              "INFO_NA": "46.00"
+            },
+            "fingerprint": "7af15d527f93ba12a81d0bad68aecc088ed0b831f4c6aa38a72f15aa05e6f0b3",
+            "amountNutrition": {
+              "INFO_ENG": "312.0000",
+              "INFO_CAR": "65.8600",
+              "INFO_PRO": "9.5600",
+              "INFO_FAT": "1.0400",
+              "INFO_NA": "92.0000"
+            }
+          },
+          {
+            "foodId": "D111-530000000-0001",
+            "name": "오징어채조림",
+            "role": "protein",
+            "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+            "retrievedAt": "2026-09-03T01:41:38.528429+00:00",
+            "basisWeight": "100.0",
+            "servingWeight": "100.0",
+            "nutrition": {
+              "INFO_ENG": "240.000",
+              "INFO_CAR": "25.36",
+              "INFO_PRO": "23.52",
+              "INFO_FAT": "4.90",
+              "INFO_NA": "1130.000"
+            },
+            "fingerprint": "40e64172d856e3370fc15c6139bc01a0387bbf5ac79ebf2c30a4478ab045ed04",
+            "amountNutrition": {
+              "INFO_ENG": "240.0000",
+              "INFO_CAR": "25.3600",
+              "INFO_PRO": "23.5200",
+              "INFO_FAT": "4.9000",
+              "INFO_NA": "1130.0000"
+            }
+          },
+          {
+            "foodId": "D113-600000000-0001",
+            "name": "호박오가리나물무침",
+            "role": "vegetable",
+            "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+            "retrievedAt": "2026-09-03T01:41:38.528429+00:00",
+            "basisWeight": "100.0",
+            "servingWeight": "80.0",
+            "nutrition": {
+              "INFO_ENG": "201.000",
+              "INFO_CAR": "21.46",
+              "INFO_PRO": "6.14",
+              "INFO_FAT": "10.01",
+              "INFO_NA": "1849.000"
+            },
+            "fingerprint": "7f18700b3f8cb3cd6d65160d29aeedb47c6943c3ddbb81d902092e0020a81e33",
+            "amountNutrition": {
+              "INFO_ENG": "160.8000",
+              "INFO_CAR": "17.1680",
+              "INFO_PRO": "4.9120",
+              "INFO_FAT": "8.0080",
+              "INFO_NA": "1479.2000"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "notices": [],
+  "mode": "food_rag_draft"
+}

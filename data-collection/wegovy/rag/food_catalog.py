@@ -6,8 +6,11 @@ import json
 import os
 from pathlib import Path
 import re
+import sqlite3
 from urllib.request import urlopen
 from hybrid import VectorIndex
+from nutrition import recipe_nutrition
+from nutrition_catalog import NutrientCatalog, ROOT as NUTRIENT_ROOT
 
 ROOT = Path(__file__).parent / 'cache' / 'food'
 SOURCE = 'https://www.foodsafetykorea.go.kr/api/openApiInfo.do?menu_no=661&svc_no=COOKRCP01'
@@ -58,6 +61,7 @@ class FoodCatalog:
         self.data = json.loads(path.read_text(encoding='utf-8'))
         self.rows = {str(r['RCP_SEQ']): r for r in self.data['rows']}
         self.index = VectorIndex([document(r) for r in self.rows.values()], ROOT / 'embeddings.sqlite3')
+        self.notices = []
 
     def retrieve(self, preferences):
         if self.data.get('sample') or not self.index.ready:
@@ -72,12 +76,26 @@ class FoodCatalog:
         except (OSError, ValueError, KeyError):
             raise FoodUnavailable('식품 검색 연결에 실패했어요. 잠시 후 다시 시도해 주세요.') from None
         # Side dishes/desserts alone are not complete meal candidates.
-        selected = [self.rows[key] for key, _ in ranked if self.rows[key].get('RCP_PAT2') in ('밥', '일품')][:40]
-        if len(selected) < 21:
-            raise FoodUnavailable('조건에 맞는 주식 레시피가 21개 미만이에요. 자료를 보충하거나 음식 선호를 확인해 주세요.')
+        selected = [self.rows[key] for key, _ in ranked if self.rows[key].get('RCP_PAT2') in ('밥', '일품') and (not preferences.get('nutritionGoal') or recipe_nutrition(self.rows[key]) is not None)][:40]
+        if (NUTRIENT_ROOT / 'foods.sqlite3').exists():
+            try:
+                meals = NutrientCatalog().retrieve_meals(preferences)
+            except (OSError, ValueError, KeyError, sqlite3.Error):
+                raise FoodUnavailable('추가 영양정보 검색이 준비되지 않았어요. 수집과 임베딩 상태를 확인해 주세요.') from None
+            if meals:
+                selected = selected[:max(16, 21-len(meals))] + meals
+            else:
+                self.notices.append('조건에 맞는 밥·반찬·채소 조합이 부족해 기존 레시피에서 선택했어요.')
+        else:
+            self.notices.append('추가 영양 DB 수집 전이므로 현재 등록된 레시피로 추천했어요.')
+        minimum = 3 if preferences.get('nutritionGoal') else 21
+        if len(selected) < minimum:
+            raise FoodUnavailable(f'조건과 영양 기준을 충족하는 주식 레시피가 {minimum}개 미만이에요. 자료를 보충하거나 음식 선호를 확인해 주세요.')
         return selected
 
     def evidence(self, row):
+        if row.get('_evidence'):
+            return row['_evidence']
         return {'recipeId': str(row['RCP_SEQ']), 'sourceUrl': SOURCE, 'retrievedAt': self.data['retrievedAt'],
                 'ingredients': row.get('RCP_PARTS_DTLS', ''), 'servingWeight': row.get('INFO_WGT', ''),
                 'nutrition': {k: str(row.get(k, '')) for k in ('INFO_ENG', 'INFO_CAR', 'INFO_PRO', 'INFO_FAT', 'INFO_NA')},
