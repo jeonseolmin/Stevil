@@ -91,7 +91,7 @@ public class SecurityConfig {
                         // USER_URLS
                         .requestMatchers(
                                 SecurityUrls.USER_URLS
-                        ).hasAnyRole("USER", "ADMIN")
+                        ).hasAnyRole("USER", "ADMIN", "DOCTOR")
 
                         // ADMIN_URLS
                         .requestMatchers(

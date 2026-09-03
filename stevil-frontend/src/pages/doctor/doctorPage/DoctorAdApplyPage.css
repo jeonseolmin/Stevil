@@ -1,0 +1,130 @@
+.doctor-ad-page {
+    padding: 30px;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.doctor-ad-header {
+    margin-bottom: 24px;
+}
+
+.doctor-ad-header span {
+    font-size: 0.85rem;
+    color: #0d9488;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.doctor-ad-header h1 {
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin: 8px 0;
+}
+
+.doctor-ad-header p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+/* 폼 카드 영역 */
+.doctor-ad-card {
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+}
+
+.form-group > label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 16px;
+}
+
+/* 광고 옵션 카드 (라디오 버튼) */
+.ad-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ad-option-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ad-option-card:hover {
+    border-color: #99f6e4;
+    background-color: #f0fdfa;
+}
+
+/* 선택된 라디오 버튼 카드 스타일 */
+.ad-option-card.selected {
+    border-color: #0d9488;
+    background-color: #f0fdfa;
+    box-shadow: 0 0 0 1px #0d9488;
+}
+
+.ad-option-card input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #0d9488;
+}
+
+.ad-option-card div strong {
+    display: block;
+    font-size: 1.05rem;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.ad-option-card div p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* 제출 버튼 영역 */
+.form-submit-area {
+    margin-top: 32px;
+    text-align: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 24px;
+}
+
+.btn-submit-ad {
+    background-color: #0d9488;
+    color: white;
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-submit-ad:hover {
+    background-color: #0f766e;
+}
+
+.btn-submit-ad:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.notice-text {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}

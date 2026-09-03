@@ -39,6 +39,9 @@ export default function Header() {
 
     const isAdmin =
         userRole === "ROLE_ADMIN";
+        
+    const isDoctor = 
+        userRole === "ROLE_DOCTOR";
 
     const closeMenu = () => {
         setIsMenuOpen(false);
@@ -497,7 +500,7 @@ export default function Header() {
                             <>
                                 {isAdmin && (
                                     <Link
-                                        to="/admin"
+                                        to="/admin/dashboard"
                                         className="header-admin-button"
                                         onClick={
                                             closeMenu
@@ -506,8 +509,20 @@ export default function Header() {
                                         관리자 메뉴
                                     </Link>
                                 )}
+                                
+                                {isDoctor && (
+                                    <Link
+                                        to="/doctor/dashboard"
+                                        className="header-admin-button"
+                                        style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                        onClick={
+                                            closeMenu
+                                        }
+                                    >
+                                        의사 페이지
+                                    </Link>
+                                )}
 
-                                {/* 💡 모바일 메뉴 액션 영역의 로그아웃 옆에 마이페이지 추가 */}
                                 <Link
                                     to="/mypage"
                                     className="header-login-link"
@@ -565,14 +580,24 @@ export default function Header() {
                         <>
                             {isAdmin && (
                                 <Link
-                                    to="/admin"
+                                    to="/admin/dashboard"
                                     className="header-admin-button"
                                 >
                                     관리자 메뉴
                                 </Link>
                             )}
+                            
+                            {isDoctor && (
+                                <Link
+                                    to="/doctor/dashboard"
+                                    className="header-admin-button"
+                                    style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                    onClick={closeMenu}
+                                >
+                                    의사 페이지
+                                </Link>
+                            )}
 
-                            {/* 💡 데스크톱 액션 영역의 로그아웃 옆에 마이페이지 추가 */}
                             <Link
                                 to="/mypage"
                                 className="header-login-link"

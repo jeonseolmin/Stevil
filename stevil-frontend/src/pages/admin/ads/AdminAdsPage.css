@@ -1,0 +1,104 @@
+/* 테이블을 감싸는 하얀색 카드 영역 */
+.admin-ads-card {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow-x: auto;
+}
+
+/* 광고 목록 테이블 */
+.admin-ads-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-ads-table th {
+    padding: 14px 12px;
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.admin-ads-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: middle;
+}
+
+.admin-ads-table tr:hover {
+    background-color: #f8fafc;
+}
+
+/* 상태 및 타입 강조 라벨 */
+.ad-type-label {
+    color: #0d9488; /* 스테빌 시그니처 딥그린 */
+    font-weight: 600;
+}
+
+.ad-status-pending {
+    color: #d97706; /* 대기중 - 오렌지 */
+    font-weight: bold;
+}
+
+.ad-status-approved {
+    color: #10b981; /* 승인 - 그린 */
+    font-weight: bold;
+}
+
+.ad-status-rejected {
+    color: #ef4444; /* 반려 - 레드 */
+    font-weight: bold;
+}
+
+/* 액션 버튼 그룹 */
+.ad-action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+/* 승인 버튼 */
+.btn-approve {
+    padding: 6px 14px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-approve:hover {
+    background-color: #059669;
+}
+
+/* 반려 버튼 */
+.btn-reject {
+    padding: 6px 14px;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-reject:hover {
+    background-color: #dc2626;
+}
+
+/* 데이터가 없을 때 */
+.empty-table-row {
+    text-align: center;
+    color: #94a3b8;
+    padding: 40px 0 !important;
+}

@@ -179,6 +179,18 @@ export default function AdminDashboardPage() {
                             시설 등록과 승인 상태를 관리합니다.
                         </span>
                     </button>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            navigate("/admin/ads")
+                        }
+                    >
+                        <strong>광고·제휴 관리</strong>
+                        <span>
+                            병원 상단 노출 및 제휴 신청을 승인/반려합니다.
+                        </span>
+                    </button>
                 </div>
             </section>
         </section>

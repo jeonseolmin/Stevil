@@ -26,7 +26,10 @@ import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx"
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
 import MyPage from "../pages/mypage/MyPage.jsx";
-
+import AdminAdsPage from "../pages/admin/ads/AdminAdsPage.jsx";
+import DoctorLayout from "../components/layout/doctor/DoctorLayout.jsx";
+import DoctorDashboardPage from "../pages/doctor/dashboard/DoctorDashboardPage.jsx";
+import DoctorAdApplyPage from "../pages/doctor/doctorPage/DoctorAdApplyPage.jsx";
 
 export default function AppRouter() {
     return (
@@ -61,6 +64,12 @@ export default function AppRouter() {
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="inquiries" element={<AdminInquiriesPage />} />
                 <Route path="contents" element={<AdminContentsPage />} />
+                <Route path="ads" element={<AdminAdsPage />} />
+            </Route>
+
+            <Route path="/doctor" element={<DoctorLayout />}> {/* 의사 사이드바가 포함된 레이아웃 */}
+                <Route path="dashboard" element={<DoctorDashboardPage />} />
+                <Route path="ads/apply" element={<DoctorAdApplyPage />} /> {/* 아까 만든 페이지 */}
             </Route>
 
             {/* 최초 로그인 후 추가 정보 입력 */}
