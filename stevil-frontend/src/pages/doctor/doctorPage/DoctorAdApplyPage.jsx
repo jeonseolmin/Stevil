@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axiosInstance from "../../../api/axiosInstance.js"; // 경로에 맞게 수정
-import "./DoctorAdApplyPage.css"; 
+import axiosInstance from "../../../api/axiosInstance.js";
+import "./DoctorAdApplyPage.css";
 
 export default function DoctorAdApplyPage() {
     const [adType, setAdType] = useState("TOP_BANNER");
@@ -8,20 +8,20 @@ export default function DoctorAdApplyPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!window.confirm("해당 광고 제휴를 신청하시겠습니까? 관리자 승인 후 노출이 시작됩니다.")) return;
 
         setIsSubmitting(true);
         try {
             await axiosInstance.post("/ads/request", {
-                adType: adType
+                adType: adType,
             });
             alert("광고 제휴 신청이 완료되었습니다. 관리자 검토 후 상태가 업데이트됩니다.");
-            // 선택 사항: 신청 후 '내 신청 내역' 페이지나 대시보드 메인으로 이동
+            // 선택 사항: 신청 후 대시보드 메인으로 이동
             // navigate('/doctor/dashboard');
         } catch (error) {
             alert(error.response?.data?.message ?? "광고 신청 처리 중 오류가 발생했습니다.");
-            console.error(error);
+            console.error("광고 신청 에러:", error);
         } finally {
             setIsSubmitting(false);
         }
@@ -43,12 +43,12 @@ export default function DoctorAdApplyPage() {
                         <label>광고 상품 선택</label>
                         <div className="ad-options">
                             {/* 라디오 버튼 1: 상단 배너 */}
-                            <label className={`ad-option-card ${adType === 'TOP_BANNER' ? 'selected' : ''}`}>
-                                <input 
-                                    type="radio" 
-                                    name="adType" 
-                                    value="TOP_BANNER" 
-                                    checked={adType === 'TOP_BANNER'}
+                            <label className={`ad-option-card ${adType === "TOP_BANNER" ? "selected" : ""}`}>
+                                <input
+                                    type="radio"
+                                    name="adType"
+                                    value="TOP_BANNER"
+                                    checked={adType === "TOP_BANNER"}
                                     onChange={(e) => setAdType(e.target.value)}
                                 />
                                 <div>
@@ -58,12 +58,12 @@ export default function DoctorAdApplyPage() {
                             </label>
 
                             {/* 라디오 버튼 2: 리스트 강조 */}
-                            <label className={`ad-option-card ${adType === 'HIGHLIGHT' ? 'selected' : ''}`}>
-                                <input 
-                                    type="radio" 
-                                    name="adType" 
-                                    value="HIGHLIGHT" 
-                                    checked={adType === 'HIGHLIGHT'}
+                            <label className={`ad-option-card ${adType === "HIGHLIGHT" ? "selected" : ""}`}>
+                                <input
+                                    type="radio"
+                                    name="adType"
+                                    value="HIGHLIGHT"
+                                    checked={adType === "HIGHLIGHT"}
                                     onChange={(e) => setAdType(e.target.value)}
                                 />
                                 <div>
@@ -73,12 +73,12 @@ export default function DoctorAdApplyPage() {
                             </label>
 
                             {/* 라디오 버튼 3: 검색 최상단 고정 */}
-                            <label className={`ad-option-card ${adType === 'SEARCH_TOP' ? 'selected' : ''}`}>
-                                <input 
-                                    type="radio" 
-                                    name="adType" 
-                                    value="SEARCH_TOP" 
-                                    checked={adType === 'SEARCH_TOP'}
+                            <label className={`ad-option-card ${adType === "SEARCH_TOP" ? "selected" : ""}`}>
+                                <input
+                                    type="radio"
+                                    name="adType"
+                                    value="SEARCH_TOP"
+                                    checked={adType === "SEARCH_TOP"}
                                     onChange={(e) => setAdType(e.target.value)}
                                 />
                                 <div>
