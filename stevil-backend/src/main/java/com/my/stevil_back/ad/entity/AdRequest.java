@@ -49,9 +49,11 @@ public class AdRequest {
     private LocalDateTime updatedAt; // 상태 변경(승인/거절) 일자
 
     @Builder
-    public AdRequest(User doctor, AdType adType) {
+    public AdRequest(User doctor, AdType adType, LocalDate startDate, LocalDate endDate) {
         this.doctor = doctor;
         this.adType = adType;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     // 비즈니스 로직: 관리자 승인 메서드

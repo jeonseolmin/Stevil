@@ -30,6 +30,8 @@ public class AdService {
         AdRequest adRequest = AdRequest.builder()
                 .doctor(doctor)
                 .adType(request.adType())
+                .startDate(request.startDate())
+                .endDate(request.endDate())
                 .build();
 
         AdRequest savedAd = adRequestRepository.save(adRequest);
@@ -93,7 +95,8 @@ public class AdService {
                 ad.getStatus(),
                 ad.getStartDate(),
                 ad.getEndDate(),
-                ad.getAdminFeedback()
+                ad.getAdminFeedback(),
+                ad.getRequestedAt()
         );
     }
 }

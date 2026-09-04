@@ -8,20 +8,23 @@ const AD_TYPE_LABELS = {
     SEARCH_TOP: "검색 최상단 (지역 검색 고정)"
 };
 
+// 날짜 포맷 함수
+const formatDate = (dateString) => {
+    if (!dateString) return "";
+    return dateString.split("T")[0];
+};
+
 export default function AdminAdsPage() {
     const [pendingAds, setPendingAds] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // 모달 상태 관리
     const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null, adId: null });
     
-    // 폼 데이터 (승인용 날짜, 반려용 사유)
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [adminFeedback, setAdminFeedback] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // 승인 대기 목록 불러오기
     const fetchPendingAds = async () => {
         setLoading(true);
         try {
@@ -39,16 +42,21 @@ export default function AdminAdsPage() {
         fetchPendingAds();
     }, []);
 
-    const openApproveModal = (adId) => {
-        // 기본값: 오늘부터 한 달(30일) 뒤
-        const today = new Date();
-        const nextMonth = new Date();
-        nextMonth.setDate(today.getDate() + 30);
-
-        setStartDate(today.toISOString().split("T")[0]);
-        setEndDate(nextMonth.toISOString().split("T")[0]);
+    // 승인 모달 열기 (의사가 희망한 날짜를 기본값으로 세팅)
+    const openApproveModal = (ad) => {
+        if (ad.startDate && ad.endDate) {
+            setStartDate(ad.startDate);
+            setEndDate(ad.endDate);
+        } else {
+            // 희망 날짜가 없을 경우 기본값 (오늘 ~ 30일 뒤)
+            const today = new Date();
+            const nextMonth = new Date();
+            nextMonth.setDate(today.getDate() + 30);
+            setStartDate(today.toISOString().split("T")[0]);
+            setEndDate(nextMonth.toISOString().split("T")[0]);
+        }
         
-        setModalConfig({ isOpen: true, type: "APPROVE", adId });
+        setModalConfig({ isOpen: true, type: "APPROVE", adId: ad.id });
     };
 
     const openRejectModal = (adId) => {
@@ -60,7 +68,6 @@ export default function AdminAdsPage() {
         setModalConfig({ isOpen: false, type: null, adId: null });
     };
 
-    // 승인 처리 API 호출
     const handleApprove = async () => {
         if (!startDate || !endDate) {
             alert("노출 시작일과 종료일을 모두 지정해주세요.");
@@ -75,7 +82,7 @@ export default function AdminAdsPage() {
             });
             alert("해당 광고가 승인되어 노출이 시작됩니다.");
             closeModal();
-            fetchPendingAds(); // 목록 새로고침
+            fetchPendingAds();
         } catch (error) {
             console.error("승인 처리 에러:", error);
             alert("승인 처리 중 오류가 발생했습니다.");
@@ -84,7 +91,6 @@ export default function AdminAdsPage() {
         }
     };
 
-    // 반려 처리 API 호출
     const handleReject = async () => {
         if (!adminFeedback.trim()) {
             alert("반려 사유를 작성해주세요.");
@@ -98,7 +104,7 @@ export default function AdminAdsPage() {
             });
             alert("해당 광고가 반려 처리되었습니다.");
             closeModal();
-            fetchPendingAds(); // 목록 새로고침
+            fetchPendingAds(); 
         } catch (error) {
             console.error("반려 처리 에러:", error);
             alert("반려 처리 중 오류가 발생했습니다.");
@@ -126,16 +132,23 @@ export default function AdminAdsPage() {
                     <table className="admin-table">
                         <thead>
                             <tr>
-                                <th>신청 번호</th>
+                                <th>신청 정보</th>
                                 <th>신청자 (의사/병원)</th>
                                 <th>광고 유형</th>
-                                <th>관리 (승인/반려)</th>
+                                <th>희망 노출 기간</th>
+                                <th>관리</th>
                             </tr>
                         </thead>
                         <tbody>
                             {pendingAds.map((ad) => (
                                 <tr key={ad.id}>
-                                    <td>#{ad.id}</td>
+                                    <td>
+                                        {/* 신청 번호와 신청일 표시 */}
+                                        <div className="admin-ad-info">
+                                            <strong>#{ad.id}</strong>
+                                            <span className="admin-ad-date">{formatDate(ad.requestedAt)} 신청</span>
+                                        </div>
+                                    </td>
                                     <td>
                                         <strong>{ad.doctorName || "이름 없음"}</strong>
                                     </td>
@@ -145,10 +158,18 @@ export default function AdminAdsPage() {
                                         </span>
                                     </td>
                                     <td>
+                                        {/* 의사가 입력한 희망 노출 기간 표시 */}
+                                        <div className="admin-ad-duration">
+                                            {ad.startDate && ad.endDate 
+                                                ? `${ad.startDate} ~ ${ad.endDate}` 
+                                                : "기간 미지정"}
+                                        </div>
+                                    </td>
+                                    <td>
                                         <div className="admin-action-buttons">
                                             <button 
                                                 className="btn-approve"
-                                                onClick={() => openApproveModal(ad.id)}
+                                                onClick={() => openApproveModal(ad)}
                                             >
                                                 승인
                                             </button>
@@ -179,7 +200,7 @@ export default function AdminAdsPage() {
                         <div className="modal-body">
                             {modalConfig.type === "APPROVE" ? (
                                 <>
-                                    <p className="modal-desc">해당 광고의 노출 기간을 설정해주세요.</p>
+                                    <p className="modal-desc">해당 광고의 노출 기간을 설정해주세요. <br/>(의사가 희망한 날짜가 기본으로 입력되어 있습니다.)</p>
                                     <div className="form-group">
                                         <label>노출 시작일</label>
                                         <input 

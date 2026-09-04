@@ -7,7 +7,10 @@ import java.time.LocalDate;
 public class AdDto {
 
     // 의사가 광고를 신청할 때 보내는 데이터
-    public record CreateRequest(AdType adType) {}
+    public record CreateRequest(AdType adType,
+                                LocalDate startDate,
+                                LocalDate endDate
+    ) {}
 
     // 관리자가 승인할 때 보내는 데이터 (노출 기간)
     public record ApproveRequest(LocalDate startDate, LocalDate endDate) {}
@@ -23,6 +26,7 @@ public class AdDto {
             AdStatus status,
             LocalDate startDate,
             LocalDate endDate,
-            String adminFeedback
+            String adminFeedback,
+            java.time.LocalDateTime requestedAt
     ) {}
 }

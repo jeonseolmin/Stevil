@@ -213,3 +213,21 @@
 .btn-confirm.approve { background: #0f766e; }
 .btn-confirm.reject { background: #a63232; }
 .btn-confirm:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* --- 테이블 내 날짜 및 기간 정보 스타일 --- */
+.admin-ad-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-ad-date {
+    font-size: 12px;
+    color: #8b9b98;
+}
+
+.admin-ad-duration {
+    font-size: 14px;
+    color: #154e48;
+    font-weight: 500;
+}

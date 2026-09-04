@@ -55,6 +55,14 @@ function OAuthSuccessPage() {
                     return;
                 }
 
+                if (user.role === "ROLE_DOCTOR") {
+                    navigate("/doctor/dashboard", {
+                        replace: true,
+                    });
+
+                    return;
+                }
+
                 /*
                  * 일반 회원만 온보딩 완료 여부를 확인합니다.
                  */
