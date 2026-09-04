@@ -4,13 +4,13 @@ import com.my.stevil_back.ad.dto.AdDto;
 import com.my.stevil_back.ad.entity.AdRequest;
 import com.my.stevil_back.ad.enums.AdStatus;
 import com.my.stevil_back.ad.repository.AdRequestRepository;
-// User 관련 import는 실제 프로젝트 경로에 맞게 수정하세요.
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class AdService {
 
     private final AdRequestRepository adRequestRepository;
-    private final UserRepository userRepository; // 의사 정보 조회를 위해 필요
+    private final UserRepository userRepository;
 
     // 1. 의사: 광고 신청 (Create)
     @Transactional
@@ -68,11 +68,27 @@ public class AdService {
         return convertToResponseDto(adRequest);
     }
 
+    @Transactional(readOnly = true)
+    public List<AdDto.Response> getMyAds(Long doctorId) {
+        return adRequestRepository.findByDoctorIdOrderByIdDesc(doctorId).stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    // 활성화된 전체 광고 조회 (환자 화면용)
+    @Transactional(readOnly = true)
+    public List<AdDto.Response> getActiveAds() {
+        LocalDate today = LocalDate.now();
+        return adRequestRepository.findActiveAds(today).stream()
+                .map(this::convertToResponseDto)
+                .collect(Collectors.toList());
+    }
+
     // 엔티티를 응답용 DTO로 변환하는 헬퍼 메서드
     private AdDto.Response convertToResponseDto(AdRequest ad) {
         return new AdDto.Response(
                 ad.getId(),
-                ad.getDoctor().getNickname(), // 의사 이름 매핑
+                ad.getDoctor().getNickname(),
                 ad.getAdType(),
                 ad.getStatus(),
                 ad.getStartDate(),

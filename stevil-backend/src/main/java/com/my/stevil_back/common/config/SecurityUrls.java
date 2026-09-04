@@ -61,7 +61,8 @@ public class SecurityUrls {
 
             "/api/injections/**",
 
-            "/api/ads/request"
+            "/api/ads/request",
+            "/api/ads/active"
     };
 
     private SecurityUrls() {

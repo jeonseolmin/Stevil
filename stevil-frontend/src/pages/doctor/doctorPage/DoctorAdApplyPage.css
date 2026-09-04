@@ -130,3 +130,94 @@
     font-size: 13px;
     text-align: center;
 }
+
+/* --- 내 신청 내역 스타일 --- */
+.doctor-ad-history {
+    margin-top: 48px;
+}
+
+.doctor-ad-history h2 {
+    font-size: 20px;
+    color: #154e48;
+    margin-bottom: 20px;
+}
+
+.history-empty {
+    padding: 40px;
+    text-align: center;
+    background: #fff;
+    border: 1px dashed #dce9e6;
+    border-radius: 12px;
+    color: #8b9b98;
+    font-size: 15px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.history-card {
+    background: #fff;
+    border: 1px solid #dce9e6;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(24, 58, 55, 0.03);
+}
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.history-card-header strong {
+    font-size: 16px;
+    color: #183a37;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.approved {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-badge.rejected {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.history-card-body p, 
+.history-card-body .rejected-feedback {
+    margin: 0;
+    font-size: 14px;
+}
+
+.pending-text {
+    color: #657b78;
+}
+
+.approved-text {
+    color: #0f766e;
+}
+
+.rejected-feedback {
+    background: #fdf2f2;
+    padding: 12px;
+    border-radius: 8px;
+    color: #a63232;
+    margin-top: 8px;
+}

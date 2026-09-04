@@ -500,7 +500,7 @@ export default function Header() {
                             <>
                                 {isAdmin && (
                                     <Link
-                                        to="/admin/dashboard"
+                                        to="/admin"
                                         className="header-admin-button"
                                         onClick={
                                             closeMenu
@@ -580,7 +580,7 @@ export default function Header() {
                         <>
                             {isAdmin && (
                                 <Link
-                                    to="/admin/dashboard"
+                                    to="/admin"
                                     className="header-admin-button"
                                 >
                                     관리자 메뉴

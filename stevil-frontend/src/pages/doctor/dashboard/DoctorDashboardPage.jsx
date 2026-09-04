@@ -87,7 +87,7 @@ export default function DoctorDashboardPage() {
                     >
                         <strong>광고·제휴 신청</strong>
                         <span>
-                            플랫폼 상단 노출 및 프리미엄 제휴를 신청합니다.
+                            플랫폼 상단 노출 및 광고를 신청합니다.
                         </span>
                     </button>
                 </div>

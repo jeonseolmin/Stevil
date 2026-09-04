@@ -1,23 +1,35 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../../../api/axiosInstance.js"; // 경로를 프로젝트에 맞게 수정해주세요
-import "./AdminAdsPage.css"; // CSS 파일 연결 활성화
+import axiosInstance from "../../../api/axiosInstance.js";
+import "./AdminAdsPage.css";
+
+const AD_TYPE_LABELS = {
+    TOP_BANNER: "상단 배너 (메인 대시보드)",
+    HIGHLIGHT: "리스트 강조 (시각적 하이라이트)",
+    SEARCH_TOP: "검색 최상단 (지역 검색 고정)"
+};
 
 export default function AdminAdsPage() {
     const [pendingAds, setPendingAds] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState("");
 
-    // 대기 중인 광고 목록 불러오기
+    // 모달 상태 관리
+    const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null, adId: null });
+    
+    // 폼 데이터 (승인용 날짜, 반려용 사유)
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [adminFeedback, setAdminFeedback] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 승인 대기 목록 불러오기
     const fetchPendingAds = async () => {
         setLoading(true);
         try {
             const response = await axiosInstance.get("/ads/admin/pending");
             setPendingAds(response.data);
-            setErrorMessage("");
         } catch (error) {
-            setErrorMessage(
-                error.response?.data?.message ?? "광고 신청 목록을 불러오지 못했습니다."
-            );
+            console.error("광고 목록 조회 실패:", error);
+            alert("목록을 불러오는 중 오류가 발생했습니다.");
         } finally {
             setLoading(false);
         }
@@ -27,111 +39,195 @@ export default function AdminAdsPage() {
         fetchPendingAds();
     }, []);
 
-    // 승인 처리 (기본 1개월 노출로 설정)
-    const handleApprove = async (adId) => {
-        if (!window.confirm("이 광고를 승인하시겠습니까? (기본 1개월 노출)")) return;
-        
+    const openApproveModal = (adId) => {
+        // 기본값: 오늘부터 한 달(30일) 뒤
         const today = new Date();
         const nextMonth = new Date();
-        nextMonth.setMonth(today.getMonth() + 1);
+        nextMonth.setDate(today.getDate() + 30);
 
+        setStartDate(today.toISOString().split("T")[0]);
+        setEndDate(nextMonth.toISOString().split("T")[0]);
+        
+        setModalConfig({ isOpen: true, type: "APPROVE", adId });
+    };
+
+    const openRejectModal = (adId) => {
+        setAdminFeedback("");
+        setModalConfig({ isOpen: true, type: "REJECT", adId });
+    };
+
+    const closeModal = () => {
+        setModalConfig({ isOpen: false, type: null, adId: null });
+    };
+
+    // 승인 처리 API 호출
+    const handleApprove = async () => {
+        if (!startDate || !endDate) {
+            alert("노출 시작일과 종료일을 모두 지정해주세요.");
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
-            await axiosInstance.patch(`/ads/admin/${adId}/approve`, {
-                startDate: today.toISOString().split("T")[0],
-                endDate: nextMonth.toISOString().split("T")[0],
+            await axiosInstance.patch(`/ads/admin/${modalConfig.adId}/approve`, {
+                startDate,
+                endDate
             });
-            alert("광고가 성공적으로 승인되었습니다.");
+            alert("해당 광고가 승인되어 노출이 시작됩니다.");
+            closeModal();
             fetchPendingAds(); // 목록 새로고침
         } catch (error) {
+            console.error("승인 처리 에러:", error);
             alert("승인 처리 중 오류가 발생했습니다.");
-            console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    // 거절 처리 (사유 입력)
-    const handleReject = async (adId) => {
-        const reason = window.prompt("반려 사유를 입력해주세요 (예: 배너 이미지 해상도 낮음):");
-        if (!reason) return; // 취소 누르거나 빈칸이면 중단
+    // 반려 처리 API 호출
+    const handleReject = async () => {
+        if (!adminFeedback.trim()) {
+            alert("반려 사유를 작성해주세요.");
+            return;
+        }
 
+        setIsSubmitting(true);
         try {
-            await axiosInstance.patch(`/ads/admin/${adId}/reject`, {
-                adminFeedback: reason,
+            await axiosInstance.patch(`/ads/admin/${modalConfig.adId}/reject`, {
+                adminFeedback
             });
-            alert("광고 신청이 반려되었습니다.");
+            alert("해당 광고가 반려 처리되었습니다.");
+            closeModal();
             fetchPendingAds(); // 목록 새로고침
         } catch (error) {
+            console.error("반려 처리 에러:", error);
             alert("반려 처리 중 오류가 발생했습니다.");
-            console.error(error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <section className="admin-dashboard-page">
-            <header className="admin-dashboard-heading">
+        <section className="admin-ads-page">
+            <header className="admin-ads-heading">
                 <div>
-                    <span>ADVERTISEMENT MANAGEMENT</span>
+                    <span>PARTNERSHIP MANAGEMENT</span>
                     <h1>광고·제휴 관리</h1>
-                    <p>병원 상단 노출 및 제휴 신청을 검토하고 승인/반려합니다.</p>
+                    <p>의사(병원)들이 신청한 광고 제휴 내역을 검토하고 승인/반려합니다.</p>
                 </div>
             </header>
 
-            {errorMessage && (
-                <div className="admin-dashboard-error">
-                    {errorMessage}
-                </div>
-            )}
-
-            <div className="admin-ads-card">
+            <div className="admin-ads-content">
                 {loading ? (
-                    <p>로딩 중...</p>
+                    <div className="loading-state">목록을 불러오는 중입니다...</div>
+                ) : pendingAds.length === 0 ? (
+                    <div className="empty-state">승인 대기 중인 광고 신청이 없습니다.</div>
                 ) : (
-                    <table className="admin-ads-table">
+                    <table className="admin-table">
                         <thead>
                             <tr>
                                 <th>신청 번호</th>
-                                <th>의사(병원)명</th>
-                                <th>광고 타입</th>
-                                <th>상태</th>
-                                <th style={{ textAlign: "center" }}>관리</th>
+                                <th>신청자 (의사/병원)</th>
+                                <th>광고 유형</th>
+                                <th>관리 (승인/반려)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {pendingAds.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" className="empty-table-row">
-                                        대기 중인 광고 신청이 없습니다.
+                            {pendingAds.map((ad) => (
+                                <tr key={ad.id}>
+                                    <td>#{ad.id}</td>
+                                    <td>
+                                        <strong>{ad.doctorName || "이름 없음"}</strong>
+                                    </td>
+                                    <td>
+                                        <span className={`ad-type-badge ${ad.adType}`}>
+                                            {AD_TYPE_LABELS[ad.adType] || ad.adType}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div className="admin-action-buttons">
+                                            <button 
+                                                className="btn-approve"
+                                                onClick={() => openApproveModal(ad.id)}
+                                            >
+                                                승인
+                                            </button>
+                                            <button 
+                                                className="btn-reject"
+                                                onClick={() => openRejectModal(ad.id)}
+                                            >
+                                                반려
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
-                            ) : (
-                                pendingAds.map((ad) => (
-                                    <tr key={ad.id}>
-                                        <td>{ad.id}</td>
-                                        <td style={{ fontWeight: "bold" }}>{ad.doctorName}</td>
-                                        <td className="ad-type-label">{ad.adType}</td>
-                                        <td className="ad-status-pending">{ad.status}</td>
-                                        <td>
-                                            <div className="ad-action-buttons">
-                                                <button 
-                                                    className="btn-approve" 
-                                                    onClick={() => handleApprove(ad.id)}
-                                                >
-                                                    승인
-                                                </button>
-                                                <button 
-                                                    className="btn-reject" 
-                                                    onClick={() => handleReject(ad.id)}
-                                                >
-                                                    반려
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
+                            ))}
                         </tbody>
                     </table>
                 )}
             </div>
+
+            {/* 모달 영역 */}
+            {modalConfig.isOpen && (
+                <div className="admin-modal-overlay">
+                    <div className="admin-modal">
+                        <header className="modal-header">
+                            <h2>{modalConfig.type === "APPROVE" ? "광고 노출 승인" : "광고 신청 반려"}</h2>
+                            <button className="btn-close-modal" onClick={closeModal}>×</button>
+                        </header>
+                        
+                        <div className="modal-body">
+                            {modalConfig.type === "APPROVE" ? (
+                                <>
+                                    <p className="modal-desc">해당 광고의 노출 기간을 설정해주세요.</p>
+                                    <div className="form-group">
+                                        <label>노출 시작일</label>
+                                        <input 
+                                            type="date" 
+                                            value={startDate} 
+                                            onChange={(e) => setStartDate(e.target.value)} 
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>노출 종료일</label>
+                                        <input 
+                                            type="date" 
+                                            value={endDate} 
+                                            onChange={(e) => setEndDate(e.target.value)} 
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="modal-desc">신청자에게 전달될 반려 사유를 작성해주세요.</p>
+                                    <div className="form-group">
+                                        <label>반려 사유 (피드백)</label>
+                                        <textarea 
+                                            placeholder="예: 등록하신 병원 정보가 부족하여 승인이 어렵습니다."
+                                            value={adminFeedback}
+                                            onChange={(e) => setAdminFeedback(e.target.value)}
+                                            rows="4"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        <footer className="modal-footer">
+                            <button className="btn-cancel" onClick={closeModal} disabled={isSubmitting}>
+                                취소
+                            </button>
+                            <button 
+                                className={`btn-confirm ${modalConfig.type === "APPROVE" ? "approve" : "reject"}`} 
+                                onClick={modalConfig.type === "APPROVE" ? handleApprove : handleReject}
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "처리 중..." : modalConfig.type === "APPROVE" ? "승인 완료" : "반려 완료"}
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

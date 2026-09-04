@@ -41,6 +41,22 @@ public class AdController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<List<AdDto.Response>> getMyAds(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Long doctorId;
+        try {
+            doctorId = Long.parseLong(principal.getName());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("사용자 식별자가 올바르지 않습니다.");
+        }
+
+        return ResponseEntity.ok(adService.getMyAds(doctorId));
+    }
+
     // [관리자 권한] 승인 대기 중인 광고 목록 조회
     @GetMapping("/admin/pending")
     public ResponseEntity<List<AdDto.Response>> getPendingAds() {
@@ -65,5 +81,10 @@ public class AdController {
 
         AdDto.Response response = adService.rejectAd(adId, request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<AdDto.Response>> getActiveAds() {
+        return ResponseEntity.ok(adService.getActiveAds());
     }
 }
