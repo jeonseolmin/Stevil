@@ -331,3 +331,51 @@
         padding: 16px;
     }
 }
+
+/* --- 광고(SEARCH_TOP / HIGHLIGHT) 효과 스타일 --- */
+
+/* 1. 지역 검색 최상단 고정 카드 스타일 */
+.hospital-card.hospital-card--search-top {
+    background: #f0fdfa;
+    border: 2px solid #3abdb1;
+    box-shadow: 0 4px 12px rgba(58, 189, 177, 0.15);
+}
+
+/* 2. 병원 리스트 시각적 강조 스타일 */
+.hospital-card.hospital-card--highlight {
+    background: #fffdf5;
+    border: 2px solid #f6ad55;
+    box-shadow: 0 4px 12px rgba(246, 173, 85, 0.15);
+}
+
+/* 3. 뱃지 디자인 */
+.ad-badge-top {
+    display: inline-block;
+    background: #0f766e;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.ad-badge-highlight {
+    display: inline-block;
+    background: #dd6b20;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* 지도 위 마커 강조 */
+.hospital-map-marker.is-top {
+    background: #0f766e !important;
+    border-color: #ffd700 !important;
+    box-shadow: 0 5px 16px rgba(15, 118, 110, 0.5);
+}
