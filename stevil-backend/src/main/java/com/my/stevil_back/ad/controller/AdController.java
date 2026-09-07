@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ads")
@@ -87,4 +88,10 @@ public class AdController {
     public ResponseEntity<List<AdDto.Response>> getActiveAds() {
         return ResponseEntity.ok(adService.getActiveAds());
     }
+
+    @GetMapping("/dashboard-ads")
+    public ResponseEntity<Map<String, List<AdDto.Response>>> getDashboardAds() {
+        return ResponseEntity.ok(adService.getDashboardAds());
+    }
+
 }

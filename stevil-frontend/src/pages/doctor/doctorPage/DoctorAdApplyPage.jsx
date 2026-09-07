@@ -5,7 +5,9 @@ import "./DoctorAdApplyPage.css";
 const AD_TYPE_LABELS = {
     TOP_BANNER: "메인 대시보드 상단 배너",
     HIGHLIGHT: "병원 리스트 시각적 강조",
-    SEARCH_TOP: "지역 검색 최상단 고정"
+    SEARCH_TOP: "지역 검색 최상단 고정",
+    LOGIN_POPUP: "일일 최초 로그인 팝업",
+    REPORT_SPONSOR: "오늘의 건강 리포트 하단 스폰서"
 };
 
 const formatDate = (dateString) => {
@@ -15,7 +17,6 @@ const formatDate = (dateString) => {
 
 export default function DoctorAdApplyPage() {
     const [adType, setAdType] = useState("TOP_BANNER");
-    
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     
@@ -62,7 +63,6 @@ export default function DoctorAdApplyPage() {
             });
             alert("광고 제휴 신청이 완료되었습니다.");
             
-            // 폼 초기화
             setStartDate("");
             setEndDate("");
             fetchMyAds();
@@ -111,6 +111,22 @@ export default function DoctorAdApplyPage() {
                                     <p>환자가 해당 지역 병원을 검색할 때 무조건 1순위로 고정 노출됩니다.</p>
                                 </div>
                             </label>
+
+                            <label className={`ad-option-card ${adType === "LOGIN_POPUP" ? "selected" : ""}`}>
+                                <input type="radio" name="adType" value="LOGIN_POPUP" checked={adType === "LOGIN_POPUP"} onChange={(e) => setAdType(e.target.value)} />
+                                <div>
+                                    <strong>일일 최초 로그인 팝업</strong>
+                                    <p>환자가 대시보드에 처음 진입할 때 화면 중앙에 단독 팝업으로 노출됩니다.</p>
+                                </div>
+                            </label>
+
+                            <label className={`ad-option-card ${adType === "REPORT_SPONSOR" ? "selected" : ""}`}>
+                                <input type="radio" name="adType" value="REPORT_SPONSOR" checked={adType === "REPORT_SPONSOR"} onChange={(e) => setAdType(e.target.value)} />
+                                <div>
+                                    <strong>대시보드 하단 스폰서 텍스트</strong>
+                                    <p>환자의 건강 기록 페이지 하단에 자연스러운 후원사 형태로 노출됩니다.</p>
+                                </div>
+                            </label>
                         </div>
                     </div>
 
@@ -121,7 +137,7 @@ export default function DoctorAdApplyPage() {
                                 type="date" 
                                 value={startDate} 
                                 onChange={(e) => setStartDate(e.target.value)} 
-                                min={new Date().toISOString().split("T")[0]} // 오늘 이전 날짜 선택 방지
+                                min={new Date().toISOString().split("T")[0]}
                             />
                             <span>~</span>
                             <input 
@@ -144,7 +160,7 @@ export default function DoctorAdApplyPage() {
 
             <div className="doctor-ad-history">
                 <h2>나의 신청 내역</h2>
-                {/* ... (이하 기존 내역 렌더링 코드 동일) ... */}
+                
                 {loadingAds ? (
                     <div className="history-empty">내역을 불러오는 중입니다...</div>
                 ) : myAds.length === 0 ? (

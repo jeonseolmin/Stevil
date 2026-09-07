@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,6 +73,7 @@ public class AdService {
         return convertToResponseDto(adRequest);
     }
 
+    // 5. 의사: 내 광고 신청 내역 조회
     @Transactional(readOnly = true)
     public List<AdDto.Response> getMyAds(Long doctorId) {
         return adRequestRepository.findByDoctorIdOrderByIdDesc(doctorId).stream()
@@ -77,13 +81,31 @@ public class AdService {
                 .collect(Collectors.toList());
     }
 
-    // 활성화된 전체 광고 조회 (환자 화면용)
+    // 6. 활성화된 전체 광고 조회
     @Transactional(readOnly = true)
     public List<AdDto.Response> getActiveAds() {
         LocalDate today = LocalDate.now();
         return adRequestRepository.findActiveAds(today).stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    // 7. 대시보드용 광고를 유형(AdType)별로 그룹화하여 반환
+    @Transactional(readOnly = true)
+    public Map<String, List<AdDto.Response>> getDashboardAds() {
+        LocalDate today = LocalDate.now();
+        List<AdRequest> activeAds = adRequestRepository.findActiveAds(today);
+
+        Map<String, List<AdDto.Response>> adMap = new HashMap<>();
+
+        for (AdRequest ad : activeAds) {
+            String typeStr = ad.getAdType().name();
+            // 해당 타입의 키가 없으면 새 리스트를 생성해 넣고, 있으면 기존 리스트를 가져와서 추가
+            adMap.computeIfAbsent(typeStr, k -> new ArrayList<>())
+                    .add(convertToResponseDto(ad));
+        }
+
+        return adMap;
     }
 
     // 엔티티를 응답용 DTO로 변환하는 헬퍼 메서드

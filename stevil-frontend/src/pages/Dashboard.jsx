@@ -51,8 +51,13 @@ export default function Dashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     
-    // 1. 상단 배너 상태 추가
+    // 1. 기존 상단 배너 상태
     const [topBanners, setTopBanners] = useState([]);
+    
+    // 2. 팝업 및 스폰서 광고 상태
+    const [sponsorAds, setSponsorAds] = useState([]);
+    const [popupAd, setPopupAd] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
 
     useEffect(() => {
         const fetchDashboard = async () => {
@@ -82,20 +87,49 @@ export default function Dashboard() {
             }
         };
 
-        // 2. 활성화된 광고 불러오기 함수
-        const fetchActiveAds = async () => {
+        // 3. 모든 광고(상단 배너 + 팝업 + 스폰서)를 한 번에 불러오는 함수로 확장
+        const fetchAds = async () => {
             try {
-                const response = await axiosInstance.get("/ads/active");
-                const banners = response.data.filter(ad => ad.adType === "TOP_BANNER");
+                // 기존 TOP_BANNER 불러오기 (활성화된 전체 광고에서 필터링)
+                const activeResponse = await axiosInstance.get("/ads/active");
+                const banners = activeResponse.data.filter(ad => ad.adType === "TOP_BANNER");
                 setTopBanners(banners);
+
+                // 그룹화된 대시보드 전용 광고 불러오기
+                const dashboardAdsResponse = await axiosInstance.get("/ads/dashboard-ads");
+                const adsMap = dashboardAdsResponse.data;
+
+                // 하단 스폰서 광고 세팅
+                if (adsMap["REPORT_SPONSOR"]) {
+                    setSponsorAds(adsMap["REPORT_SPONSOR"]);
+                }
+
+                // 중앙 팝업 광고 세팅 및 로컬 스토리지 확인
+                if (adsMap["LOGIN_POPUP"] && adsMap["LOGIN_POPUP"].length > 0) {
+                    const todayDate = new Date().toISOString().split("T")[0];
+                    const hidePopupDate = localStorage.getItem("hidePopupDate");
+
+                    // "오늘 하루 보지 않기"를 누른 날짜가 오늘이 아니라면 팝업 노출
+                    if (hidePopupDate !== todayDate) {
+                        setPopupAd(adsMap["LOGIN_POPUP"][0]);
+                        setShowPopup(true);
+                    }
+                }
             } catch (adError) {
                 console.error("광고 불러오기 실패:", adError);
             }
         };
 
         fetchDashboard();
-        fetchActiveAds();
+        fetchAds();
     }, [navigate]);
+
+    // 4. 팝업 '오늘 하루 보지 않기' 클릭 핸들러
+    const handleClosePopupToday = () => {
+        const todayDate = new Date().toISOString().split("T")[0];
+        localStorage.setItem("hidePopupDate", todayDate);
+        setShowPopup(false);
+    };
 
     const chartData = useMemo(() => {
         const recentWeights = dashboard?.recentWeights ?? [];
@@ -185,9 +219,30 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-page">
+            
+            {/* 5. 중앙 로그인 팝업 영역 (조건부 렌더링) */}
+            {showPopup && popupAd && (
+                <div className="dashboard-popup-overlay">
+                    <div className="dashboard-popup-content">
+                        <span className="popup-badge">스폰서</span>
+                        <h3>건강한 변화의 시작</h3>
+                        <p><strong>{popupAd.doctorName}</strong>에서<br/>맞춤형 상담을 받아보세요.</p>
+                        
+                        <div className="popup-actions">
+                            <button className="btn-close-today" onClick={handleClosePopupToday}>
+                                오늘 하루 보지 않기
+                            </button>
+                            <button className="btn-close" onClick={() => setShowPopup(false)}>
+                                닫기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="dashboard-container">
                 
-                {/* 3. 상단 배너 노출 영역 (데이터가 있을 때만 렌더링) */}
+                {/* 상단 배너 노출 영역 */}
                 {topBanners.length > 0 && (
                     <section className="dashboard-premium-banner">
                         {topBanners.map(ad => (
@@ -385,6 +440,19 @@ export default function Dashboard() {
                         Stevil의 기록과 분석은 건강 관리를 돕기 위한 참고 정보이며 의료진의 진단이나 처방을 대신하지 않습니다.
                     </p>
                 </aside>
+
+                {/* 6. 최하단 리포트 스폰서 영역 */}
+                {sponsorAds.length > 0 && (
+                    <section className="dashboard-sponsor-section">
+                        {sponsorAds.map(ad => (
+                            <div key={ad.id} className="sponsor-text-banner">
+                                <span>오늘의 건강 기록을 응원합니다!</span>
+                                <p>이 대시보드는 <strong>{ad.doctorName}</strong>의 후원으로 제공됩니다.</p>
+                            </div>
+                        ))}
+                    </section>
+                )}
+
             </div>
         </div>
     );

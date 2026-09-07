@@ -5,7 +5,9 @@ import "./AdminAdsPage.css";
 const AD_TYPE_LABELS = {
     TOP_BANNER: "상단 배너 (메인 대시보드)",
     HIGHLIGHT: "리스트 강조 (시각적 하이라이트)",
-    SEARCH_TOP: "검색 최상단 (지역 검색 고정)"
+    SEARCH_TOP: "검색 최상단 (지역 검색 고정)",
+    LOGIN_POPUP: "일일 최초 로그인 팝업",
+    REPORT_SPONSOR: "대시보드 하단 스폰서 텍스트"
 };
 
 // 날짜 포맷 함수
