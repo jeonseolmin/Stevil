@@ -35,4 +35,24 @@ public class PatientReportController {
         List<Map<String, Object>> reports = patientReportService.getReportsForDoctor(userDetails.getUser().getId());
         return ResponseEntity.ok(reports);
     }
+
+    // 의사 -> 피드백 전송 API
+    @PostMapping("/{reportId}/feedback")
+    public ResponseEntity<?> sendFeedback(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long reportId,
+            @RequestBody Map<String, String> request) {
+
+        patientReportService.sendFeedback(userDetails.getUser().getId(), reportId, request.get("content"));
+        return ResponseEntity.ok(Map.of("message", "환자에게 피드백이 전송되었습니다."));
+    }
+
+    // 환자 -> 나에게 온 피드백 조회 API
+    @GetMapping("/my-feedbacks")
+    public ResponseEntity<List<Map<String, Object>>> getMyFeedbacks(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        List<Map<String, Object>> feedbacks = patientReportService.getFeedbacksForPatient(userDetails.getUser().getId());
+        return ResponseEntity.ok(feedbacks);
+    }
 }

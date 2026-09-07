@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axiosInstance from "../../api/axiosInstance.js"; // 경로 주의!
+import axiosInstance from "../../api/axiosInstance.js";
 import "./DoctorReportPage.css";
 
 export default function DoctorReportPage() {
@@ -7,12 +7,14 @@ export default function DoctorReportPage() {
     const [selectedReport, setSelectedReport] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [feedbackText, setFeedbackText] = useState("");
+    const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+
     useEffect(() => {
         const fetchReports = async () => {
             try {
                 const response = await axiosInstance.get("/patient-reports/doctor");
                 setReports(response.data);
-                // 리포트가 하나라도 있으면 첫 번째 리포트를 기본 선택 상태로 둠
                 if (response.data.length > 0) {
                     setSelectedReport(response.data[0]);
                 }
@@ -27,7 +29,29 @@ export default function DoctorReportPage() {
 
     const handleSelectReport = (report) => {
         setSelectedReport(report);
-        // TODO: 백엔드에 '읽음 처리(READ)' API 연결 가능
+        setFeedbackText("");
+    };
+
+    const handleSendFeedback = async () => {
+        if (!feedbackText.trim()) {
+            alert("피드백 내용을 입력해주세요.");
+            return;
+        }
+        if (!selectedReport) return;
+
+        setIsSendingFeedback(true);
+        try {
+            await axiosInstance.post(`/patient-reports/${selectedReport.id}/feedback`, {
+                content: feedbackText
+            });
+            alert("환자에게 피드백이 성공적으로 전송되었습니다!");
+            setFeedbackText("");
+        } catch (error) {
+            console.error("피드백 전송 실패:", error);
+            alert("전송에 실패했습니다.");
+        } finally {
+            setIsSendingFeedback(false);
+        }
     };
 
     return (
@@ -72,7 +96,7 @@ export default function DoctorReportPage() {
                     )}
                 </aside>
 
-                {/* 오른쪽: 리포트 상세 내용 (AI 요약) */}
+                {/* 오른쪽: 리포트 상세 내용 및 피드백 작성 */}
                 <main className="report-detail-view">
                     {selectedReport ? (
                         <div className="detail-card">
@@ -95,8 +119,23 @@ export default function DoctorReportPage() {
                                 </div>
                             </div>
 
-                            <div className="detail-actions">
-                                <button className="btn-reply">환자에게 피드백 보내기</button>
+                            <div className="feedback-section" style={{ marginTop: '24px', borderTop: '1px solid #e2e8e8', paddingTop: '20px' }}>
+                                <h3>주치의 피드백 작성</h3>
+                                <textarea
+                                    value={feedbackText}
+                                    onChange={(e) => setFeedbackText(e.target.value)}
+                                    placeholder="환자에게 전달할 투약 조언이나 진료 코멘트를 작성해주세요."
+                                    style={{ width: '100%', height: '100px', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', marginTop: '8px', resize: 'vertical' }}
+                                />
+                                <div className="detail-actions" style={{ marginTop: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+                                    <button 
+                                        className="btn-reply" 
+                                        onClick={handleSendFeedback}
+                                        disabled={isSendingFeedback}
+                                    >
+                                        {isSendingFeedback ? '전송 중...' : '환자에게 피드백 전송하기'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ) : (

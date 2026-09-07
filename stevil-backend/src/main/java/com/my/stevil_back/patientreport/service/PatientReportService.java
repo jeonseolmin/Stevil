@@ -1,6 +1,8 @@
 package com.my.stevil_back.patientreport.service;
 
+import com.my.stevil_back.patientreport.entity.Feedback;
 import com.my.stevil_back.patientreport.entity.PatientReport;
+import com.my.stevil_back.patientreport.repository.FeedbackRepository;
 import com.my.stevil_back.patientreport.repository.PatientReportRepository;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.repository.UserRepository;
@@ -20,6 +22,7 @@ public class PatientReportService {
 
     private final PatientReportRepository patientReportRepository;
     private final UserRepository userRepository;
+    private final FeedbackRepository feedbackRepository;
 
     // 환자가 의사에게 리포트 전송
     @Transactional
@@ -49,7 +52,7 @@ public class PatientReportService {
                 .map(r -> {
                     User p = r.getPatient();
                     int age = p.getBirthDate() != null ? Period.between(p.getBirthDate(), LocalDate.now()).getYears() : 0;
-                    
+
                     String genderCode = "UNKNOWN";
                     if (p.getSex() != null) {
                         String s = p.getSex().name().toUpperCase();
@@ -67,5 +70,31 @@ public class PatientReportService {
                             "status", r.getStatus()
                     );
                 }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void sendFeedback(Long doctorId, Long reportId, String content) {
+        PatientReport report = patientReportRepository.findById(reportId)
+                .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+
+        Feedback feedback = Feedback.builder()
+                .report(report)
+                .doctor(report.getDoctor())
+                .patient(report.getPatient())
+                .content(content)
+                .build();
+
+        feedbackRepository.save(feedback);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getFeedbacksForPatient(Long patientId) {
+        return feedbackRepository.findByPatientIdOrderByIdDesc(patientId).stream()
+                .map(f -> Map.<String, Object>of(
+                        "id", f.getId(),
+                        "doctorName", f.getDoctor().getNickname(),
+                        "content", f.getContent(),
+                        "sentAt", f.getCreatedAt().toLocalDate().toString()
+                )).collect(Collectors.toList());
     }
 }

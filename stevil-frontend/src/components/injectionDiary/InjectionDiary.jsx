@@ -3,7 +3,7 @@ import './InjectionDiary.css';
 import axiosInstance from '../../api/axiosInstance';
 
 const InjectionDiary = () => {
-  const [viewMode, setViewMode] = useState('RECORD');
+  const [viewMode, setViewMode] = useState('RECORD'); // 'RECORD' | 'REPORT' | 'FEEDBACK'
   const [recordDate, setRecordDate] = useState(new Date().toISOString().split('T')[0]);
   
   const [dosage, setDosage] = useState('');
@@ -12,8 +12,8 @@ const InjectionDiary = () => {
   const [lifestyleMemo, setLifestyleMemo] = useState('');
 
   const [recentLogs, setRecentLogs] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
 
-  // AI 분석 및 전송 관련 상태
   const [isSending, setIsSending] = useState(false);
   const [aiSummaryResult, setAiSummaryResult] = useState('');
 
@@ -30,6 +30,7 @@ const InjectionDiary = () => {
 
   useEffect(() => {
     fetchLogs();
+    fetchFeedbacks();
   }, []);
 
   const fetchLogs = async () => {
@@ -43,6 +44,15 @@ const InjectionDiary = () => {
     } catch (error) {
       console.error("기록 조회 실패:", error);
       setRecentLogs([]); 
+    }
+  };
+
+  const fetchFeedbacks = async () => {
+    try {
+      const response = await axiosInstance.get('/patient-reports/my-feedbacks');
+      setFeedbacks(response.data);
+    } catch (error) {
+      console.error("피드백 조회 실패:", error);
     }
   };
 
@@ -83,7 +93,6 @@ const InjectionDiary = () => {
     }
   };
 
-  // AI 분석 후 주치의에게 찐으로 전송하는 로직
   const handleSendToDoctor = async () => {
     if (recentLogs.length === 0) {
       alert("전송할 기록이 없습니다.");
@@ -93,12 +102,10 @@ const InjectionDiary = () => {
     setIsSending(true);
     
     try {
-      // 1. 투약일지 텍스트 데이터 묶기
       const reportText = recentLogs.map(log => 
         `날짜: ${log.recordDate}, 용량: ${log.dosage}mg, 증상: ${log.symptoms?.join(',') || '없음'}, 메모: ${log.lifestyleMemo || '없음'}`
       ).join('\n');
 
-      // 2. JSON 형태로 백엔드 전송해 AI 요약 받아오기
       const aiResponse = await axiosInstance.post('/ai/logs/analyze', {
           logText: reportText
       }, {
@@ -107,17 +114,15 @@ const InjectionDiary = () => {
 
       const generatedSummary = aiResponse.data;
 
-      // 3. 요약된 내용을 주치의 수신함 API로 전송!
       await axiosInstance.post('/patient-reports/send', {
           aiSummary: generatedSummary
       });
 
       alert("의사에게 리포트가 성공적으로 전달되었습니다!");
-      setAiSummaryResult(generatedSummary); // 화면에 보여주기 위해 상태 저장
+      setAiSummaryResult(generatedSummary);
       
     } catch (error) {
       console.error("의사 전달 실패:", error);
-      // 만약 주치의 등록이 안 되어있다면 백엔드가 보낸 에러 메시지를 띄워줍니다.
       alert(error.response?.data?.message || "전송 중 오류가 발생했습니다.");
     } finally {
       setIsSending(false);
@@ -146,9 +151,10 @@ const InjectionDiary = () => {
       <header className="dashboard-header">
         <div className="header-text">
           <h1 className="main-title">주사 및 컨디션 일기</h1>
-          <p className="sub-title">투여 기록과 증상을 메모하여 진료 시 담당 의 에게 보여주세요.</p>
+          <p className="sub-title">투여 기록과 증상을 메모하여 진료 시 담당 의사에게 보여주세요.</p>
         </div>
         
+        {/* 상단 모드 전환 탭 */}
         <div className="mode-toggle">
           <button 
             className={`toggle-btn ${viewMode === 'RECORD' ? 'active' : ''}`}
@@ -161,6 +167,16 @@ const InjectionDiary = () => {
             onClick={() => setViewMode('REPORT')}
           >
             의사 전달 리포트
+          </button>
+          <button 
+            className={`toggle-btn ${viewMode === 'FEEDBACK' ? 'active' : ''}`}
+            onClick={() => setViewMode('FEEDBACK')}
+            style={{ 
+              backgroundColor: viewMode === 'FEEDBACK' ? '#0f766e' : '', 
+              color: viewMode === 'FEEDBACK' ? 'white' : '' 
+            }}
+          >
+            주치의 피드백
           </button>
         </div>
       </header>
@@ -261,7 +277,7 @@ const InjectionDiary = () => {
             </div>
           </div>
         </div>
-      ) : (
+      ) : viewMode === 'REPORT' ? (
         <div className="report-mode-container" style={{ display: 'flex', gap: '20px' }}>
           
           <div style={{ flex: 1 }}>
@@ -352,6 +368,32 @@ const InjectionDiary = () => {
             </div>
           </div>
 
+        </div>
+      ) : (
+
+        <div className="card" style={{ padding: '32px' }}>
+          <h2>담당 주치의 피드백 수신함</h2>
+          <p style={{ color: '#64748b', marginBottom: '24px' }}>주치의 선생님이 회원님의 투약일지를 검토하고 남긴 소중한 코멘트입니다.</p>
+          
+          {feedbacks.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8' }}>
+              <p>아직 도착한 주치의 피드백이 없습니다.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {feedbacks.map(fb => (
+                <div key={fb.id} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', backgroundColor: '#f8fafc' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <strong style={{ color: '#0f766e' }}>{fb.doctorName} 주치의 선생님</strong>
+                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>{fb.sentAt}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '15px', color: '#1e293b', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                    {fb.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
