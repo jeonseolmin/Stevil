@@ -65,7 +65,7 @@ export default function HospitalMapPage() {
     const [keyword, setKeyword] = useState("");
     const [hospitals, setHospitals] = useState([]);
     
-    // 💡 활성화된 광고 목록 상태 추가
+    // 활성화된 광고 목록 상태 추가
     const [activeAds, setActiveAds] = useState([]);
 
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -78,7 +78,7 @@ export default function HospitalMapPage() {
         "현재 위치를 허용하면 가까운 병원 순으로 볼 수 있습니다."
     );
 
-    // 💡 활성화된 광고 목록 불러오기
+    // 활성화된 광고 목록 불러오기
     useEffect(() => {
         const fetchActiveAds = async () => {
             try {
@@ -91,7 +91,7 @@ export default function HospitalMapPage() {
         fetchActiveAds();
     }, []);
 
-    // 💡 광고 효과(최상단 고정, 강조)가 반영된 최종 병원 리스트 계산
+    // 광고 효과(최상단 고정, 강조)가 반영된 최종 병원 리스트 계산
     const processedHospitals = useMemo(() => {
         if (!hospitals || hospitals.length === 0) return [];
 
@@ -418,7 +418,7 @@ export default function HospitalMapPage() {
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
                                             <div>
-                                                {/* 💡 광고 뱃지 노출 영역 */}
+                                                {/* 광고 뱃지 노출 영역 */}
                                                 {hospital.isSearchTop && <span className="ad-badge-top">추천 1위</span>}
                                                 {hospital.isHighlight && <span className="ad-badge-highlight">프리미엄</span>}
                                                 <strong>{hospital.name}</strong>

@@ -169,3 +169,52 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* 의사 고유 코드 배너 */
+.doctor-code-banner {
+    background: linear-gradient(135deg, #154e48 0%, #20bfa9 100%);
+    border-radius: 16px;
+    padding: 24px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 10px 20px rgba(32, 191, 169, 0.2);
+}
+
+.code-info span {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 600;
+}
+
+.code-info h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 8px 0;
+    letter-spacing: 2px;
+}
+
+.code-info p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 0;
+}
+
+.btn-copy-code {
+    background: white;
+    color: #154e48;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-copy-code:hover {
+    background: #f1f5f5;
+    transform: translateY(-2px);
+}
