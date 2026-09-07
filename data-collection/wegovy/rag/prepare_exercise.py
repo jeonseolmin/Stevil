@@ -176,9 +176,9 @@ def main(input_dir):
         db.close()
     print(json.dumps({'imported': len(rows), 'indexable': sum(json.loads(r[1])['indexable'] for r in rows)}))
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input-dir', type=Path, default=ROOT / 'review')
     args = parser.parse_args()
     main(args.input_dir)
+

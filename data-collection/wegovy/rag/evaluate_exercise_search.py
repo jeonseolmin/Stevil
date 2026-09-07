@@ -1,18 +1,23 @@
 """
 Exercise evidence retrieval evaluation.
 
-This script evaluates exercise evidence retrieval only.
-It does NOT validate clinical correctness or generate recommendations.
+Fixed benchmark:
+- 28 queries
+- strict section/recommendation-level Gold Labels
 
-Compared retrieval methods:
-- BM25
-- Gemini embedding cosine retrieval
-- Hybrid retrieval using Reciprocal Rank Fusion (RRF)
+Compared methods:
+1. BM25
+2. Raw Vector
+3. Vector + metadata reranking
+4. BM25 + Raw Vector RRF Hybrid
 
 Metrics:
 - Recall@3
 - Recall@5
 - MRR
+
+This evaluates retrieval only.
+It does NOT validate clinical correctness or recommendation safety.
 """
 
 import json
@@ -22,28 +27,32 @@ from collections import Counter
 from pathlib import Path
 
 from app import load_env
-from exercise_store import documents, index
+
+from exercise_store import (
+    documents,
+    index,
+)
+
+from exercise_evidence import (
+    rerank_evidence,
+)
 
 
 BASE = Path(__file__).parent
 
 
 # =========================================================
-# Evaluation cases
-#
-# expected_source_prefixes:
-# A result is considered relevant if its document id starts
-# with any of the expected prefixes.
+# Fixed evaluation set
 #
 # IMPORTANT:
-# Keep this benchmark fixed while comparing retrieval methods.
+# Do not change these cases while comparing retrieval methods.
 # =========================================================
 
 CASES = [
 
-    # -----------------------------------------------------
+    # =====================================================
     # WHO - Adults 18–64
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "adult-activity-guideline",
@@ -89,9 +98,10 @@ CASES = [
             "Sedentary adult activity guidance",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # WHO - Older adults
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "older-adult-activity",
@@ -115,9 +125,10 @@ CASES = [
             "Older adult balance and fall prevention",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # WHO - Pregnancy / postpartum
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "pregnancy-activity",
@@ -141,9 +152,10 @@ CASES = [
             "WHO postpartum activity recommendation",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # WHO - Chronic conditions
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "chronic-condition-activity",
@@ -167,9 +179,10 @@ CASES = [
             "WHO chronic condition subgroup retrieval",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # WHO - Disability
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "disability-activity",
@@ -182,9 +195,10 @@ CASES = [
             "WHO people living with disability",
     },
 
-    # -----------------------------------------------------
-    # EASO - strict recommendation-level Gold Labels
-    # -----------------------------------------------------
+
+    # =====================================================
+    # EASO - strict Gold Labels
+    # =====================================================
 
     {
         "id": "obesity-aerobic",
@@ -253,9 +267,10 @@ CASES = [
             "EASO clinical implications beyond weight loss",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # Compendium - Walking
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "walking-met",
@@ -291,9 +306,10 @@ CASES = [
             "Ambiguous beginner cardio activity retrieval",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # Compendium - Bicycling
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "cycling-met",
@@ -317,9 +333,10 @@ CASES = [
             "Cycling semantic paraphrase retrieval",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # Compendium - Water
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "water-activity",
@@ -343,9 +360,10 @@ CASES = [
             "Water exercise semantic retrieval",
     },
 
-    # -----------------------------------------------------
+
+    # =====================================================
     # Compendium - Conditioning
-    # -----------------------------------------------------
+    # =====================================================
 
     {
         "id": "conditioning",
@@ -369,9 +387,10 @@ CASES = [
             "Resistance exercise activity classification",
     },
 
-    # -----------------------------------------------------
-    # Cross-source / ambiguous
-    # -----------------------------------------------------
+
+    # =====================================================
+    # Cross-source
+    # =====================================================
 
     {
         "id": "beginner-walking",
@@ -413,17 +432,26 @@ def tokens(text):
     result = []
 
     for word in words:
-        if re.fullmatch(r"[가-힣]+", word):
-            result.append(word)
+        if re.fullmatch(
+            r"[가-힣]+",
+            word,
+        ):
+            result.append(
+                word
+            )
 
             result.extend(
                 word[i:i + 2]
-                for i in range(
+                for i
+                in range(
                     len(word) - 1
                 )
             )
+
         else:
-            result.append(word)
+            result.append(
+                word
+            )
 
     return result
 
@@ -433,7 +461,11 @@ def tokens(text):
 # =========================================================
 
 class ExerciseBM25:
-    def __init__(self, docs):
+
+    def __init__(
+        self,
+        docs,
+    ):
         self.docs = docs
 
         self.counts = [
@@ -450,13 +482,16 @@ class ExerciseBM25:
                     )
                 )
             )
-            for doc in docs
+            for doc
+            in docs
         ]
 
         self.df = Counter(
             token
-            for counts in self.counts
-            for token in counts
+            for counts
+            in self.counts
+            for token
+            in counts
         )
 
         self.avg_length = (
@@ -464,10 +499,13 @@ class ExerciseBM25:
                 sum(
                     counts.values()
                 )
-                for counts in self.counts
+                for counts
+                in self.counts
             )
             / max(
-                len(self.docs),
+                len(
+                    self.docs
+                ),
                 1,
             )
         )
@@ -478,7 +516,9 @@ class ExerciseBM25:
         limit=12,
     ):
         query = set(
-            tokens(question)
+            tokens(
+                question
+            )
         )
 
         ranked = []
@@ -487,6 +527,7 @@ class ExerciseBM25:
             self.docs,
             self.counts,
         ):
+
             length = sum(
                 counts.values()
             )
@@ -497,19 +538,28 @@ class ExerciseBM25:
                 query
                 & counts.keys()
             ):
+
                 frequency = (
-                    counts[token]
+                    counts[
+                        token
+                    ]
                 )
 
                 idf = math.log(
                     1
                     + (
-                        len(self.docs)
-                        - self.df[token]
+                        len(
+                            self.docs
+                        )
+                        - self.df[
+                            token
+                        ]
                         + 0.5
                     )
                     / (
-                        self.df[token]
+                        self.df[
+                            token
+                        ]
                         + 0.5
                     )
                 )
@@ -534,7 +584,9 @@ class ExerciseBM25:
                 ranked.append(
                     (
                         score,
-                        doc["id"],
+                        doc[
+                            "id"
+                        ],
                     )
                 )
 
@@ -548,35 +600,24 @@ class ExerciseBM25:
 
 
 # =========================================================
-# Reciprocal Rank Fusion
+# RRF
 # =========================================================
 
 def rrf_merge(
     bm25_ids,
     vector_ids,
-    limit=5,
+    limit=12,
     k=60,
 ):
-    """
-    Reciprocal Rank Fusion.
-
-    score(d) =
-        1 / (k + BM25_rank)
-        +
-        1 / (k + Vector_rank)
-
-    Raw BM25 score and cosine similarity are intentionally
-    not directly compared because they live on different
-    score scales.
-    """
-
     scores = {}
 
     for rank, doc_id in enumerate(
         bm25_ids,
         start=1,
     ):
-        scores[doc_id] = (
+        scores[
+            doc_id
+        ] = (
             scores.get(
                 doc_id,
                 0.0,
@@ -592,7 +633,9 @@ def rrf_merge(
         vector_ids,
         start=1,
     ):
-        scores[doc_id] = (
+        scores[
+            doc_id
+        ] = (
             scores.get(
                 doc_id,
                 0.0,
@@ -673,23 +716,61 @@ def reciprocal_rank(
 
 
 # =========================================================
-# Summary helper
+# Result helper
 # =========================================================
+
+def method_result(
+    ids,
+    expected,
+):
+    return {
+        "result_ids":
+            ids[:5],
+
+        "recall_at_3":
+            recall_at_k(
+                ids,
+                expected,
+                3,
+            ),
+
+        "recall_at_5":
+            recall_at_k(
+                ids,
+                expected,
+                5,
+            ),
+
+        "reciprocal_rank":
+            round(
+                reciprocal_rank(
+                    ids,
+                    expected,
+                ),
+                4,
+            ),
+    }
+
 
 def summarize(
     rows,
     method,
 ):
-    count = len(rows)
+    count = len(
+        rows
+    )
 
     return {
         "recall_at_3":
             round(
                 sum(
-                    row[method][
+                    row[
+                        method
+                    ][
                         "recall_at_3"
                     ]
-                    for row in rows
+                    for row
+                    in rows
                 )
                 / count,
                 4,
@@ -698,10 +779,13 @@ def summarize(
         "recall_at_5":
             round(
                 sum(
-                    row[method][
+                    row[
+                        method
+                    ][
                         "recall_at_5"
                     ]
-                    for row in rows
+                    for row
+                    in rows
                 )
                 / count,
                 4,
@@ -710,10 +794,13 @@ def summarize(
         "mrr":
             round(
                 sum(
-                    row[method][
+                    row[
+                        method
+                    ][
                         "reciprocal_rank"
                     ]
-                    for row in rows
+                    for row
+                    in rows
                 )
                 / count,
                 4,
@@ -726,15 +813,22 @@ def summarize(
 # =========================================================
 
 def evaluate():
+
     load_env()
 
     docs = documents()
 
     if not docs:
         raise SystemExit(
-            "Exercise documents not found. "
-            "Run exercise collection/import first."
+            "Exercise documents not found."
         )
+
+    docs_by_id = {
+        doc["id"]:
+            doc
+        for doc
+        in docs
+    }
 
     bm25 = ExerciseBM25(
         docs
@@ -751,8 +845,11 @@ def evaluate():
     rows = []
 
     for case in CASES:
+
         question = (
-            case["question"]
+            case[
+                "question"
+            ]
         )
 
         expected = (
@@ -761,9 +858,9 @@ def evaluate():
             ]
         )
 
-        # ---------------------------------------------
+        # -------------------------------------------------
         # BM25
-        # ---------------------------------------------
+        # -------------------------------------------------
 
         bm25_results = (
             bm25.search(
@@ -778,42 +875,64 @@ def evaluate():
             in bm25_results
         ]
 
-        # ---------------------------------------------
-        # Vector
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # Raw Vector
+        # -------------------------------------------------
 
-        vector_results = (
+        raw_vector_results = (
             vector.rank(
                 question,
                 limit=12,
             )
         )
 
-        vector_ids = [
+        raw_vector_ids = [
             doc_id
             for doc_id, _
-            in vector_results
+            in raw_vector_results
         ]
 
-        # ---------------------------------------------
-        # Hybrid - RRF
-        # ---------------------------------------------
+        # -------------------------------------------------
+        # Vector + metadata reranking
+        #
+        # Same raw semantic retrieval candidates.
+        # Only ranking is changed.
+        # -------------------------------------------------
+
+        reranked_results = (
+            rerank_evidence(
+                raw_vector_results,
+                docs_by_id,
+            )
+        )
+
+        reranked_ids = [
+            doc_id
+            for doc_id, _
+            in reranked_results
+        ]
+
+        # -------------------------------------------------
+        # Hybrid
+        #
+        # Important:
+        # Uses RAW vector ranking so this remains comparable
+        # to the previous BM25 + Vector RRF experiment.
+        # -------------------------------------------------
 
         hybrid_ids = (
             rrf_merge(
                 bm25_ids,
-                vector_ids,
-                limit=5,
+                raw_vector_ids,
+                limit=12,
             )
         )
 
-        # ---------------------------------------------
-        # Result row
-        # ---------------------------------------------
-
         row = {
             "id":
-                case["id"],
+                case[
+                    "id"
+                ],
 
             "question":
                 question,
@@ -822,102 +941,73 @@ def evaluate():
                 expected,
 
             "note":
-                case["note"],
+                case[
+                    "note"
+                ],
 
-            "bm25": {
-                "result_ids":
-                    bm25_ids[:5],
+            "bm25":
+                method_result(
+                    bm25_ids,
+                    expected,
+                ),
 
-                "recall_at_3":
-                    recall_at_k(
-                        bm25_ids,
-                        expected,
-                        3,
-                    ),
+            "vector":
+                method_result(
+                    raw_vector_ids,
+                    expected,
+                ),
 
-                "recall_at_5":
-                    recall_at_k(
-                        bm25_ids,
-                        expected,
-                        5,
-                    ),
+            "reranked_vector":
+                method_result(
+                    reranked_ids,
+                    expected,
+                ),
 
-                "reciprocal_rank":
-                    round(
-                        reciprocal_rank(
-                            bm25_ids,
-                            expected,
-                        ),
-                        4,
-                    ),
-            },
-
-            "vector": {
-                "result_ids":
-                    vector_ids[:5],
-
-                "recall_at_3":
-                    recall_at_k(
-                        vector_ids,
-                        expected,
-                        3,
-                    ),
-
-                "recall_at_5":
-                    recall_at_k(
-                        vector_ids,
-                        expected,
-                        5,
-                    ),
-
-                "reciprocal_rank":
-                    round(
-                        reciprocal_rank(
-                            vector_ids,
-                            expected,
-                        ),
-                        4,
-                    ),
-            },
-
-            "hybrid": {
-                "result_ids":
+            "hybrid":
+                method_result(
                     hybrid_ids,
-
-                "recall_at_3":
-                    recall_at_k(
-                        hybrid_ids,
-                        expected,
-                        3,
-                    ),
-
-                "recall_at_5":
-                    recall_at_k(
-                        hybrid_ids,
-                        expected,
-                        5,
-                    ),
-
-                "reciprocal_rank":
-                    round(
-                        reciprocal_rank(
-                            hybrid_ids,
-                            expected,
-                        ),
-                        4,
-                    ),
-            },
+                    expected,
+                ),
         }
 
-        rows.append(row)
+        # -------------------------------------------------
+        # Debugging info:
+        # Show cases whose ranking changed.
+        # -------------------------------------------------
 
-    # ---------------------------------------------
+        if (
+            raw_vector_ids[:5]
+            != reranked_ids[:5]
+        ):
+            row[
+                "reranking_changed"
+            ] = True
+
+            row[
+                "raw_vector_top5"
+            ] = (
+                raw_vector_ids[:5]
+            )
+
+            row[
+                "reranked_top5"
+            ] = (
+                reranked_ids[:5]
+            )
+
+        rows.append(
+            row
+        )
+
+    # =====================================================
     # Summary
-    # ---------------------------------------------
+    # =====================================================
 
     summary = {
         "cases":
-            len(rows),
+            len(
+                rows
+            ),
 
         "bm25":
             summarize(
@@ -931,6 +1021,12 @@ def evaluate():
                 "vector",
             ),
 
+        "reranked_vector":
+            summarize(
+                rows,
+                "reranked_vector",
+            ),
+
         "hybrid":
             summarize(
                 rows,
@@ -938,19 +1034,67 @@ def evaluate():
             ),
     }
 
+    changed_cases = [
+        row[
+            "id"
+        ]
+        for row
+        in rows
+        if row.get(
+            "reranking_changed"
+        )
+    ]
+
     report = {
         "note": (
-            "Exercise evidence retrieval "
-            "evaluation only. "
-            "This does not validate clinical "
-            "correctness or recommendation safety."
+            "Exercise evidence retrieval evaluation only. "
+            "This does not validate clinical correctness "
+            "or recommendation safety."
         ),
 
-        "rrf": {
-            "k": 60,
+        "benchmark": {
+            "cases":
+                len(
+                    rows
+                ),
+
+            "gold":
+                (
+                    "Strict WHO section / EASO recommendation "
+                    "/ Compendium source labels"
+                ),
+        },
+
+        "reranker": {
             "description":
-                "BM25 + vector ranking fused "
-                "with Reciprocal Rank Fusion",
+                (
+                    "Near-tie metadata reranking. "
+                    "Graded recommendations are preferred only "
+                    "within RECOMMENDATION_MARGIN of the top "
+                    "semantic result."
+                ),
+
+            "changed_cases":
+                changed_cases,
+
+            "changed_count":
+                len(
+                    changed_cases
+                ),
+        },
+
+        "hybrid": {
+            "type":
+                "Reciprocal Rank Fusion",
+
+            "k":
+                60,
+
+            "inputs":
+                [
+                    "BM25",
+                    "Raw Vector",
+                ],
         },
 
         "summary":
@@ -960,9 +1104,9 @@ def evaluate():
             rows,
     }
 
-    # ---------------------------------------------
-    # Save report
-    # ---------------------------------------------
+    # =====================================================
+    # Save
+    # =====================================================
 
     target = (
         BASE
@@ -985,53 +1129,103 @@ def evaluate():
         encoding="utf-8",
     )
 
-    # ---------------------------------------------
-    # Console output
-    # ---------------------------------------------
+    # =====================================================
+    # Console
+    # =====================================================
 
     print()
+
     print(
         "Exercise retrieval evaluation"
     )
+
     print(
         "-----------------------------"
     )
 
     print(
-        f"Cases: {len(rows)}"
+        "Cases:",
+        len(
+            rows
+        ),
     )
 
     print()
 
-    for method, title in [
-        ("bm25", "BM25"),
-        ("vector", "Vector"),
-        ("hybrid", "Hybrid (RRF)"),
-    ]:
-        print(title)
+    methods = [
+        (
+            "bm25",
+            "BM25",
+        ),
+        (
+            "vector",
+            "Raw Vector",
+        ),
+        (
+            "reranked_vector",
+            "Vector + Reranker",
+        ),
+        (
+            "hybrid",
+            "Hybrid (RRF)",
+        ),
+    ]
+
+    for method, title in methods:
+
+        values = (
+            summary[
+                method
+            ]
+        )
+
+        print(
+            title
+        )
 
         print(
             "Recall@3:",
-            summary[method][
+            values[
                 "recall_at_3"
             ],
         )
 
         print(
             "Recall@5:",
-            summary[method][
+            values[
                 "recall_at_5"
             ],
         )
 
         print(
             "MRR:",
-            summary[method][
+            values[
                 "mrr"
             ],
         )
 
         print()
+
+    print(
+        "Reranking changed:",
+        len(
+            changed_cases
+        ),
+        "cases",
+    )
+
+    if changed_cases:
+        print(
+            "Changed case IDs:"
+        )
+
+        for case_id in changed_cases:
+            print(
+                "-",
+                case_id,
+            )
+
+    print()
 
     print(
         "Report:",
