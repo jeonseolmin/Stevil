@@ -31,6 +31,7 @@ import DoctorLayout from "../components/layout/doctor/DoctorLayout.jsx";
 import DoctorDashboardPage from "../pages/doctor/dashboard/DoctorDashboardPage.jsx";
 import DoctorAdApplyPage from "../pages/doctor/doctorPage/DoctorAdApplyPage.jsx";
 import DoctorReportPage from "../pages/doctorReport/DoctorReportPage.jsx";
+import DoctorPatientListPage from "../pages/doctor/DoctorPatientListPage.jsx";
 
 export default function AppRouter() {
     return (
@@ -72,6 +73,7 @@ export default function AppRouter() {
                 <Route path="dashboard" element={<DoctorDashboardPage />} />
                 <Route path="ads/apply" element={<DoctorAdApplyPage />} />
                 <Route path="patients" element={<DoctorReportPage />} />
+                <Route path="patient-list" element={<DoctorPatientListPage />} />
             </Route>
 
             {/* 최초 로그인 후 추가 정보 입력 */}

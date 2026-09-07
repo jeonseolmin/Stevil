@@ -49,12 +49,19 @@ public class PatientReportService {
                 .map(r -> {
                     User p = r.getPatient();
                     int age = p.getBirthDate() != null ? Period.between(p.getBirthDate(), LocalDate.now()).getYears() : 0;
+                    
+                    String genderCode = "UNKNOWN";
+                    if (p.getSex() != null) {
+                        String s = p.getSex().name().toUpperCase();
+                        if (s.equals("MALE") || s.equals("M")) genderCode = "M";
+                        else if (s.equals("FEMALE") || s.equals("F")) genderCode = "F";
+                    }
 
                     return Map.<String, Object>of(
                             "id", r.getId(),
                             "patientName", p.getNickname(),
                             "patientAge", age,
-                            "patientGender", p.getSex() != null ? p.getSex().name() : "UNKNOWN",
+                            "patientGender", genderCode,
                             "sentAt", r.getCreatedAt().toLocalDate().toString(),
                             "aiSummary", r.getAiSummary(),
                             "status", r.getStatus()

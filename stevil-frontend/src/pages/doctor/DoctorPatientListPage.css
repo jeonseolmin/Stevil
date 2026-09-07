@@ -1,0 +1,123 @@
+.patient-list-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: #8b9b98;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 12px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    color: #183a37;
+    margin: 0 0 8px 0;
+}
+
+.page-header p {
+    color: #657b78;
+    margin: 0;
+}
+
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.patient-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8e8;
+    padding: 24px;
+    transition: 0.2s;
+}
+
+.patient-card:hover {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-color: #20bfa9;
+}
+
+.patient-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.patient-avatar {
+    width: 56px;
+    height: 56px;
+    background: #f1f5f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.patient-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    color: #183a37;
+}
+
+.patient-info span {
+    font-size: 13px;
+    color: #657b78;
+    background: #f8fbfb;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.patient-email {
+    margin: 8px 0 0 0;
+    font-size: 13px;
+    color: #8b9b98;
+}
+
+.patient-actions button {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #20bfa9;
+    background: white;
+    color: #20bfa9;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.patient-actions button:hover {
+    background: #20bfa9;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 0;
+    background: #f8fbfb;
+    border-radius: 16px;
+    border: 1px dashed #dce9e6;
+}
+
+.empty-state span {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.empty-state p {
+    color: #657b78;
+    font-size: 15px;
+}

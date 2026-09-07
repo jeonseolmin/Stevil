@@ -1,37 +1,42 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../api/axiosInstance.js";
+import axiosInstance from "../../../api/axiosInstance.js"; // 경로 확인
 import "./DoctorDashboardPage.css";
 
 export default function DoctorDashboardPage() {
     const navigate = useNavigate();
     
-    const [doctorInfo, setDoctorInfo] = useState({ doctorCode: "" });
-
-    const [stats] = useState({
-        totalPatients: 12,
-        pendingReports: 3,
-        activeAds: 1,
+    const [doctorInfo, setDoctorInfo] = useState({ doctorCode: "로딩 중..." });
+    const [stats, setStats] = useState({
+        totalPatients: 0,
+        pendingReports: 0,
+        activeAds: 0,
     });
 
+    // 대시보드 통계 API 연동
     useEffect(() => {
-        // 실제 API 연동 시 주석 해제 (현재 로그인한 의사 정보 가져오기)
-        /*
-        const fetchDoctorInfo = async () => {
+        const fetchDashboardData = async () => {
             try {
-                const res = await axiosInstance.get("/users/profile/me");
-                setDoctorInfo(res.data);
+                const res = await axiosInstance.get("/doctor/dashboard/stats");
+                
+                // 백엔드에서 준 데이터를 화면 상태에 쏙쏙 집어넣기
+                setDoctorInfo({ doctorCode: res.data.doctorCode });
+                setStats({
+                    totalPatients: res.data.totalPatients,
+                    pendingReports: res.data.pendingReports,
+                    activeAds: res.data.activeAds
+                });
             } catch (err) {
-                console.error("의사 정보 로드 실패", err);
+                console.error("대시보드 통계 로드 실패", err);
+                setDoctorInfo({ doctorCode: "코드 로드 실패" });
             }
-        }
-        fetchDoctorInfo();
-        */
-        setDoctorInfo({ doctorCode: "DOC-A1B2" });
+        };
+        
+        fetchDashboardData();
     }, []);
 
     const copyDoctorCode = () => {
-        if (!doctorInfo.doctorCode) return;
+        if (!doctorInfo.doctorCode || doctorInfo.doctorCode === "로딩 중...") return;
         navigator.clipboard.writeText(doctorInfo.doctorCode);
         alert("의사 코드가 복사되었습니다. 환자에게 전달해주세요!");
     };
@@ -41,7 +46,7 @@ export default function DoctorDashboardPage() {
             label: "내 환자 수",
             value: stats.totalPatients,
             description: "코드를 등록하고 연결된 환자",
-            path: "/doctor/patients",
+            path: "/doctor/patient-list",
         },
         {
             label: "미확인 리포트",
@@ -70,7 +75,7 @@ export default function DoctorDashboardPage() {
             <div className="doctor-code-banner">
                 <div className="code-info">
                     <span>나의 고유 의사 코드</span>
-                    <h2>{doctorInfo.doctorCode || "코드 미발급"}</h2>
+                    <h2>{doctorInfo.doctorCode}</h2>
                     <p>오프라인 진료 시 환자에게 위 코드를 알려주시면, Stevil 앱에서 원격 주치의로 연결됩니다.</p>
                 </div>
                 <button className="btn-copy-code" onClick={copyDoctorCode}>
