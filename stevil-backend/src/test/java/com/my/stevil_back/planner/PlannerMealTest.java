@@ -8,6 +8,26 @@ import static org.junit.jupiter.api.Assertions.*;
 import static com.my.stevil_back.planner.PlannerTypes.*;
 
 class PlannerMealTest {
+    @Test void publishedSnacksHaveValidEvidenceAndPersistAsSnackEvents() throws Exception {
+        var mapper=new ObjectMapper();
+        try(var stream=getClass().getResourceAsStream("/planner/snacks.json");
+            var factory=jakarta.validation.Validation.buildDefaultValidatorFactory()) {
+            var items=mapper.readTree(stream);
+            assertTrue(items.size()>=3 && items.size()<=6);
+            var categories=new java.util.HashSet<String>();
+            for(var item:items) {
+                categories.add(item.get("category").asText());
+                var evidence=mapper.treeToValue(item.get("foodEvidence"),FoodEvidence.class);
+                assertTrue(factory.getValidator().validate(evidence).isEmpty());
+                assertDoesNotThrow(()->PlannerValidation.food(evidence));
+                var event=new Event("snack","SNACK",item.get("title").asText(),"",
+                    java.time.LocalDateTime.of(2026,9,7,15,0),java.time.LocalDateTime.of(2026,9,7,15,10),"",false,evidence);
+                assertTrue(factory.getValidator().validate(event).isEmpty());
+                assertEquals(event,mapper.readValue(mapper.writeValueAsString(event),Event.class));
+            }
+            assertEquals(java.util.Set.of("shake","chicken","egg"),categories);
+        }
+    }
     private static final String SOURCE="https://www.data.go.kr/data/15127578/openapi.do";
     private Map<String,String> nutrients(String energy,String protein) {
         return Map.of("INFO_ENG",energy,"INFO_PRO",protein,"INFO_CAR","10","INFO_FAT","1","INFO_NA","");

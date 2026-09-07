@@ -129,3 +129,14 @@
 .planner-meal-components summary { cursor:pointer; display:flex; justify-content:space-between; gap:12px; color:#3c6149; }
 .planner-meal-components summary span { overflow-wrap:anywhere; }.planner-meal-components summary b { white-space:nowrap; }
 .planner-meal-components p { color:#73816b; font-size:11px; overflow-wrap:anywhere; }.planner-meal-components a { color:#35775a; }
+.planner-snack-offer { margin:16px 0 24px; padding:18px; border:1px solid #e3e7d7; border-radius:16px; background:#fafbf5; }
+.planner-snack-offer header { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:13px; color:#486146; }
+.planner-snack-offer header span,.planner-snack-offer p { font-size:11px; color:#7b856f; line-height:1.7; }
+.planner-snack-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:12px 0; }
+.planner-snack-options article { padding:14px; border-radius:12px; background:white; display:flex; flex-direction:column; gap:8px; }
+.planner-snack-options small { color:#7e906b; font-size:11px; }.planner-snack-options strong { color:#3e5941; font-size:13px; overflow-wrap:anywhere; }
+.planner-snack-options span { font-size:11px; color:#64745b; }.planner-snack-options button { margin-top:auto; border:1px solid #dce6d3; border-radius:8px; padding:8px; color:#4a6c48; background:#f0f5e9; cursor:pointer; }
+.planner-event--snack { background:#faf4e6; border-color:#e9ddc1; }
+@media(max-width:650px) { .planner-snack-options { grid-template-columns:1fr; } }
+
+.planner-snack-suggestion{display:grid;gap:6px;width:100%;text-align:left;background:#fffaf0;border:1px dashed #bd9650;border-radius:12px;padding:12px;color:#765b2e;cursor:pointer;margin-bottom:8px}.planner-snack-suggestion small,.planner-snack-suggestion span{font-size:11px;line-height:1.5}.planner-snack-suggestion strong{font-size:13px}

@@ -55,13 +55,13 @@ export function exampleWeek(p) {
 }
 
 export function mealCalories(events) {
-    const meals = events.filter(e => e.kind === "MEAL");
+    const meals = events.filter(e => e.kind === "MEAL" || e.kind === "SNACK");
     const values = meals.map(e => e.foodEvidence?.nutrition?.INFO_ENG).filter(value => typeof value === "string" && /^\d+(?:\.\d+)?$/.test(value.trim())).map(Number).filter(Number.isFinite);
     return { total: values.length ? Math.round(values.reduce((sum, n) => sum + n, 0)) : null, partial: values.length < meals.length, count: meals.length };
 }
 
 export function dayNutrition(events) {
-    const meals = events.filter(e => e.kind === "MEAL");
+    const meals = events.filter(e => e.kind === "MEAL" || e.kind === "SNACK");
     const totals = { calories: 0, carbs: 0, protein: 0, fat: 0 };
     let available = 0;
     for (const meal of meals) {

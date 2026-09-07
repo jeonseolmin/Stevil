@@ -12,6 +12,11 @@ function normalize(plan) {
 }
 export const loadWeek = (week) => axiosInstance.get("/planner", { params: { week } }).then(r => r.status === 204 ? null : normalize(r.data));
 export const generateWeek = (preferences) => axiosInstance.post("/planner/draft", preferences, { timeout: 100000 }).then(r => ({ ...r.data, events: normalizeEvents(r.data.events) }));
-export const saveWeek = (plan) => axiosInstance.put("/planner", plan).then(r => normalize(r.data));
+export const saveWeek = (plan) => axiosInstance.put("/planner", plan).then(r => {
+    const saved = normalize(r.data);
+    window.dispatchEvent(new CustomEvent("planner:saved", { detail: { week: saved.preferences.weekStart } }));
+    return saved;
+});
 
 export const loadPlannerProfile = () => axiosInstance.get("/planner/profile").then(r => r.data);
+export const loadSnackCatalog = () => axiosInstance.get("/planner/snacks").then(r => r.data);

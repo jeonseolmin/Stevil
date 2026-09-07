@@ -1,3 +1,4 @@
+import SavedPlanPanel from "../planner/SavedPlanPanel";
 import { useState, useEffect } from 'react';
 import './DietManagement.css';
 import axiosInstance from '../../api/axiosInstance'; 
@@ -258,6 +259,7 @@ const DietManagement = () => {
             <button className="diet-btn diet-btn--primary" onClick={() => setIsManualModalOpen(true)}>직접 입력</button>
           </div>
         </header>
+        <SavedPlanPanel kind="food" />
 
         <div className="diet-grid">
           

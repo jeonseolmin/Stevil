@@ -53,7 +53,8 @@ public final class PlannerValidation {
             if(!evidence.components().isEmpty()) fail("레시피와 음식 조합의 출처를 구분해 주세요.");
             return;
         }
-        if(evidence.components().size()!=3) fail("음식 조합에는 밥·반찬·채소가 필요합니다.");
+        boolean snack=evidence.components().size()==1 && "snack".equals(evidence.components().getFirst().role());
+        if(!snack && evidence.components().size()!=3) fail("음식 조합에는 밥·반찬·채소가 필요합니다.");
         var roles=new HashSet<String>();
         var ids=new HashSet<String>();
         double weight=0;
@@ -77,7 +78,7 @@ public final class PlannerValidation {
                 totals.merge(key,expected,Double::sum);
             }
         }
-        if(!roles.equals(Set.of("staple","protein","vegetable"))) fail("음식 구성 분류를 확인해 주세요.");
+        if(!roles.equals(snack ? Set.of("snack") : Set.of("staple","protein","vegetable"))) fail("음식 구성 분류를 확인해 주세요.");
         if(Math.abs(nutrient(evidence.servingWeight())-weight)>.01) fail("식사량 합계가 다릅니다.");
         for(String key:fields) {
             String total=evidence.nutrition().get(key);

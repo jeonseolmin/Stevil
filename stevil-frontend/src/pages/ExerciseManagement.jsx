@@ -1,3 +1,4 @@
+import SavedPlanPanel from "../components/planner/SavedPlanPanel";
 import { useState, useEffect } from 'react';
 import './ExerciseManagement.css';
 import axiosInstance from '../api/axiosInstance'; 
@@ -255,6 +256,7 @@ const ExerciseManagement = () => {
             </div>
           </div>
         </header>
+        <SavedPlanPanel kind="exercise" />
 
         <section className="daily-overview-section">
           <div className="calendar-strip">

@@ -13,6 +13,9 @@ import static com.my.stevil_back.planner.PlannerTypes.*;
 public class PlannerController {
     private final PlannerService service;
     public PlannerController(PlannerService service) {this.service=service;}
+    @GetMapping(value="/snacks",produces="application/json") public org.springframework.core.io.Resource snacks() {
+        return new org.springframework.core.io.ClassPathResource("planner/snacks.json");
+    }
     @PostMapping("/draft") public Draft draft(@AuthenticationPrincipal CustomUserDetails user,@Valid @RequestBody Preferences preferences) {
         return service.generate(user.getUserId(),preferences);
     }

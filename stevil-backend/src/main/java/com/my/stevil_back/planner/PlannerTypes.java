@@ -35,7 +35,7 @@ public final class PlannerTypes {
         }
     }
     public record FoodComponent(@NotBlank @Size(max=80) String foodId, @NotBlank @Size(max=300) String name,
-            @NotNull @Pattern(regexp="staple|protein|vegetable") String role,
+            @NotNull @Pattern(regexp="staple|protein|vegetable|snack") String role,
             @NotNull @Pattern(regexp="https://www\\.data\\.go\\.kr/data/15127578/openapi\\.do") String sourceUrl,
             @NotNull @Size(max=80) String retrievedAt,
             @NotNull @Pattern(regexp="[0-9]+(?:\\.[0-9]+)?") @Size(max=20) String basisWeight,
@@ -58,7 +58,7 @@ public final class PlannerTypes {
             this(recipeId,sourceUrl,retrievedAt,ingredients,servingWeight,nutrition,fingerprint,List.of());
         }
     }
-    public record Event(@NotBlank @Size(max=80) String id, @NotNull @Pattern(regexp="MEAL|EXERCISE") String kind,
+    public record Event(@NotBlank @Size(max=80) String id, @NotNull @Pattern(regexp="MEAL|EXERCISE|SNACK") String kind,
             @NotBlank @Size(max=60) String title, @NotNull @Size(max=500) String details,
             @NotNull LocalDateTime start, @NotNull LocalDateTime end,
             @NotNull @Pattern(regexp="|가볍게|보통") String intensity, boolean completed, @Valid FoodEvidence foodEvidence) {
