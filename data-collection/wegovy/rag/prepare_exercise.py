@@ -99,9 +99,29 @@ def prepare(source, path):
         reader = PdfReader(io.BytesIO(raw))
         if len(reader.pages) != 1:
             raise ValueError('EASO visual summary page count changed')
-        text = reader.pages[0].extract_text(extraction_mode='layout')
-        if 'HEALTHCARE PROFESSIONALS' not in text:
-            raise ValueError('Wrong EASO PDF')
+        text = reader.pages[0].extract_text(
+            extraction_mode='layout'
+        )
+
+        normalized = re.sub(
+            r'[^a-z]',
+            '',
+            text.lower()
+        )
+
+        required_markers = [
+            'exercise',
+            'overweight',
+            'obesity',
+        ]
+
+        if not all(
+                marker in normalized
+                for marker in required_markers
+        ):
+            raise ValueError(
+                'Wrong EASO PDF'
+            )
         row = record(source, raw, text, 'page1', source['title'], retrieved, page=1)
         meta = json.loads(row[1])
         # Multicolumn poster: retain for visual verification, not flattened retrieval.
