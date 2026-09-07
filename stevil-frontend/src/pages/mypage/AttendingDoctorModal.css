@@ -1,0 +1,108 @@
+.doc-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(2px);
+}
+
+.doc-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.doc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.doc-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #183a37;
+}
+
+.doc-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #8b9b98;
+    cursor: pointer;
+}
+
+.doc-modal-desc {
+    font-size: 14px;
+    color: #657b78;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.doc-modal-form input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e2e8e8;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    transition: 0.2s;
+}
+
+.doc-modal-form input:focus {
+    outline: none;
+    border-color: #20bfa9;
+}
+
+.doc-modal-form input.input-error {
+    border-color: #ef4444;
+}
+
+.doc-error-text {
+    color: #ef4444;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.doc-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.doc-modal-actions button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+}
+
+.doc-btn-cancel {
+    background: #f1f5f5;
+    color: #657b78;
+}
+
+.doc-btn-submit {
+    background: #20bfa9;
+    color: white;
+}
+
+.doc-btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}

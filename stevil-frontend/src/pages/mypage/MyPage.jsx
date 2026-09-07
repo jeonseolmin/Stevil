@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import ChatModal from '../chat/ChatModal'; 
+import AttendingDoctorModal from './AttendingDoctorModal';
 import './MyPage.css'; 
 
 export default function MyPage() {
@@ -21,12 +22,12 @@ export default function MyPage() {
     const [selectedRoomId, setSelectedRoomId] = useState(null);
     const [selectedTargetNickname, setSelectedTargetNickname] = useState('');
 
-    // 1. 처음 렌더링될 때 프로필 정보를 먼저 불러옵니다.
+    const [showDoctorModal, setShowDoctorModal] = useState(false);
+
     useEffect(() => {
         fetchMyProfile();
     }, []);
 
-    // 2. 현재 페이지가 바뀔 때마다 게시글 목록 새로 불러오기
     useEffect(() => {
         fetchMyPosts(currentPage);
     }, [currentPage]);
@@ -45,7 +46,6 @@ export default function MyPage() {
             setIsLoading(false);
         }
     };
-
 
     const fetchMyChatRooms = async (nickname) => {
         if (!nickname) return;
@@ -93,7 +93,6 @@ export default function MyPage() {
                 <h1 className="mypage-title">마이페이지</h1>
 
                 <div className="mypage-card">
-                    {/* 상단 프로필 영역 */}
                     <div className="mypage-header">
                         <div className="mypage-avatar">
                             {profile.profileImage ? (
@@ -106,6 +105,33 @@ export default function MyPage() {
                             <h2>{profile.nickname}</h2>
                             <p className="mypage-email">{profile.email}</p>
                             <p className="mypage-date">가입일: {profile.joinDate}</p>
+                        </div>
+                    </div>
+
+                    <hr className="mypage-divider" />
+
+                    {/* 1. 나의 주치의 관리 섹션 추가 */}
+                    <div className="mypage-section">
+                        <div className="section-header">
+                            <h3>나의 주치의</h3>
+                        </div>
+                        <div className="attending-doctor-box">
+                            {profile.attendingDoctorNickname ? (
+                                <div className="registered-doctor">
+                                    <span className="doctor-icon"></span>
+                                    <div>
+                                        <strong>{profile.attendingDoctorNickname} 선생님</strong>
+                                        <p>주치의 등록이 완료되었습니다. AI 리포트를 바로 전송할 수 있습니다.</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="unregistered-doctor">
+                                    <p>아직 등록된 주치의가 없습니다.<br/>병원에서 안내받은 코드를 입력해 연결해보세요.</p>
+                                    <button className="btn-register-doctor" onClick={() => setShowDoctorModal(true)}>
+                                        주치의 코드 등록하기
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -230,37 +256,6 @@ export default function MyPage() {
                                 </ul>
 
                                 {/* 페이지네이션 */}
-                                {totalPages > 1 && (
-                                    <div className="mypage-pagination">
-                                        <button
-                                            className="page-nav-btn"
-                                            disabled={currentPage === 0}
-                                            onClick={() => setCurrentPage(prev => prev - 1)}
-                                        >
-                                            이전
-                                        </button>
-
-                                        <div className="page-numbers">
-                                            {Array.from({ length: totalPages }, (_, i) => (
-                                                <button
-                                                    key={i}
-                                                    className={`page-num-btn ${currentPage === i ? 'active' : ''}`}
-                                                    onClick={() => setCurrentPage(i)}
-                                                >
-                                                    {i + 1}
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        <button
-                                            className="page-nav-btn"
-                                            disabled={currentPage >= totalPages - 1}
-                                            onClick={() => setCurrentPage(prev => prev + 1)}
-                                        >
-                                            다음
-                                        </button>
-                                    </div>
-                                )}
                             </>
                         ) : (
                             <p className="empty-text">아직 작성한 글이 없습니다.</p>
@@ -270,6 +265,7 @@ export default function MyPage() {
                 </div>
             </div>
 
+            {/* 채팅 모달 */}
             {selectedRoomId && (
                 <ChatModal 
                     roomId={selectedRoomId}
@@ -278,6 +274,17 @@ export default function MyPage() {
                     onClose={() => {
                         setSelectedRoomId(null);
                         fetchMyChatRooms(profile.nickname);
+                    }}
+                />
+            )}
+
+            {/* 2. 주치의 등록 모달 컴포넌트 마운트 */}
+            {showDoctorModal && (
+                <AttendingDoctorModal 
+                    onClose={() => setShowDoctorModal(false)}
+                    onSuccess={() => {
+                        setShowDoctorModal(false);
+                        fetchMyProfile(); // 등록 성공 시 프로필 새로고침
                     }}
                 />
             )}

@@ -83,7 +83,7 @@ const InjectionDiary = () => {
     }
   };
 
-  // AI 의사 리포트 전송 로직
+  // AI 분석 후 주치의에게 찐으로 전송하는 로직
   const handleSendToDoctor = async () => {
     if (recentLogs.length === 0) {
       alert("전송할 기록이 없습니다.");
@@ -98,19 +98,27 @@ const InjectionDiary = () => {
         `날짜: ${log.recordDate}, 용량: ${log.dosage}mg, 증상: ${log.symptoms?.join(',') || '없음'}, 메모: ${log.lifestyleMemo || '없음'}`
       ).join('\n');
 
-      // 2. JSON 형태로 백엔드 전송
-      const response = await axiosInstance.post('/ai/logs/analyze', {
+      // 2. JSON 형태로 백엔드 전송해 AI 요약 받아오기
+      const aiResponse = await axiosInstance.post('/ai/logs/analyze', {
           logText: reportText
       }, {
-          timeout: 60000 // 이 요청에만 특별히 60초 대기 시간 부여
+          timeout: 60000 
+      });
+
+      const generatedSummary = aiResponse.data;
+
+      // 3. 요약된 내용을 주치의 수신함 API로 전송!
+      await axiosInstance.post('/patient-reports/send', {
+          aiSummary: generatedSummary
       });
 
       alert("의사에게 리포트가 성공적으로 전달되었습니다!");
-      setAiSummaryResult(response.data); // AI 요약 결과 저장
+      setAiSummaryResult(generatedSummary); // 화면에 보여주기 위해 상태 저장
       
     } catch (error) {
       console.error("의사 전달 실패:", error);
-      alert("전송 중 오류가 발생했습니다.");
+      // 만약 주치의 등록이 안 되어있다면 백엔드가 보낸 에러 메시지를 띄워줍니다.
+      alert(error.response?.data?.message || "전송 중 오류가 발생했습니다.");
     } finally {
       setIsSending(false);
     }
@@ -138,7 +146,7 @@ const InjectionDiary = () => {
       <header className="dashboard-header">
         <div className="header-text">
           <h1 className="main-title">주사 및 컨디션 일기</h1>
-          <p className="sub-title">투여 기록과 증상을 메모하여 진료 시 담당 의사에게 보여주세요.</p>
+          <p className="sub-title">투여 기록과 증상을 메모하여 진료 시 담당 의 에게 보여주세요.</p>
         </div>
         
         <div className="mode-toggle">

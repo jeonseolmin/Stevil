@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.my.stevil_back.post.dto.PostResponse;
-import org.springframework.data.domain.PageRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -41,6 +38,11 @@ public class UserProfileService {
         int postCount = (int) postRepository.countByAuthorEmail(email);
         int commentCount = (int) commentRepository.countByAuthorEmail(email);
 
+        String doctorName = null;
+        if (user.getAttendingDoctor() != null) {
+            doctorName = user.getAttendingDoctor().getNickname();
+        }
+
         return new UserProfileResponse(
                 user.getId(),
                 user.getNickname(),
@@ -49,7 +51,8 @@ public class UserProfileService {
                 medicationDays,
                 user.getBio(),
                 postCount,
-                commentCount
+                commentCount,
+                doctorName
         );
     }
 

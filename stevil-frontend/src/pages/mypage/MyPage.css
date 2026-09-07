@@ -399,3 +399,68 @@
     color: #ffffff;
     box-shadow: var(--shadow-small);
 }
+
+/* --- 주치의 섹션 --- */
+.attending-doctor-box {
+    background: #f8fbfb;
+    border: 1px solid #dce9e6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 12px;
+}
+
+.unregistered-doctor {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.unregistered-doctor p {
+    margin: 0;
+    color: #657b78;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.btn-register-doctor {
+    background: #20bfa9;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-register-doctor:hover {
+    background: #199e8a;
+}
+
+.registered-doctor {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.doctor-icon {
+    font-size: 32px;
+    background: white;
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.registered-doctor strong {
+    font-size: 16px;
+    color: #183a37;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.registered-doctor p {
+    margin: 0;
+    font-size: 13px;
+    color: #657b78;
+}
