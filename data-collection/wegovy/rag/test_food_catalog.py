@@ -36,6 +36,12 @@ class FoodTest(unittest.TestCase):
             index.return_value.rank.return_value = [(str(i), .8) for i in range(25)]
             return FoodCatalog(path)
 
+    def test_processed_meat_in_recipe_ingredients_is_excluded(self):
+        catalog=self.catalog()
+        catalog.rows['0']['RCP_PARTS_DTLS']='쌀 100g, 런천미트 30g'
+        selected=catalog.retrieve({})
+        self.assertFalse(any(r['RCP_SEQ']=='0' for r in selected))
+
     def test_sample_cannot_become_real_meal_plan(self):
         with self.assertRaises(FoodUnavailable): self.catalog(True).retrieve({})
 

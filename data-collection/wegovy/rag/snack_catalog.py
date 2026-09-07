@@ -70,6 +70,7 @@ def publish(raw,retrieved):
     destination=Path(__file__).resolve().parents[3]/'stevil-backend/src/main/resources/planner/snacks.json'
     destination.parent.mkdir(parents=True,exist_ok=True)
     destination.write_text(json.dumps(selected,ensure_ascii=False,indent=2),encoding='utf-8')
+    Path(__file__).with_name('snacks.json').write_text(json.dumps(selected,ensure_ascii=False,indent=2),encoding='utf-8')
     print('Collected snack candidates:',len(selected),[c['category'] for c in selected])
 
 

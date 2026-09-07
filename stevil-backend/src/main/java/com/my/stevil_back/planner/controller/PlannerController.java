@@ -1,5 +1,6 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.controller;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.planner.service.PlannerService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.Map;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 
 @RestController @RequestMapping("/api/planner")
 public class PlannerController {

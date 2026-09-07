@@ -1,4 +1,4 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.user.repository.UserRepository;

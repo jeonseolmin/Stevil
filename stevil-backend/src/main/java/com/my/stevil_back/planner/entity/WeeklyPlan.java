@@ -1,4 +1,4 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;

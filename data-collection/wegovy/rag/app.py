@@ -1,4 +1,6 @@
 """Local evidence-first Wegovy RAG prototype. Python 3.10+, stdlib only."""
+from nutrition import NutritionTargetUnavailable
+from food_policy import FoodPolicyUnavailable
 import argparse
 from collections import Counter
 import hashlib
@@ -269,7 +271,7 @@ def serve(corpus, port, model, host='127.0.0.1'):
                 if self.path == '/api/plan':
                     try:
                         return self.send(200, make_plan(data, model))
-                    except FoodUnavailable as error:
+                    except (FoodUnavailable, NutritionTargetUnavailable, FoodPolicyUnavailable) as error:
                         return self.send(503, {'error': str(error), 'code': 'FOOD_NOT_READY'})
                     except (ValueError, KeyError, TypeError):
                         return self.send(400, {'error': '입력 정보 또는 AI 계획 형식을 확인해 주세요.'})

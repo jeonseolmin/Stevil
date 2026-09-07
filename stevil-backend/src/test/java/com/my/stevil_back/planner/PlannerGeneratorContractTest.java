@@ -1,5 +1,7 @@
 package com.my.stevil_back.planner;
 
+import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
+import com.my.stevil_back.planner.service.PlannerService;
 import com.sun.net.httpserver.HttpServer;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Validation;
@@ -12,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 

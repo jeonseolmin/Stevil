@@ -1,5 +1,8 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.service;
 
+import com.my.stevil_back.planner.dto.PlannerValidation;
+import com.my.stevil_back.planner.entity.WeeklyPlan;
+import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
 import com.my.stevil_back.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -14,7 +17,7 @@ import java.net.URI;
 import java.net.http.*;
 import java.time.*;
 import java.util.concurrent.ConcurrentHashMap;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 
 @Service
 public class PlannerService {

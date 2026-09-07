@@ -10,6 +10,7 @@ import sqlite3
 from urllib.request import urlopen
 from hybrid import VectorIndex
 from nutrition import recipe_nutrition
+from food_policy import processed_meat, diverse_recipe_candidates
 from nutrition_catalog import NutrientCatalog, ROOT as NUTRIENT_ROOT
 
 ROOT = Path(__file__).parent / 'cache' / 'food'
@@ -76,14 +77,15 @@ class FoodCatalog:
         except (OSError, ValueError, KeyError):
             raise FoodUnavailable('식품 검색 연결에 실패했어요. 잠시 후 다시 시도해 주세요.') from None
         # Side dishes/desserts alone are not complete meal candidates.
-        selected = [self.rows[key] for key, _ in ranked if self.rows[key].get('RCP_PAT2') in ('밥', '일품') and (not preferences.get('nutritionGoal') or recipe_nutrition(self.rows[key]) is not None)][:40]
+        selected = [self.rows[key] for key, _ in ranked if not processed_meat(self.rows[key]) and self.rows[key].get('RCP_PAT2') in ('밥', '일품') and (not preferences.get('nutritionGoal') or recipe_nutrition(self.rows[key]) is not None)]
+        selected = diverse_recipe_candidates(selected)
         if (NUTRIENT_ROOT / 'foods.sqlite3').exists():
             try:
                 meals = NutrientCatalog().retrieve_meals(preferences)
             except (OSError, ValueError, KeyError, sqlite3.Error):
                 raise FoodUnavailable('추가 영양정보 검색이 준비되지 않았어요. 수집과 임베딩 상태를 확인해 주세요.') from None
             if meals:
-                selected = selected[:max(16, 21-len(meals))] + meals
+                selected = selected[:max(12, 40-len(meals))] + meals
             else:
                 self.notices.append('조건에 맞는 밥·반찬·채소 조합이 부족해 기존 레시피에서 선택했어요.')
         else:

@@ -1,7 +1,7 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.dto;
 import java.time.DayOfWeek;
 import java.util.*;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 
 public final class PlannerValidation {
     private PlannerValidation() {}
@@ -43,7 +43,7 @@ public final class PlannerValidation {
                         (e.start().toLocalTime().isBefore(window.start()) || e.end().toLocalTime().isAfter(window.end())))
                     fail("운동 가능 시간 밖에 있는 일정입니다.");
             }
-            for(var busy:p.busySlots()) if(busy.day()==day && e.start().toLocalTime().isBefore(busy.end()) && e.end().toLocalTime().isAfter(busy.start())) fail("고정 일정과 겹치는 시간이 있습니다.");
+            for(var busy:p.busySlots()) if(busy.day()==day && !busy.allows(e.kind()) && e.start().toLocalTime().isBefore(busy.end()) && e.end().toLocalTime().isAfter(busy.start())) fail("고정 일정과 겹치는 시간이 있습니다.");
             previous=e;
         }
     }

@@ -1,3 +1,4 @@
+export const busyAllows = (slot, kind) => kind === "MEAL" && slot.allowMeals === true || kind === "SNACK" && slot.allowSnacks === true;
 export const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 export function dateKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -29,7 +30,7 @@ export function validatePlan(preferences, events) {
             const window = windows.find(w => w.day === day);
             if (!preferences.exerciseDays.includes(day) || (window && (mins(start) < mins(window.start) || mins(end) > mins(window.end)))) return "운동 일정을 선택한 요일과 가능 시간 안으로 옮겨 주세요.";
         }
-        if (preferences.busySlots.some(slot => slot.day === day && mins(start) < mins(slot.end) && mins(end) > mins(slot.start))) return "고정 일정과 겹치는 계획이 있습니다. 시간을 조정해 주세요.";
+        if (preferences.busySlots.some(slot => slot.day === day && !busyAllows(slot, event.kind) && mins(start) < mins(slot.end) && mins(end) > mins(slot.start))) return "고정 일정과 겹치는 계획이 있습니다. 시간을 조정해 주세요.";
     }
     return "";
 }
@@ -37,14 +38,14 @@ export function validatePlan(preferences, events) {
 export function exampleWeek(p) {
     const events = [], notices = [];
     DAYS.forEach((_, day) => {
-        const slots = p.busySlots.filter(s => s.day === day).map(s => [mins(s.start), mins(s.end)]);
+        const slots = [];
         const tasks = [["MEAL", "아침 식사", p.breakfastTime, 30, 360, 660], ["MEAL", "점심 식사", p.lunchTime, 30, 660, 960], ["MEAL", "저녁 식사", p.dinnerTime, 30, 960, 1380]];
         const window = (p.exerciseWindows || []).find(w => w.day === day);
         if (p.exerciseDays.includes(day)) tasks.push(["EXERCISE", "가벼운 활동 시간", p.exerciseTime, window ? mins(window.end) - mins(window.start) : p.exerciseMinutes, mins(window?.start || p.wakeTime), mins(window?.end || p.sleepTime)]);
         for (const [kind, title, preferred, duration, low, high] of tasks) {
             const candidates = [];
             for (let t = Math.max(mins(p.wakeTime), low); t + duration <= Math.min(mins(p.sleepTime), high); t += 5) candidates.push(t);
-            const start = candidates.sort((a, b) => Math.abs(a - mins(preferred)) - Math.abs(b - mins(preferred))).find(t => slots.every(([a, b]) => t + duration <= a || t >= b));
+            const start = candidates.sort((a, b) => Math.abs(a - mins(preferred)) - Math.abs(b - mins(preferred))).find(t => [...slots, ...p.busySlots.filter(s => s.day === day && !busyAllows(s, kind)).map(s => [mins(s.start), mins(s.end)])].every(([a, b]) => t + duration <= a || t >= b));
             if (start === undefined) { notices.push(`${DAYS[day]}요일 ${title}: 여유 시간이 없어 제외했어요.`); continue; }
             slots.push([start, start + duration]);
             const date = shiftDate(p.weekStart, day);
@@ -75,6 +76,25 @@ export function dayNutrition(events) {
     }
     const energy = totals.carbs * 4 + totals.protein * 4 + totals.fat * 9;
     return { ...totals, available, count: meals.length, partial: available < meals.length, ratios: energy > 0 ? [totals.carbs * 4, totals.protein * 4, totals.fat * 9].map(n => Math.round(n / energy * 1000) / 10) : null };
+}
+
+export function calorieTargetStatus(preferences, events) {
+    const goal = preferences.nutritionGoal;
+    if (!goal?.confirmed) return null;
+    const totals = dayNutrition(events);
+    if (!totals.available || totals.partial) return { state: 'unknown', text: '영양정보 부족 · 목표 충족 여부 확인 불가' };
+    const gap = goal.calories - totals.calories;
+    if (events.filter(e => e.kind === 'MEAL').length !== 3) return { state: 'missing', text: `식사 누락 · 계획 ${Math.round(totals.calories)} / 목표 ${goal.calories} kcal` };
+    const mealEnergy = events.filter(e => e.kind === 'MEAL').map(e => Number(e.foodEvidence.nutrition.INFO_ENG));
+    if (Math.min(...mealEnergy) < goal.calories*.20 || Math.max(...mealEnergy) > Math.min(900,goal.calories*.35) || Math.max(...mealEnergy) > Math.min(...mealEnergy)*1.5)
+        return { state: 'unbalanced', text: '끼니별 열량 불균형 · 식사량과 간식 분배를 조정해 주세요' };
+    const energy=totals.carbs*4+totals.protein*4+totals.fat*9;
+    const carbRatio=totals.carbs*4/energy, fatRatio=totals.fat*9/energy;
+    const proteinTarget=goal.weightKg*goal.proteinPerKg;
+    if (Math.abs(gap) <= goal.calories*.05 && (Math.max(.45-carbRatio,0,carbRatio-.65)+Math.max(.20-fatRatio,0,fatRatio-.35)+Math.max(.8-totals.protein/proteinTarget,0,totals.protein/proteinTarget-1.2)>1e-4))
+        return {state:'macro_unbalanced',text:`탄단지 조정 필요 · 탄수화물 ${(carbRatio*100).toFixed(1)}% · 지방 ${(fatRatio*100).toFixed(1)}% · 단백질 ${totals.protein.toFixed(1)} / 목표 ${proteinTarget.toFixed(1)}g`};
+    if (Math.abs(gap) <= goal.calories * .05) return { state: 'within', text: `목표 범위 충족 (±5%) · 차이 ${Math.round(Math.abs(gap))} kcal` };
+    return { state: gap > 0 ? 'low' : 'high', text: `목표 대비 ${Math.round(Math.abs(gap))} kcal ${gap > 0 ? '부족' : '초과'} · 식사·간식 조정 필요` };
 }
 
 // Mifflin–St Jeor resting estimate × user-selected activity multiplier.

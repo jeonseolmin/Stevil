@@ -1,4 +1,8 @@
 package com.my.stevil_back.planner;
+import com.my.stevil_back.planner.dto.PlannerValidation;
+import com.my.stevil_back.planner.entity.WeeklyPlan;
+import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
+import com.my.stevil_back.planner.service.PlannerService;
 import com.my.stevil_back.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -8,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.databind.ObjectMapper;
 import java.time.*;
 import java.util.*;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,7 +23,7 @@ class PlannerTest {
         var p=mapper.readValue(original.replace("\"exerciseWindows\":[]", "\"exerciseWindows\":[{\"day\":0,\"start\":\"09:00:00\",\"end\":\"10:00:00\"}]"),Preferences.class);
         assertEquals(1,p.exerciseWindows().size());
         var inside=new Event("inside","EXERCISE","걷기","",LocalDateTime.of(2026,9,7,9,0),LocalDateTime.of(2026,9,7,9,30),"가볍게",false);
-        assertDoesNotThrow(()->PlannerValidation.events(p,List.of(inside)));
+        assertDoesNotThrow(()-> PlannerValidation.events(p,List.of(inside)));
         var outside=new Event("outside","EXERCISE","걷기","",LocalDateTime.of(2026,9,7,19,0),LocalDateTime.of(2026,9,7,19,30),"가볍게",false);
         assertThrows(IllegalArgumentException.class,()->PlannerValidation.events(p,List.of(outside)));
         assertEquals(p,mapper.readValue(mapper.writeValueAsString(p),Preferences.class));
@@ -37,6 +41,19 @@ class PlannerTest {
     }
     private Event event(String id,int start,int end) {
         return new Event(id,"MEAL","식사","",LocalDateTime.of(2026,9,7,start,0),LocalDateTime.of(2026,9,7,end,0),"",false);
+    }
+    @Test void workPermissionsPersistAndOnlyAllowSelectedKinds() {
+        var mapper=new ObjectMapper();
+        var slot=new BusySlot(0,LocalTime.of(9,0),LocalTime.of(17,0),"업무",true,false);
+        var p=prefs(List.of(slot));
+        assertEquals(p,mapper.readValue(mapper.writeValueAsString(p),Preferences.class));
+        assertDoesNotThrow(()->PlannerValidation.events(p,List.of(event("lunch",12,13))));
+        var snack=new Event("snack","SNACK","간식","",LocalDateTime.of(2026,9,7,15,0),LocalDateTime.of(2026,9,7,15,10),"",false);
+        assertThrows(IllegalArgumentException.class,()->PlannerValidation.events(p,List.of(snack)));
+        assertTrue(new BusySlot(0,LocalTime.of(9,0),LocalTime.of(17,0),"업무",true,true).allows("SNACK"));
+        assertFalse(slot.allows("EXERCISE"));
+        var old=mapper.readValue("{\"day\":0,\"start\":\"09:00:00\",\"end\":\"17:00:00\",\"title\":\"업무\"}",BusySlot.class);
+        assertFalse(old.allowMeals());assertFalse(old.allowSnacks());
     }
     @Test void rejectsOverlappingAndFixedEvents() {
         assertThrows(IllegalArgumentException.class,()->PlannerValidation.events(prefs(List.of()),List.of(event("1",8,10),event("2",9,11))));

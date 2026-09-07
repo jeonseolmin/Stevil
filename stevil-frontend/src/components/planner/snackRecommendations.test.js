@@ -17,7 +17,9 @@ test('suggestions do not count until selected, and selected snack fills a free m
     const snack={id:'added',kind:'SNACK',title:'계란',start:offer.start,end:offer.end,foodEvidence:catalog[0].foodEvidence};
     assert.equal(validatePlan(p,[...meals,snack]),'');
     assert.equal(dayNutrition([...meals,snack]).protein,55);
-    assert.equal(snackRecommendations(p,date,[...meals,snack],catalog),null);
+    assert.equal(snackRecommendations(p,date,[...meals,snack],catalog).candidates.length,1);
+    assert.ok(snackRecommendations(p,date,[...meals,snack],catalog).end<meals[1].start);
+    assert.equal(snackRecommendations(p,date,[...meals,snack,{...snack,id:'second'}],catalog),null);
 });
 test('does not invent a deficit or override calorie/availability constraints',()=>{
     assert.equal(snackRecommendations({...p,nutritionGoal:null},date,meals,catalog),null);
@@ -26,5 +28,15 @@ test('does not invent a deficit or override calorie/availability constraints',()
     assert.equal(snackRecommendations({...p,nutritionGoal:{...p.nutritionGoal,calories:1200}},date,meals,catalog).candidates.length,0);
     const blocked={...p,busySlots:[{day:0,start:'08:30',end:'18:00',title:'일정'}]};
     assert.equal(snackRecommendations(blocked,date,meals,catalog).candidates.length,0);
-    assert.equal(snackRecommendations(p,date,meals.map(e=>({...e,foodEvidence:evidence(400,25)})),catalog),null);
+    assert.equal(snackRecommendations(p,date,meals.map(e=>({...e,foodEvidence:evidence(400,25)})),catalog).calorieGap,600);
+});
+
+test('work permits selected food kinds while other fixed appointments still block',()=>{
+    const work={day:0,title:'업무',start:'09:00',end:'17:00',allowMeals:true,allowSnacks:true};
+    const prefs={...p,busySlots:[work]};
+    assert.equal(validatePlan(prefs,meals),'');
+    const offer=snackRecommendations(prefs,date,meals,catalog);
+    assert.ok(offer.start < `${date}T17:00`);
+    assert.notEqual(validatePlan({...prefs,busySlots:[{...work,allowMeals:false}]},meals),'');
+    assert.notEqual(validatePlan({...prefs,busySlots:[work,{day:0,title:'회의',start:'12:00',end:'13:00'}]},meals),'');
 });

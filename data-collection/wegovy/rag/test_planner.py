@@ -8,6 +8,16 @@ def suggestions():
     return [dict(meals=[dict(title=t,details='예시') for t in ['아침','점심','저녁']],exercise=dict(title='활동',details='예시')) for _ in range(7)]
 
 class PlannerTest(unittest.TestCase):
+    def test_work_allows_meals_but_not_exercise_or_other_fixed_slots(self):
+        p=preferences();p['exerciseTime']='14:00'
+        p['busySlots']=[dict(day=0,start='09:00',end='17:00',allowMeals=True,allowSnacks=True)]
+        events=[e for e in schedule(p,suggestions())['events'] if e['start'].startswith('2026-09-07')]
+        self.assertTrue(any(e['kind']=='MEAL' and e['start'].endswith('12:30') for e in events))
+        self.assertTrue(all(e['start'][11:]>='17:00' or e['end'][11:]<='09:00' for e in events if e['kind']=='EXERCISE'))
+        p['busySlots'].append(dict(day=0,start='12:00',end='14:00'))
+        events=schedule(p,suggestions())['events']
+        self.assertFalse(any(e['start']=='2026-09-07T12:30' for e in events))
+
     def test_busy_time_moves_meal_without_overlap(self):
         p=preferences();p['busySlots']=[dict(day=0,start='12:00',end='14:00')]
         result=schedule(p,suggestions())

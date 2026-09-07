@@ -13,7 +13,8 @@ from urllib.parse import urlencode, unquote
 from urllib.request import urlopen
 
 from hybrid import VectorIndex
-from nutrition import number, recipe_nutrition, validate_goal
+from food_policy import processed_meat, families, canonical
+from nutrition import number, recipe_nutrition, validate_goal, macro_penalty
 
 ROOT = Path(__file__).parent / 'cache' / 'nutrition'
 SOURCE = 'https://www.data.go.kr/data/15127578/openapi.do'
@@ -26,15 +27,16 @@ PORTIONS = {'staple': (150, 200, 250), 'protein': (75, 100, 125), 'vegetable': (
 
 def diverse_foods(rows, limit=12):
     """Share the shortlist across cooking categories; source-name variants get one slot."""
-    selected = []; families = set(); category_usage = {}
+    selected = []; seen_names = set(); category_usage = {}; family_usage = {}
     remaining = list(enumerate(rows))
     while remaining and len(selected) < limit:
-        rank, row = min(remaining, key=lambda item: (category_usage.get(item[1]['category'], 0), item[0]))
+        rank, row = min(remaining, key=lambda item: (sum(family_usage.get(k,0) for k in families(item[1]['name'])), category_usage.get(item[1]['category'], 0), item[0]))
         remaining.remove((rank, row))
-        family = row['name'].split('_', 1)[0].strip()
-        if family in families:
+        family = canonical(row['name'])
+        if family in seen_names:
             continue
-        selected.append(row); families.add(family)
+        selected.append(row); seen_names.add(family)
+        for key in families(row['name']): family_usage[key]=family_usage.get(key,0)+1
         category_usage[row['category']] = category_usage.get(row['category'], 0) + 1
     return selected
 
@@ -208,12 +210,12 @@ class NutrientCatalog:
                 'INFO_WGT': evidence['servingWeight'], **total, '_evidence': evidence,
                 '_componentIds': [r['id'] for r in rows]}
 
-    def retrieve_meals(self, preferences, limit=24):
+    def retrieve_meals(self, preferences, limit=28):
         if not self.index.ready:
             raise ValueError('추가 영양정보의 임베딩이 아직 완료되지 않았습니다.')
         target = validate_goal(preferences.get('nutritionGoal'))
         ranked = self.index.rank('식사 밥 반찬 채소 ' + preferences.get('preferences', ''), limit=len(self.rows))
-        groups = {role: diverse_foods([self.rows[key] for key,_ in ranked if self.rows[key]['role'] == role]) for role in PORTIONS}
+        groups = {role: diverse_foods([self.rows[key] for key,_ in ranked if self.rows[key]['role'] == role and not processed_meat(self.rows[key])], limit={'staple':12,'protein':24,'vegetable':20}[role]) for role in PORTIONS}
         if any(not rows for rows in groups.values()):
             return []
         options = []
@@ -225,16 +227,24 @@ class NutrientCatalog:
                 kcal = sum(number(r['nutrition']['INFO_ENG']) * a / r['basisWeight'] for r,a in zip(combo,amounts))
                 protein = sum(number(r['nutrition']['INFO_PRO']) * a / r['basisWeight'] for r,a in zip(combo,amounts))
                 score = (abs(kcal-target['calories']/3)/(target['calories']/3) + abs(protein-target['protein']/3)/(target['protein']/3)) if target else combo_index * .00001
+                if target:
+                    carbs=sum(number(r['nutrition']['INFO_CAR'])*a/r['basisWeight'] for r,a in zip(combo,amounts))
+                    fat=sum(number(r['nutrition']['INFO_FAT'])*a/r['basisWeight'] for r,a in zip(combo,amounts))
+                    score += 5*macro_penalty(carbs,protein,fat,target['protein']/3)
                 if best is None or score < best[0]:
                     best = (score, combo, amounts)
             options.append(best)
-        selected = []; usage = {}
+        selected = []; usage = {}; family_usage = {}
         while options and len(selected) < limit:
-            best = min(options, key=lambda item: item[0] + .08 * sum(usage.get(r['id'], 0) for r in item[1]))
+            available=[item for item in options if all(usage.get(canonical(r['name']),0)<3 and all(family_usage.get(k,0)<6 for k in families(r['name'])) for r in item[1] if r['role']=='protein')]
+            if not available: break
+            best = min(available, key=lambda item: item[0] + .2 * sum(usage.get(canonical(r['name']), 0) for r in item[1]) + .35 * sum(family_usage.get(k,0) for r in item[1] if r['role']=='protein' for k in families(r['name'])))
             options.remove(best)
             selected.append(self.meal(best[1], best[2]))
             for row in best[1]:
-                usage[row['id']] = usage.get(row['id'], 0) + 1
+                usage[canonical(row['name'])] = usage.get(canonical(row['name']), 0) + 1
+                if row['role']=='protein':
+                    for key in families(row['name']): family_usage[key]=family_usage.get(key,0)+1
         return selected
 
 

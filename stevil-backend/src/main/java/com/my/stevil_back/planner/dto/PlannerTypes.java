@@ -1,4 +1,4 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -11,7 +11,18 @@ import java.util.Map;
 public final class PlannerTypes {
     private PlannerTypes() {}
     public record BusySlot(@Min(0) @Max(6) int day, @NotNull LocalTime start, @NotNull LocalTime end,
-                           @NotBlank @Size(max=60) String title) {}
+                           @NotBlank @Size(max=60) String title, Boolean allowMeals, Boolean allowSnacks) {
+        public BusySlot {
+            allowMeals = Boolean.TRUE.equals(allowMeals);
+            allowSnacks = Boolean.TRUE.equals(allowSnacks);
+        }
+        public BusySlot(int day, LocalTime start, LocalTime end, String title) {
+            this(day, start, end, title, false, false);
+        }
+        public boolean allows(String kind) {
+            return ("MEAL".equals(kind) && allowMeals) || ("SNACK".equals(kind) && allowSnacks);
+        }
+    }
     public record ExerciseWindow(@Min(0) @Max(6) int day, @NotNull LocalTime start, @NotNull LocalTime end) {}
     public record NutritionGoal(@DecimalMin("20") @DecimalMax("350") double weightKg,
             @DecimalMin("0.1") @DecimalMax("3") double proteinPerKg,
@@ -58,10 +69,35 @@ public final class PlannerTypes {
             this(recipeId,sourceUrl,retrievedAt,ingredients,servingWeight,nutrition,fingerprint,List.of());
         }
     }
+    public record ExerciseEvidence(
+            @NotBlank @Size(max=200) String evidenceId,
+            @NotNull @Size(max=1000) String title,
+            @NotNull @Size(max=1000) String section,
+            @NotNull @Size(max=100000) String text,
+            @NotBlank @Size(max=200) String sourceId,
+            @NotNull @Size(max=2000) @Pattern(regexp="https://[^\\s]+") String url,
+            @NotNull @Size(max=1000) String population,
+            @Size(max=100) String recommendationGrade,
+            @Size(max=300) String recommendationStrength,
+            boolean recommendation, boolean glp1Specific,
+            @NotNull @Size(max=100) String reviewStatus,
+            @DecimalMin("-1") @DecimalMax("1") Double retrievalScore) {}
+
     public record Event(@NotBlank @Size(max=80) String id, @NotNull @Pattern(regexp="MEAL|EXERCISE|SNACK") String kind,
             @NotBlank @Size(max=60) String title, @NotNull @Size(max=500) String details,
             @NotNull LocalDateTime start, @NotNull LocalDateTime end,
-            @NotNull @Pattern(regexp="|가볍게|보통") String intensity, boolean completed, @Valid FoodEvidence foodEvidence) {
+            @NotNull @Pattern(regexp="|가볍게|보통") String intensity, boolean completed, @Valid FoodEvidence foodEvidence,
+            @Size(max=100) String exerciseId, @Size(max=100) String exerciseCategory,
+            @Size(max=100) String exerciseDifficulty, @Size(max=300) String exerciseEquipment,
+            @Size(max=100) String exerciseImpact,
+            @Size(max=5) List<@NotNull @Valid ExerciseEvidence> exerciseEvidence) {
+        public Event {
+            exerciseEvidence = exerciseEvidence == null ? List.of() : List.copyOf(exerciseEvidence);
+        }
+        public Event(String id,String kind,String title,String details,LocalDateTime start,LocalDateTime end,
+                     String intensity,boolean completed,FoodEvidence foodEvidence) {
+            this(id,kind,title,details,start,end,intensity,completed,foodEvidence,null,null,null,null,null,List.of());
+        }
         public Event(String id,String kind,String title,String details,LocalDateTime start,LocalDateTime end,String intensity,boolean completed) {
             this(id,kind,title,details,start,end,intensity,completed,null);
         }

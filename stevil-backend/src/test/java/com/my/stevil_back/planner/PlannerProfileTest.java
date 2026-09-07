@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.planner.controller.PlannerProfileController;
 import com.my.stevil_back.user.entity.*;
 import com.my.stevil_back.user.entity.enumType.Sex;
 import com.my.stevil_back.user.repository.*;

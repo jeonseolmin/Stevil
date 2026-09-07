@@ -1,11 +1,12 @@
-package com.my.stevil_back.planner;
+package com.my.stevil_back.planner.dto;
 
+import com.my.stevil_back.planner.dto.PlannerValidation;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.my.stevil_back.planner.PlannerTypes.*;
+import static com.my.stevil_back.planner.dto.PlannerTypes.*;
 
 class PlannerMealTest {
     @Test void publishedSnacksHaveValidEvidenceAndPersistAsSnackEvents() throws Exception {
@@ -19,7 +20,7 @@ class PlannerMealTest {
                 categories.add(item.get("category").asText());
                 var evidence=mapper.treeToValue(item.get("foodEvidence"),FoodEvidence.class);
                 assertTrue(factory.getValidator().validate(evidence).isEmpty());
-                assertDoesNotThrow(()->PlannerValidation.food(evidence));
+                assertDoesNotThrow(()-> PlannerValidation.food(evidence));
                 var event=new Event("snack","SNACK",item.get("title").asText(),"",
                     java.time.LocalDateTime.of(2026,9,7,15,0),java.time.LocalDateTime.of(2026,9,7,15,10),"",false,evidence);
                 assertTrue(factory.getValidator().validate(event).isEmpty());

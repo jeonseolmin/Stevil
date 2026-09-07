@@ -1,12 +1,29 @@
 import unittest
+from unittest.mock import patch
 from nutrition import validate_goal, recipe_nutrition, match_week
 
 
 def row(i,kcal,protein):
-    return dict(RCP_SEQ=str(i),INFO_WGT='400',INFO_ENG=str(kcal),INFO_CAR=str((kcal-protein*4-90)/4),INFO_PRO=str(protein),INFO_FAT='10')
+    return dict(RCP_SEQ=str(i),INFO_WGT='400',INFO_ENG=str(kcal),INFO_CAR=str((kcal*.75-protein*4)/4),INFO_PRO=str(protein),INFO_FAT=str(kcal*.25/9))
 
 
 class NutritionTest(unittest.TestCase):
+    def setUp(self):
+        # Isolate nutrient arithmetic/scheduling; test_food_policy exercises weekly rotation.
+        rotation=patch('nutrition.choose_diverse_week',side_effect=lambda options:[min(options,key=lambda item:item[0])]*7)
+        rotation.start(); self.addCleanup(rotation.stop)
+
+    def test_macros_and_confirmed_protein_target_are_required(self):
+        from nutrition import NutritionTargetUnavailable
+        goal=dict(weightKg=70,proteinPerKg=1,calories=1800,confirmed=True)
+        fatty=[row(i,600,25)|{'INFO_FAT':'50','INFO_CAR':'12.5'} for i in range(3)]
+        with self.assertRaises(NutritionTargetUnavailable): match_week(fatty,goal)
+        balanced=[row(i+3,600,25) for i in range(3)]
+        days,_=match_week(fatty+balanced,goal)
+        self.assertTrue(all({r['RCP_SEQ'] for r in day}=={'3','4','5'} for day in days))
+        with self.assertRaises(NutritionTargetUnavailable):
+            match_week(balanced,goal|{'proteinPerKg':1.8})
+
     def test_goal_and_nonfinite_rejected(self):
         goal=dict(weightKg=70,proteinPerKg=1,calories=1800,confirmed=True)
         self.assertEqual(validate_goal(goal)['protein'],70)
