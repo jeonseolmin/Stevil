@@ -365,6 +365,8 @@ export default function Dashboard({ previewData = null }) {
                     </article>
                 </section>
 
+                <WeeklyPlanner preview={preview} />
+
                 <section className="dashboard-daily-section">
                     <div className="dashboard-section-heading">
                         <div>

@@ -94,6 +94,11 @@ public class SecurityConfig {
                                 SecurityUrls.PUBLIC_URLS
                         ).permitAll()
 
+                        // DOCTOR_URLS
+                        .requestMatchers(
+                                SecurityUrls.DOCTOR_URLS
+                        ).hasRole("DOCTOR")
+
                         // USER_URLS
                         .requestMatchers(
                                 SecurityUrls.USER_URLS

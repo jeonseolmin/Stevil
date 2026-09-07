@@ -81,7 +81,7 @@ const DietManagement = () => {
       
       let data = response.data;
       if (typeof data === 'string') {
-        try { data = JSON.parse(data); } catch(e) {}
+        data = JSON.parse(data);
       }
       
       console.log("✅ 백엔드에서 넘어온 API 원본 데이터:", data);
@@ -94,6 +94,7 @@ const DietManagement = () => {
       setSearchResults(items);
     } catch (error) {
       console.error("음식 검색 실패", error);
+      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }

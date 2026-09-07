@@ -37,7 +37,6 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.30'
-	implementation 'org.springframework.ai:spring-ai-starter-model-gemini'
 
 	// JWT 설정
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
