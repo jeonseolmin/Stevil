@@ -23,7 +23,44 @@ FIELDS = {'INFO_ENG': 'AMT_NUM1', 'INFO_CAR': 'AMT_NUM6', 'INFO_PRO': 'AMT_NUM3'
           'INFO_FAT': 'AMT_NUM4', 'INFO_NA': 'AMT_NUM13'}
 # Proposed serving amounts, not source-reported servings or medical prescriptions.
 PORTIONS = {'staple': (150, 200, 250), 'protein': (75, 100, 125), 'vegetable': (60, 80, 100)}
+# =========================================================
+# Meal quality guardrails
+# =========================================================
 
+# WHO의 일반 성인 sodium 권고를 참고한
+# planner-level reference입니다.
+#
+# 자동 식단에서는 이 값을 개인별 처방값으로 사용하지 않고,
+# 나트륨이 과도하게 높은 조합을 피하기 위한 품질 기준으로만 씁니다.
+DAILY_SODIUM_REFERENCE_MG = 2000
+
+# 한 끼 soft target.
+# 초과해도 바로 제외하지 않고 score penalty를 줍니다.
+MEAL_SODIUM_SOFT_MG = (
+    DAILY_SODIUM_REFERENCE_MG
+    / 3
+)
+
+# 이 정도로 매우 높은 한 끼는
+# 기본 자동 식단 후보에서 제외합니다.
+MEAL_SODIUM_HARD_MG = 1500
+
+
+# 식단의 '주요 단백질 반찬'으로 인정할 음식명입니다.
+PROTEIN_FOOD_PATTERN = re.compile(
+    r"닭|치킨|돼지|돈육|제육|삼겹|목살|"
+    r"소고기|쇠고기|우육|한우|"
+    r"오리|"
+    r"계란|달걀|"
+    r"두부|콩|대두|"
+    r"생선|고등어|삼치|꽁치|갈치|조기|병어|"
+    r"연어|장어|명태|동태|황태|북어|코다리|"
+    r"참치|다랑어|"
+    r"새우|대하|오징어|낙지|문어|주꾸미|쭈꾸미|"
+    r"조개|꼬막|홍합|바지락|전복|가리비|"
+    r"족발|함박|미트볼|스테이크",
+    re.I,
+)
 
 def diverse_foods(rows, limit=12):
     """Share the shortlist across cooking categories; source-name variants get one slot."""
@@ -60,35 +97,306 @@ def nutrient_text(value):
 
 
 def normalize(row):
-    if row.get('DB_GRP_NM') != '음식':
-        return None, 'not_prepared_food'
-    if not row.get('FOOD_CD') or not row.get('FOOD_NM_KR'):
-        return None, 'missing_identity'
-    basis = grams(row.get('SERVING_SIZE'))
-    if basis is None:
-        return None, 'unsupported_basis'
-    nutrients = {k: nutrient_text(row.get(v, '')) for k, v in FIELDS.items()}
-    n = recipe_nutrition({'INFO_WGT': basis, **nutrients})
-    if n is None:
-        return None, 'missing_or_inconsistent_nutrition'
-    title = str(row['FOOD_NM_KR'])
-    category = str(row.get('FOOD_CAT1_NM', ''))
-    protein100 = n['protein'] * 100 / basis
-    role = None
-    if ('밥' in category and re.search('쌀밥|잡곡밥|현미밥|보리밥|흑미밥|기장밥|수수밥|콩밥|팥밥|율무밥|조밥|오곡밥|찰밥|백미밥', title)
-            and not re.search('비빔|볶음|덮밥|김밥|초밥|국밥|주먹|리소토|오므라이스', title)
-            and n['carbs'] * 4 / n['calories'] >= .65 and n['fat'] * 9 / n['calories'] < .2):
-        role = 'staple'
-    elif any(word in category for word in ('구이', '찜', '조림', '볶음', '부침', '전류')) and protein100 >= 8:
-        role = 'protein'
-    elif (any(word in category for word in ('나물', '숙채', '생채', '무침')) and protein100 < 8
-          and not re.search('오징어|낙지|문어|쭈꾸미|주꾸미|골뱅이|소라|조개|홍합|꼬막|해파리|북어|황태|명태|멸치|새우|어묵|고기|족발|순대|닭|돼지|쇠고기|소고기', title)):
-        role = 'vegetable'
-    if role is None:
-        return None, 'not_meal_component'
-    return {'id': str(row['FOOD_CD']), 'name': title, 'category': category, 'role': role,
-            'basisWeight': basis, 'nutrition': nutrients, 'fingerprint': digest(row)}, None
+    if (
+        row.get(
+            "DB_GRP_NM"
+        )
+        != "음식"
+    ):
+        return (
+            None,
+            "not_prepared_food",
+        )
 
+    if (
+        not row.get(
+            "FOOD_CD"
+        )
+        or not row.get(
+            "FOOD_NM_KR"
+        )
+    ):
+        return (
+            None,
+            "missing_identity",
+        )
+
+    basis = grams(
+        row.get(
+            "SERVING_SIZE"
+        )
+    )
+
+    if basis is None:
+        return (
+            None,
+            "unsupported_basis",
+        )
+
+    nutrients = {
+        key:
+            nutrient_text(
+                row.get(
+                    source,
+                    "",
+                )
+            )
+        for key, source
+        in FIELDS.items()
+    }
+
+    n = recipe_nutrition(
+        {
+            "INFO_WGT":
+                basis,
+
+            **nutrients,
+        }
+    )
+
+    if n is None:
+        return (
+            None,
+            "missing_or_inconsistent_nutrition",
+        )
+
+    title = str(
+        row[
+            "FOOD_NM_KR"
+        ]
+    )
+
+    category = str(
+        row.get(
+            "FOOD_CAT1_NM",
+            "",
+        )
+    )
+
+    protein100 = (
+        n[
+            "protein"
+        ]
+        * 100
+        / basis
+    )
+
+    role = None
+
+    # =====================================================
+    # Staple
+    # =====================================================
+
+    if (
+        "밥"
+        in category
+
+        and re.search(
+            (
+                r"쌀밥|잡곡밥|현미밥|보리밥|"
+                r"흑미밥|기장밥|수수밥|콩밥|"
+                r"팥밥|율무밥|조밥|오곡밥|찰밥|백미밥"
+            ),
+            title,
+        )
+
+        and not re.search(
+            (
+                r"비빔|볶음|덮밥|김밥|초밥|"
+                r"국밥|주먹|리소토|오므라이스"
+            ),
+            title,
+        )
+
+        and (
+            n[
+                "carbs"
+            ]
+            * 4
+            / n[
+                "calories"
+            ]
+            >= 0.65
+        )
+
+        and (
+            n[
+                "fat"
+            ]
+            * 9
+            / n[
+                "calories"
+            ]
+            < 0.20
+        )
+    ):
+        role = (
+            "staple"
+        )
+
+    # =====================================================
+    # Protein
+    #
+    # 이전:
+    # 찜/구이 등의 카테고리 +
+    # protein >= 8g/100g 이면 모두 protein
+    #
+    # 문제:
+    # 애호박찜 같은 음식도 protein으로 분류될 수 있었음.
+    #
+    # 변경:
+    # 실제 단백질 식품명 패턴도 동시에 확인합니다.
+    # =====================================================
+
+    elif (
+        any(
+            word
+            in category
+            for word
+            in (
+                "구이",
+                "찜",
+                "조림",
+                "볶음",
+                "부침",
+                "전류",
+            )
+        )
+
+        and protein100
+        >= 8
+
+        and PROTEIN_FOOD_PATTERN.search(
+            title
+        )
+    ):
+        role = (
+            "protein"
+        )
+
+    # =====================================================
+    # Vegetable
+    # =====================================================
+
+    elif (
+        any(
+            word
+            in category
+            for word
+            in (
+                "나물",
+                "숙채",
+                "생채",
+                "무침",
+            )
+        )
+
+        and protein100
+        < 8
+
+        and not re.search(
+            (
+                r"오징어|낙지|문어|쭈꾸미|주꾸미|"
+                r"골뱅이|소라|조개|홍합|꼬막|"
+                r"해파리|북어|황태|명태|멸치|"
+                r"새우|어묵|고기|족발|순대|"
+                r"닭|돼지|쇠고기|소고기"
+            ),
+            title,
+        )
+    ):
+        role = (
+            "vegetable"
+        )
+
+    if role is None:
+        return (
+            None,
+            "not_meal_component",
+        )
+
+    return (
+        {
+            "id":
+                str(
+                    row[
+                        "FOOD_CD"
+                    ]
+                ),
+
+            "name":
+                title,
+
+            "category":
+                category,
+
+            "role":
+                role,
+
+            "basisWeight":
+                basis,
+
+            "nutrition":
+                nutrients,
+
+            "fingerprint":
+                digest(
+                    row
+                ),
+        },
+
+        None,
+    )
+def sodium_for_amount(
+    row,
+    amount,
+):
+    sodium = number(
+        row[
+            "nutrition"
+        ].get(
+            "INFO_NA"
+        )
+    )
+
+    if sodium is None:
+        return None
+
+    return (
+        sodium
+        * amount
+        / row[
+            "basisWeight"
+        ]
+    )
+
+
+def meal_sodium(
+    rows,
+    amounts,
+):
+    values = [
+        sodium_for_amount(
+            row,
+            amount,
+        )
+        for row, amount
+        in zip(
+            rows,
+            amounts,
+        )
+    ]
+
+    if any(
+        value is None
+        for value
+        in values
+    ):
+        return None
+
+    return sum(
+        values
+    )
 
 def revalidate(root=ROOT):
     with closing(sqlite3.connect(root / 'foods.sqlite3')) as db:
@@ -210,41 +518,481 @@ class NutrientCatalog:
                 'INFO_WGT': evidence['servingWeight'], **total, '_evidence': evidence,
                 '_componentIds': [r['id'] for r in rows]}
 
-    def retrieve_meals(self, preferences, limit=28):
+    def retrieve_meals(
+            self,
+            preferences,
+            limit=28,
+    ):
         if not self.index.ready:
-            raise ValueError('추가 영양정보의 임베딩이 아직 완료되지 않았습니다.')
-        target = validate_goal(preferences.get('nutritionGoal'))
-        ranked = self.index.rank('식사 밥 반찬 채소 ' + preferences.get('preferences', ''), limit=len(self.rows))
-        groups = {role: diverse_foods([self.rows[key] for key,_ in ranked if self.rows[key]['role'] == role and not processed_meat(self.rows[key])], limit={'staple':12,'protein':24,'vegetable':20}[role]) for role in PORTIONS}
-        if any(not rows for rows in groups.values()):
+            raise ValueError(
+                "추가 영양정보의 임베딩이 아직 완료되지 않았습니다."
+            )
+
+        target = validate_goal(
+            preferences.get(
+                "nutritionGoal"
+            )
+        )
+
+        ranked = self.index.rank(
+            (
+                    "식사 밥 반찬 채소 "
+                    + preferences.get(
+                "preferences",
+                "",
+            )
+            ),
+            limit=len(
+                self.rows
+            ),
+        )
+
+        # =====================================================
+        # Candidate groups
+        # =====================================================
+
+        groups = {
+            role:
+                diverse_foods(
+                    [
+                        self.rows[
+                            key
+                        ]
+                        for key, _
+                        in ranked
+                        if (
+                            self.rows[
+                                key
+                            ][
+                                "role"
+                            ]
+                            == role
+
+                            and not processed_meat(
+                        self.rows[
+                            key
+                        ]
+                    )
+                    )
+                    ],
+                    limit={
+                        "staple":
+                            12,
+
+                        "protein":
+                            24,
+
+                        "vegetable":
+                            20,
+
+                    }[
+                        role
+                    ],
+                )
+
+            for role
+            in PORTIONS
+        }
+
+        if any(
+                not rows
+                for rows
+                in groups.values()
+        ):
             return []
+
+        # =====================================================
+        # Generate possible meals
+        # =====================================================
+
         options = []
-        for combo_index, combo in enumerate(product(*groups.values())):
+
+        for combo_index, combo in enumerate(
+                product(
+                    *groups.values()
+                )
+        ):
             best = None
-            # No goal means ordinary proposed amounts, without invented calorie/protein targets.
-            portions = product(*PORTIONS.values()) if target else [(200, 100, 80)]
+
+            portions = (
+                product(
+                    *PORTIONS.values()
+                )
+                if target
+                else [
+                    (
+                        200,
+                        100,
+                        80,
+                    )
+                ]
+            )
+
             for amounts in portions:
-                kcal = sum(number(r['nutrition']['INFO_ENG']) * a / r['basisWeight'] for r,a in zip(combo,amounts))
-                protein = sum(number(r['nutrition']['INFO_PRO']) * a / r['basisWeight'] for r,a in zip(combo,amounts))
-                score = (abs(kcal-target['calories']/3)/(target['calories']/3) + abs(protein-target['protein']/3)/(target['protein']/3)) if target else combo_index * .00001
+
+                kcal = sum(
+                    number(
+                        row[
+                            "nutrition"
+                        ][
+                            "INFO_ENG"
+                        ]
+                    )
+                    * amount
+                    / row[
+                        "basisWeight"
+                    ]
+
+                    for row, amount
+                    in zip(
+                        combo,
+                        amounts,
+                    )
+                )
+
+                protein = sum(
+                    number(
+                        row[
+                            "nutrition"
+                        ][
+                            "INFO_PRO"
+                        ]
+                    )
+                    * amount
+                    / row[
+                        "basisWeight"
+                    ]
+
+                    for row, amount
+                    in zip(
+                        combo,
+                        amounts,
+                    )
+                )
+
+                # =================================================
+                # Sodium
+                # =================================================
+
+                sodium = meal_sodium(
+                    combo,
+                    amounts,
+                )
+
+                # 나트륨 정보가 있으면
+                # 지나치게 높은 한 끼는 자동 후보에서 제거합니다.
+                if (
+                        sodium is not None
+                        and sodium
+                        > MEAL_SODIUM_HARD_MG
+                ):
+                    continue
+
+                # =================================================
+                # Base score
+                # =================================================
+
                 if target:
-                    carbs=sum(number(r['nutrition']['INFO_CAR'])*a/r['basisWeight'] for r,a in zip(combo,amounts))
-                    fat=sum(number(r['nutrition']['INFO_FAT'])*a/r['basisWeight'] for r,a in zip(combo,amounts))
-                    score += 5*macro_penalty(carbs,protein,fat,target['protein']/3)
-                if best is None or score < best[0]:
-                    best = (score, combo, amounts)
-            options.append(best)
-        selected = []; usage = {}; family_usage = {}
-        while options and len(selected) < limit:
-            available=[item for item in options if all(usage.get(canonical(r['name']),0)<3 and all(family_usage.get(k,0)<6 for k in families(r['name'])) for r in item[1] if r['role']=='protein')]
-            if not available: break
-            best = min(available, key=lambda item: item[0] + .2 * sum(usage.get(canonical(r['name']), 0) for r in item[1]) + .35 * sum(family_usage.get(k,0) for r in item[1] if r['role']=='protein' for k in families(r['name'])))
-            options.remove(best)
-            selected.append(self.meal(best[1], best[2]))
+                    score = (
+                            abs(
+                                kcal
+                                - target[
+                                    "calories"
+                                ]
+                                / 3
+                            )
+                            / (
+                                    target[
+                                        "calories"
+                                    ]
+                                    / 3
+                            )
+
+                            + abs(
+                        protein
+                        - target[
+                            "protein"
+                        ]
+                        / 3
+                    )
+                            / (
+                                    target[
+                                        "protein"
+                                    ]
+                                    / 3
+                            )
+                    )
+                else:
+                    score = (
+                            combo_index
+                            * 0.00001
+                    )
+
+                # =================================================
+                # Macro balance
+                # =================================================
+
+                if target:
+                    carbs = sum(
+                        number(
+                            row[
+                                "nutrition"
+                            ][
+                                "INFO_CAR"
+                            ]
+                        )
+                        * amount
+                        / row[
+                            "basisWeight"
+                        ]
+
+                        for row, amount
+                        in zip(
+                            combo,
+                            amounts,
+                        )
+                    )
+
+                    fat = sum(
+                        number(
+                            row[
+                                "nutrition"
+                            ][
+                                "INFO_FAT"
+                            ]
+                        )
+                        * amount
+                        / row[
+                            "basisWeight"
+                        ]
+
+                        for row, amount
+                        in zip(
+                            combo,
+                            amounts,
+                        )
+                    )
+
+                    score += (
+                            5
+                            * macro_penalty(
+                        carbs,
+                        protein,
+                        fat,
+                        target[
+                            "protein"
+                        ]
+                        / 3,
+                    )
+                    )
+
+                # =================================================
+                # Sodium soft penalty
+                #
+                # 낮으면 penalty 없음.
+                # 높아질수록 점수 불리.
+                #
+                # 따라서 낮은 sodium 조합을 우선 선택합니다.
+                # =================================================
+
+                if (
+                        sodium is not None
+                        and sodium
+                        > MEAL_SODIUM_SOFT_MG
+                ):
+                    sodium_penalty = (
+                                             sodium
+                                             - MEAL_SODIUM_SOFT_MG
+                                     ) / MEAL_SODIUM_SOFT_MG
+
+                    score += (
+                            0.75
+                            * sodium_penalty
+                    )
+
+                if (
+                        best is None
+                        or score
+                        < best[0]
+                ):
+                    best = (
+                        score,
+                        combo,
+                        amounts,
+                    )
+
+            # 모든 portion이 sodium hard limit 등으로
+            # 탈락할 수도 있으므로 확인
+            if best is not None:
+                options.append(
+                    best
+                )
+
+        if not options:
+            return []
+
+        # =====================================================
+        # Diversity selection
+        # =====================================================
+
+        selected = []
+
+        usage = {}
+
+        family_usage = {}
+
+        while (
+                options
+                and len(
+            selected
+        )
+                < limit
+        ):
+
+            available = [
+                item
+                for item
+                in options
+
+                if all(
+                    (
+                            usage.get(
+                                canonical(
+                                    row[
+                                        "name"
+                                    ]
+                                ),
+                                0,
+                            )
+                            < 3
+
+                            and all(
+                        family_usage.get(
+                            key,
+                            0,
+                        )
+                        < 6
+
+                        for key
+                        in families(
+                            row[
+                                "name"
+                            ]
+                        )
+                    )
+                    )
+
+                    for row
+                    in item[1]
+
+                    if row[
+                        "role"
+                    ]
+                    == "protein"
+                )
+            ]
+
+            if not available:
+                break
+
+            best = min(
+                available,
+
+                key=lambda item:
+                (
+                        item[0]
+
+                        + 0.2
+                        * sum(
+                    usage.get(
+                        canonical(
+                            row[
+                                "name"
+                            ]
+                        ),
+                        0,
+                    )
+
+                    for row
+                    in item[1]
+                )
+
+                        + 0.35
+                        * sum(
+                    family_usage.get(
+                        key,
+                        0,
+                    )
+
+                    for row
+                    in item[1]
+
+                    if row[
+                        "role"
+                    ]
+                    == "protein"
+
+                    for key
+                    in families(
+                        row[
+                            "name"
+                        ]
+                    )
+                )
+                ),
+            )
+
+            options.remove(
+                best
+            )
+
+            selected.append(
+                self.meal(
+                    best[1],
+                    best[2],
+                )
+            )
+
             for row in best[1]:
-                usage[canonical(row['name'])] = usage.get(canonical(row['name']), 0) + 1
-                if row['role']=='protein':
-                    for key in families(row['name']): family_usage[key]=family_usage.get(key,0)+1
+                usage[
+                    canonical(
+                        row[
+                            "name"
+                        ]
+                    )
+                ] = (
+                        usage.get(
+                            canonical(
+                                row[
+                                    "name"
+                                ]
+                            ),
+                            0,
+                        )
+                        + 1
+                )
+
+                if (
+                        row[
+                            "role"
+                        ]
+                        == "protein"
+                ):
+                    for key in families(
+                            row[
+                                "name"
+                            ]
+                    ):
+                        family_usage[
+                            key
+                        ] = (
+                                family_usage.get(
+                                    key,
+                                    0,
+                                )
+                                + 1
+                        )
+
         return selected
 
 

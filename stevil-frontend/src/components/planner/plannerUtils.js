@@ -78,23 +78,233 @@ export function dayNutrition(events) {
     return { ...totals, available, count: meals.length, partial: available < meals.length, ratios: energy > 0 ? [totals.carbs * 4, totals.protein * 4, totals.fat * 9].map(n => Math.round(n / energy * 1000) / 10) : null };
 }
 
-export function calorieTargetStatus(preferences, events) {
-    const goal = preferences.nutritionGoal;
-    if (!goal?.confirmed) return null;
-    const totals = dayNutrition(events);
-    if (!totals.available || totals.partial) return { state: 'unknown', text: '영양정보 부족 · 목표 충족 여부 확인 불가' };
-    const gap = goal.calories - totals.calories;
-    if (events.filter(e => e.kind === 'MEAL').length !== 3) return { state: 'missing', text: `식사 누락 · 계획 ${Math.round(totals.calories)} / 목표 ${goal.calories} kcal` };
-    const mealEnergy = events.filter(e => e.kind === 'MEAL').map(e => Number(e.foodEvidence.nutrition.INFO_ENG));
-    if (Math.min(...mealEnergy) < goal.calories*.20 || Math.max(...mealEnergy) > Math.min(900,goal.calories*.35) || Math.max(...mealEnergy) > Math.min(...mealEnergy)*1.5)
-        return { state: 'unbalanced', text: '끼니별 열량 불균형 · 식사량과 간식 분배를 조정해 주세요' };
-    const energy=totals.carbs*4+totals.protein*4+totals.fat*9;
-    const carbRatio=totals.carbs*4/energy, fatRatio=totals.fat*9/energy;
-    const proteinTarget=goal.weightKg*goal.proteinPerKg;
-    if (Math.abs(gap) <= goal.calories*.05 && (Math.max(.45-carbRatio,0,carbRatio-.65)+Math.max(.20-fatRatio,0,fatRatio-.35)+Math.max(.8-totals.protein/proteinTarget,0,totals.protein/proteinTarget-1.2)>1e-4))
-        return {state:'macro_unbalanced',text:`탄단지 조정 필요 · 탄수화물 ${(carbRatio*100).toFixed(1)}% · 지방 ${(fatRatio*100).toFixed(1)}% · 단백질 ${totals.protein.toFixed(1)} / 목표 ${proteinTarget.toFixed(1)}g`};
-    if (Math.abs(gap) <= goal.calories * .05) return { state: 'within', text: `목표 범위 충족 (±5%) · 차이 ${Math.round(Math.abs(gap))} kcal` };
-    return { state: gap > 0 ? 'low' : 'high', text: `목표 대비 ${Math.round(Math.abs(gap))} kcal ${gap > 0 ? '부족' : '초과'} · 식사·간식 조정 필요` };
+export function calorieTargetStatus(
+    preferences,
+    events
+) {
+    const goal =
+        preferences.nutritionGoal;
+
+    if (!goal?.confirmed) {
+        return null;
+    }
+
+    const totals =
+        dayNutrition(events);
+
+    if (
+        !totals.available
+        || totals.partial
+    ) {
+        return {
+            state: "unknown",
+            text:
+                "영양정보 부족 · 목표 충족 여부 확인 불가",
+        };
+    }
+
+    const gap =
+        goal.calories
+        - totals.calories;
+
+    const meals =
+        events.filter(
+            event =>
+                event.kind === "MEAL"
+        );
+
+    if (
+        meals.length !== 3
+    ) {
+        return {
+            state: "missing",
+            text:
+                `식사 누락 · 계획 ${Math.round(
+                    totals.calories
+                )} / 목표 ${goal.calories} kcal`,
+        };
+    }
+
+    const mealEnergy =
+        meals.map(
+            event =>
+                Number(
+                    event
+                        .foodEvidence
+                        .nutrition
+                        .INFO_ENG
+                )
+        );
+
+    // ---------------------------------------------
+    // Meal calorie distribution
+    // ---------------------------------------------
+
+    if (
+        Math.min(
+            ...mealEnergy
+        )
+        < goal.calories * 0.20
+
+        || Math.max(
+            ...mealEnergy
+        )
+        > Math.min(
+            900,
+            goal.calories * 0.35
+        )
+
+        || Math.max(
+            ...mealEnergy
+        )
+        > Math.min(
+            ...mealEnergy
+        ) * 1.5
+    ) {
+        return {
+            state: "unbalanced",
+
+            text:
+                "끼니별 열량 불균형 · "
+                + "식사량과 간식 분배를 조정해 주세요",
+        };
+    }
+
+    // ---------------------------------------------
+    // Macro ratios
+    // ---------------------------------------------
+
+    const energy =
+        totals.carbs * 4
+        + totals.protein * 4
+        + totals.fat * 9;
+
+    if (
+        !Number.isFinite(
+            energy
+        )
+        || energy <= 0
+    ) {
+        return {
+            state: "unknown",
+
+            text:
+                "탄단지 정보를 확인할 수 없습니다.",
+        };
+    }
+
+    const carbRatio =
+        totals.carbs * 4
+        / energy;
+
+    const fatRatio =
+        totals.fat * 9
+        / energy;
+
+    const proteinTarget =
+        goal.weightKg
+        * goal.proteinPerKg;
+
+    // ---------------------------------------------
+    // Same rule as Python nutrition.py
+    //
+    // Carb:
+    // 45 ~ 65%
+    //
+    // Fat:
+    // 20 ~ 35%
+    //
+    // Protein:
+    // at least 80% of configured target
+    //
+    // Protein above 120% is NOT automatically
+    // considered an error anymore.
+    // ---------------------------------------------
+
+    const carbUnbalanced =
+        carbRatio < 0.45
+        || carbRatio > 0.65;
+
+    const fatUnbalanced =
+        fatRatio < 0.20
+        || fatRatio > 0.35;
+
+    const proteinLow =
+        totals.protein
+        < proteinTarget * 0.80;
+
+    // Keep the same planner-level excessive
+    // protein guardrail as backend.
+    const proteinTooHigh =
+        totals.protein
+        > Math.max(
+            proteinTarget * 2.0,
+            proteinTarget + 60
+        );
+
+    const caloriesWithin =
+        Math.abs(
+            gap
+        )
+        <= goal.calories * 0.05;
+
+    if (
+        caloriesWithin
+        && (
+            carbUnbalanced
+            || fatUnbalanced
+            || proteinLow
+            || proteinTooHigh
+        )
+    ) {
+        return {
+            state:
+                "macro_unbalanced",
+
+            text:
+                "탄단지 조정 필요"
+                + ` · 탄수화물 ${(carbRatio * 100).toFixed(1)}%`
+                + ` · 지방 ${(fatRatio * 100).toFixed(1)}%`
+                + ` · 단백질 ${totals.protein.toFixed(1)}`
+                + ` / 기준 ${proteinTarget.toFixed(1)}g`,
+        };
+    }
+
+    // ---------------------------------------------
+    // Calories
+    // ---------------------------------------------
+
+    if (
+        caloriesWithin
+    ) {
+        return {
+            state: "within",
+
+            text:
+                "목표 범위 충족 (±5%)"
+                + ` · 차이 ${Math.round(
+                    Math.abs(gap)
+                )} kcal`,
+        };
+    }
+
+    return {
+        state:
+            gap > 0
+                ? "low"
+                : "high",
+
+        text:
+            `목표 대비 ${Math.round(
+                Math.abs(gap)
+            )} kcal `
+            + (
+                gap > 0
+                    ? "부족"
+                    : "초과"
+            )
+            + " · 식사·간식 조정 필요",
+    };
 }
 
 // Mifflin–St Jeor resting estimate × user-selected activity multiplier.

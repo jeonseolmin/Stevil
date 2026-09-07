@@ -61,17 +61,107 @@ def portion_totals(row, factor):
 
 # Adult carbohydrate/fat AMDR reference: https://www.ncbi.nlm.nih.gov/books/NBK208874/
 # Protein remains the confirmed g/kg goal; +/-20% is a planner matching tolerance.
-def macro_penalty(carbs, protein, fat, protein_target):
-    energy=carbs*4+protein*4+fat*9
-    if energy<=0: return float('inf')
-    c=carbs*4/energy; f=fat*9/energy; p=protein/protein_target
-    return (max(.45-c,0,c-.65)+max(.20-f,0,f-.35)
-            + max(.8-p,0,p-1.2))
+def macro_penalty(
+    carbs,
+    protein,
+    fat,
+    protein_target,
+):
+    energy = (
+        carbs * 4
+        + protein * 4
+        + fat * 9
+    )
+
+    if energy <= 0:
+        return float("inf")
+
+    carb_ratio = (
+        carbs * 4
+        / energy
+    )
+
+    fat_ratio = (
+        fat * 9
+        / energy
+    )
+
+    protein_ratio = (
+        protein
+        / protein_target
+    )
+
+    # 탄수화물:
+    # 총 에너지의 45~65%
+    carb_penalty = max(
+        0,
+        0.45 - carb_ratio,
+        carb_ratio - 0.65,
+    )
+
+    # 지방:
+    # 총 에너지의 20~35%
+    fat_penalty = max(
+        0,
+        0.20 - fat_ratio,
+        fat_ratio - 0.35,
+    )
+
+    # 단백질:
+    # 목표의 80% 미만은 패널티.
+    #
+    # 목표 초과 자체는 실패 조건으로 만들지 않습니다.
+    # 단, 비정상적으로 높은 값을 막기 위한 상한은
+    # 별도 검증에서 처리할 수 있습니다.
+    protein_penalty = max(
+        0,
+        0.80 - protein_ratio,
+    )
+
+    return (
+        carb_penalty
+        + fat_penalty
+        + protein_penalty
+    )
 
 
-def balanced_macros(carbs, protein, fat, protein_target):
-    # Allow at most 0.01 percentage point for rounding source-backed grams.
-    return macro_penalty(carbs,protein,fat,protein_target)<=1e-4
+def balanced_macros(
+    carbs,
+    protein,
+    fat,
+    protein_target,
+):
+    if protein_target <= 0:
+        return False
+
+    # 목표의 80%는 최소 확보
+    if protein < (
+        protein_target
+        * 0.80
+    ):
+        return False
+
+    # 과도한 단백질 후보 방지용
+    # Planner-level guardrail.
+    #
+    # 이것은 개인별 의학적 단백질 처방값이 아니라
+    # 자동 조합이 극단적으로 치우치는 것을 막는
+    # 기술적 제한입니다.
+    if protein > max(
+        protein_target * 2.0,
+        protein_target + 60,
+    ):
+        return False
+
+    return (
+        macro_penalty(
+            carbs,
+            protein,
+            fat,
+            protein_target,
+        )
+        <= 1e-4
+    )
 
 
 def portion(row, factor):
@@ -106,56 +196,609 @@ def balanced_meals(calories, target):
             and max(calories) <= min(calories)*1.5)
 
 
-def match_week(rows,goal,snacks=()):
-    target=validate_goal(goal)
-    eligible=[(row,recipe_nutrition(row)) for row in rows]
-    eligible=[item for item in eligible if item[1] is not None and not processed_meat(item[0])]
-    if len(eligible)<3: raise NutritionTargetUnavailable('중량과 영양정보를 확인할 수 있는 메뉴가 부족합니다.')
-    options=[]
-    snacks=[s for s in snacks if not processed_meat(s)]
-    snack_sets = [()] + [(s,) for s in snacks] + list(combinations(snacks, 2))
-    variants={}
-    for row,_ in eligible:
-        choices=[]
-        for step in range(10,31):
-            factor=step/20
-            kcal,protein,carbs,fat=portion_macros(row,factor)
-            if target['calories']*.20 <= kcal <= min(900,target['calories']*.35):
-                choices.append((factor,kcal,protein,carbs,fat))
-        variants[str(row['RCP_SEQ'])]=choices
-    for combo in combinations(eligible,3):
-        best=None
+def match_week(
+    rows,
+    goal,
+    snacks=(),
+):
+    target = validate_goal(
+        goal
+    )
+
+    eligible = [
+        (
+            row,
+            recipe_nutrition(
+                row
+            ),
+        )
+        for row
+        in rows
+    ]
+
+    eligible = [
+        item
+        for item
+        in eligible
+        if (
+            item[1] is not None
+            and not processed_meat(
+                item[0]
+            )
+        )
+    ]
+
+    if len(
+        eligible
+    ) < 3:
+        raise NutritionTargetUnavailable(
+            "목표 열량 ±5%, 끼니별 배분, "
+            "탄수화물·지방 범위와 최소 단백질 기준을 "
+            "함께 충족하는 조합이 없습니다. "
+            "음식 후보·제한 또는 목표를 확인해 주세요."
+        )
+
+    options = []
+
+    snacks = [
+        snack
+        for snack
+        in snacks
+        if not processed_meat(
+            snack
+        )
+    ]
+
+    snack_sets = (
+        [()]
+        + [
+            (
+                snack,
+            )
+            for snack
+            in snacks
+        ]
+        + list(
+            combinations(
+                snacks,
+                2,
+            )
+        )
+    )
+
+    variants = {}
+
+    for row, _ in eligible:
+        choices = []
+
+        for step in range(
+            10,
+            31,
+        ):
+            factor = (
+                step
+                / 20
+            )
+
+            (
+                kcal,
+                protein,
+                carbs,
+                fat,
+            ) = portion_macros(
+                row,
+                factor,
+            )
+
+            if (
+                target[
+                    "calories"
+                ]
+                * 0.20
+                <= kcal
+                <= min(
+                    900,
+                    target[
+                        "calories"
+                    ]
+                    * 0.35,
+                )
+            ):
+                choices.append(
+                    (
+                        factor,
+                        kcal,
+                        protein,
+                        carbs,
+                        fat,
+                    )
+                )
+
+        variants[
+            str(
+                row[
+                    "RCP_SEQ"
+                ]
+            )
+        ] = choices
+
+    for combo in combinations(
+        eligible,
+        3,
+    ):
+        best = None
+
         for extra in snack_sets:
-            extra_kcal=sum(float(s['foodEvidence']['nutrition']['INFO_ENG']) for s in extra)
-            extra_protein=sum(float(s['foodEvidence']['nutrition']['INFO_PRO']) for s in extra)
-            extra_carbs=sum(float(s['foodEvidence']['nutrition']['INFO_CAR']) for s in extra)
-            extra_fat=sum(float(s['foodEvidence']['nutrition']['INFO_FAT']) for s in extra)
-            desired=(target['calories']-extra_kcal)/3
-            choices=[sorted(variants[str(r['RCP_SEQ'])],key=lambda v:(abs(v[1]-desired),abs(v[0]-1)))[:3] for r,_ in combo]
-            for selected in product(*choices):
-                factors=tuple(v[0] for v in selected)
-                meal_kcal=[v[1] for v in selected]
-                total=sum(meal_kcal)+extra_kcal
-                if not balanced_meals(meal_kcal,target['calories']) or abs(total-target['calories'])>target['calories']*.05:
+            extra_kcal = sum(
+                float(
+                    snack[
+                        "foodEvidence"
+                    ][
+                        "nutrition"
+                    ][
+                        "INFO_ENG"
+                    ]
+                )
+                for snack
+                in extra
+            )
+
+            extra_protein = sum(
+                float(
+                    snack[
+                        "foodEvidence"
+                    ][
+                        "nutrition"
+                    ][
+                        "INFO_PRO"
+                    ]
+                )
+                for snack
+                in extra
+            )
+
+            extra_carbs = sum(
+                float(
+                    snack[
+                        "foodEvidence"
+                    ][
+                        "nutrition"
+                    ][
+                        "INFO_CAR"
+                    ]
+                )
+                for snack
+                in extra
+            )
+
+            extra_fat = sum(
+                float(
+                    snack[
+                        "foodEvidence"
+                    ][
+                        "nutrition"
+                    ][
+                        "INFO_FAT"
+                    ]
+                )
+                for snack
+                in extra
+            )
+
+            desired = (
+                target[
+                    "calories"
+                ]
+                - extra_kcal
+            ) / 3
+
+            choices = [
+                sorted(
+                    variants[
+                        str(
+                            row[
+                                "RCP_SEQ"
+                            ]
+                        )
+                    ],
+                    key=lambda value: (
+                        abs(
+                            value[1]
+                            - desired
+                        ),
+                        abs(
+                            value[0]
+                            - 1
+                        ),
+                    ),
+                )[:3]
+                for row, _
+                in combo
+            ]
+
+            if any(
+                not group
+                for group
+                in choices
+            ):
+                continue
+
+            for selected in product(
+                *choices
+            ):
+                factors = tuple(
+                    value[0]
+                    for value
+                    in selected
+                )
+
+                meal_kcal = [
+                    value[1]
+                    for value
+                    in selected
+                ]
+
+                total = (
+                    sum(
+                        meal_kcal
+                    )
+                    + extra_kcal
+                )
+
+                if (
+                    not balanced_meals(
+                        meal_kcal,
+                        target[
+                            "calories"
+                        ],
+                    )
+                    or abs(
+                        total
+                        - target[
+                            "calories"
+                        ]
+                    )
+                    > target[
+                        "calories"
+                    ]
+                    * 0.05
+                ):
                     continue
-                protein=sum(v[2] for v in selected)+extra_protein
-                carbs=sum(v[3] for v in selected)+extra_carbs
-                fat=sum(v[4] for v in selected)+extra_fat
-                if not balanced_macros(carbs,protein,fat,target['protein']):
+
+                protein = (
+                    sum(
+                        value[2]
+                        for value
+                        in selected
+                    )
+                    + extra_protein
+                )
+
+                carbs = (
+                    sum(
+                        value[3]
+                        for value
+                        in selected
+                    )
+                    + extra_carbs
+                )
+
+                fat = (
+                    sum(
+                        value[4]
+                        for value
+                        in selected
+                    )
+                    + extra_fat
+                )
+
+                if not balanced_macros(
+                    carbs,
+                    protein,
+                    fat,
+                    target[
+                        "protein"
+                    ],
+                ):
                     continue
-                # Compare portion changes and balance before menu repetition preferences.
-                score=(2*sum(abs(f-1) for f in factors)/3
-                       + 2*(max(meal_kcal)-min(meal_kcal))/target['calories']
-                       + abs(total-target['calories'])/target['calories']
-                       + .15*abs(protein-target['protein'])/target['protein'] + .01*len(extra))
-                if best is None or score<best[0]: best=(score,combo,total,protein,factors,extra)
-        if best is not None: options.append(best)
+
+                score = (
+                    2
+                    * sum(
+                        abs(
+                            factor
+                            - 1
+                        )
+                        for factor
+                        in factors
+                    )
+                    / 3
+                    + 2
+                    * (
+                        max(
+                            meal_kcal
+                        )
+                        - min(
+                            meal_kcal
+                        )
+                    )
+                    / target[
+                        "calories"
+                    ]
+                    + abs(
+                        total
+                        - target[
+                            "calories"
+                        ]
+                    )
+                    / target[
+                        "calories"
+                    ]
+                    + 0.15
+                    * abs(
+                        protein
+                        - target[
+                            "protein"
+                        ]
+                    )
+                    / target[
+                        "protein"
+                    ]
+                    + 0.01
+                    * len(
+                        extra
+                    )
+                )
+
+                if (
+                    best is None
+                    or score
+                    < best[0]
+                ):
+                    best = (
+                        score,
+                        combo,
+                        total,
+                        protein,
+                        factors,
+                        extra,
+                    )
+
+        if best is not None:
+            options.append(
+                best
+            )
+
+    # =====================================================
+    # Debug output
+    # =====================================================
+
     if not options:
-        raise NutritionTargetUnavailable('목표 열량 ±5%, 끼니별 배분, 탄수화물·지방 범위와 단백질 목표 ±20%를 함께 충족하는 조합이 없습니다. 음식 후보·제한 또는 목표를 확인해 주세요.')
-    days=[];notices=[]
-    for day,(score,combo,kcal,protein,factors,extra) in enumerate(choose_diverse_week(options)):
-        meals=sorted([portion(row,factor) for (row,_),factor in zip(combo,factors)],key=lambda r:float(r['INFO_ENG']))
-        meals[0]['_plannedSnacks']=list(extra)
-        days.append(meals)
-        notices.append(f'{day+1}일차 추천: 세 끼 {" / ".join(str(round(float(r["INFO_ENG"]))) for r in meals)} kcal · 간식 {len(extra)}개 · 합계 {kcal:.0f} kcal / 단백질 {protein:.1f}g. 표시된 제안량 기준입니다.')
-    return days,notices
+        print()
+        print(
+            "=== Nutrition matching debug ==="
+        )
+
+        print(
+            "Input rows:",
+            len(
+                rows
+            ),
+        )
+
+        print(
+            "Nutrition-valid eligible:",
+            len(
+                eligible
+            ),
+        )
+
+        print(
+            "Target calories:",
+            target[
+                "calories"
+            ],
+        )
+
+        print(
+            "Target protein:",
+            target[
+                "protein"
+            ],
+        )
+
+        print(
+            "Available snacks:",
+            len(
+                snacks
+            ),
+        )
+
+        print()
+
+        print(
+            "--- Eligible foods ---"
+        )
+
+        for (
+            row,
+            nutrition,
+        ) in eligible[:30]:
+            print(
+                row.get(
+                    "RCP_SEQ"
+                ),
+                "|",
+                row.get(
+                    "RCP_NM"
+                ),
+                "| kcal:",
+                round(
+                    nutrition[
+                        "calories"
+                    ],
+                    2,
+                ),
+                "| carb:",
+                round(
+                    nutrition[
+                        "carbs"
+                    ],
+                    2,
+                ),
+                "| protein:",
+                round(
+                    nutrition[
+                        "protein"
+                    ],
+                    2,
+                ),
+                "| fat:",
+                round(
+                    nutrition[
+                        "fat"
+                    ],
+                    2,
+                ),
+                "| portion variants:",
+                len(
+                    variants.get(
+                        str(
+                            row.get(
+                                "RCP_SEQ"
+                            )
+                        ),
+                        [],
+                    )
+                ),
+            )
+
+        print()
+
+        print(
+            "--- Snack candidates ---"
+        )
+
+        for snack in snacks:
+            nutrition = (
+                snack.get(
+                    "foodEvidence",
+                    {}
+                ).get(
+                    "nutrition",
+                    {}
+                )
+            )
+
+            print(
+                snack.get(
+                    "id"
+                ),
+                "|",
+                snack.get(
+                    "title"
+                ),
+                "| kcal:",
+                nutrition.get(
+                    "INFO_ENG"
+                ),
+                "| carb:",
+                nutrition.get(
+                    "INFO_CAR"
+                ),
+                "| protein:",
+                nutrition.get(
+                    "INFO_PRO"
+                ),
+                "| fat:",
+                nutrition.get(
+                    "INFO_FAT"
+                ),
+            )
+
+        print(
+            "=== End nutrition debug ==="
+        )
+
+        print()
+
+        raise NutritionTargetUnavailable(
+            "목표 열량 ±5%, 끼니별 배분, "
+            "탄수화물·지방 범위와 단백질 목표 ±20%를 "
+            "함께 충족하는 조합이 없습니다. "
+            "음식 후보·제한 또는 목표를 확인해 주세요."
+        )
+
+    # =====================================================
+    # Weekly diversity selection
+    # =====================================================
+
+    days = []
+
+    notices = []
+
+    for (
+        day,
+        (
+            score,
+            combo,
+            kcal,
+            protein,
+            factors,
+            extra,
+        ),
+    ) in enumerate(
+        choose_diverse_week(
+            options
+        )
+    ):
+        meals = sorted(
+            [
+                portion(
+                    row,
+                    factor,
+                )
+                for (
+                    row,
+                    _
+                ),
+                factor
+                in zip(
+                    combo,
+                    factors,
+                )
+            ],
+            key=lambda row:
+                float(
+                    row[
+                        "INFO_ENG"
+                    ]
+                ),
+        )
+
+        meals[0][
+            "_plannedSnacks"
+        ] = list(
+            extra
+        )
+
+        days.append(
+            meals
+        )
+
+        notices.append(
+            (
+                f"{day + 1}일차 추천: "
+                f"세 끼 "
+                f"{' / '.join(str(round(float(row['INFO_ENG']))) for row in meals)} kcal "
+                f"· 간식 {len(extra)}개 "
+                f"· 합계 {kcal:.0f} kcal "
+                f"/ 단백질 {protein:.1f}g. "
+                "표시된 제안량 기준입니다."
+            )
+        )
+
+    return (
+        days,
+        notices,
+    )
