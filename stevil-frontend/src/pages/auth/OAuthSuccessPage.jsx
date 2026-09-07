@@ -66,6 +66,14 @@ function OAuthSuccessPage() {
                     return;
                 }
 
+                if (user.role === "ROLE_DOCTOR") {
+                    navigate("/doctor/dashboard", {
+                        replace: true,
+                    });
+
+                    return;
+                }
+
                 /*
                  * 일반 사용자
                  */

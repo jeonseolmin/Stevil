@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { loadNaverMap } from "../api/naverMapLoader";
@@ -64,6 +64,10 @@ export default function HospitalMapPage() {
 
     const [keyword, setKeyword] = useState("");
     const [hospitals, setHospitals] = useState([]);
+    
+    // 💡 활성화된 광고 목록 상태 추가
+    const [activeAds, setActiveAds] = useState([]);
+
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [currentPosition, setCurrentPosition] = useState(null);
     const [isMapReady, setIsMapReady] = useState(false);
@@ -73,6 +77,54 @@ export default function HospitalMapPage() {
     const [locationMessage, setLocationMessage] = useState(
         "현재 위치를 허용하면 가까운 병원 순으로 볼 수 있습니다."
     );
+
+    // 💡 활성화된 광고 목록 불러오기
+    useEffect(() => {
+        const fetchActiveAds = async () => {
+            try {
+                const response = await axiosInstance.get("/ads/active");
+                setActiveAds(response.data);
+            } catch (error) {
+                console.error("광고 목록을 불러오지 못했습니다.", error);
+            }
+        };
+        fetchActiveAds();
+    }, []);
+
+    // 💡 광고 효과(최상단 고정, 강조)가 반영된 최종 병원 리스트 계산
+    const processedHospitals = useMemo(() => {
+        if (!hospitals || hospitals.length === 0) return [];
+
+        // 1. SEARCH_TOP(지역 검색 최상단 고정) 광고가 걸린 병원 이름 추출
+        const topAdNames = activeAds
+            .filter(ad => ad.adType === "SEARCH_TOP")
+            .map(ad => ad.doctorName?.trim());
+
+        // 2. HIGHLIGHT(시각적 강조) 광고가 걸린 병원 이름 추출
+        const highlightAdNames = activeAds
+            .filter(ad => ad.adType === "HIGHLIGHT")
+            .map(ad => ad.doctorName?.trim());
+
+        // 3. 데이터에 광고 정보 매핑 및 정렬 (SEARCH_TOP인 병원을 맨 위로 이동)
+        const mapped = hospitals.map(hospital => {
+            const hName = hospital.name?.trim();
+            const isTop = topAdNames.some(name => hName.includes(name));
+            const isHighlight = highlightAdNames.some(name => hName.includes(name));
+
+            return {
+                ...hospital,
+                isSearchTop: isTop,
+                isHighlight: isHighlight
+            };
+        });
+
+        // SEARCH_TOP인 병원들을 배열 맨 앞으로 정렬
+        return mapped.sort((a, b) => {
+            if (a.isSearchTop && !b.isSearchTop) return -1;
+            if (!a.isSearchTop && b.isSearchTop) return 1;
+            return 0;
+        });
+    }, [hospitals, activeAds]);
 
     const searchHospitals = useCallback(async (query, position) => {
         try {
@@ -226,7 +278,7 @@ export default function HospitalMapPage() {
         const bounds = new maps.LatLngBounds();
         let hasPosition = false;
 
-        hospitals.forEach((hospital, index) => {
+        processedHospitals.forEach((hospital, index) => {
             if (hospital.latitude === null || hospital.longitude === null) {
                 return;
             }
@@ -240,7 +292,7 @@ export default function HospitalMapPage() {
                 position,
                 title: hospital.name,
                 icon: {
-                    content: `<span class="hospital-map-marker"><b>${index + 1}</b></span>`,
+                    content: `<span class="hospital-map-marker ${hospital.isSearchTop ? 'is-top' : ''}"><b>${index + 1}</b></span>`,
                     anchor: new maps.Point(18, 42),
                 },
             });
@@ -264,14 +316,14 @@ export default function HospitalMapPage() {
         if (hasPosition) {
             map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
         }
-    }, [currentPosition, hospitals, isMapReady]);
+    }, [currentPosition, processedHospitals, isMapReady]);
 
     useEffect(() => {
         if (selectedIndex === null || !mapRef.current) {
             return;
         }
 
-        const hospital = hospitals[selectedIndex];
+        const hospital = processedHospitals[selectedIndex];
 
         if (hospital?.latitude !== null && hospital?.longitude !== null) {
             mapRef.current.panTo(new mapsRef.current.LatLng(
@@ -279,7 +331,7 @@ export default function HospitalMapPage() {
                 hospital.longitude
             ));
         }
-    }, [hospitals, selectedIndex]);
+    }, [processedHospitals, selectedIndex]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -326,7 +378,7 @@ export default function HospitalMapPage() {
                 <aside className="hospital-results" aria-live="polite">
                     <div className="hospital-results-heading">
                         <h2>검색 결과</h2>
-                        <span>{hospitals.length}곳</span>
+                        <span>{processedHospitals.length}곳</span>
                     </div>
 
                     {searchError && (
@@ -336,7 +388,7 @@ export default function HospitalMapPage() {
                         </div>
                     )}
 
-                    {!searchError && !isSearching && hospitals.length === 0 && (
+                    {!searchError && !isSearching && processedHospitals.length === 0 && (
                         <div className="hospital-empty">
                             <strong>검색 결과가 없습니다.</strong>
                             <p>지역명을 포함해 다시 검색해 보세요.</p>
@@ -344,10 +396,14 @@ export default function HospitalMapPage() {
                     )}
 
                     <ol className="hospital-list">
-                        {hospitals.map((hospital, index) => (
+                        {processedHospitals.map((hospital, index) => (
                             <li key={`${hospital.name}-${hospital.address}-${index}`}>
                                 <div
-                                    className={`hospital-card ${selectedIndex === index ? "hospital-card--selected" : ""}`}
+                                    className={`hospital-card 
+                                        ${selectedIndex === index ? "hospital-card--selected" : ""}
+                                        ${hospital.isSearchTop ? "hospital-card--search-top" : ""}
+                                        ${hospital.isHighlight ? "hospital-card--highlight" : ""}
+                                    `}
                                     role="button"
                                     tabIndex={0}
                                     onClick={() => setSelectedIndex(index)}
@@ -361,7 +417,12 @@ export default function HospitalMapPage() {
                                     <span className="hospital-card-number">{index + 1}</span>
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
-                                            <strong>{hospital.name}</strong>
+                                            <div>
+                                                {/* 💡 광고 뱃지 노출 영역 */}
+                                                {hospital.isSearchTop && <span className="ad-badge-top">추천 1위</span>}
+                                                {hospital.isHighlight && <span className="ad-badge-highlight">프리미엄</span>}
+                                                <strong>{hospital.name}</strong>
+                                            </div>
                                             {formatDistance(hospital.distanceKm) && (
                                                 <em>{formatDistance(hospital.distanceKm)}</em>
                                             )}

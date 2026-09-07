@@ -8,6 +8,7 @@ import {
     Link,
     NavLink,
     useLocation,
+
 } from "react-router-dom";
 
 import axiosInstance, {
@@ -46,6 +47,9 @@ export default function Header() {
 
     const isAdmin =
         userRole === "ROLE_ADMIN";
+
+    const isDoctor =
+        userRole === "ROLE_DOCTOR";
 
     const closeMenu = useCallback(() => {
         setIsMenuOpen(false);
@@ -565,6 +569,27 @@ export default function Header() {
                                     </Link>
                                 )}
 
+                                {isDoctor && (
+                                    <Link
+                                        to="/doctor/dashboard"
+                                        className="header-admin-button"
+                                        style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                        onClick={
+                                            closeMenu
+                                        }
+                                    >
+                                        의사 페이지
+                                    </Link>
+                                )}
+
+                                <Link
+                                    to="/mypage"
+                                    className="header-login-link"
+                                    onClick={closeMenu}
+                                >
+                                    마이페이지
+                                </Link>
+
                                 <button
                                     type="button"
                                     className="header-login-link"
@@ -622,6 +647,25 @@ export default function Header() {
                                     관리자 메뉴
                                 </Link>
                             )}
+
+                            {isDoctor && (
+                                <Link
+                                    to="/doctor/dashboard"
+                                    className="header-admin-button"
+                                    style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                    onClick={closeMenu}
+                                >
+                                    의사 페이지
+                                </Link>
+                            )}
+
+                            <Link
+                                to="/mypage"
+                                className="header-login-link"
+                                onClick={closeMenu}
+                            >
+                                마이페이지
+                            </Link>
 
                             <button
                                 type="button"

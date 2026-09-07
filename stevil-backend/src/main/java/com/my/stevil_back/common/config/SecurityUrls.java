@@ -19,6 +19,10 @@ public class SecurityUrls {
             "/api/community/**",
 
             "/ws-stomp/**",
+            "/ws-stomp/**",
+
+            "/api/ai/**"
+
 
             "/api/partnership-inquiries"
     };
@@ -26,6 +30,8 @@ public class SecurityUrls {
     public static final String[] ADMIN_URLS = {
             "/api/admin/**",
 
+            "/api/admin/**",
+            "/api/ads/admin/**"
     };
 
     public static final String[] USER_URLS = {
@@ -59,7 +65,10 @@ public class SecurityUrls {
 
             "/api/exercise-logs/**",
 
-            "/api/injections/**"
+            "/api/injections/**",
+
+            "/api/ads/request",
+            "/api/ads/active"
     };
 
     private SecurityUrls() {

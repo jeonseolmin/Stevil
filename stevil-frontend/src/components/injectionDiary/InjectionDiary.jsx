@@ -13,6 +13,10 @@ const InjectionDiary = () => {
 
   const [recentLogs, setRecentLogs] = useState([]);
 
+  // AI 분석 및 전송 관련 상태
+  const [isSending, setIsSending] = useState(false);
+  const [aiSummaryResult, setAiSummaryResult] = useState('');
+
   const symptomTags = [
     { id: 'none', label: '증상 없음' },
     { id: 'nausea', label: '메스꺼움' },
@@ -30,7 +34,7 @@ const InjectionDiary = () => {
 
   const fetchLogs = async () => {
     try {
-      const response = await axiosInstance.get(`http://localhost:8080/api/injections/recent`);
+      const response = await axiosInstance.get(`/injections/recent`);
       if (Array.isArray(response.data)) {
         setRecentLogs(response.data);
       } else {
@@ -65,7 +69,7 @@ const InjectionDiary = () => {
         lifestyleMemo: lifestyleMemo
       };
 
-      await axiosInstance.post(`http://localhost:8080/api/injections`, payload);
+      await axiosInstance.post(`/injections`, payload);
       alert('오늘의 주사 일기가 성공적으로 저장되었습니다!');
       
       setDosage(''); 
@@ -76,6 +80,39 @@ const InjectionDiary = () => {
     } catch (error) {
       console.error("저장 실패:", error);
       alert("기록 저장에 실패했습니다.");
+    }
+  };
+
+  // AI 의사 리포트 전송 로직
+  const handleSendToDoctor = async () => {
+    if (recentLogs.length === 0) {
+      alert("전송할 기록이 없습니다.");
+      return;
+    }
+
+    setIsSending(true);
+    
+    try {
+      // 1. 투약일지 텍스트 데이터 묶기
+      const reportText = recentLogs.map(log => 
+        `날짜: ${log.recordDate}, 용량: ${log.dosage}mg, 증상: ${log.symptoms?.join(',') || '없음'}, 메모: ${log.lifestyleMemo || '없음'}`
+      ).join('\n');
+
+      // 2. JSON 형태로 백엔드 전송
+      const response = await axiosInstance.post('/ai/logs/analyze', {
+          logText: reportText
+      }, {
+          timeout: 60000 // 이 요청에만 특별히 60초 대기 시간 부여
+      });
+
+      alert("의사에게 리포트가 성공적으로 전달되었습니다!");
+      setAiSummaryResult(response.data); // AI 요약 결과 저장
+      
+    } catch (error) {
+      console.error("의사 전달 실패:", error);
+      alert("전송 중 오류가 발생했습니다.");
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -217,61 +254,96 @@ const InjectionDiary = () => {
           </div>
         </div>
       ) : (
-        <div className="report-mode-container">
-          <div className="report-header">
-            <h2>진료 참고용 환자 리포트</h2>
-            <button className="print-btn" onClick={() => window.print()}>인쇄/PDF 저장</button>
-          </div>
+        <div className="report-mode-container" style={{ display: 'flex', gap: '20px' }}>
+          
+          <div style={{ flex: 1 }}>
+            <div className="report-header">
+              <h2>진료 참고용 환자 리포트</h2>
+              <button className="print-btn" onClick={() => window.print()}>인쇄/PDF 저장</button>
+            </div>
 
-          <div className="report-summary-cards">
-            <div className="r-card">
-              <div className="r-card-title">현재 투여 용량</div>
-              <div className="r-card-value blue-text">{currentDosage} <span>mg</span></div>
+            <div className="report-summary-cards">
+              <div className="r-card">
+                <div className="r-card-title">현재 투여 용량</div>
+                <div className="r-card-value blue-text">{currentDosage} <span>mg</span></div>
+              </div>
+              <div className="r-card">
+                <div className="r-card-title">가장 잦은 증상</div>
+                <div className="r-card-value red-text">{getMostFrequentSymptom()}</div>
+              </div>
+              <div className="r-card">
+                <div className="r-card-title">기록된 총 일수</div>
+                <div className="r-card-value green-text">{recentLogs.length} <span>일</span></div>
+              </div>
             </div>
-            <div className="r-card">
-              <div className="r-card-title">가장 잦은 증상</div>
-              <div className="r-card-value red-text">{getMostFrequentSymptom()}</div>
-            </div>
-            <div className="r-card">
-              <div className="r-card-title">기록된 총 일수</div>
-              <div className="r-card-value green-text">{recentLogs.length} <span>일</span></div>
-            </div>
-          </div>
 
-          <div className="card report-table-card">
-            <h3>전체 상세 기록</h3>
-            {recentLogs.length === 0 ? (
-              <p style={{textAlign: 'center', padding: '30px', color: 'var(--color-text-muted)'}}>기록된 데이터가 없습니다.</p>
-            ) : (
-              <table className="doctor-report-table">
-                <thead>
-                  <tr>
-                    <th>날짜</th>
-                    <th>투여량</th>
-                    <th>주사 부위</th>
-                    <th>발현 증상</th>
-                    <th>환자 메모 (식단/운동/컨디션)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentLogs.map((log, idx) => (
-                    <tr key={idx}>
-                      <td>{log.recordDate}</td>
-                      <td className="fw-bold">{log.dosage}mg</td>
-                      <td>{log.injectionSite}</td>
-                      <td className="symptom-cell">
-                        {log.symptoms && log.symptoms.length > 0 
-                          ? log.symptoms.map((s, i) => <span key={i} className="r-tag">{s}</span>)
-                          : <span className="r-tag gray">없음</span>
-                        }
-                      </td>
-                      <td className="memo-cell">{log.lifestyleMemo || '-'}</td>
+            <div className="card report-table-card">
+              <h3>전체 상세 기록</h3>
+              {recentLogs.length === 0 ? (
+                <p style={{textAlign: 'center', padding: '30px', color: 'var(--color-text-muted)'}}>기록된 데이터가 없습니다.</p>
+              ) : (
+                <table className="doctor-report-table">
+                  <thead>
+                    <tr>
+                      <th>날짜</th>
+                      <th>투여량</th>
+                      <th>주사 부위</th>
+                      <th>발현 증상</th>
+                      <th>환자 메모 (식단/운동/컨디션)</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  </thead>
+                  <tbody>
+                    {recentLogs.map((log, idx) => (
+                      <tr key={idx}>
+                        <td>{log.recordDate}</td>
+                        <td className="fw-bold">{log.dosage}mg</td>
+                        <td>{log.injectionSite}</td>
+                        <td className="symptom-cell">
+                          {log.symptoms && log.symptoms.length > 0 
+                            ? log.symptoms.map((s, i) => <span key={i} className="r-tag">{s}</span>)
+                            : <span className="r-tag gray">없음</span>
+                          }
+                        </td>
+                        <td className="memo-cell">{log.lifestyleMemo || '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
+
+          <div style={{ width: '320px' }}>
+            <div className="card" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', height: '100%' }}>
+              <h3 style={{ marginTop: 0, color: '#1e293b' }}>담당 의사에게 전송</h3>
+              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.5', marginBottom: '20px' }}>
+                현재까지 작성된 일지 내역을 PDF 형태로 의료진에게 전송합니다. AI가 증상을 요약하여 진료를 보조합니다.
+              </p>
+              
+              <button 
+                onClick={handleSendToDoctor} 
+                disabled={isSending || recentLogs.length === 0}
+                style={{ 
+                  width: '100%', padding: '12px', 
+                  backgroundColor: isSending || recentLogs.length === 0 ? '#94a3b8' : '#3b82f6', 
+                  color: 'white', border: 'none', borderRadius: '6px', 
+                  fontWeight: 'bold', cursor: isSending || recentLogs.length === 0 ? 'not-allowed' : 'pointer' 
+                }}
+              >
+                {isSending ? 'AI 분석 및 전송 중...' : '투약일지 전송하기'}
+              </button>
+
+              {aiSummaryResult && (
+                <div style={{ marginTop: '20px', padding: '15px', backgroundColor: 'white', border: '1px solid #cbd5e1', borderRadius: '6px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#10b981' }}>✓ 의사에게 전달된 AI 분석 초안</span>
+                  <p style={{ fontSize: '13px', color: '#333', whiteSpace: 'pre-wrap', marginTop: '8px', marginBottom: 0, lineHeight: '1.6' }}>
+                    {aiSummaryResult}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       )}
     </div>
