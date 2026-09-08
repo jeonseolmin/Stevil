@@ -25,8 +25,6 @@ import AdminFacilitiesPage from "../pages/admin/facilities/AdminFacilitiesPage.j
 import AdminInquiriesPage from "../pages/admin/inquiries/AdminInquiriesPage.jsx";
 import AdminContentsPage from "../pages/admin/contents/AdminContentsPage.jsx";
 import PartnershipGuidePage from "../pages/partnership/guide/PartnershipGuidePage.jsx";
-
-import PartnershipGuidePage from "../pages/partnership/PartnershipGuidePage.jsx";
 import MyPage from "../pages/mypage/MyPage.jsx";
 import AdminAdsPage from "../pages/admin/ads/AdminAdsPage.jsx";
 import DoctorLayout from "../components/layout/doctor/DoctorLayout.jsx";
