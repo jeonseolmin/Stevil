@@ -1,6 +1,6 @@
 package com.my.stevil_back.auth.service;
 
-import com.my.stevil_back.auth.social.dto.response.SocialAccountResponse;
+import com.my.stevil_back.auth.social.dto.SocialAccountResponse;
 import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
 import com.my.stevil_back.auth.social.entity.SocialAccount;
 import com.my.stevil_back.auth.social.repository.SocialAccountRepository;

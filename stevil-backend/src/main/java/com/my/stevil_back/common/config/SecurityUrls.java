@@ -17,7 +17,6 @@ public class SecurityUrls {
 
             "/api/community",
             "/api/community/**",
-<<<<<<< HEAD
             "/api/community/**",
 
             "/ws-stomp/**",
@@ -25,31 +24,15 @@ public class SecurityUrls {
             "/api/ai/**",
 
 
-=======
-
-            "/ws-stomp/**",
-
->>>>>>> 72a74fbd90ffd7829ad6b6c4aa7e3f417a105c1c
             "/api/partnership-inquiries"
     };
 
     public static final String[] ADMIN_URLS = {
             "/api/admin/**",
             "/api/ads/admin/**"
-<<<<<<< HEAD
-=======
-    };
-
-    public static final String[] DOCTOR_URLS = {
-            "/api/doctor/**"
->>>>>>> 72a74fbd90ffd7829ad6b6c4aa7e3f417a105c1c
     };
 
     public static final String[] USER_URLS = {
-            "/api/ai/**",
-
-            "/api/planner/**",
-            "/api/planner",
             "/api/users/",
             "/api/users/**",
 
@@ -80,10 +63,8 @@ public class SecurityUrls {
 
             "/api/injections/**",
 
-            "/api/patient-reports/**",
-
-            "/api/ads/active",
-            "/api/ads/dashboard-ads"
+            "/api/ads/request",
+            "/api/ads/active"
     };
 
     private SecurityUrls() {

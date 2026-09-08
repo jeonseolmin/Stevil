@@ -5,10 +5,10 @@
     background:
         radial-gradient(
             circle at top right,
-            rgba(57, 135, 106, 0.11),
+            rgba(58, 189, 177, 0.11),
             transparent 34%
         ),
-        var(--color-background, var(--color-background));
+        var(--color-background, #f8faf9);
 }
 
 .admin-reports-container {
@@ -29,12 +29,12 @@
     margin-bottom: 10px;
     padding: 6px 11px;
 
-    color: var(--color-primary-dark, var(--color-primary-dark));
+    color: var(--color-primary-dark, #0f7d72);
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
 
-    background: var(--color-primary-soft, var(--color-primary-soft));
+    background: var(--color-primary-soft, #e8f8f5);
     border-radius: 999px;
 }
 
@@ -46,7 +46,7 @@
 
 .admin-reports-header p {
     margin: 0;
-    color: var(--color-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary, #526966);
 }
 
 .admin-report-count {
@@ -57,14 +57,14 @@
 }
 
 .admin-report-count strong {
-    color: var(--color-primary-dark, var(--color-primary-dark));
+    color: var(--color-primary-dark, #0f7d72);
     font-size: 30px;
     line-height: 1;
 }
 
 .admin-report-count span {
     margin-top: 6px;
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
     font-size: 13px;
 }
 
@@ -78,7 +78,7 @@
     padding: 20px;
 
     background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, var(--color-border));
+    border: 1px solid var(--color-border, #dce9e6);
     border-radius: 18px;
     box-shadow: var(--shadow-small);
 }
@@ -90,7 +90,7 @@
 }
 
 .admin-report-filters label > span {
-    color: var(--color-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary, #526966);
     font-size: 13px;
     font-weight: 700;
 }
@@ -99,7 +99,7 @@
 .report-processing select,
 .report-processing textarea {
     width: 100%;
-    border: 1px solid var(--color-border, var(--color-border));
+    border: 1px solid var(--color-border, #dce9e6);
     outline: none;
     background: #fff;
 }
@@ -114,8 +114,8 @@
 .admin-report-filters select:focus,
 .report-processing select:focus,
 .report-processing textarea:focus {
-    border-color: var(--color-primary, var(--color-primary));
-    box-shadow: 0 0 0 3px rgba(57, 135, 106, 0.15);
+    border-color: var(--color-primary, #3abdb1);
+    box-shadow: 0 0 0 3px rgba(58, 189, 177, 0.15);
 }
 
 .admin-refresh-button {
@@ -125,7 +125,7 @@
     color: #fff;
     font-weight: 700;
 
-    background: var(--color-primary, var(--color-primary));
+    background: var(--color-primary, #3abdb1);
     border-radius: 10px;
     cursor: pointer;
 }
@@ -150,7 +150,7 @@
 .admin-report-table-card {
     overflow: hidden;
     background: var(--color-surface, #fff);
-    border: 1px solid var(--color-border, var(--color-border));
+    border: 1px solid var(--color-border, #dce9e6);
     border-radius: 18px;
     box-shadow: var(--shadow-medium);
 }
@@ -167,21 +167,21 @@
 
 .admin-report-table-head {
     padding: 15px 20px;
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
     font-size: 12px;
     font-weight: 800;
-    background: var(--color-surface-soft, var(--color-surface-soft));
+    background: var(--color-surface-soft, #f1f7f5);
 }
 
 .admin-report-row {
     width: 100%;
     padding: 17px 20px;
 
-    color: var(--color-text-primary, var(--color-text-primary));
+    color: var(--color-text-primary, #183a37);
     text-align: left;
 
     background: transparent;
-    border-bottom: 1px solid var(--color-border-light, var(--color-border-light));
+    border-bottom: 1px solid var(--color-border-light, #e8f0ee);
     cursor: pointer;
 }
 
@@ -191,11 +191,11 @@
 
 .admin-report-row:hover,
 .admin-report-row:focus-visible {
-    background: var(--color-primary-soft, var(--color-primary-soft));
+    background: var(--color-primary-soft, #e8f8f5);
 }
 
 .report-number {
-    color: var(--color-primary-dark, var(--color-primary-dark));
+    color: var(--color-primary-dark, #0f7d72);
     font-weight: 800;
 }
 
@@ -238,7 +238,7 @@
 
 .admin-report-state {
     padding: 70px 20px;
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
     text-align: center;
 }
 
@@ -254,11 +254,11 @@
     min-width: 76px;
     min-height: 40px;
 
-    color: var(--color-primary-dark, var(--color-primary-dark));
+    color: var(--color-primary-dark, #0f7d72);
     font-weight: 700;
 
     background: #fff;
-    border: 1px solid var(--color-border, var(--color-border));
+    border: 1px solid var(--color-border, #dce9e6);
     border-radius: 10px;
     cursor: pointer;
 }
@@ -270,7 +270,7 @@
 }
 
 .admin-report-pagination span {
-    color: var(--color-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary, #526966);
     font-size: 14px;
     font-weight: 700;
 }
@@ -308,7 +308,7 @@
 }
 
 .report-modal-header span {
-    color: var(--color-primary, var(--color-primary));
+    color: var(--color-primary, #3abdb1);
     font-size: 13px;
     font-weight: 800;
 }
@@ -340,7 +340,7 @@
 
 .report-detail-grid > div {
     padding: 14px;
-    background: var(--color-surface-soft, var(--color-surface-soft));
+    background: var(--color-surface-soft, #f1f7f5);
     border-radius: 12px;
 }
 
@@ -351,7 +351,7 @@
 
 .report-detail-grid span {
     margin-bottom: 6px;
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
     font-size: 12px;
 }
 
@@ -371,7 +371,7 @@
 
 .report-detail-section p {
     margin: 0;
-    color: var(--color-text-secondary, var(--color-text-secondary));
+    color: var(--color-text-secondary, #526966);
     line-height: 1.65;
 }
 
@@ -379,8 +379,8 @@
     min-height: 80px;
     padding: 15px;
     white-space: pre-wrap;
-    background: var(--color-background);
-    border: 1px solid var(--color-border-light, var(--color-border-light));
+    background: #f8faf9;
+    border: 1px solid var(--color-border-light, #e8f0ee);
     border-radius: 12px;
 }
 
@@ -390,7 +390,7 @@
     gap: 16px;
     margin-top: 24px;
     padding-top: 22px;
-    border-top: 1px solid var(--color-border, var(--color-border));
+    border-top: 1px solid var(--color-border, #dce9e6);
 }
 
 .report-processing label {
@@ -413,7 +413,7 @@
 
 .report-processing small {
     align-self: flex-end;
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
 }
 
 .report-review-button {
@@ -447,13 +447,13 @@
 
 .report-resolve-button {
     color: #fff;
-    background: var(--color-primary, var(--color-primary));
+    background: var(--color-primary, #3abdb1);
 }
 
 .report-result-box {
     margin-top: 24px;
     padding: 18px;
-    background: var(--color-surface-soft, var(--color-surface-soft));
+    background: var(--color-surface-soft, #f1f7f5);
     border-radius: 14px;
 }
 
@@ -469,7 +469,7 @@
 }
 
 .report-result-box dt {
-    color: var(--color-text-muted, var(--color-text-muted));
+    color: var(--color-text-muted, #7d918e);
     font-size: 13px;
 }
 
@@ -500,7 +500,7 @@
     .admin-report-row > span::before {
         display: block;
         margin-bottom: 4px;
-        color: var(--color-text-muted, var(--color-text-muted));
+        color: var(--color-text-muted, #7d918e);
         font-size: 11px;
         font-weight: 700;
         content: attr(data-label);

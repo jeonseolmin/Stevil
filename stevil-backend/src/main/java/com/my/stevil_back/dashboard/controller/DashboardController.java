@@ -1,7 +1,7 @@
 package com.my.stevil_back.dashboard.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.dashboard.dto.response.DashboardResponse;
+import com.my.stevil_back.dashboard.dto.DashboardResponse;
 import com.my.stevil_back.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
