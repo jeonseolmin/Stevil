@@ -12,6 +12,22 @@ import org.springframework.data.repository.query.Param;
 public interface InquiryRepository
         extends JpaRepository<Inquiry, Long> {
 
+    Page<Inquiry> findByStatus(
+            InquiryStatus status,
+            Pageable pageable
+    );
+
+    Page<Inquiry> findByCategory(
+            InquiryCategory category,
+            Pageable pageable
+    );
+
+    Page<Inquiry> findByStatusAndCategory(
+            InquiryStatus status,
+            InquiryCategory category,
+            Pageable pageable
+    );
+
     @Query("""
             SELECT i 
             FROM Inquiry i 
@@ -24,7 +40,6 @@ public interface InquiryRepository
     Page<Inquiry> searchForAdmin(
             @Param("status") InquiryStatus status,
             @Param("category") InquiryCategory category,
-            @Param("keyword") String keyword,
             Pageable pageable
     );
 

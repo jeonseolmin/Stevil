@@ -17,12 +17,14 @@ public class SecurityUrls {
 
             "/api/community",
             "/api/community/**",
+            "/api/community/**",
 
             "/ws-stomp/**",
 
-            "/api/ai/**"
+            "/api/ai/**",
 
 
+            "/api/partnership-inquiries"
     };
 
     public static final String[] ADMIN_URLS = {

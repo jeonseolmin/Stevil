@@ -178,9 +178,22 @@
 }
 
 .admin-main {
-    width: calc(100% - var(--admin-sidebar-width));
+    width: calc(
+        100% - var(--admin-sidebar-width)
+    );
+
+    min-width: 0;
     min-height: 100vh;
-    margin-left: var(--admin-sidebar-width);
+    margin-left:
+        var(--admin-sidebar-width);
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(58, 189, 177, 0.07),
+            transparent 30%
+        ),
+        #f4f8f7;
 }
 
 .admin-topbar {
@@ -235,7 +248,28 @@
 }
 
 .admin-content {
-    width: 100%;
+     width: 100%;
+     min-width: 0;
+}
+/*
+ * 공통 관리자 페이지 외곽 여백
+ *
+ * 대시보드와 신고 페이지는 자체 컨테이너가 있으므로
+ * 별도로 포함하지 않습니다.
+ */
+.admin-content > .admin-users-page,
+.admin-content > .admin-facilities-page,
+.admin-content > .admin-inquiries-page,
+.admin-content > .admin-contents-page {
+    width: min(
+        1180px,
+        calc(100% - 48px)
+    );
+
+    margin: 0 auto;
+    padding: 42px 0 80px;
+
+    box-sizing: border-box;
 }
 
 .admin-auth-loading {
@@ -271,6 +305,7 @@
 }
 
 @media (max-width: 900px) {
+
     .admin-sidebar {
         width: min(290px, 84vw);
         transform: translateX(-100%);
@@ -301,5 +336,24 @@
 
         display: block;
         background: rgba(7, 28, 25, 0.52);
+    }
+}
+@media (max-width: 900px) {
+    .admin-content > .admin-users-page,
+    .admin-content > .admin-facilities-page,
+    .admin-content > .admin-inquiries-page,
+    .admin-content > .admin-contents-page {
+        width: calc(100% - 32px);
+        padding: 30px 0 60px;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-content > .admin-users-page,
+    .admin-content > .admin-facilities-page,
+    .admin-content > .admin-inquiries-page,
+    .admin-content > .admin-contents-page {
+        width: calc(100% - 24px);
+        padding: 24px 0 50px;
     }
 }

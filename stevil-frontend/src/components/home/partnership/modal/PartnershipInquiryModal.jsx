@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import axiosInstance from "../../../../api/axiosInstance";
 import "./PartnershipInquiryModal.css";
 
 const INITIAL_FORM = {
@@ -20,6 +20,8 @@ export default function PartnershipInquiryModal({
     const [errorMessage, setErrorMessage] =
         useState("");
     const [submitted, setSubmitted] =
+        useState(false);
+    const [submitting, setSubmitting] =
         useState(false);
 
     useEffect(() => {
@@ -117,39 +119,50 @@ export default function PartnershipInquiryModal({
         return "";
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const validationMessage =
-            validateForm();
+        const validationMessage = validateForm();
 
         if (validationMessage) {
             setErrorMessage(validationMessage);
             return;
         }
 
-        /*
-         * 백엔드 API가 구현되면 아래 부분을
-         * axiosInstance.post() 요청으로 교체합니다.
-         *
-         * await axiosInstance.post(
-         *     "/partnership-inquiries",
-         *     {
-         *         facilityType:
-         *             form.facilityType,
-         *         facilityName:
-         *             form.facilityName.trim(),
-         *         managerName:
-         *             form.managerName.trim(),
-         *         phone: form.phone.trim(),
-         *         email: form.email.trim(),
-         *         address: form.address.trim(),
-         *         message: form.message.trim(),
-         *     }
-         * );
-         */
+        try {
+            setSubmitting(true);
+            setErrorMessage("");
 
-        setSubmitted(true);
+            await axiosInstance.post(
+                "/partnership-inquiries",
+                {
+                    facilityType: form.facilityType,
+                    facilityName:
+                        form.facilityName.trim(),
+                    managerName:
+                        form.managerName.trim(),
+                    phone: form.phone.trim(),
+                    email: form.email.trim(),
+                    address: form.address.trim(),
+                    message:
+                        form.message.trim() || null,
+                }
+            );
+
+            setSubmitted(true);
+        } catch (error) {
+            console.error(
+                "제휴 문의 접수 실패:",
+                error
+            );
+
+            setErrorMessage(
+                error.response?.data?.message ??
+                "제휴 문의 접수에 실패했습니다. 잠시 후 다시 시도해 주세요."
+            );
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleBackdropMouseDown = (event) => {
@@ -474,8 +487,11 @@ export default function PartnershipInquiryModal({
                         <button
                             type="submit"
                             className="partnership-modal-submit"
+                            disabled={submitting}
                         >
-                            제휴 문의 접수
+                            {submitting
+                                ? "접수 중..."
+                                : "제휴 문의 접수"}
                         </button>
                     </footer>
                 </form>
