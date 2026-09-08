@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ChatRoomListDto {
-    private Long roomId;
+    private String roomId;
     private String targetNickname;
     private String lastMessage;
     private String lastMessageTime;
