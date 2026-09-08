@@ -13,10 +13,15 @@ import csv
 from pathlib import Path
 
 
-BASE = Path(__file__).parent
+RAG_ROOT = Path(__file__).resolve().parents[2]
+
+DATA_COLLECTION_ROOT = (
+    RAG_ROOT
+    .parents[1]
+)
 
 EXERCISE_CSV = (
-    BASE.parents[1]
+    DATA_COLLECTION_ROOT
     / "DB"
     / "exercises.csv"
 )

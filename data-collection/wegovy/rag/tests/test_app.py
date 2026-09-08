@@ -32,9 +32,10 @@ class RagTests(unittest.TestCase):
             (root / 'runs').mkdir()
             source = json.loads((ROOT / 'sources.json').read_text(encoding='utf-8'))[0]
             (root / 'sources.json').write_text(json.dumps([source]), encoding='utf-8')
-            (root / 'raw' / 'bad.html').write_text('tampered')
-            result = {'source_id': source['id'], 'status': 'downloaded_pending_review', 'relative_path': 'raw/bad.html', 'sha256': 'bad'}
-            (root / 'runs' / 'run.json').write_text(json.dumps({'results': [result]}))
+            (root / 'raw' / 'bad.html').write_text('tampered', encoding='utf-8')
+            result = {'source_id': source['id'], 'status': 'downloaded_pending_review',
+                      'relative_path': 'raw/bad.html', 'sha256': 'bad'}
+            (root / 'runs' / 'run.json').write_text(json.dumps({'results': [result]}), encoding='utf-8')
             corpus = Corpus(root, preview=True)
             self.assertEqual(corpus.docs, [])
             self.assertIn('SHA-256', corpus.status[0]['reason'])
@@ -49,15 +50,16 @@ class RagTests(unittest.TestCase):
         from io import BytesIO
         for output, expected in [('검토 전 초안입니다. 설명 [1]', 'generated_draft'), ('설명 [99]', 'evidence')]:
             body = {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [{'text': output}]}}]}
-            with patch.dict('os.environ', {'GEMINI_API_KEY': 'test-only'}), patch('app.urlopen', return_value=BytesIO(json.dumps(body).encode())):
+            with patch.dict('os.environ', {'GEMINI_API_KEY': 'test-only'}),                  patch('app.urlopen', return_value=BytesIO(json.dumps(body).encode())):
                 response = answer(Corpus(preview=True), '임신', 'test-model')
             self.assertEqual(response['mode'], expected)
 
     def test_gemini_receives_shared_prompt_and_source_metadata(self):
         from io import BytesIO
-        from prompts import SYSTEM_PROMPT
-        body = {'candidates': [{'finishReason': 'STOP', 'content': {'parts': [{'text': '함께 확인해 볼게요. [1]'}]}}]}
-        with patch.dict('os.environ', {'GEMINI_API_KEY': 'test-only'}), patch('app.urlopen', return_value=BytesIO(json.dumps(body).encode())) as api:
+        from chat.prompts import SYSTEM_PROMPT
+        body = {'candidates': [{'finishReason': 'STOP',
+                                'content': {'parts': [{'text': '함께 확인해 볼게요. [1]'}]}}]}
+        with patch.dict('os.environ', {'GEMINI_API_KEY': 'test-only'}),              patch('app.urlopen', return_value=BytesIO(json.dumps(body).encode())) as api:
             answer(Corpus(preview=True), '임신', 'test-model')
         payload = json.loads(api.call_args.args[0].data)
         self.assertEqual(payload['systemInstruction']['parts'][0]['text'], SYSTEM_PROMPT)

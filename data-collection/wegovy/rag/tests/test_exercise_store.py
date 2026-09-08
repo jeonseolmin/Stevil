@@ -3,8 +3,8 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from exercise_store import PageText
-from hybrid import DIMENSIONS, VectorIndex
+from planner.exercise.store import PageText
+from retrieval.hybrid import DIMENSIONS, VectorIndex
 
 
 class ExerciseStoreTests(unittest.TestCase):
@@ -18,7 +18,8 @@ class ExerciseStoreTests(unittest.TestCase):
         docs = [{'id': 'walk', 'section': 'Walking', 'text': 'Slow walking'}]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'vectors.sqlite3'
-            with patch('hybrid.embed_batch', return_value=[[1.0] + [0.0] * (DIMENSIONS-1)]) as paid:
+            with patch('retrieval.hybrid.embed_batch',
+                       return_value=[[1.0] + [0.0] * (DIMENSIONS - 1)]) as paid:
                 self.assertEqual(VectorIndex(docs, path).build(batch_size=32), 1)
                 self.assertEqual(VectorIndex(docs, path).build(batch_size=32), 0)
                 self.assertEqual(paid.call_count, 1)

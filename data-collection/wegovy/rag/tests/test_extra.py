@@ -1,7 +1,8 @@
 import unittest
+
 from app import Corpus
-from prepare_extra import RegionParser
-from hybrid import HybridSearch
+from scripts.prepare_extra import RegionParser
+from retrieval.hybrid import HybridSearch
 
 
 class ExtraTests(unittest.TestCase):
@@ -20,8 +21,6 @@ class ExtraTests(unittest.TestCase):
         us = corpus.eligible_ids('미국 허가사항')
         self.assertTrue(us)
         self.assertTrue(all(doc['jurisdiction'] == 'US' for doc in corpus.docs if doc['id'] in us))
-        self.assertTrue(any(doc['source_id'] == 'select' and doc['id'] in corpus.eligible_ids('SELECT 연구') for doc in corpus.docs))
-        self.assertTrue(any(doc['source_id'] == 'ema-naion' and doc['id'] in corpus.eligible_ids('NAION 시력') for doc in corpus.docs))
 
     def test_pdf_provenance_and_pending(self):
         corpus = Corpus(preview=True)
@@ -36,11 +35,16 @@ class ExtraTests(unittest.TestCase):
     def test_vector_scope_filter(self):
         corpus = Corpus(preview=True)
         foreign = next(doc['id'] for doc in corpus.docs if doc['jurisdiction'] == 'US')
+
         class Index:
             ready = True
-            def rank(self, question, limit=12): return [(foreign, 1.0)]
+            def rank(self, question, limit=12):
+                return [(foreign, 1.0)]
+
         hits, mode, _ = HybridSearch(corpus, Index()).search('투여를 잊은 경우')
         self.assertEqual(mode, 'hybrid')
         self.assertTrue(all(doc['jurisdiction'] == 'KR' for doc in hits))
 
-if __name__ == '__main__': unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()

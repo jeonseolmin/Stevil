@@ -29,8 +29,6 @@ EXERCISE_SOURCES_PATH = (
     / "exercise_sources.json"
 )
 
-BASE = Path(__file__).parent
-ROOT = BASE / 'cache' / 'exercise'
 
 
 class PageText(HTMLParser):

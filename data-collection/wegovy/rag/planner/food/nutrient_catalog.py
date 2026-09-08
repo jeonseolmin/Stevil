@@ -15,11 +15,16 @@ from urllib.request import urlopen
 from retrieval.hybrid import VectorIndex
 
 from planner.food.policy import (
+    canonical,
+    families,
     processed_meat,
 )
 
 from planner.nutrition.matching import (
+    macro_penalty,
+    number,
     recipe_nutrition,
+    validate_goal,
 )
 
 RAG_ROOT = (
