@@ -4,13 +4,20 @@ import "./AuthLayout.css";
 export default function AuthLayout() {
     return (
         <div className="auth-layout">
-            <Link
-                to="/"
-                className="auth-logo"
-                aria-label="Stevil 홈으로 이동"
-            >
-                Stevil
-            </Link>
+            <header className="auth-header">
+                <Link
+                    to="/"
+                    className="auth-logo"
+                    aria-label="Stevil 홈으로 이동"
+                >
+                    <span className="auth-brand-symbol" aria-hidden="true">
+                        1
+                    </span>
+                    <span className="auth-brand-name">
+                        Stevil
+                    </span>
+                </Link>
+            </header>
 
             <main className="auth-content">
                 <Outlet />

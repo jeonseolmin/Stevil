@@ -105,6 +105,48 @@
     text-align: center;
 }
 
+.auth-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.auth-brand-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    width: 28px;
+    height: 28px;
+    
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 900;
+    
+    background-color: var(--color-primary, #20bfa9);
+    border-radius: 8px;
+}
+
+.auth-brand-name {
+    color: var(--color-primary-dark, #183a37);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    transition: color 0.2s ease;
+}
+
+.auth-logo:hover .auth-brand-name {
+    color: var(--color-primary, #20bfa9);
+}
+
+.auth-logo:focus-visible {
+    outline: 3px solid rgba(32, 191, 169, 0.22);
+    outline-offset: 6px;
+    border-radius: 6px;
+}
+
 @media (max-width: 600px) {
     .auth-header {
         width: calc(100% - 32px);
