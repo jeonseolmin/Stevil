@@ -13,12 +13,12 @@ public class ChatRoomController {
     private final ChatService chatService;
 
     @PostMapping("/room")
-    public ResponseEntity<Long> createOrGetRoom(@RequestParam String myNickname, @RequestParam String targetNickname) {
+    public ResponseEntity<String> createOrGetRoom(@RequestParam String myNickname, @RequestParam String targetNickname) {
         return ResponseEntity.ok(chatService.createOrGetRoom(myNickname, targetNickname));
     }
 
     @GetMapping("/room/{roomId}/messages")
-    public ResponseEntity<List<ChatMessageDto>> getChatHistory(@PathVariable Long roomId) {
+    public ResponseEntity<List<ChatMessageDto>> getChatHistory(@PathVariable String roomId) {
         return ResponseEntity.ok(chatService.getChatHistory(roomId));
     }
 

@@ -6,6 +6,8 @@ import com.my.stevil_back.common.security.jwt.JwtUtil;
 import com.my.stevil_back.common.security.refresh.service.RefreshTokenService;
 import com.my.stevil_back.user.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -97,6 +99,7 @@ public class TokenController {
             )
             String refreshToken,
 
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
         /*
@@ -136,6 +139,12 @@ public class TokenController {
         }
 
         deleteRefreshCookie(response);
+        // OAuth also establishes a session; clearing only refreshToken leaves it authenticated.
+        var session = request.getSession(false);
+        if (session != null) session.invalidate();
+        SecurityContextHolder.clearContext();
+        response.addHeader("Set-Cookie", ResponseCookie.from("JSESSIONID", "")
+                .httpOnly(true).path("/").maxAge(0).sameSite("Lax").build().toString());
 
         return ResponseEntity
                 .noContent()

@@ -78,7 +78,7 @@
 .partnership-modal-header h2 {
     margin: 8px 0 7px;
 
-    color: #173f39;
+    color: var(--color-text-primary);
     font-size: 1.55rem;
     letter-spacing: -0.035em;
 }
@@ -121,7 +121,7 @@
 }
 
 .partnership-modal-close:hover {
-    color: #173f39;
+    color: var(--color-text-primary);
     background: #edf8f5;
     border-color: #bcded7;
 }
@@ -230,7 +230,7 @@
     font-size: 0.85rem;
     font-weight: 900;
 
-    background: #dff5f1;
+    background: var(--color-primary-soft);
     border-radius: 11px;
 }
 
@@ -509,7 +509,7 @@
 .partnership-modal--success h2 {
     margin: 10px 0 12px;
 
-    color: #173f39;
+    color: var(--color-text-primary);
     font-size: 1.45rem;
     letter-spacing: -0.035em;
 }

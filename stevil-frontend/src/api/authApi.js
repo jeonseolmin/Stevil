@@ -3,15 +3,10 @@ import axiosInstance, {
 } from "./axiosInstance";
 
 export const logout = async () => {
-    try {
-        await axiosInstance.post(
-            "/auth/logout"
-        );
-    } finally {
-        clearAccessToken();
-
-        localStorage.removeItem(
-            "userRole"
-        );
-    }
+    await axiosInstance.post("/auth/logout");
+    clearAccessToken();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userRole");
+    // A full navigation discards pending authentication requests and memory tokens.
+    window.location.replace("/");
 };

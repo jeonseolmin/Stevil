@@ -1,0 +1,9 @@
+.venv
+.idea
+**/__pycache__
+**/.env
+**/.env.*
+rag/cache/ssh_known_hosts
+rag/cache/qa
+rag/cache/deployment
+*.pem

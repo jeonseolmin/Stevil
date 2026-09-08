@@ -9,11 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @Query("select u from User u where u.id = :userId")
+    Optional<User> findByIdForUpdate(@Param("userId") Long userId);
+
     Optional<User> findByEmail(String email);
+    Optional<User> findByDoctorCode(String doctorCode);
 
     long countByRole(UserRole role);
 
@@ -23,6 +29,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             LocalDateTime start,
             LocalDateTime end
     );
+
+    long countByAttendingDoctorId(Long doctorId);
+    List<User> findByAttendingDoctorId(Long doctorId);
 
     @Query("""
             SELECT u

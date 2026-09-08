@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(
-        name = "users"
-)
+@Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -69,6 +67,16 @@ public class User extends BaseEntity {
 
     @Column(length = 100)
     private String bio; // 한 줄 소개
+
+    // 의사용: 고유 발급 코드 (예: DOC-1234)
+    @Column(name = "doctor_code", unique = true, length = 20)
+    private String doctorCode;
+
+    // 환자용: 나의 담당 주치의 연결
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "attending_doctor_id")
+    private User attendingDoctor;
+
 
     @Builder
     private User(
@@ -137,5 +145,15 @@ public class User extends BaseEntity {
 
     public void updateBio(String bio) {
         this.bio = bio;
+    }
+
+    // 환자가 주치의를 등록할 때 사용하는 편의 메서드
+    public void assignAttendingDoctor(User doctor) {
+        this.attendingDoctor = doctor;
+    }
+
+    // 의사 코드를 세팅하는 편의 메서드
+    public void setDoctorCode(String doctorCode) {
+        this.doctorCode = doctorCode;
     }
 }

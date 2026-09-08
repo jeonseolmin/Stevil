@@ -27,7 +27,7 @@
 }
 
 .features-heading > div > span {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 0.78rem;
     font-weight: 900;
     letter-spacing: 0.14em;
@@ -35,7 +35,7 @@
 
 .features-heading h2 {
     margin: 11px 0 0;
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.23;
     letter-spacing: -0.045em;
@@ -45,7 +45,7 @@
 .features-heading > p {
     width: min(100%, 440px);
     margin: 0;
-    color: #718783;
+    color: var(--color-text-muted);
     line-height: 1.8;
     word-break: keep-all;
 }
@@ -65,7 +65,7 @@
     flex-direction: column;
 
     background: #fbfdfc;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 21px;
     box-shadow: 0 10px 28px rgba(24, 58, 55, 0.05);
 
@@ -95,11 +95,11 @@
     flex: 0 0 48px;
     place-items: center;
 
-    color: #118777;
+    color: var(--color-primary-dark);
     font-size: 1rem;
     font-weight: 900;
 
-    background: #ddf4ef;
+    background: var(--color-primary-soft);
     border-radius: 15px;
 }
 
@@ -139,7 +139,7 @@
 
 .feature-card h3 {
     margin: 24px 0 10px;
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: 1.13rem;
     letter-spacing: -0.025em;
 }
@@ -147,7 +147,7 @@
 .feature-card > p {
     min-height: 75px;
     margin: 0;
-    color: #718783;
+    color: var(--color-text-muted);
     font-size: 0.9rem;
     line-height: 1.75;
     word-break: keep-all;
@@ -165,11 +165,11 @@
 .feature-card li {
     padding: 6px 9px;
 
-    color: #617773;
+    color: var(--color-text-secondary);
     font-size: 0.72rem;
     font-weight: 700;
 
-    background: #edf4f2;
+    background: var(--color-surface-soft);
     border-radius: 999px;
 }
 
@@ -181,7 +181,7 @@
     margin-top: auto;
     padding-top: 17px;
 
-    color: #118777;
+    color: var(--color-primary-dark);
     font-size: 0.84rem;
     font-weight: 800;
     text-decoration: none;
@@ -226,17 +226,17 @@
     flex: 0 0 29px;
     place-items: center;
 
-    color: #118777;
+    color: var(--color-primary-dark);
     font-size: 0.78rem;
     font-weight: 900;
 
-    background: #ddf4ef;
+    background: var(--color-primary-soft);
     border-radius: 9px;
 }
 
 .features-notice p {
     margin: 0;
-    color: #617773;
+    color: var(--color-text-secondary);
     font-size: 0.84rem;
     line-height: 1.6;
 }
@@ -244,7 +244,7 @@
 .features-notice a {
     flex: 0 0 auto;
 
-    color: #118777;
+    color: var(--color-primary-dark);
     font-size: 0.8rem;
     font-weight: 800;
     text-decoration: none;

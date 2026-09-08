@@ -1,4 +1,5 @@
 package com.my.stevil_back.exercise.entity;
+import com.my.stevil_back.exercise.entity.enumType.ExerciseStatus;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

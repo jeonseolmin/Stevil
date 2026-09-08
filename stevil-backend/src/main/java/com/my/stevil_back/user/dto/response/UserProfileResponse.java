@@ -1,7 +1,6 @@
 package com.my.stevil_back.user.dto.response;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public record UserProfileResponse(
         Long userId,
@@ -11,6 +10,7 @@ public record UserProfileResponse(
         Integer medicationDays, // 약 투여일 수
         String bio,
         int postCount,
-        int commentCount
+        int commentCount,
+        String attendingDoctorNickname
 ) {
 }

@@ -8,7 +8,7 @@ import {
     Link,
     NavLink,
     useLocation,
-    useNavigate,
+
 } from "react-router-dom";
 
 import axiosInstance, {
@@ -16,9 +16,9 @@ import axiosInstance, {
 } from "../../api/axiosInstance";
 
 import "./Header.css";
+import { logout } from "../../api/authApi";
 
 export default function Header() {
-    const navigate = useNavigate();
     const location = useLocation();
 
     const isPartnershipPage =
@@ -47,6 +47,9 @@ export default function Header() {
 
     const isAdmin =
         userRole === "ROLE_ADMIN";
+
+    const isDoctor =
+        userRole === "ROLE_DOCTOR";
 
     const closeMenu = useCallback(() => {
         setIsMenuOpen(false);
@@ -77,6 +80,10 @@ export default function Header() {
                     await axiosInstance.get(
                         "/users/me"
                     );
+
+                if (!response.data || typeof response.data !== "object" || !response.data.id || !response.data.role) {
+                    throw new Error("인증된 사용자 정보가 아닙니다.");
+                }
 
                 const role =
                     response.data.role;
@@ -146,9 +153,7 @@ export default function Header() {
      */
     const handleLogout = async () => {
         try {
-            await axiosInstance.post(
-                "/auth/logout"
-            );
+            await logout();
         } catch (error) {
             console.error(
                 "로그아웃 요청 실패:",
@@ -156,21 +161,7 @@ export default function Header() {
                 error.response?.data ??
                 error.message
             );
-        } finally {
-            clearAccessToken();
-
-            localStorage.removeItem(
-                "userRole"
-            );
-
-            setIsLoggedIn(false);
-            setUserRole(null);
-
-            closeMenu();
-
-            navigate("/", {
-                replace: true,
-            });
+            window.alert("로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.");
         }
     };
 
@@ -194,6 +185,9 @@ export default function Header() {
      */
     useEffect(() => {
         let active = true;
+
+        // The callback page owns token rotation until navigation completes.
+        if (location.pathname === "/oauth-success") return;
 
         const verifyAuthentication =
             async () => {
@@ -575,6 +569,27 @@ export default function Header() {
                                     </Link>
                                 )}
 
+                                {isDoctor && (
+                                    <Link
+                                        to="/doctor/dashboard"
+                                        className="header-admin-button"
+                                        style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                        onClick={
+                                            closeMenu
+                                        }
+                                    >
+                                        의사 페이지
+                                    </Link>
+                                )}
+
+                                <Link
+                                    to="/mypage"
+                                    className="header-login-link"
+                                    onClick={closeMenu}
+                                >
+                                    마이페이지
+                                </Link>
+
                                 <button
                                     type="button"
                                     className="header-login-link"
@@ -632,6 +647,25 @@ export default function Header() {
                                     관리자 메뉴
                                 </Link>
                             )}
+
+                            {isDoctor && (
+                                <Link
+                                    to="/doctor/dashboard"
+                                    className="header-admin-button"
+                                    style={{ backgroundColor: '#0f766e', color: 'white' }}
+                                    onClick={closeMenu}
+                                >
+                                    의사 페이지
+                                </Link>
+                            )}
+
+                            <Link
+                                to="/mypage"
+                                className="header-login-link"
+                                onClick={closeMenu}
+                            >
+                                마이페이지
+                            </Link>
 
                             <button
                                 type="button"

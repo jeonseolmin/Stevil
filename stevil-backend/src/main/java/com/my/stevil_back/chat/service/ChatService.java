@@ -1,10 +1,13 @@
 package com.my.stevil_back.chat.service;
+
 import com.my.stevil_back.chat.dto.*;
 import com.my.stevil_back.chat.entity.*;
 import com.my.stevil_back.chat.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException; // 💡 1. 올바른 예외 클래스로 임포트 수정!
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -14,8 +17,22 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
+    public ChatRoom getChatRoomWithAuthCheck(String roomId, String currentNickname) {
+        ChatRoom room = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+        
+        boolean isParticipant = room.getUser1Nickname().equals(currentNickname)
+                || room.getUser2Nickname().equals(currentNickname);
+
+        if (!isParticipant) {
+            throw new AccessDeniedException("해당 채팅방에 접근할 권한이 없습니다.");
+        }
+
+        return room;
+    }
+
     @Transactional
-    public Long createOrGetRoom(String myNickname, String targetNickname) {
+    public String createOrGetRoom(String myNickname, String targetNickname) {
         return chatRoomRepository.findChatRoom(myNickname, targetNickname)
                 .map(ChatRoom::getId)
                 .orElseGet(() -> chatRoomRepository.save(ChatRoom.builder()
@@ -35,7 +52,7 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageDto> getChatHistory(Long roomId) {
+    public List<ChatMessageDto> getChatHistory(String roomId) {
         return chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId).stream()
                 .map(msg -> ChatMessageDto.builder()
                         .roomId(msg.getChatRoom().getId())
