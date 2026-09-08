@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-import axiosInstance from "../api/axiosInstance";
+import axiosInstance, {clearAccessToken} from "../api/axiosInstance";
 import DashboardChatWidget from "../components/rag/DashboardChatWidget";
 import WeeklyPlanner from "../components/planner/WeeklyPlanner";
 import "./Dashboard.css";
@@ -116,8 +116,10 @@ export default function Dashboard({ previewData = null }) {
                     status === 401 ||
                     status === 403
                 ) {
+                    clearAccessToken();
+
                     localStorage.removeItem(
-                        "accessToken"
+                        "userRole"
                     );
 
                     navigate(

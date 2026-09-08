@@ -20,9 +20,6 @@ public class SecurityUrls {
 
             "/ws-stomp/**",
 
-            "/api/ai/**",
-
-
             "/api/partnership-inquiries"
     };
 
@@ -36,6 +33,8 @@ public class SecurityUrls {
     };
 
     public static final String[] USER_URLS = {
+            "/api/ai/**",
+
             "/api/planner/**",
             "/api/planner",
             "/api/users/",
@@ -68,7 +67,10 @@ public class SecurityUrls {
 
             "/api/injections/**",
 
-            "/api/ads/active"
+            "/api/patient-reports/**",
+
+            "/api/ads/active",
+            "/api/ads/dashboard-ads"
     };
 
     private SecurityUrls() {
