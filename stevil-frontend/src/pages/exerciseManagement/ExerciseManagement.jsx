@@ -1,7 +1,7 @@
-import SavedPlanPanel from "../components/planner/SavedPlanPanel";
+import SavedPlanPanel from "../../components/planner/SavedPlanPanel.jsx";
 import { useState, useEffect } from 'react';
 import './ExerciseManagement.css';
-import axiosInstance from '../api/axiosInstance'; 
+import axiosInstance from '../../api/axiosInstance.js';
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';

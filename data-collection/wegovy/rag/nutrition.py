@@ -194,7 +194,121 @@ def balanced_meals(calories, target):
     return (len(calories) == 3 and min(calories) >= target*.20
             and max(calories) <= min(900, target*.35)
             and max(calories) <= min(calories)*1.5)
+def viable_portion_variants(
+    row,
+    goal,
+):
+    """
+    현재 nutritionGoal에서 이 음식이 한 끼 후보로
+    사용할 수 있는 portion variant를 반환합니다.
 
+    match_week()와 동일한 portion 범위를 사용합니다.
+
+    반환 예:
+    [
+        (
+            factor,
+            kcal,
+            protein,
+            carbs,
+            fat,
+        ),
+        ...
+    ]
+
+    빈 배열이면 현재 목표에서는
+    한 끼 후보로 사용할 수 없습니다.
+    """
+
+    target = validate_goal(
+        goal
+    )
+
+    if target is None:
+        return []
+
+    if (
+        recipe_nutrition(
+            row
+        )
+        is None
+    ):
+        return []
+
+    if processed_meat(
+        row
+    ):
+        return []
+
+    choices = []
+
+    # 기존 match_week()와 동일:
+    #
+    # 0.5배 ~ 1.5배
+    # 0.05 단위
+    for step in range(
+        10,
+        31,
+    ):
+        factor = (
+            step
+            / 20
+        )
+
+        (
+            kcal,
+            protein,
+            carbs,
+            fat,
+        ) = portion_macros(
+            row,
+            factor,
+        )
+
+        # 기존 match_week()와
+        # 반드시 동일한 한 끼 열량 조건을 사용합니다.
+        if (
+            target[
+                "calories"
+            ]
+            * 0.20
+            <= kcal
+            <= min(
+                900,
+                target[
+                    "calories"
+                ]
+                * 0.35,
+            )
+        ):
+            choices.append(
+                (
+                    factor,
+                    kcal,
+                    protein,
+                    carbs,
+                    fat,
+                )
+            )
+
+    return choices
+
+
+def is_viable_meal_candidate(
+    row,
+    goal,
+):
+    """
+    현재 nutritionGoal에서 해당 메뉴를
+    실제 한 끼 후보로 사용할 수 있는지 반환합니다.
+    """
+
+    return bool(
+        viable_portion_variants(
+            row,
+            goal,
+        )
+    )
 
 def match_week(
     rows,
@@ -269,58 +383,16 @@ def match_week(
     variants = {}
 
     for row, _ in eligible:
-        choices = []
-
-        for step in range(
-            10,
-            31,
-        ):
-            factor = (
-                step
-                / 20
-            )
-
-            (
-                kcal,
-                protein,
-                carbs,
-                fat,
-            ) = portion_macros(
-                row,
-                factor,
-            )
-
-            if (
-                target[
-                    "calories"
-                ]
-                * 0.20
-                <= kcal
-                <= min(
-                    900,
-                    target[
-                        "calories"
-                    ]
-                    * 0.35,
-                )
-            ):
-                choices.append(
-                    (
-                        factor,
-                        kcal,
-                        protein,
-                        carbs,
-                        fat,
-                    )
-                )
-
         variants[
             str(
                 row[
                     "RCP_SEQ"
                 ]
             )
-        ] = choices
+        ] = viable_portion_variants(
+            row,
+            goal,
+        )
 
     for combo in combinations(
         eligible,
@@ -724,7 +796,7 @@ def match_week(
 
         raise NutritionTargetUnavailable(
             "목표 열량 ±5%, 끼니별 배분, "
-            "탄수화물·지방 범위와 단백질 목표 ±20%를 "
+            "탄수화물·지방 범위와 최소 단백질 기준을 "
             "함께 충족하는 조합이 없습니다. "
             "음식 후보·제한 또는 목표를 확인해 주세요."
         )

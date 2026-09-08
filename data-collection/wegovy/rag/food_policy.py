@@ -12,15 +12,124 @@ PROCESSED_MEAT = re.compile(
     r'런[천쳔]미트|스팸|베이컨|소[시세]지|비엔나|살라미|페퍼로니|햄(?!프|버거|스터)'
     r'|\b(?:luncheon\s*meat|spam|bacon|sausages?|salami|pepperoni|ham)\b', re.I)
 FAMILIES = (
-    ('chicken', r'닭|치킨|chicken'), ('pork', r'돼지|돈육|제육|삼겹|목살|pork'),
-    ('beef', r'소고기|쇠고기|우육|한우|beef'), ('duck', r'오리|duck'),
-    ('soy', r'두부|콩(?!나물)|대두|tofu|soy'), ('egg', r'계란|달걀|달[걀걱]|egg'),
-    ('mackerel', r'고등어|삼치|mackerel'), ('salmon', r'연어|salmon'),
-    ('pollock', r'명태|동태|생태|황태|북어|코다리|pollock'),
-    ('shrimp', r'새우|shrimp|prawn'), ('squid', r'오징어|한치|squid'),
-    ('octopus', r'낙지|문어|주꾸미|쭈꾸미|octopus'),
-    ('tuna', r'참치|다랑어|tuna'), ('shellfish', r'조개|홍합|꼬막|바지락|전복|가리비'),
-    ('anchovy', r'멸치'), ('hairtail', r'갈치'), ('flatfish', r'가자미|광어|도다리'),
+    # =====================================================
+    # Meat
+    # =====================================================
+
+    (
+        'chicken',
+        r'닭|치킨|chicken',
+    ),
+
+    (
+        'pork',
+        r'돼지|돈육|제육|삼겹|목살|족발|pork',
+    ),
+
+    (
+        'beef',
+        r'소고기|쇠고기|우육|한우|beef',
+    ),
+
+    (
+        'duck',
+        r'오리|duck',
+    ),
+
+
+    # =====================================================
+    # Plant / egg
+    # =====================================================
+
+    (
+        'soy',
+        r'두부|콩(?!나물)|대두|tofu|soy',
+    ),
+
+    (
+        'egg',
+        r'계란|달걀|달[걀걱]|egg',
+    ),
+
+
+    # =====================================================
+    # Fish
+    # =====================================================
+
+    (
+        'mackerel',
+        r'고등어|삼치|mackerel',
+    ),
+
+    (
+        'salmon',
+        r'연어|salmon',
+    ),
+
+    (
+        'pollock',
+        r'명태|동태|생태|황태|북어|코다리|pollock',
+    ),
+
+    (
+        'croaker',
+        r'조기|굴비|croaker',
+    ),
+
+    (
+        'hairtail',
+        r'갈치|hairtail',
+    ),
+
+    (
+        'flatfish',
+        r'가자미|광어|도다리|flatfish|flounder',
+    ),
+
+    (
+        'tuna',
+        r'참치|다랑어|tuna',
+    ),
+
+    (
+        'anchovy',
+        r'멸치|anchovy',
+    ),
+
+    (
+        'eel',
+        r'장어|붕장어|민물장어|eel',
+    ),
+
+    (
+        'saury',
+        r'꽁치|saury',
+    ),
+
+
+    # =====================================================
+    # Seafood
+    # =====================================================
+
+    (
+        'shrimp',
+        r'새우|대하|shrimp|prawn',
+    ),
+
+    (
+        'squid',
+        r'오징어|한치|squid',
+    ),
+
+    (
+        'octopus',
+        r'낙지|문어|주꾸미|쭈꾸미|octopus',
+    ),
+
+    (
+        'shellfish',
+        r'조개|홍합|꼬막|바지락|전복|가리비|shellfish',
+    ),
 )
 
 
