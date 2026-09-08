@@ -7,9 +7,17 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": {
-        target: "http://localhost:8080",
+      "/rag-api": {
+        target: "http://127.0.0.1:8091",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/rag-api/, "/api"),
+        timeout: 100000,
+        proxyTimeout: 100000,
+      },
+      "/api": {
+        target: "http://127.0.0.1:8080",
+        // Keep the browser host so Spring recognizes this as a same-origin request.
+        changeOrigin: false,
       },
     },
   },

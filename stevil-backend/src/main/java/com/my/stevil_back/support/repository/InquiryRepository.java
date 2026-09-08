@@ -12,25 +12,38 @@ import org.springframework.data.repository.query.Param;
 public interface InquiryRepository
         extends JpaRepository<Inquiry, Long> {
 
-    @Query("""
-            SELECT i
-            FROM Inquiry i
-            WHERE (:status IS NULL OR i.status = :status)
-              AND (:category IS NULL OR i.category = :category)
-              AND (
-                    :keyword IS NULL
-                    OR LOWER(i.title)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-                    OR LOWER(i.content)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-              )
-            """)
-    Page<Inquiry> searchForAdmin(
-            @Param("status") InquiryStatus status,
-            @Param("category") InquiryCategory category,
-            @Param("keyword") String keyword,
+    Page<Inquiry> findByStatus(
+            InquiryStatus status,
             Pageable pageable
     );
 
-    long countByStatus(InquiryStatus status);
+    Page<Inquiry> findByCategory(
+            InquiryCategory category,
+            Pageable pageable
+    );
+
+    Page<Inquiry> findByStatusAndCategory(
+            InquiryStatus status,
+            InquiryCategory category,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT i
+        FROM Inquiry i
+        WHERE (
+            LOWER(i.title)
+                LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(i.content)
+                LIKE LOWER(CONCAT('%', :keyword, '%'))
+        )
+        AND (:status IS NULL OR i.status = :status)
+        AND (:category IS NULL OR i.category = :category)
+    """)
+    Page<Inquiry> searchByKeyword(
+            @Param("keyword") String keyword,
+            @Param("status") InquiryStatus status,
+            @Param("category") InquiryCategory category,
+            Pageable pageable
+    );
 }

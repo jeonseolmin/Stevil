@@ -4,6 +4,7 @@ import "./AuthLayout.css";
 export default function AuthLayout() {
     return (
         <div className="auth-layout">
+            <header className="auth-header">
             <Link
                 to="/"
                 className="auth-logo"
@@ -11,6 +12,7 @@ export default function AuthLayout() {
             >
                 Stevil
             </Link>
+            </header>
 
             <main className="auth-content">
                 <Outlet />

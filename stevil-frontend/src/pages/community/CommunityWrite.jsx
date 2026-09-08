@@ -11,14 +11,15 @@ const CommunityWrite = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [writeCategory, setWriteCategory] = useState('자유');
-  
-  const [selectedFile, setSelectedFile] = useState(null);
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const [imagePreview, setImagePreview] = useState(null);
-  const [excelPreview, setExcelPreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState({});
+  const [excelPreviews, setExcelPreviews] = useState({});
+  const [loadingPreviews, setLoadingPreviews] = useState({});
 
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [externalLink, setExternalLink] = useState('');
   const [allowComment, setAllowComment] = useState(true);
@@ -30,33 +31,56 @@ const CommunityWrite = () => {
   const [voteOptions, setVoteOptions] = useState(['', '']);
   const [allowMultipleVote, setAllowMultipleVote] = useState(false);
 
-  const processFile = async (file) => {
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const processFiles = async (newFiles) => {
     const allowedExtensions = ['png', 'jpg', 'jpeg', 'xlsx', 'xls', 'csv', 'txt', 'pdf', 'docx', 'doc', 'ppt', 'pptx'];
-    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const MAX_SIZE = 500 * 1024 * 1024; // 500MB
 
-    if (!allowedExtensions.includes(fileExtension)) {
-      alert(`업로드가 불가능한 파일 형식입니다.\n허용: 이미지 및 일반 문서 파일 (png, jpg, xlsx, txt 등)\n차단: 프로그램 및 압축 파일 (exe, zip 등)`);
-      clearFile();
-      return;
-    }
+    const validFiles = [];
 
-    const MAX_SIZE = 500 * 1024 * 1024;
-    if (file.size > MAX_SIZE) {
-      alert(`파일 용량은 500MB를 초과할 수 없습니다. (현재 파일: ${(file.size / 1024 / 1024).toFixed(1)}MB)`);
-      clearFile();
-      return;
-    }
+    Array.from(newFiles).forEach(file => {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
 
-    setSelectedFile(file);
-    setImagePreview(null);
-    setExcelPreview(null);
+      if (!allowedExtensions.includes(fileExtension)) {
+        alert(`[${file.name}] 업로드가 불가능한 파일 형식입니다.\n허용: 이미지 및 문서 파일\n차단: 프로그램 및 압축 파일`);
+        return;
+      }
 
+      if (file.size > MAX_SIZE) {
+        alert(`[${file.name}] 파일 용량은 500MB를 초과할 수 없습니다. (현재: ${formatFileSize(file.size)})`);
+        return;
+      }
+
+      validFiles.push({
+        id: `${file.lastModified}-${file.name}-${Math.random()}`,
+        file: file
+      });
+    });
+
+    if (validFiles.length === 0) return;
+
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+
+    validFiles.forEach(item => {
+      generatePreview(item.file, item.id);
+    });
+  };
+
+  // 개별 파일의 미리보기를 생성하는 로직
+  const generatePreview = async (file, fileId) => {
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
-      setImagePreview(url);
+      setImagePreviews(prev => ({ ...prev, [fileId]: url }));
     } 
     else if (file.name.match(/\.(xlsx|xls|csv)$/i)) {
-      setIsPreviewLoading(true);
+      setLoadingPreviews(prev => ({ ...prev, [fileId]: true }));
       try {
         const buffer = await file.arrayBuffer();
         let workbook;
@@ -77,62 +101,42 @@ const CommunityWrite = () => {
         const worksheet = workbook.Sheets[firstSheetName];
         
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        setExcelPreview(jsonData.slice(0, 15)); 
+        setExcelPreviews(prev => ({ ...prev, [fileId]: jsonData.slice(0, 15) }));
       } catch (error) {
         console.error("엑셀/CSV 파싱 에러:", error);
-        alert("파일을 읽는 중 오류가 발생했습니다.");
       } finally {
-        setIsPreviewLoading(false);
+        setLoadingPreviews(prev => ({ ...prev, [fileId]: false }));
       }
     }
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
     }
+    e.target.value = '';
+  };
+
+  const handleRemoveFile = (idToRemove) => {
+    setSelectedFiles(prev => prev.filter(item => item.id !== idToRemove));
+    setImagePreviews(prev => { const next = {...prev}; delete next[idToRemove]; return next; });
+    setExcelPreviews(prev => { const next = {...prev}; delete next[idToRemove]; return next; });
   };
 
   const onDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     setIsDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
     }
   };
 
-  const onDragEnter = (e) => {
-    e.preventDefault(); e.stopPropagation();
-    setIsDragging(true);
-  };
-  const onDragLeave = (e) => {
-    e.preventDefault(); e.stopPropagation();
-    setIsDragging(false);
-  };
-  const onDragOver = (e) => {
-    e.preventDefault(); e.stopPropagation();
-    if (!isDragging) setIsDragging(true);
-  };
+  const onDragEnter = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+  const onDragLeave = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+  const onDragOver = (e) => { e.preventDefault(); e.stopPropagation(); if (!isDragging) setIsDragging(true); };
 
-  const clearFile = () => {
-    setSelectedFile(null);
-    setImagePreview(null);
-    setExcelPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleAddVoteOption = () => {
-    setVoteOptions([...voteOptions, '']);
-  };
-
-  const handleRemoveVoteOption = (index) => {
-    setVoteOptions(voteOptions.filter((_, i) => i !== index));
-  };
-
+  const handleAddVoteOption = () => setVoteOptions([...voteOptions, '']);
+  const handleRemoveVoteOption = (index) => setVoteOptions(voteOptions.filter((_, i) => i !== index));
   const handleVoteOptionChange = (index, value) => {
     const newOptions = [...voteOptions];
     newOptions[index] = value;
@@ -140,7 +144,11 @@ const CommunityWrite = () => {
   };
 
   const handleSavePost = async () => {
+    if (isSubmitting) return; 
+
     if (!title.trim() || !content.trim()) return alert("제목과 내용을 입력해주세요.");
+
+    setIsSubmitting(true);
 
     try {
       const formData = new FormData();
@@ -155,18 +163,18 @@ const CommunityWrite = () => {
       formData.append('externalLink', externalLink);
       
       if (showVote) {
-        if (!voteTitle.trim()) return alert("투표 제목을 입력해주세요.");
+        if (!voteTitle.trim()) { setIsSubmitting(false); return alert("투표 제목을 입력해주세요."); }
         const validOptions = voteOptions.filter(opt => opt.trim() !== '');
-        if (validOptions.length < 2) return alert("투표 항목은 최소 2개 이상 입력해야 합니다.");
+        if (validOptions.length < 2) { setIsSubmitting(false); return alert("투표 항목은 최소 2개 이상 입력해야 합니다."); }
 
         formData.append('voteTitle', voteTitle);
         formData.append('allowMultipleVote', allowMultipleVote);
         validOptions.forEach(opt => formData.append('voteOptions', opt));
       }
       
-      if (selectedFile) {
-        formData.append('file', selectedFile);
-      }
+      selectedFiles.forEach(item => {
+        formData.append('file', item.file);
+      });
 
       await axiosInstance.post('/community', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -177,6 +185,7 @@ const CommunityWrite = () => {
     } catch (error) {
       console.error("글 작성 실패", error);
       alert(error.response?.data || "글 작성에 실패했습니다.");
+      setIsSubmitting(false); // 에러 발생 시 다시 제출 가능하도록 해제
     }
   };
 
@@ -294,7 +303,7 @@ const CommunityWrite = () => {
           </div>
 
           <div className="ste-form-group">
-            <label>첨부파일 (최대 500MB)</label>
+            <label>첨부파일 다중 선택 (최대 500MB)</label>
             <div 
               className={`ste-file-upload-wrapper ${isDragging ? 'dragging' : ''}`}
               onDragEnter={onDragEnter}
@@ -304,67 +313,85 @@ const CommunityWrite = () => {
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                {/* multiple 속성 추가로 한 번에 여러 개 선택 가능 */}
                 <input 
                   type="file" 
                   id="file-upload" 
                   className="ste-file-input" 
+                  multiple
                   accept=".png,.jpg,.jpeg,.xlsx,.xls,.csv,.txt,.pdf,.docx,.doc,.ppt,.pptx"
                   onChange={handleFileChange}
                   ref={fileInputRef}
                 />
-                <label htmlFor="file-upload" className="ste-btn-secondary small">파일 찾기</label>
+                <label htmlFor="file-upload" className="ste-btn-secondary small">파일 추가</label>
                 <span className="ste-file-name">
-                  {selectedFile 
-                    ? `${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(2)} MB)` 
-                    : '이곳에 파일을 드래그하거나 버튼을 클릭하세요.'}
+                  이곳에 여러 개의 파일을 드래그하거나 버튼을 클릭하세요.
                 </span>
-                {selectedFile && (
-                  <button className="ste-file-clear-btn" onClick={clearFile}>삭제</button>
-                )}
               </div>
 
-              {imagePreview && (
-                <div style={{ marginTop: '16px', width: '100%', textAlign: 'center', background: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
-                  <img src={imagePreview} alt="미리보기" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '6px' }} />
+              {/* 추가된 파일 목록 및 개별 미리보기 렌더링 */}
+              {selectedFiles.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', marginTop: '20px' }}>
+                  {selectedFiles.map(item => (
+                    <div key={item.id} style={{ background: '#fff', border: '1px solid var(--color-border-light)', borderRadius: '12px', padding: '16px', boxShadow: 'var(--shadow-small)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontWeight: '700', fontSize: '14px', color: 'var(--color-text-primary)' }}>
+                          {item.file.name} <span style={{ color: 'var(--color-text-muted)', fontWeight: '600' }}>({formatFileSize(item.file.size)})</span>
+                        </span>
+                        <button className="ste-file-clear-btn" onClick={() => handleRemoveFile(item.id)}>삭제</button>
+                      </div>
+
+                      {imagePreviews[item.id] && (
+                        <div style={{ marginTop: '12px', textAlign: 'center', background: 'var(--color-surface-soft)', padding: '10px', borderRadius: '8px' }}>
+                          <img src={imagePreviews[item.id]} alt="미리보기" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '6px' }} />
+                        </div>
+                      )}
+
+                      {loadingPreviews[item.id] && (
+                        <div style={{ marginTop: '12px', padding: '12px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', color: 'var(--color-primary)', fontWeight: '800' }}>
+                          파일을 읽고 미리보기를 생성하는 중입니다...
+                        </div>
+                      )}
+
+                      {excelPreviews[item.id] && !loadingPreviews[item.id] && (
+                        <div style={{ marginTop: '12px', width: '100%', borderRadius: '8px', border: '1px solid var(--color-border-light)', overflow: 'hidden' }}>
+                          <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border-light)', fontSize: '13px', fontWeight: '800', color: 'var(--color-text-secondary)' }}>
+                            데이터 미리보기 (상위 15줄)
+                          </div>
+                          <div style={{ overflowX: 'auto', padding: '12px' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                              <tbody>
+                                {excelPreviews[item.id].map((row, rowIdx) => (
+                                  <tr key={rowIdx}>
+                                    {row.map((cell, colIdx) => (
+                                      <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '6px 10px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : '#fff', fontWeight: rowIdx === 0 ? '700' : 'normal', color: 'var(--color-text-primary)' }}>
+                                        {cell}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
-
-              {/* 엑셀/CSV 로딩 중 상태 표시 */}
-              {isPreviewLoading && (
-                <div style={{ marginTop: '16px', width: '100%', padding: '16px', textAlign: 'center', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border)', color: 'var(--color-primary)', fontWeight: '800' }}>
-                  파일을 읽고 미리보기를 생성하는 중입니다...
-                </div>
-              )}
-
-              {excelPreview && !isPreviewLoading && (
-                <div style={{ marginTop: '16px', width: '100%', background: '#fff', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
-                  <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
-                    데이터 미리보기 (상위 15줄)
-                  </div>
-                  <div style={{ overflowX: 'auto', padding: '12px' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', whiteSpace: 'nowrap' }}>
-                      <tbody>
-                        {excelPreview.map((row, rowIdx) => (
-                          <tr key={rowIdx}>
-                            {row.map((cell, colIdx) => (
-                              <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '8px 12px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : '#fff', fontWeight: rowIdx === 0 ? '700' : 'normal' }}>
-                                {cell}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
             </div>
           </div>
           
           <div className="ste-form-actions">
-            <button className="ste-btn-secondary" onClick={() => navigate('/community')}>취소</button>
-            <button className="ste-btn-primary" onClick={handleSavePost}>등록하기</button>
+            <button className="ste-btn-secondary" onClick={() => navigate('/community')} disabled={isSubmitting}>취소</button>
+            <button 
+              className="ste-btn-primary" 
+              onClick={handleSavePost} 
+              disabled={isSubmitting}
+              style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+            >
+              {isSubmitting ? '등록 중...' : '등록하기'}
+            </button>
           </div>
         </div>
       </div>

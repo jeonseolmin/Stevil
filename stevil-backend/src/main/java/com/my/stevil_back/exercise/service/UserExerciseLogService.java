@@ -4,7 +4,7 @@ import com.my.stevil_back.exercise.dto.request.ExerciseLogRequest;
 import com.my.stevil_back.exercise.dto.response.ExerciseLogDetailResponse;
 import com.my.stevil_back.exercise.dto.response.WeeklyChartResponse;
 import com.my.stevil_back.exercise.entity.Exercise;
-import com.my.stevil_back.exercise.entity.ExerciseStatus;
+import com.my.stevil_back.exercise.entity.enumType.ExerciseStatus;
 import com.my.stevil_back.exercise.entity.UserExerciseLog;
 import com.my.stevil_back.exercise.repository.ExerciseRepository;
 import com.my.stevil_back.exercise.repository.UserExerciseLogRepository;
