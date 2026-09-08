@@ -14,10 +14,6 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
-    @Query("select u from User u where u.id = :userId")
-    Optional<User> findByIdForUpdate(@Param("userId") Long userId);
-
     Optional<User> findByEmail(String email);
     Optional<User> findByDoctorCode(String doctorCode);
 
@@ -37,8 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT u
             FROM User u
             WHERE :keyword IS NULL
-               OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(u.email) LIKE :keyword
+               OR LOWER(u.nickname) LIKE :keyword
             """)
     Page<User> searchForAdmin(
             @Param("keyword") String keyword,

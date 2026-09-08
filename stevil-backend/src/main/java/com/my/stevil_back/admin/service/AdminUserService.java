@@ -107,7 +107,6 @@ public class AdminUserService {
         if (keyword == null || keyword.isBlank()) {
             return null;
         }
-
-        return keyword.trim();
+        return "%" + keyword.trim().toLowerCase() + "%";
     }
 }

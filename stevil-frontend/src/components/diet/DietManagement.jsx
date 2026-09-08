@@ -1,4 +1,3 @@
-import SavedPlanPanel from "../planner/SavedPlanPanel";
 import { useState, useEffect } from 'react';
 import './DietManagement.css';
 import axiosInstance from '../../api/axiosInstance'; 
@@ -81,7 +80,7 @@ const DietManagement = () => {
       
       let data = response.data;
       if (typeof data === 'string') {
-        data = JSON.parse(data);
+        try { data = JSON.parse(data); } catch(e) {}
       }
       
       console.log("✅ 백엔드에서 넘어온 API 원본 데이터:", data);
@@ -94,7 +93,6 @@ const DietManagement = () => {
       setSearchResults(items);
     } catch (error) {
       console.error("음식 검색 실패", error);
-      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
@@ -260,7 +258,6 @@ const DietManagement = () => {
             <button className="diet-btn diet-btn--primary" onClick={() => setIsManualModalOpen(true)}>직접 입력</button>
           </div>
         </header>
-        <SavedPlanPanel kind="food" />
 
         <div className="diet-grid">
           

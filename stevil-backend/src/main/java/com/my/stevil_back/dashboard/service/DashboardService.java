@@ -1,7 +1,7 @@
 package com.my.stevil_back.dashboard.service;
 
-import com.my.stevil_back.dashboard.dto.response.DashboardResponse;
-import com.my.stevil_back.dashboard.dto.response.RecentWeightResponse;
+import com.my.stevil_back.dashboard.dto.DashboardResponse;
+import com.my.stevil_back.dashboard.dto.RecentWeightResponse;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.entity.UserWeight;
 import com.my.stevil_back.user.repository.UserRepository;

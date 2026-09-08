@@ -1,6 +1,6 @@
 package com.my.stevil_back.weight.service;
 
-import com.my.stevil_back.weight.dto.request.WeightRequest;
+import com.my.stevil_back.weight.dto.WeightRequest;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.entity.UserWeight;
 import com.my.stevil_back.user.repository.UserRepository;

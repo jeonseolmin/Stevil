@@ -59,12 +59,6 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-        http.exceptionHandling(exception -> exception
-                .defaultAuthenticationEntryPointFor(
-                        (request, response, cause) -> response.setStatus(401),
-                        request -> request.getServletPath().startsWith("/api/"))
-        );
-
 //        http
 //                .exceptionHandling(exception -> exception
 //                        .authenticationEntryPoint((request, response, authException) -> {
@@ -94,22 +88,18 @@ public class SecurityConfig {
                                 SecurityUrls.PUBLIC_URLS
                         ).permitAll()
 
-                        // ADMIN_URLS
-                        .requestMatchers(
-                                SecurityUrls.ADMIN_URLS
-                        ).hasRole("ADMIN")
-
-                        // DOCTOR_URLS
-                        .requestMatchers(
-                                SecurityUrls.DOCTOR_URLS
-                        ).hasRole("DOCTOR")
-
                         // USER_URLS
                         .requestMatchers(
                                 SecurityUrls.USER_URLS
                         ).hasAnyRole("USER", "ADMIN", "DOCTOR")
 
+                        // ADMIN_URLS
+                        .requestMatchers(
+                                SecurityUrls.ADMIN_URLS
+                        ).hasRole("ADMIN")
+
                         // 그 외
+
                         .anyRequest().authenticated()
                 );
         http
