@@ -24,13 +24,26 @@ public class JwtUtil {
         );
     }
 
-    public String createJwt(String email, String role) {
+    public String createAccessToken(
+            String email,
+            String role
+    ) {
         return Jwts.builder()
                 .subject(email)
                 .claim("email", email)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessExpiration()))
+                .issuedAt(
+                        new Date(
+                                System.currentTimeMillis()
+                        )
+                )
+                .expiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + jwtProperties
+                                        .getAccessExpiration()
+                        )
+                )
                 .signWith(secretKey)
                 .compact();
     }
@@ -55,7 +68,7 @@ public class JwtUtil {
         try {
             getClaims(token);
             return false;
-        } catch (ExpiredJwtException e) {
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
             return true;
         }
     }

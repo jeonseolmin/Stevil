@@ -1,0 +1,55 @@
+/* Shared visual language for public, member, and administration screens. */
+.site-header { background:rgba(255,255,255,.95); border-bottom:1px solid var(--color-border-light); }
+.header-inner { max-width:1120px; }
+.brand-symbol { background:var(--color-primary-dark); box-shadow:none; }
+.brand-name { letter-spacing:-.06em; }
+.primary-button,.secondary-button { border-radius:30px; font-weight:600; box-shadow:none; }
+.section-title { font-weight:600; line-height:1.35; }
+.section-eyebrow { font-size:11px; font-weight:600; letter-spacing:.08em; }
+.hero-section { background:linear-gradient(135deg,var(--color-background),#eef3e8); }
+.hero-title { font-weight:600; line-height:1.2; }
+.hero-eyebrow { font-size:12px; font-weight:600; }
+.hero-description { font-size:16px; }
+.auth-layout { background:radial-gradient(ellipse at 20% 15%,#e6eedf,transparent 50%),var(--color-surface-warm); }
+.login-card { border:1px solid var(--color-border-light); border-radius:24px; box-shadow:var(--shadow-medium); background:white; }
+.login-heading h1 { font-size:30px; font-weight:600; }
+.login-label { font-weight:600; }
+.onboarding-page { background:var(--color-background); }
+.diet-page,.exercise-page,.medical-web-container,.ste-community-wrapper,.weight-record-page,.mypage-wrapper {
+    background:var(--color-background); padding-top:38px;
+}
+.exercise-container,.medical-web-container { font-family:inherit; }
+.diet-container,.exercise-container,.ste-container { max-width:1120px; }
+.diet-header,.dashboard-header,.ste-header,.weight-record-header { margin-bottom:28px; }
+.diet-header h1,.header-text .main-title,.ste-title,.weight-record-header h1,.mypage-title,.hospital-heading h1 {
+    font-size:clamp(26px,3.3vw,36px); font-weight:600; line-height:1.35;
+}
+.diet-header p,.header-text .sub-title,.ste-subtitle,.weight-record-header p { font-size:14px; line-height:1.75; }
+.ste-card,.weight-record-card,.weight-preview-card,.mypage-card,.goal-banner {
+    border-color:var(--color-border-light); border-radius:22px; box-shadow:var(--shadow-small);
+}
+.weight-preview-card { background:var(--color-surface-warm); }
+.weight-submit-button,.ste-btn-primary { background:var(--color-primary-dark); border-radius:24px; font-weight:600; }
+.ste-btn-secondary,.weight-reset-button { border-radius:24px; font-weight:600; }
+.ste-table-header { background:var(--color-surface-soft); }
+.hospital-card { border-radius:16px; border-color:var(--color-border-light); box-shadow:none; }
+.hospital-card--selected { border-color:var(--color-primary); background:var(--color-primary-soft); }
+.partnership-guide-page { background:var(--color-background); }
+.partnership-guide-hero { background:linear-gradient(130deg,#203f32,#397b5a); }
+.admin-layout { background:var(--color-background); }
+.admin-sidebar { background:linear-gradient(180deg,#203f32,#173327); }
+.admin-brand-mark { background:#d4e9ce; color:#2b5c43; }
+.admin-layout h1 { font-size:clamp(25px,3vw,34px); font-weight:600; line-height:1.35; }
+.admin-layout h2 { font-weight:600; }
+.admin-stat-card,.admin-users-count,.admin-quick-section { border-color:var(--color-border-light); border-radius:20px; box-shadow:var(--shadow-small); }
+.admin-layout :is(input,select,textarea),.ste-card :is(input,select,textarea),.weight-record-card :is(input,select,textarea) {
+    accent-color:var(--color-primary-dark);
+}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible {
+    outline:3px solid var(--color-primary); outline-offset:3px;
+}
+@media(max-width:600px) {
+    .diet-page,.exercise-page,.medical-web-container,.ste-community-wrapper,.weight-record-page,.mypage-wrapper { padding-top:26px; }
+    .ste-card,.weight-record-card,.weight-preview-card,.mypage-card { border-radius:18px; }
+    .login-heading h1 { font-size:27px; }
+}

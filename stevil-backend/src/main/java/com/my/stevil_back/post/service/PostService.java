@@ -1,7 +1,7 @@
 package com.my.stevil_back.post.service;
 
-import com.my.stevil_back.post.dto.PostRequest;
-import com.my.stevil_back.post.dto.PostResponse;
+import com.my.stevil_back.post.dto.request.PostRequest;
+import com.my.stevil_back.post.dto.response.PostResponse;
 import com.my.stevil_back.post.entity.Post;
 import com.my.stevil_back.post.entity.PostFile;
 import com.my.stevil_back.post.entity.PostLike;

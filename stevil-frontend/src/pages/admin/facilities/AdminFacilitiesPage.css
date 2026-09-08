@@ -15,7 +15,7 @@
 
 .admin-facilities-heading > div:first-child > span,
 .admin-facility-modal header span {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.13em;
@@ -23,13 +23,13 @@
 
 .admin-facilities-heading h1 {
     margin: 8px 0 6px;
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: clamp(1.7rem, 3vw, 2.3rem);
 }
 
 .admin-facilities-heading p {
     margin: 0;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-facilities-heading-actions {
@@ -42,7 +42,7 @@
     padding: 0 20px;
     border: 0;
     border-radius: 14px;
-    background: #159987;
+    background: var(--color-primary);
     color: #fff;
     font-weight: 800;
     cursor: pointer;
@@ -51,19 +51,19 @@
 .admin-facilities-count {
     min-width: 130px;
     padding: 15px 20px;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 16px;
     background: #fff;
 }
 
 .admin-facilities-count span {
     display: block;
-    color: #718783;
+    color: var(--color-text-muted);
     font-size: 0.78rem;
 }
 
 .admin-facilities-count strong {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 1.5rem;
 }
 
@@ -72,7 +72,7 @@
     grid-template-columns: minmax(200px, 1fr) 150px 150px auto auto;
     gap: 10px;
     padding: 18px;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 19px;
     background: #fff;
 }
@@ -84,11 +84,11 @@
 .admin-facility-form textarea {
     width: 100%;
     padding: 12px 13px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 11px;
     outline: none;
     background: #f9fbfb;
-    color: #294944;
+    color: var(--color-text-primary);
     font: inherit;
     box-sizing: border-box;
 }
@@ -98,24 +98,24 @@
 .admin-facility-create-grid input:focus,
 .admin-facility-create-grid select:focus,
 .admin-facility-form textarea:focus {
-    border-color: #159987;
-    box-shadow: 0 0 0 3px rgba(21, 153, 135, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(57, 135, 106, 0.1);
 }
 
 .admin-facilities-filter button {
     padding: 0 20px;
     border: 0;
     border-radius: 11px;
-    background: #159987;
+    background: var(--color-primary);
     color: #fff;
     font-weight: 800;
     cursor: pointer;
 }
 
 .admin-facilities-filter .admin-facilities-reset {
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     background: #fff;
-    color: #617773;
+    color: var(--color-text-secondary);
 }
 
 .admin-facilities-error {
@@ -138,7 +138,7 @@
 
 .admin-facilities-table-card {
     overflow: hidden;
-    border: 1px solid #dcebe8;
+    border: 1px solid var(--color-border);
     border-radius: 21px;
     background: #fff;
     box-shadow: 0 10px 30px rgba(24, 58, 55, 0.07);
@@ -157,18 +157,18 @@
 .admin-facilities-table th,
 .admin-facilities-table td {
     padding: 16px 17px;
-    border-bottom: 1px solid #edf3f1;
+    border-bottom: 1px solid var(--color-surface-soft);
     text-align: left;
 }
 
 .admin-facilities-table th {
-    background: #f5faf9;
-    color: #617773;
+    background: var(--color-background);
+    color: var(--color-text-secondary);
     font-size: 0.8rem;
 }
 
 .admin-facilities-table td {
-    color: #47625e;
+    color: var(--color-text-secondary);
     font-size: 0.87rem;
 }
 
@@ -184,8 +184,8 @@
     height: 40px;
     place-items: center;
     border-radius: 13px;
-    background: #ddf4ef;
-    color: #118777;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
     font-weight: 900;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .admin-facility-name strong {
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-facility-name small {
@@ -232,8 +232,8 @@
 }
 
 .admin-facility-status--approved {
-    background: #e2f6f1;
-    color: #118777;
+    background: var(--color-primary-soft);
+    color: var(--color-primary-dark);
 }
 
 .admin-facility-status--rejected {
@@ -248,10 +248,10 @@
 
 .admin-facility-actions button {
     padding: 7px 10px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     background: #fff;
-    color: #47625e;
+    color: var(--color-text-secondary);
     font-size: 0.75rem;
     font-weight: 800;
     cursor: pointer;
@@ -260,7 +260,7 @@
 .admin-facility-actions .approve {
     border-color: #bfe2db;
     background: #eefaf7;
-    color: #118777;
+    color: var(--color-primary-dark);
 }
 
 .admin-facility-actions .reject {
@@ -280,7 +280,7 @@
     place-items: center;
     align-content: center;
     gap: 10px;
-    color: #718783;
+    color: var(--color-text-muted);
     text-align: center;
 }
 
@@ -291,8 +291,8 @@
 .admin-facilities-spinner {
     width: 34px;
     height: 34px;
-    border: 3px solid #d9eeea;
-    border-top-color: #159987;
+    border: 3px solid var(--color-primary-soft);
+    border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: facility-spin 0.75s linear infinite;
 }
@@ -313,7 +313,7 @@
 
 .admin-facilities-pagination button {
     padding: 9px 16px;
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     border-radius: 9px;
     background: #fff;
     cursor: pointer;
@@ -327,11 +327,11 @@
 .admin-facilities-pagination span {
     display: flex;
     gap: 7px;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-facilities-pagination strong {
-    color: #159987;
+    color: var(--color-primary);
 }
 
 .admin-facilities-pagination em {
@@ -366,12 +366,12 @@
     display: flex;
     justify-content: space-between;
     padding: 23px 26px;
-    border-bottom: 1px solid #e7efed;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
 .admin-facility-modal header h2 {
     margin: 7px 0 0;
-    color: #173c38;
+    color: var(--color-text-primary);
 }
 
 .admin-facility-modal header button {
@@ -379,8 +379,8 @@
     height: 36px;
     border: 0;
     border-radius: 10px;
-    background: #f1f6f5;
-    color: #617773;
+    background: var(--color-surface-soft);
+    color: var(--color-text-secondary);
     font-size: 1.3rem;
     cursor: pointer;
 }
@@ -390,20 +390,20 @@
 }
 
 .admin-facility-detail-title span {
-    color: #159987;
+    color: var(--color-primary);
     font-size: 0.8rem;
     font-weight: 800;
 }
 
 .admin-facility-detail-title h3 {
     margin: 7px 0;
-    color: #173c38;
+    color: var(--color-text-primary);
     font-size: 1.4rem;
 }
 
 .admin-facility-detail-title p {
     margin: 0;
-    color: #718783;
+    color: var(--color-text-muted);
 }
 
 .admin-facility-detail-list {
@@ -412,9 +412,9 @@
     gap: 1px;
     margin: 0 26px 24px;
     overflow: hidden;
-    border: 1px solid #e4edeb;
+    border: 1px solid var(--color-border-light);
     border-radius: 15px;
-    background: #e4edeb;
+    background: var(--color-border-light);
 }
 
 .admin-facility-detail-list div {
@@ -424,13 +424,13 @@
 
 .admin-facility-detail-list dt {
     margin-bottom: 6px;
-    color: #829490;
+    color: var(--color-text-muted);
     font-size: 0.75rem;
 }
 
 .admin-facility-detail-list dd {
     margin: 0;
-    color: #294944;
+    color: var(--color-text-primary);
     font-weight: 700;
 }
 
@@ -453,7 +453,7 @@
 }
 
 .admin-facility-form p {
-    color: #617773;
+    color: var(--color-text-secondary);
 }
 
 .admin-facility-form label,
@@ -461,7 +461,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    color: #294944;
+    color: var(--color-text-primary);
     font-size: 0.85rem;
     font-weight: 800;
 }
@@ -472,7 +472,7 @@
 }
 
 .admin-facility-form small {
-    color: #829490;
+    color: var(--color-text-muted);
     text-align: right;
 }
 
@@ -492,7 +492,7 @@
     justify-content: flex-end;
     gap: 9px;
     padding: 18px 26px;
-    border-top: 1px solid #e7efed;
+    border-top: 1px solid var(--color-border-light);
 }
 
 .admin-facility-modal-actions button {
@@ -503,14 +503,14 @@
 }
 
 .admin-facility-modal-actions button:first-child {
-    border: 1px solid #dce8e6;
+    border: 1px solid var(--color-border);
     background: #fff;
-    color: #617773;
+    color: var(--color-text-secondary);
 }
 
 .admin-facility-modal-actions button:last-child {
     border: 0;
-    background: #159987;
+    background: var(--color-primary);
     color: #fff;
 }
 

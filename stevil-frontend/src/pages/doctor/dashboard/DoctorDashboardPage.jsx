@@ -17,7 +17,7 @@ export default function DoctorDashboardPage() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const res = await axiosInstance.get("/doctor/dashboard/stats");
+                const res = await axiosInstance.get("/doctor/dashboard");
                 
                 // 백엔드에서 준 데이터를 화면 상태에 쏙쏙 집어넣기
                 setDoctorInfo({ doctorCode: res.data.doctorCode });

@@ -1,6 +1,6 @@
 package com.my.stevil_back.diet.service;
 
-import com.my.stevil_back.diet.dto.DietDashboardResponse;
+import com.my.stevil_back.diet.dto.response.DietDashboardResponse;
 import com.my.stevil_back.diet.entity.DietRecord;
 import com.my.stevil_back.diet.entity.UserDietGoal;
 import com.my.stevil_back.diet.repository.DietRecordRepository;
@@ -224,7 +224,7 @@ public class DietService {
 
     // 식단 직접 입력 & 사진 등록 처리
     @Transactional
-    public void addRecord(Long userId, com.my.stevil_back.diet.dto.DietRecordRequest request, MultipartFile image) {
+    public void addRecord(Long userId, com.my.stevil_back.diet.dto.request.DietRecordRequest request, MultipartFile image) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
 

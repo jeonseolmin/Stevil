@@ -5,6 +5,7 @@ export default function AuthLayout() {
     return (
         <div className="auth-layout">
             <header className="auth-header">
+<<<<<<< HEAD
                 <Link
                     to="/"
                     className="auth-logo"
@@ -17,6 +18,15 @@ export default function AuthLayout() {
                         Stevil
                     </span>
                 </Link>
+=======
+            <Link
+                to="/"
+                className="auth-logo"
+                aria-label="Stevil 홈으로 이동"
+            >
+                Stevil
+            </Link>
+>>>>>>> 72a74fbd90ffd7829ad6b6c4aa7e3f417a105c1c
             </header>
 
             <main className="auth-content">
