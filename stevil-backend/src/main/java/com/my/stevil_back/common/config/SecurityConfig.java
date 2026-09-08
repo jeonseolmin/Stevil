@@ -94,6 +94,11 @@ public class SecurityConfig {
                                 SecurityUrls.PUBLIC_URLS
                         ).permitAll()
 
+                        // ADMIN_URLS
+                        .requestMatchers(
+                                SecurityUrls.ADMIN_URLS
+                        ).hasRole("ADMIN")
+
                         // DOCTOR_URLS
                         .requestMatchers(
                                 SecurityUrls.DOCTOR_URLS
@@ -104,13 +109,7 @@ public class SecurityConfig {
                                 SecurityUrls.USER_URLS
                         ).hasAnyRole("USER", "ADMIN", "DOCTOR")
 
-                        // ADMIN_URLS
-                        .requestMatchers(
-                                SecurityUrls.ADMIN_URLS
-                        ).hasRole("ADMIN")
-
                         // 그 외
-
                         .anyRequest().authenticated()
                 );
         http
