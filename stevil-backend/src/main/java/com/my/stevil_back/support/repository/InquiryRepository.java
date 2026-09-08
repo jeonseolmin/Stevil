@@ -40,6 +40,7 @@ public interface InquiryRepository
     Page<Inquiry> searchForAdmin(
             @Param("status") InquiryStatus status,
             @Param("category") InquiryCategory category,
+            @Param("keyword") String keyword,
             Pageable pageable
     );
 
