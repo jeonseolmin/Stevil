@@ -4,7 +4,7 @@
     background:
         radial-gradient(
             circle at top right,
-            rgba(32, 191, 169, 0.1),
+            rgba(57, 135, 106, 0.1),
             transparent 34%
         ),
         var(--color-background);

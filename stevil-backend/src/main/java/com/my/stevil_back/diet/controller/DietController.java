@@ -1,8 +1,8 @@
 package com.my.stevil_back.diet.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.diet.dto.DietDashboardResponse;
-import com.my.stevil_back.diet.dto.DietRecordRequest;
+import com.my.stevil_back.diet.dto.response.DietDashboardResponse;
+import com.my.stevil_back.diet.dto.request.DietRecordRequest;
 import com.my.stevil_back.diet.service.DietService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

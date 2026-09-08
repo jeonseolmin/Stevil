@@ -31,4 +31,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByCategory(String category,Pageable pageable);
 
     Page <Post> findByAuthorEmailOrderByIdDesc(String email, Pageable pageable);
+
+    long countByAuthorEmail(String authorEmail);
 }

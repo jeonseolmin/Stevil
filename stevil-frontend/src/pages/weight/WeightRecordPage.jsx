@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance"; 
 
 import "./WeightRecordPage.css";
 
@@ -100,7 +101,7 @@ export default function WeightRecordPage() {
         return "";
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const validationMessage = validateForm();
@@ -119,21 +120,20 @@ export default function WeightRecordPage() {
             recordedAt: `${recordedAt}:00`,
         };
 
-        setErrorMessage("");
-        setSubmittedData(payload);
-
-        /*
-         * 백엔드 연결 시 이 부분을 교체합니다.
-         *
-         * await axiosInstance.post(
-         *     "/weights",
-         *     payload
-         * );
-         *
-         * navigate("/dashboard");
-         */
-
-        console.log("체중 등록 예정 데이터:", payload);
+        try {
+            await axiosInstance.post("/weights", payload);
+            
+            setErrorMessage("");
+            setSubmittedData(payload);
+            
+            alert("체중 기록이 성공적으로 저장되었습니다.");
+            navigate("/dashboard"); // 저장 후 대시보드로 이동
+            
+        } catch (error) {
+            console.error("체중 기록 저장 실패:", error);
+            setErrorMessage(error.response?.data || "저장에 실패했습니다. 다시 시도해주세요.");
+            setSubmittedData(null);
+        }
     };
 
     const handleReset = () => {
@@ -296,14 +296,8 @@ export default function WeightRecordPage() {
                                 role="status"
                             >
                                 <strong>
-                                    프론트 입력 검증이
-                                    완료되었습니다.
+                                    데이터 처리 중입니다...
                                 </strong>
-
-                                <p>
-                                    백엔드 API가 연결되면 이
-                                    데이터가 실제로 저장됩니다.
-                                </p>
                             </div>
                         )}
 

@@ -1,0 +1,213 @@
+.doctor-report-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.report-header {
+    margin-bottom: 32px;
+}
+
+.report-header span {
+    color: #20bfa9;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.report-header h1 {
+    font-size: 28px;
+    color: #183a37;
+    margin: 8px 0;
+}
+
+.report-header p {
+    color: #657b78;
+    margin: 0;
+}
+
+.report-container {
+    display: flex;
+    gap: 24px;
+    height: 600px;
+}
+
+/* 왼쪽 리스트 */
+.report-list-sidebar {
+    width: 350px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8e8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.list-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8e8;
+    background: #f8fbfb;
+}
+
+.list-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #183a37;
+}
+
+.report-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+}
+
+.report-item {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8e8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.report-item:hover {
+    background: #f8fbfb;
+}
+
+.report-item.active {
+    background: #e8f8f5;
+    border-left: 4px solid #20bfa9;
+}
+
+.report-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.report-item-header strong {
+    font-size: 15px;
+    color: #183a37;
+}
+
+.new-badge {
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 6px;
+    border-radius: 8px;
+}
+
+.report-date {
+    display: block;
+    font-size: 12px;
+    color: #8b9b98;
+    margin-bottom: 8px;
+}
+
+.report-preview {
+    margin: 0;
+    font-size: 13px;
+    color: #657b78;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 오른쪽 디테일 */
+.report-detail-view {
+    flex: 1;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8e8;
+    overflow-y: auto;
+}
+
+.empty-detail {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b9b98;
+    font-size: 15px;
+}
+
+.detail-card {
+    padding: 32px;
+}
+
+.detail-patient-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e2e8e8;
+    margin-bottom: 24px;
+}
+
+.detail-patient-info h2 {
+    margin: 0 0 8px 0;
+    color: #183a37;
+    font-size: 24px;
+}
+
+.detail-patient-info span {
+    color: #657b78;
+    font-size: 14px;
+}
+
+.detail-date {
+    background: #f1f5f5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.ai-summary-box {
+    background: #f8fbfb;
+    border: 1px solid #dce9e6;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.ai-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.ai-summary-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #0f766e;
+}
+
+.ai-summary-content p {
+    margin: 0 0 8px 0;
+    color: #183a37;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-reply {
+    background: #183a37;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-reply:hover {
+    background: #112a28;
+}

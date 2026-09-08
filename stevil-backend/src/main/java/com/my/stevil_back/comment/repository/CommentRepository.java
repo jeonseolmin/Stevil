@@ -13,4 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByPostId(Long postId);
     Page<Comment> findByAuthorEmailOrderByIdDesc(String authorEmail, Pageable pageable);
     Optional<Comment> findById(Long id);
+
+    long countByAuthorEmail(String authorEmail);
 }
