@@ -33,8 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT u
             FROM User u
             WHERE :keyword IS NULL
-               OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(u.email) LIKE :keyword
+               OR LOWER(u.nickname) LIKE :keyword
             """)
     Page<User> searchForAdmin(
             @Param("keyword") String keyword,

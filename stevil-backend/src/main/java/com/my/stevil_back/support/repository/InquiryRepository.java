@@ -13,17 +13,13 @@ public interface InquiryRepository
         extends JpaRepository<Inquiry, Long> {
 
     @Query("""
-            SELECT i
-            FROM Inquiry i
-            WHERE (:status IS NULL OR i.status = :status)
-              AND (:category IS NULL OR i.category = :category)
-              AND (
-                    :keyword IS NULL
-                    OR LOWER(i.title)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-                    OR LOWER(i.content)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-              )
+            SELECT i 
+            FROM Inquiry i 
+            WHERE (:status IS NULL OR i.status = :status) 
+              AND (:category IS NULL OR i.category = :category) 
+              AND (:keyword IS NULL 
+                   OR LOWER(i.title) LIKE :keyword 
+                   OR LOWER(i.content) LIKE :keyword)
             """)
     Page<Inquiry> searchForAdmin(
             @Param("status") InquiryStatus status,

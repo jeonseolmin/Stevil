@@ -114,6 +114,7 @@ public class User extends BaseEntity {
         this.heightCm = heightCm;
         this.profileImage = profileImage;
     }
+
     public void completeOnboarding(
             String nickname,
             LocalDate birthDate,
@@ -125,6 +126,20 @@ public class User extends BaseEntity {
         this.sex = sex;
         this.heightCm = heightCm;
         this.onboardingCompleted = true;
+    }
+
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+
+    // 환자가 주치의를 등록할 때 사용하는 편의 메서드
+    public void assignAttendingDoctor(User doctor) {
+        this.attendingDoctor = doctor;
+    }
+
+    // 의사 코드를 세팅하는 편의 메서드
+    public void setDoctorCode(String doctorCode) {
+        this.doctorCode = doctorCode;
     }
 
     public void changeRole(UserRole role) {
@@ -141,19 +156,5 @@ public class User extends BaseEntity {
         this.suspended = false;
         this.suspendedAt = null;
         this.suspensionReason = null;
-    }
-
-    public void updateBio(String bio) {
-        this.bio = bio;
-    }
-
-    // 환자가 주치의를 등록할 때 사용하는 편의 메서드
-    public void assignAttendingDoctor(User doctor) {
-        this.attendingDoctor = doctor;
-    }
-
-    // 의사 코드를 세팅하는 편의 메서드
-    public void setDoctorCode(String doctorCode) {
-        this.doctorCode = doctorCode;
     }
 }
