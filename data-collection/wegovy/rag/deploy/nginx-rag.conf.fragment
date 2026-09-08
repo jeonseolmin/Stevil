@@ -1,0 +1,27 @@
+    # Authenticated RAG proxy. The Python service has no public port.
+    location = /_rag_auth {
+        internal;
+        proxy_pass http://backend:8080/api/users/me;
+        proxy_method GET;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header Cookie $http_cookie;
+        proxy_intercept_errors on;
+        error_page 301 302 303 307 308 =401 /_rag_unauthorized;
+    }
+    location = /_rag_unauthorized {
+        internal;
+        return 401;
+    }
+    location /rag-api/ {
+        auth_request /_rag_auth;
+        limit_req zone=rag_requests burst=3 nodelay;
+        limit_req_status 429;
+        client_max_body_size 16k;
+        proxy_pass http://rag-api:8091/api/;
+        proxy_read_timeout 110s;
+        proxy_set_header Origin "";
+        proxy_set_header Authorization "";
+        proxy_set_header Cookie "";
+    }
