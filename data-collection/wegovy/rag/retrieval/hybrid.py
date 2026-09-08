@@ -73,7 +73,14 @@ def cache_key(text):
 
 class VectorIndex:
     def __init__(self, docs, path=None):
-        self.path = path or Path(__file__).with_name('cache') / 'embeddings.sqlite3'
+        rag_root = Path(__file__).resolve().parents[1]
+
+        self.path = (
+                path
+                or rag_root
+                / "cache"
+                / "embeddings.sqlite3"
+        )
         self.entries = [(doc['id'], cache_key(text), text) for doc in docs for text in passages(doc)]
         self.vectors = {}
         if self.path.exists():

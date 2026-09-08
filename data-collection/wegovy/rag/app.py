@@ -1,6 +1,5 @@
-"""Local evidence-first Wegovy RAG prototype. Python 3.10+, stdlib only."""
-from nutrition import NutritionTargetUnavailable
-from food_policy import FoodPolicyUnavailable
+"""Local evidence-first Wegovy RAG prototype. Python 3.10+."""
+
 import argparse
 from collections import Counter
 import hashlib
@@ -12,10 +11,15 @@ import os
 from pathlib import Path
 import re
 from urllib.request import Request, urlopen
-from hybrid import HybridSearch, VectorIndex
-from prompts import SYSTEM_PROMPT
-from planner import make_plan
-from food_catalog import FoodUnavailable
+
+from chat.prompts import SYSTEM_PROMPT
+
+from planner.food.catalog import FoodUnavailable
+from planner.food.policy import FoodPolicyUnavailable
+from planner.nutrition.matching import NutritionTargetUnavailable
+from planner.service import make_plan
+
+from retrieval.hybrid import HybridSearch, VectorIndex
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTIONS = {'_ee_doc': '효능효과', '_ud_doc': '용법용량', '_nb_doc': '사용상의 주의사항'}
@@ -305,7 +309,8 @@ if __name__ == '__main__':
     corpus = Corpus(preview=args.preview)
     if not args.bm25_only:
         if os.environ.get('RAG_DATABASE_URL') and not args.build_index:
-            from postgres_store import PostgresIndex
+            from retrieval.postgres_store import PostgresIndex
+
             index = PostgresIndex(corpus.docs)
         else:
             index = VectorIndex(corpus.docs)

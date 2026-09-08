@@ -4,14 +4,21 @@ from datetime import date, timedelta
 from pathlib import Path
 import json
 import uuid
-from food_policy import validate_food_policy
+from planner.food.policy import validate_food_policy
 
-from nutrition import number, validate_goal, balanced_meals, balanced_macros, NutritionTargetUnavailable
+from planner.nutrition.matching  import number, validate_goal, balanced_meals, balanced_macros, NutritionTargetUnavailable
 
 
 def load_snacks():
-    return json.loads(Path(__file__).with_name('snacks.json').read_text(encoding='utf-8'))
+    snacks_path = (
+        Path(__file__).resolve().parents[2]
+        / "config"
+        / "snacks.json"
+    )
 
+    return json.loads(
+        snacks_path.read_text(encoding="utf-8")
+    )
 
 def complete_nutrition(p, result, suggestions):
     validate_food_policy(result['events'])

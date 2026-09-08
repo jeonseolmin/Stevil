@@ -15,7 +15,7 @@ This module does NOT:
 The LLM receives only evidence returned by this module.
 """
 
-from exercise_store import (
+from planner.exercise.store import (
     documents,
     index,
 )

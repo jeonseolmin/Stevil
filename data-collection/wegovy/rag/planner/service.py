@@ -11,24 +11,25 @@ import re
 import uuid
 from urllib.request import Request, urlopen
 
-from exercise_catalog import (
+from planner.exercise.catalog import (
     load_catalog,
     filter_catalog,
 )
 
-from exercise_evidence import (
+from planner.exercise.evidence import (
     retrieve_exercise_evidence,
     evidence_for_model,
     resolve_evidence,
 )
 
-from food_catalog import FoodCatalog
-from nutrition_schedule import (
+from planner.food.catalog import FoodCatalog
+
+from planner.nutrition.completion import (
     load_snacks,
     complete_nutrition,
 )
 
-from nutrition import (
+from planner.nutrition.matching import (
     validate_goal,
     match_week,
     is_viable_meal_candidate,

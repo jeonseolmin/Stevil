@@ -12,11 +12,27 @@ import sqlite3
 from urllib.parse import urlencode, unquote
 from urllib.request import urlopen
 
-from hybrid import VectorIndex
-from food_policy import processed_meat, families, canonical
-from nutrition import number, recipe_nutrition, validate_goal, macro_penalty
+from retrieval.hybrid import VectorIndex
 
-ROOT = Path(__file__).parent / 'cache' / 'nutrition'
+from planner.food.policy import (
+    processed_meat,
+)
+
+from planner.nutrition.matching import (
+    recipe_nutrition,
+)
+
+RAG_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parents[2]
+)
+
+ROOT = (
+    RAG_ROOT
+    / "cache"
+    / "nutrition"
+)
 SOURCE = 'https://www.data.go.kr/data/15127578/openapi.do'
 ENDPOINT = 'https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02'
 FIELDS = {'INFO_ENG': 'AMT_NUM1', 'INFO_CAR': 'AMT_NUM6', 'INFO_PRO': 'AMT_NUM3',

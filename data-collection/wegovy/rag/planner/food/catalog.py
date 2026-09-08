@@ -8,12 +8,33 @@ from pathlib import Path
 import re
 import sqlite3
 from urllib.request import urlopen
-from hybrid import VectorIndex
-from nutrition import recipe_nutrition
-from food_policy import processed_meat, diverse_recipe_candidates
-from nutrition_catalog import NutrientCatalog, ROOT as NUTRIENT_ROOT
+from retrieval.hybrid import VectorIndex
 
-ROOT = Path(__file__).parent / 'cache' / 'food'
+from planner.nutrition.matching import (
+    recipe_nutrition,
+)
+
+from planner.food.policy import (
+    processed_meat,
+    diverse_recipe_candidates,
+)
+
+from planner.food.nutrient_catalog import (
+    NutrientCatalog,
+    ROOT as NUTRIENT_ROOT,
+)
+
+RAG_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parents[2]
+)
+
+ROOT = (
+    RAG_ROOT
+    / "cache"
+    / "food"
+)
 SOURCE = 'https://www.foodsafetykorea.go.kr/api/openApiInfo.do?menu_no=661&svc_no=COOKRCP01'
 
 

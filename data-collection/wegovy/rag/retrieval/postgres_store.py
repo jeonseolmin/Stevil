@@ -2,7 +2,12 @@
 import hashlib
 import json
 import os
-from hybrid import DIMENSIONS, MODEL, VectorIndex, embed
+from retrieval.hybrid import (
+    DIMENSIONS,
+    MODEL,
+    VectorIndex,
+    embed,
+)
 
 
 def snapshot_id(docs):

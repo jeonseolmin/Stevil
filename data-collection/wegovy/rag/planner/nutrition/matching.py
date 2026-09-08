@@ -4,7 +4,10 @@ from copy import deepcopy
 import hashlib
 import json
 import math
-from food_policy import choose_diverse_week, processed_meat
+from planner.food.policy import (
+    choose_diverse_week,
+    processed_meat,
+)
 
 
 class NutritionTargetUnavailable(ValueError):

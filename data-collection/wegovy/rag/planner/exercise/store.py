@@ -12,7 +12,22 @@ from pathlib import Path
 import sqlite3
 from urllib.request import Request, urlopen
 
-from hybrid import VectorIndex
+from retrieval.hybrid import VectorIndex
+
+
+RAG_ROOT = Path(__file__).resolve().parents[2]
+
+ROOT = (
+    RAG_ROOT
+    / "cache"
+    / "exercise"
+)
+
+EXERCISE_SOURCES_PATH = (
+    RAG_ROOT
+    / "config"
+    / "exercise_sources.json"
+)
 
 BASE = Path(__file__).parent
 ROOT = BASE / 'cache' / 'exercise'
@@ -54,7 +69,12 @@ def connect():
 
 
 def collect():
-    sources = json.loads((BASE / 'exercise_sources.json').read_text(encoding='utf-8'))
+    sources = json.loads(
+        EXERCISE_SOURCES_PATH
+        .read_text(
+            encoding="utf-8"
+        )
+    )
     db = connect()
     try:
         for source in sources:
