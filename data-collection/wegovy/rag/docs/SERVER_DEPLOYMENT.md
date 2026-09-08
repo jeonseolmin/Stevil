@@ -1,5 +1,16 @@
 # Server migration — 2026-09-02
 
+## Current deployment — 2026-09-08
+
+- Deployed current frontend, backend and reorganized RAG code. GitHub was not pushed.
+- App Compose remains `/home/ubuntu/Stevil/compose.yaml`. Preserve its production ports, database URL, pgvector image and backend `env_file` entries. It now connects `APP_FRONTEND_URL` to `FRONTEND_URL` and passes `VITE_NAVER_MAP_CLIENT_ID` into the frontend build.
+- Backend production OAuth registrations were restored. Chat room IDs remain compatible with the existing BIGINT schema. The backend source includes these fixes; production currently also supplies `APP_FRONTEND_URL` through Compose.
+- RAG release: `/home/ubuntu/stevil-rag/releases/20260908`. Its Compose file is `rag/deploy/compose.server.yaml`; the build context is the release root.
+- RAG command: `docker compose --env-file /home/ubuntu/stevil-rag/server.env -p stevil-rag -f /home/ubuntu/stevil-rag/releases/20260908/rag/deploy/compose.server.yaml up -d --no-build`.
+- Pre-deployment DB dump and configuration: `/home/ubuntu/stevil-rag/backups/release-20260908T045114Z`. Previous application images use tag `before-20260908T045114Z`; previous RAG image uses `before-20260908`.
+- Verified frontend HTTP 200, authenticated API rejection 401, all three OAuth initiation redirects 302, SockJS info 200, PostgreSQL healthy and RAG generation/vector readiness. RAG snapshot has 281 documents, 1,289 passages and 1,149 cached vectors; no new embeddings were generated.
+- Backend tests: 20 passed with local test environment. RAG: 55 passed with the shared backend snacks catalog mounted read-only. Frontend production build and dashboard lint passed; repository-wide lint still has existing errors. Real authenticated login, planner generation/save and user interactions were not exercised.
+
 Host: `ubuntu@15.165.242.94`. Existing application: `/home/ubuntu/Stevil`.
 
 ## Applied
