@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getActiveAds, getDashboard, getDashboardAds } from "../api/dashboardApi";
-import { clearAccessToken } from "../api/axiosInstance";
-import DashboardDailyCards from "../components/dashboard/DashboardDailyCards";
-import DashboardMedicalNotice from "../components/dashboard/DashboardMedicalNotice";
-import DashboardQuickActions from "../components/dashboard/DashboardQuickActions";
-import DashboardWeightChart from "../components/dashboard/DashboardWeightChart";
-import DashboardWeightSummary from "../components/dashboard/DashboardWeightSummary";
-import DashboardWelcome from "../components/dashboard/DashboardWelcome";
-import DashboardPopupAd from "../components/dashboard/ads/DashboardPopupAd";
-import DashboardSponsor from "../components/dashboard/ads/DashboardSponsor";
-import DashboardTopBanner from "../components/dashboard/ads/DashboardTopBanner";
-import { clampProgressRate, splitDashboardAds, todayKey } from "../components/dashboard/dashboardUtils";
-import WeeklyPlanner from "../components/planner/WeeklyPlanner";
-import DashboardChatWidget from "../components/rag/DashboardChatWidget";
+import { getActiveAds, getDashboard, getDashboardAds } from "../../api/dashboardApi.js";
+import { clearAccessToken } from "../../api/axiosInstance.js";
+import DashboardDailyCards from "../../components/dashboard/DashboardDailyCards.jsx";
+import DashboardMedicalNotice from "../../components/dashboard/DashboardMedicalNotice.jsx";
+import DashboardQuickActions from "../../components/dashboard/DashboardQuickActions.jsx";
+import DashboardWeightChart from "../../components/dashboard/DashboardWeightChart.jsx";
+import DashboardWeightSummary from "../../components/dashboard/DashboardWeightSummary.jsx";
+import DashboardWelcome from "../../components/dashboard/DashboardWelcome.jsx";
+import DashboardPopupAd from "../../components/dashboard/ads/DashboardPopupAd.jsx";
+import DashboardSponsor from "../../components/dashboard/ads/DashboardSponsor.jsx";
+import DashboardTopBanner from "../../components/dashboard/ads/DashboardTopBanner.jsx";
+import { clampProgressRate, splitDashboardAds, todayKey } from "../../components/dashboard/dashboardUtils.js";
+import WeeklyPlanner from "../../components/planner/WeeklyPlanner.jsx";
+import DashboardChatWidget from "../../components/rag/DashboardChatWidget.jsx";
 import "./Dashboard.css";
-import "./DashboardRefresh.css";
 
 export default function Dashboard({ previewData = null }) {
     const navigate = useNavigate();
