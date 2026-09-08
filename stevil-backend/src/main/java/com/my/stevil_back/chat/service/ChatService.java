@@ -17,7 +17,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
-    public ChatRoom getChatRoomWithAuthCheck(String roomId, String currentNickname) {
+    public ChatRoom getChatRoomWithAuthCheck(Long roomId, String currentNickname) {
         ChatRoom room = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
         
@@ -32,7 +32,7 @@ public class ChatService {
     }
 
     @Transactional
-    public String createOrGetRoom(String myNickname, String targetNickname) {
+    public Long createOrGetRoom(String myNickname, String targetNickname) {
         return chatRoomRepository.findChatRoom(myNickname, targetNickname)
                 .map(ChatRoom::getId)
                 .orElseGet(() -> chatRoomRepository.save(ChatRoom.builder()
@@ -52,7 +52,7 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageDto> getChatHistory(String roomId) {
+    public List<ChatMessageDto> getChatHistory(Long roomId) {
         return chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId).stream()
                 .map(msg -> ChatMessageDto.builder()
                         .roomId(msg.getChatRoom().getId())

@@ -17,3 +17,6 @@ spring:
 logging:
   level:
     root: info
+
+app:
+  frontend-url: ${FRONTEND_URL}
