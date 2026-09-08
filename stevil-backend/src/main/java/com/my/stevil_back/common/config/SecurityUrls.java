@@ -19,7 +19,6 @@ public class SecurityUrls {
             "/api/community/**",
 
             "/ws-stomp/**",
-            "/ws-stomp/**",
 
             "/api/ai/**",
 
@@ -29,13 +28,11 @@ public class SecurityUrls {
 
     public static final String[] ADMIN_URLS = {
             "/api/admin/**",
-
-            "/api/admin/**",
             "/api/ads/admin/**"
     };
 
     public static final String[] DOCTOR_URLS = {
-            "/api/ads/request"
+            "/api/doctor/**"
     };
 
     public static final String[] USER_URLS = {

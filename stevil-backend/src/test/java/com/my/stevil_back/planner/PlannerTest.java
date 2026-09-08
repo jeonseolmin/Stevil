@@ -1,18 +1,20 @@
 package com.my.stevil_back.planner;
-import com.my.stevil_back.planner.dto.PlannerValidation;
+import com.my.stevil_back.planner.validation.PlannerValidation;
 import com.my.stevil_back.planner.entity.WeeklyPlan;
 import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
 import com.my.stevil_back.planner.service.PlannerService;
 import com.my.stevil_back.user.entity.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.databind.ObjectMapper;
 import java.time.*;
 import java.util.*;
-import static com.my.stevil_back.planner.dto.PlannerTypes.*;
+import com.my.stevil_back.planner.dto.*;
+import com.my.stevil_back.planner.dto.request.Save;
+import com.my.stevil_back.planner.dto.response.Draft;
+import com.my.stevil_back.planner.dto.response.Saved;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -61,10 +63,10 @@ class PlannerTest {
         assertDoesNotThrow(()->PlannerValidation.events(prefs(List.of()),List.of(event("1",8,9),event("2",9,10))));
     }
     @Test void savesOnlyUnderAuthenticatedUserAndRejectsStaleRevision() {
-        var repository=mock(WeeklyPlanRepository.class);var em=mock(EntityManager.class);var json=mock(ObjectMapper.class);
-        var service=new PlannerService(repository,em,json,mock(Validator.class),"http://127.0.0.1:8091/api/plan");
+        var repository=mock(WeeklyPlanRepository.class);var users=mock(UserRepository.class);var json=mock(ObjectMapper.class);
+        var service=new PlannerService(repository,users,json,mock(Validator.class),"http://127.0.0.1:8091/api/plan");
         var p=prefs(List.of());
-        when(em.find(User.class,17L,LockModeType.PESSIMISTIC_WRITE)).thenReturn(User.builder().id(17L).build());
+        when(users.findByIdForUpdate(17L)).thenReturn(Optional.of(User.builder().id(17L).build()));
         when(repository.findByUserIdAndWeekStart(17L,p.weekStart())).thenReturn(Optional.empty());
         when(json.writeValueAsString(any())).thenReturn("{}");
         var saved=service.save(17L,new Save(0,p,List.of(event("1",8,9))));
@@ -77,7 +79,7 @@ class PlannerTest {
     }
     @Test void readsOnlyRequestedUsersWeek() {
         var repository=mock(WeeklyPlanRepository.class);
-        var service=new PlannerService(repository,mock(EntityManager.class),mock(ObjectMapper.class),mock(Validator.class),"http://127.0.0.1:8091/api/plan");
+        var service=new PlannerService(repository,mock(UserRepository.class),mock(ObjectMapper.class),mock(Validator.class),"http://127.0.0.1:8091/api/plan");
         when(repository.findByUserIdAndWeekStart(29L,LocalDate.of(2026,9,7))).thenReturn(Optional.empty());
         assertNull(service.get(29L,LocalDate.of(2026,9,7)));
         verify(repository).findByUserIdAndWeekStart(29L,LocalDate.of(2026,9,7));

@@ -1,11 +1,9 @@
 package com.my.stevil_back.planner.service;
 
-import com.my.stevil_back.planner.dto.PlannerValidation;
+import com.my.stevil_back.planner.validation.PlannerValidation;
 import com.my.stevil_back.planner.entity.WeeklyPlan;
 import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
-import com.my.stevil_back.user.entity.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,21 +15,24 @@ import java.net.URI;
 import java.net.http.*;
 import java.time.*;
 import java.util.concurrent.ConcurrentHashMap;
-import static com.my.stevil_back.planner.dto.PlannerTypes.*;
+import com.my.stevil_back.planner.dto.*;
+import com.my.stevil_back.planner.dto.request.Save;
+import com.my.stevil_back.planner.dto.response.Draft;
+import com.my.stevil_back.planner.dto.response.Saved;
 
 @Service
 public class PlannerService {
     private static final org.slf4j.Logger log=org.slf4j.LoggerFactory.getLogger(PlannerService.class);
     private final WeeklyPlanRepository repository;
-    private final EntityManager em;
+    private final UserRepository users;
     private final ObjectMapper json;
     private final Validator validator;
     private final URI generator;
     private final HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     private final ConcurrentHashMap<Long,Instant> requests=new ConcurrentHashMap<>();
-    public PlannerService(WeeklyPlanRepository repository,EntityManager em,ObjectMapper json,Validator validator,
+    public PlannerService(WeeklyPlanRepository repository,UserRepository users,ObjectMapper json,Validator validator,
             @Value("${planner.generator-url:http://127.0.0.1:8091/api/plan}") String url) {
-        this.repository=repository;this.em=em;this.json=json;this.validator=validator;this.generator=URI.create(url);
+        this.repository=repository;this.users=users;this.json=json;this.validator=validator;this.generator=URI.create(url);
     }
     public Draft generate(Long userId,Preferences p) {
         PlannerValidation.preferences(p);
@@ -84,7 +85,7 @@ public class PlannerService {
     public Saved save(Long userId,Save request) {
         PlannerValidation.events(request.preferences(),request.events());
         // Serializes first inserts as well as updates across app instances.
-        if(em.find(User.class,userId,LockModeType.PESSIMISTIC_WRITE)==null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        if(users.findByIdForUpdate(userId).isEmpty()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         var plan=repository.findByUserIdAndWeekStart(userId,request.preferences().weekStart())
                 .orElseGet(()->new WeeklyPlan(userId,request.preferences().weekStart()));
         if(plan.getRevision()!=request.revision()) throw new ResponseStatusException(HttpStatus.CONFLICT,"다른 화면에서 일정이 변경됐습니다. 주간 일정을 다시 불러와 주세요.");

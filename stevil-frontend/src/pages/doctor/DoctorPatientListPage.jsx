@@ -11,7 +11,7 @@ export default function DoctorPatientListPage() {
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const res = await axiosInstance.get("/doctor/dashboard/patients");
+                const res = await axiosInstance.get("/doctor/patients");
                 setPatients(res.data);
             } catch (err) {
                 console.error("환자 목록 로드 실패", err);

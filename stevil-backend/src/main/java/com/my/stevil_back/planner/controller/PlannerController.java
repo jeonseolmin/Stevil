@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.Map;
-import static com.my.stevil_back.planner.dto.PlannerTypes.*;
+import com.my.stevil_back.planner.dto.*;
+import com.my.stevil_back.planner.dto.request.Save;
+import com.my.stevil_back.planner.dto.response.Draft;
+import com.my.stevil_back.planner.dto.response.Saved;
 
 @RestController @RequestMapping("/api/planner")
 public class PlannerController {

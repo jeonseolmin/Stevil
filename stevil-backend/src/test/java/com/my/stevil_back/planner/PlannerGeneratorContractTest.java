@@ -3,7 +3,7 @@ package com.my.stevil_back.planner;
 import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
 import com.my.stevil_back.planner.service.PlannerService;
 import com.sun.net.httpserver.HttpServer;
-import jakarta.persistence.EntityManager;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Validation;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,7 +14,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import static com.my.stevil_back.planner.dto.PlannerTypes.*;
+import com.my.stevil_back.planner.dto.*;
+import com.my.stevil_back.planner.dto.request.Save;
+import com.my.stevil_back.planner.dto.response.Draft;
+import com.my.stevil_back.planner.dto.response.Saved;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
@@ -38,7 +41,7 @@ class PlannerGeneratorContractTest {
         });
         server.start();
         try(var factory=Validation.buildDefaultValidatorFactory()) {
-            var service=new PlannerService(mock(WeeklyPlanRepository.class),mock(EntityManager.class),new ObjectMapper(),
+            var service=new PlannerService(mock(WeeklyPlanRepository.class),mock(UserRepository.class),new ObjectMapper(),
                 factory.getValidator(),"http://127.0.0.1:"+server.getAddress().getPort()+"/plan");
             var p=new Preferences(LocalDate.of(2026,9,7),LocalTime.of(7,0),LocalTime.of(23,0),
                 LocalTime.of(8,0),LocalTime.of(12,30),LocalTime.of(18,30),LocalTime.of(19,30),30,

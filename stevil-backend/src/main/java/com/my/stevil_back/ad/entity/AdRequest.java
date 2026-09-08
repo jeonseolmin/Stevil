@@ -1,7 +1,7 @@
 package com.my.stevil_back.ad.entity;
 
-import com.my.stevil_back.ad.enums.AdStatus;
-import com.my.stevil_back.ad.enums.AdType;
+import com.my.stevil_back.ad.entity.enumType.AdStatus;
+import com.my.stevil_back.ad.entity.enumType.AdType;
 import com.my.stevil_back.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

@@ -5,8 +5,7 @@ import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
 import com.my.stevil_back.planner.service.PlannerService;
 import com.my.stevil_back.user.entity.User;
 import com.sun.net.httpserver.HttpServer;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Validation;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,7 +15,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import static com.my.stevil_back.planner.dto.PlannerTypes.*;
+import com.my.stevil_back.planner.dto.*;
+import com.my.stevil_back.planner.dto.request.Save;
+import com.my.stevil_back.planner.dto.response.Draft;
+import com.my.stevil_back.planner.dto.response.Saved;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,8 +47,8 @@ class PlannerExerciseContractTest {
         server.start();
         try (var factory = Validation.buildDefaultValidatorFactory()) {
             var repository = mock(WeeklyPlanRepository.class);
-            var em = mock(EntityManager.class);
-            var service = new PlannerService(repository, em, json, factory.getValidator(),
+            var users = mock(UserRepository.class);
+            var service = new PlannerService(repository, users, json, factory.getValidator(),
                     "http://127.0.0.1:" + server.getAddress().getPort() + "/plan");
             var p = preferences();
             var draft = service.generate(17L,p);
@@ -61,7 +63,7 @@ class PlannerExerciseContractTest {
             assertFalse(exercise.exerciseEvidence().getFirst().text().isBlank());
             assertEquals(.75, exercise.exerciseEvidence().getFirst().retrievalScore());
             assertTrue(factory.getValidator().validate(draft).isEmpty());
-            when(em.find(User.class,17L,LockModeType.PESSIMISTIC_WRITE)).thenReturn(User.builder().id(17L).build());
+            when(users.findByIdForUpdate(17L)).thenReturn(Optional.of(User.builder().id(17L).build()));
             when(repository.findByUserIdAndWeekStart(17L,p.weekStart())).thenReturn(Optional.empty());
             var request = json.readValue(json.writeValueAsString(new Save(0,p,draft.events())), Save.class);
             var saved = service.save(17L,request);
