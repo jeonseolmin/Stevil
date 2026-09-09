@@ -4,7 +4,6 @@ import SockJS from 'sockjs-client';
 import axiosInstance from '../../api/axiosInstance';
 import './ChatModal.css';
 
-const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
 export default function ChatModal({ roomId, myNickname, targetNickname, onClose }) {
     const [messages, setMessages] = useState([]);
@@ -35,7 +34,8 @@ export default function ChatModal({ roomId, myNickname, targetNickname, onClose 
 
     const connectWebSocket = () => {
         const client = new Client({
-            webSocketFactory: () => new SockJS(`${API_BASE_URL}/ws-stomp`),
+            webSocketFactory: () =>
+                new SockJS('/ws-stomp'),
             debug: (str) => {
             },
             reconnectDelay: 5000, // 연결 끊기면 5초 뒤 자동 재연결
