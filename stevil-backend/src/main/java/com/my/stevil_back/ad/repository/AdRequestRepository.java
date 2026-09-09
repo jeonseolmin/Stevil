@@ -1,7 +1,7 @@
 package com.my.stevil_back.ad.repository;
 
 import com.my.stevil_back.ad.entity.AdRequest;
-import com.my.stevil_back.ad.entity.enumType.AdStatus;
+import com.my.stevil_back.ad.enums.AdStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

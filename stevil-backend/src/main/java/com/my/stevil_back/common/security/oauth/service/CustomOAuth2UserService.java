@@ -17,15 +17,19 @@ import com.my.stevil_back.user.entity.enumType.UserRole;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
-@Service @RequiredArgsConstructor
-public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
+@Service
+@RequiredArgsConstructor
+public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
     private final UserRepository userRepository;
     private final SocialAccountService socialAccountService;
+
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        String socialAccessToken = userRequest.getAccessToken().getTokenValue();
 
         String registrationId = userRequest
                 .getClientRegistration()
@@ -53,6 +57,8 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
 
         if (existingAccount.isPresent()) {
             user = existingAccount.get().getUser();
+            existingAccount.get().updateToken(socialAccessToken);
+
         } else {
             user = User.builder()
                     .email(email)
@@ -67,7 +73,8 @@ public class CustomOAuth2UserService  extends DefaultOAuth2UserService {
                     user,
                     providerType,
                     providerId,
-                    email
+                    email,
+                    socialAccessToken
             );
         }
 

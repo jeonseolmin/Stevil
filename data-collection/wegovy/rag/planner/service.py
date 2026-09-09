@@ -1036,7 +1036,7 @@ def generate_suggestions(
                 "application/json",
 
             "maxOutputTokens":
-                6500,
+                10000,
         },
     }
 

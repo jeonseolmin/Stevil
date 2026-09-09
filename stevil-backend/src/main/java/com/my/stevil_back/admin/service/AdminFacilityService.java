@@ -116,7 +116,10 @@ public class AdminFacilityService {
     }
 
     private String normalizeKeyword(String keyword) {
-        return trimToNull(keyword);
+        if (keyword == null || keyword.isBlank()) {
+            return null;
+        }
+        return "%" + keyword.trim().toLowerCase() + "%";
     }
 
     private String trimToNull(String value) {

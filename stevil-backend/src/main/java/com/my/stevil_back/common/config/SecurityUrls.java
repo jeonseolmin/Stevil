@@ -17,8 +17,12 @@ public class SecurityUrls {
 
             "/api/community",
             "/api/community/**",
+            "/api/community/**",
 
             "/ws-stomp/**",
+
+            "/api/ai/**",
+
 
             "/api/partnership-inquiries"
     };
@@ -28,15 +32,7 @@ public class SecurityUrls {
             "/api/ads/admin/**"
     };
 
-    public static final String[] DOCTOR_URLS = {
-            "/api/doctor/**"
-    };
-
     public static final String[] USER_URLS = {
-            "/api/ai/**",
-
-            "/api/planner/**",
-            "/api/planner",
             "/api/users/",
             "/api/users/**",
 
@@ -67,10 +63,8 @@ public class SecurityUrls {
 
             "/api/injections/**",
 
-            "/api/patient-reports/**",
-
-            "/api/ads/active",
-            "/api/ads/dashboard-ads"
+            "/api/ads/request",
+            "/api/ads/active"
     };
 
     private SecurityUrls() {

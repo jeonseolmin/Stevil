@@ -10,7 +10,7 @@ import "./LoginPage.css";
 export default function LoginPage() {
     const handleSocialLogin = (provider) => {
         window.location.assign(
-            `${import.meta.env.VITE_SERVER_URL}/oauth2/authorization/${provider}`
+            `/oauth2/authorization/${provider}`
         );
     };
 

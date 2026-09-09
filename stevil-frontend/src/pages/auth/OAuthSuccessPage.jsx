@@ -1,67 +1,56 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosInstance, {
-    clearAccessToken,
-    setAccessToken,
-} from "../../api/axiosInstance";
+import {
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
 
+import axiosInstance from "../../api/axiosInstance";
 
 function OAuthSuccessPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         const handleOAuthSuccess = async () => {
+            const token = searchParams.get("token");
+
+            if (!token) {
+                navigate("/login", {
+                    replace: true,
+                    state: {
+                        errorMessage:
+                            "로그인 정보를 확인할 수 없습니다.",
+                    },
+                });
+
+                return;
+            }
+
+            localStorage.setItem(
+                "accessToken",
+                token
+            );
+
             try {
-                /*
-                 * OAuth2SuccessHandler에서 이미
-                 * HttpOnly Refresh Cookie를 발급했습니다.
-                 *
-                 * 이제 그 Cookie를 이용해서
-                 * Access Token을 받아옵니다.
-                 */
-                const tokenResponse =
-                    await axiosInstance.post(
-                        "/auth/refresh"
-                    );
-
-                const accessToken =
-                    tokenResponse.data.accessToken;
-
-                if (!accessToken) {
-                    throw new Error(
-                        "Access Token이 없습니다."
-                    );
-                }
-
-
-                setAccessToken(accessToken);
-
-                const userResponse =
+                const response =
                     await axiosInstance.get(
                         "/users/me"
                     );
 
-                const user =
-                    userResponse.data;
-
+                const user = response.data;
                 localStorage.setItem(
                     "userRole",
                     user.role
                 );
 
                 /*
-                 * 관리자
+                 * 관리자 계정은 온보딩 여부와 관계없이
+                 * 관리자 페이지로 이동합니다.
                  */
-                if (
-                    user.role ===
-                    "ROLE_ADMIN"
-                ) {
-                    navigate(
-                        "/admin",
-                        {
-                            replace: true,
-                        }
-                    );
+                if (user.role === "ROLE_ADMIN") {
+                    navigate("/admin", {
+                        replace: true,
+                    });
 
                     return;
                 }
@@ -75,61 +64,43 @@ function OAuthSuccessPage() {
                 }
 
                 /*
-                 * 일반 사용자
+                 * 일반 회원만 온보딩 완료 여부를 확인합니다.
                  */
-                if (
-                    user.onboardingCompleted
-                ) {
-                    navigate(
-                        "/dashboard",
-                        {
-                            replace: true,
-                        }
-                    );
+                if (user.onboardingCompleted) {
+                    navigate("/dashboard", {
+                        replace: true,
+                    });
 
                     return;
                 }
 
-                /*
-                 * 온보딩 미완료 사용자
-                 */
-                navigate(
-                    "/onboarding",
-                    {
-                        replace: true,
-                    }
-                );
-
+                navigate("/onboarding", {
+                    replace: true,
+                });
             } catch (error) {
                 console.error(
-                    "OAuth 로그인 후 인증 처리 실패:",
+                    "사용자 정보 조회 실패:",
                     error.response?.status,
                     error.response?.data ??
                     error.message
                 );
 
-                clearAccessToken();
-
                 localStorage.removeItem(
-                    "userRole"
+                    "accessToken"
                 );
 
-                navigate(
-                    "/login",
-                    {
-                        replace: true,
-                        state: {
-                            errorMessage:
-                                "로그인 처리 중 오류가 발생했습니다.",
-                        },
-                    }
-                );
+                navigate("/login", {
+                    replace: true,
+                    state: {
+                        errorMessage:
+                            "로그인 처리 중 오류가 발생했습니다.",
+                    },
+                });
             }
         };
 
         handleOAuthSuccess();
-
-    }, [navigate]);
+    }, [navigate, searchParams]);
 
     return (
         <main className="oauth-success-page">
