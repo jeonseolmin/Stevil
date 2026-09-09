@@ -1,0 +1,138 @@
+.feedback-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f8;
+    padding: 20px;
+}
+
+.feedback-card, .feedback-success-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+}
+
+.feedback-card h1 {
+    color: #20bfa9;
+    font-size: 24px;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+
+.feedback-card p {
+    color: #666;
+    margin-bottom: 32px;
+    font-size: 15px;
+}
+
+.feedback-rating {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.feedback-rating label,
+.feedback-content label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    font-size: 15px;
+}
+
+.stars {
+    display: flex;
+    gap: 8px;
+    font-size: 40px;
+    justify-content: center;
+}
+
+.stars button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    transition: color 0.2s, transform 0.1s;
+}
+
+.stars button:hover {
+    transform: scale(1.1);
+}
+
+.star-active {
+    color: #FFC107; /* 밝은 노란색 */
+}
+
+.star-inactive {
+    color: #E5E7EB; /* 회색 */
+}
+
+.feedback-content {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.feedback-content textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+}
+
+.feedback-content textarea:focus {
+    border-color: #20bfa9;
+}
+
+.feedback-content small {
+    display: block;
+    text-align: right;
+    color: #999;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.feedback-submit-btn, 
+.feedback-success-card button {
+    width: 100%;
+    padding: 16px;
+    background-color: #20bfa9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.feedback-submit-btn:hover:not(:disabled), 
+.feedback-success-card button:hover {
+    background-color: #1a9c8a;
+}
+
+.feedback-submit-btn:disabled {
+    background-color: #a0dec5;
+    cursor: not-allowed;
+}
+
+.feedback-success-card h2 {
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.feedback-success-card p {
+    color: #666;
+    margin-bottom: 32px;
+    line-height: 1.6;
+}

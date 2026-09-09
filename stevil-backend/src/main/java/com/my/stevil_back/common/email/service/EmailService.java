@@ -42,7 +42,7 @@ public class EmailService {
                             Stevil 서비스를 이용해 주셔서 감사합니다.<br>
                             더 나은 서비스를 제공하기 위해 %s님의 소중한 의견을 듣고 싶습니다.
                         </p>
-                        <a href="http://localhost:5173/feedback" style="display: inline-block; padding: 14px 30px; background-color: #20bfa9; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
+                        <a href="http://localhost:3000/feedback" style="display: inline-block; padding: 14px 30px; background-color: #20bfa9; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
                             설문조사 참여하기
                         </a>
                         <p style="margin-top: 40px; font-size: 12px; color: #999999;">
