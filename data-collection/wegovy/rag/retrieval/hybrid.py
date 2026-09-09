@@ -1,94 +1,74 @@
-"""Hybrid retrieval helpers for the Wegovy RAG prototype."""
-
-from __future__ import annotations
-
+"""Gemini embeddings + exact cosine retrieval + reciprocal rank fusion."""
 import hashlib
+from contextlib import closing
 import json
 import math
 import os
 import re
 from pathlib import Path
+import sqlite3
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
+
+MODEL = 'gemini-embedding-001'
+DIMENSIONS = 768
 
 
+# MFDS 위고비 함량별 source.
+# 실제 source_id/id는 citation 추적을 위해 변경하지 않는다.
 MFDS_VARIANTS = {
-    "mfds-025": "0.25 mg",
-    "mfds-05": "0.5 mg",
-    "mfds-17": "1.7 mg",
-    "mfds-24": "2.4 mg",
+    'mfds-025': '0.25 mg',
+    'mfds-05': '0.5 mg',
+    'mfds-17': '1.7 mg',
+    'mfds-24': '2.4 mg',
 }
 
 
-def _requested_mfds_variant(question: str) -> str | None:
-    """
-    질문에 특정 위고비 용량이 명시되어 있으면 해당 MFDS source_id를 반환한다.
-
-    예:
-        0.25mg -> mfds-025
-        0.5mg  -> mfds-05
-        1.7mg  -> mfds-17
-        2.4mg  -> mfds-24
-    """
-    q = (question or "").lower().replace(" ", "")
+def requested_mfds_variant(question):
+    """질문에 특정 위고비 함량이 있으면 대응하는 MFDS source_id를 반환한다."""
+    q = (question or '').lower().replace(' ', '')
 
     patterns = {
-        "mfds-025": (
-            r"0\.25(?:mg|밀리그램)?",
-        ),
-        "mfds-05": (
-            r"0\.5(?:mg|밀리그램)?",
-        ),
-        "mfds-17": (
-            r"1\.7(?:mg|밀리그램)?",
-        ),
-        "mfds-24": (
-            r"2\.4(?:mg|밀리그램)?",
-        ),
+        'mfds-025': r'0\.25(?:mg|밀리그램)?',
+        'mfds-05': r'0\.5(?:mg|밀리그램)?',
+        'mfds-17': r'1\.7(?:mg|밀리그램)?',
+        'mfds-24': r'2\.4(?:mg|밀리그램)?',
     }
 
-    for source_id, source_patterns in patterns.items():
-        if any(re.search(pattern, q) for pattern in source_patterns):
+    for source_id, pattern in patterns.items():
+        if re.search(pattern, q):
             return source_id
 
     return None
 
 
-def _doc_source_id(doc_id: str, docs: dict) -> str:
-    """
-    doc_id에 대응하는 source_id를 가져온다.
-
-    문서 구조에 source_id가 있으면 그것을 사용하고,
-    없으면 doc_id의 ':' 앞부분을 fallback으로 사용한다.
-    """
+def doc_source_id(doc_id, docs):
+    """doc_id에서 실제 source_id를 얻는다."""
     doc = docs.get(doc_id, {})
-    source_id = doc.get("source_id")
 
-    if source_id:
-        return source_id
+    if doc.get('source_id'):
+        return doc['source_id']
 
-    return str(doc_id).split(":", 1)[0]
+    return str(doc_id).split(':', 1)[0]
 
 
-def _choose_representative(
-    current_id: str,
-    candidate_id: str,
-    question: str,
-    docs: dict,
-) -> str:
+def choose_representative(current_id, candidate_id, question, docs):
     """
-    동일 fingerprint 문서가 여러 개 존재할 때 대표 문서를 결정한다.
+    같은 본문의 여러 MFDS 문서 중 대표 문서를 결정한다.
 
-    특정 용량이 질문에 명시된 경우 해당 MFDS 문서를 우선한다.
+    특정 함량 질문:
+        해당 함량 source를 우선.
 
-    일반 질문에서는 기존 검색 순서를 유지한다.
-    표시 제목은 검색 완료 후 별도로 일반 MFDS 제목으로 정규화한다.
+    일반 질문:
+        기존 검색 순서를 그대로 유지.
     """
-    requested = _requested_mfds_variant(question)
+    requested = requested_mfds_variant(question)
 
     if not requested:
         return current_id
 
-    current_source = _doc_source_id(current_id, docs)
-    candidate_source = _doc_source_id(candidate_id, docs)
+    current_source = doc_source_id(current_id, docs)
+    candidate_source = doc_source_id(candidate_id, docs)
 
     if candidate_source == requested:
         return candidate_id
@@ -99,363 +79,440 @@ def _choose_representative(
     return current_id
 
 
-def _normalize_mfds_result_titles(
-    results: list[dict],
-    question: str,
-) -> list[dict]:
+def normalize_mfds_titles(results, question):
     """
-    MFDS 검색 결과의 표시 제목을 정규화한다.
+    사용자에게 노출되는 MFDS title만 정규화한다.
 
-    source_id 자체는 절대로 변경하지 않는다.
-    citation/provenance 추적을 유지하기 위함이다.
-
-    일반 질문:
-        식품의약품안전처 위고비 국내 허가사항
-
-    특정 용량 질문:
-        식품의약품안전처 위고비 1.7 mg 국내 허가사항
+    source_id/id/section/text는 변경하지 않는다.
     """
-    requested = _requested_mfds_variant(question)
+    requested = requested_mfds_variant(question)
 
     for result in results:
-        source_id = result.get("source_id")
+        source_id = result.get('source_id')
 
         if not source_id:
-            result_id = str(result.get("id", ""))
-            source_id = result_id.split(":", 1)[0]
+            source_id = str(result.get('id', '')).split(':', 1)[0]
 
         if source_id not in MFDS_VARIANTS:
             continue
 
         if requested:
-            result["title"] = (
-                "식품의약품안전처 위고비 "
-                f"{MFDS_VARIANTS[requested]} 국내 허가사항"
+            result['title'] = (
+                '식품의약품안전처 위고비 '
+                f'{MFDS_VARIANTS[requested]} 국내 허가사항'
             )
         else:
-            result["title"] = "식품의약품안전처 위고비 국내 허가사항"
-            result["variants"] = list(MFDS_VARIANTS.values())
+            result['title'] = '식품의약품안전처 위고비 국내 허가사항'
+            result['variants'] = list(MFDS_VARIANTS.values())
 
     return results
 
 
-def _tokenize(text: str) -> list[str]:
-    return re.findall(
-        r"[0-9A-Za-z가-힣]+",
-        (text or "").lower(),
+def normalize(values):
+    if len(values) != DIMENSIONS or any(
+        not isinstance(v, (float, int)) or not math.isfinite(v)
+        for v in values
+    ):
+        raise ValueError('Invalid embedding')
+
+    norm = math.sqrt(sum(v*v for v in values))
+
+    if norm == 0:
+        raise ValueError('Zero embedding')
+
+    return [v / norm for v in values]
+
+
+def embed(text, task):
+    key = os.environ.get('GEMINI_API_KEY')
+
+    if not key:
+        raise ValueError('GEMINI_API_KEY missing')
+
+    payload = {
+        'model': 'models/' + MODEL,
+        'content': {
+            'parts': [
+                {
+                    'text': text
+                }
+            ]
+        },
+        'taskType': task,
+        'outputDimensionality': DIMENSIONS
+    }
+
+    request = Request(
+        f'https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:embedContent',
+        data=json.dumps(payload).encode(),
+        headers={
+            'Content-Type': 'application/json',
+            'x-goog-api-key': key
+        }
     )
 
+    try:
+        with urlopen(
+            request,
+            timeout=8 if task == 'RETRIEVAL_QUERY' else 30
+        ) as response:
+            return normalize(
+                json.load(response)['embedding']['values']
+            )
 
-def _cosine_similarity(a: list[float], b: list[float]) -> float:
-    if not a or not b:
-        return 0.0
+    except HTTPError as error:
+        # Do not expose provider error bodies or credentials.
+        raise ValueError(
+            f'Embedding API HTTP {error.code}'
+        ) from None
 
-    dot = sum(x * y for x, y in zip(a, b))
 
-    norm_a = math.sqrt(sum(x * x for x in a))
-    norm_b = math.sqrt(sum(y * y for y in b))
+def embed_batch(texts):
+    key = os.environ.get('GEMINI_API_KEY')
 
-    if not norm_a or not norm_b:
-        return 0.0
+    if not key:
+        raise ValueError('GEMINI_API_KEY missing')
 
-    return dot / (norm_a * norm_b)
+    payload = {
+        'requests': [
+            {
+                'model': 'models/' + MODEL,
+                'content': {
+                    'parts': [
+                        {
+                            'text': text
+                        }
+                    ]
+                },
+                'taskType': 'RETRIEVAL_DOCUMENT',
+                'outputDimensionality': DIMENSIONS
+            }
+            for text in texts
+        ]
+    }
+
+    request = Request(
+        f'https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:batchEmbedContents',
+        data=json.dumps(payload).encode(),
+        headers={
+            'Content-Type': 'application/json',
+            'x-goog-api-key': key
+        }
+    )
+
+    try:
+        with urlopen(request, timeout=45) as response:
+            vectors = [
+                normalize(item['values'])
+                for item in json.load(response)['embeddings']
+            ]
+
+        if len(vectors) != len(texts):
+            raise ValueError('Embedding count mismatch')
+
+        return vectors
+
+    except HTTPError as error:
+        raise ValueError(
+            f'Embedding API HTTP {error.code}'
+        ) from None
+
+
+def passages(doc):
+    # Short overlapping search windows stay below model input limits.
+    # Answers retain the full original parent section,
+    # including tables and exceptions.
+    text = doc['section'] + '\n' + doc['text']
+
+    if doc.get('page'):
+        text = re.sub(r'[ \t]+', ' ', text)
+
+    for start in range(0, len(text), 500):
+        yield text[start:start+650]
+
+        if start + 650 >= len(text):
+            break
+
+
+def cache_key(text):
+    return hashlib.sha256(
+        f'{MODEL}:{DIMENSIONS}:RETRIEVAL_DOCUMENT:v1:{text}'.encode()
+    ).hexdigest()
 
 
 class VectorIndex:
-    def __init__(self, corpus, path: Path | None = None):
-        self.corpus = corpus
+    def __init__(self, docs, path=None):
+        rag_root = Path(__file__).resolve().parents[1]
 
-        if path is None:
-            path = Path(
-                os.getenv(
-                    "RAG_VECTOR_INDEX",
-                    Path(__file__).resolve().parents[1]
-                    / "cache"
-                    / "vector-index.json",
-                )
-            )
+        self.path = (
+            path
+            or rag_root
+            / "cache"
+            / "embeddings.sqlite3"
+        )
 
-        self.path = Path(path)
-        self.entries = []
-        self.ready = False
+        self.entries = [
+            (doc['id'], cache_key(text), text)
+            for doc in docs
+            for text in passages(doc)
+        ]
 
-        self._load()
+        self.vectors = {}
 
-    def _load(self):
-        if not self.path.exists():
-            return
-
-        try:
-            data = json.loads(
-                self.path.read_text(encoding="utf-8")
-            )
-
-            snapshot = data.get("snapshot")
-
-            if snapshot != self._snapshot():
-                return
-
-            self.entries = data.get("entries", [])
-            self.ready = bool(self.entries)
-
-        except Exception:
-            self.entries = []
-            self.ready = False
-
-    def _snapshot(self) -> str:
-        payload = []
-
-        for doc in self.corpus.docs:
-            payload.append(
-                {
-                    "id": doc.get("id"),
-                    "text": doc.get("text"),
+        if self.path.exists():
+            try:
+                needed = {
+                    entry[1]
+                    for entry in self.entries
                 }
+
+                with closing(
+                    sqlite3.connect(self.path)
+                ) as connection:
+                    for key, encoded in connection.execute(
+                        'SELECT key, vector FROM embeddings'
+                    ):
+                        if key in needed:
+                            self.vectors[key] = normalize(
+                                json.loads(encoded)
+                            )
+
+            except (
+                sqlite3.Error,
+                ValueError,
+                TypeError
+            ):
+                self.vectors = {}
+
+    @property
+    def ready(self):
+        return (
+            bool(self.entries)
+            and all(
+                key in self.vectors
+                for _, key, _ in self.entries
             )
+        )
 
-        raw = json.dumps(
-            payload,
-            ensure_ascii=False,
-            sort_keys=True,
-        ).encode("utf-8")
-
-        return hashlib.sha256(raw).hexdigest()
-
-    def build(self, batch_size: int = 32) -> int:
-        """
-        로컬 vector index 생성.
-
-        실제 embedding 생성기는 corpus/embedder 구현에 따라
-        주입되어 있다고 가정한다.
-        """
-        if not hasattr(self.corpus, "embed"):
-            return 0
-
-        entries = []
-
-        docs = self.corpus.docs
-
-        for start in range(0, len(docs), batch_size):
-            batch = docs[start : start + batch_size]
-
-            texts = [
-                doc.get("text", "")
-                for doc in batch
-            ]
-
-            vectors = self.corpus.embed(texts)
-
-            for doc, vector in zip(batch, vectors):
-                entries.append(
-                    {
-                        "doc_id": doc["id"],
-                        "embedding": vector,
-                    }
-                )
-
-        self.entries = entries
-        self.ready = bool(entries)
-
+    def build(self, batch_size=1):
         self.path.parent.mkdir(
             parents=True,
-            exist_ok=True,
+            exist_ok=True
         )
 
-        self.path.write_text(
-            json.dumps(
-                {
-                    "snapshot": self._snapshot(),
-                    "entries": entries,
-                },
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
+        count = 0
 
-        return len(entries)
+        with closing(
+            sqlite3.connect(self.path)
+        ) as connection:
 
-    def search(
-        self,
-        query: str,
-        limit: int = 12,
-    ) -> list[tuple[str, float]]:
-        if not self.ready:
-            return []
-
-        if not hasattr(self.corpus, "embed"):
-            return []
-
-        vectors = self.corpus.embed([query])
-
-        if not vectors:
-            return []
-
-        query_vector = vectors[0]
-
-        ranked = []
-
-        for entry in self.entries:
-            similarity = _cosine_similarity(
-                query_vector,
-                entry["embedding"],
+            connection.execute(
+                'CREATE TABLE IF NOT EXISTS embeddings '
+                '(key TEXT PRIMARY KEY, vector TEXT NOT NULL)'
             )
 
-            ranked.append(
-                (
-                    entry["doc_id"],
-                    similarity,
+            pending = list({
+                key: text
+                for _, key, text in self.entries
+                if key not in self.vectors
+            }.items())
+
+            for start in range(
+                0,
+                len(pending),
+                batch_size
+            ):
+                batch = pending[
+                    start:start+batch_size
+                ]
+
+                vectors = (
+                    embed_batch([
+                        text
+                        for _, text in batch
+                    ])
+                    if batch_size > 1
+                    else [
+                        embed(
+                            batch[0][1],
+                            'RETRIEVAL_DOCUMENT'
+                        )
+                    ]
                 )
-            )
+
+                for (key, _), vector in zip(
+                    batch,
+                    vectors
+                ):
+                    connection.execute(
+                        'INSERT OR REPLACE INTO embeddings VALUES (?, ?)',
+                        (
+                            key,
+                            json.dumps(vector)
+                        )
+                    )
+
+                    self.vectors[key] = vector
+                    count += 1
+
+                # Interrupted builds resume without repeating paid requests.
+                connection.commit()
+
+                print(
+                    f'Embedded {count}/{len(pending)} new passages',
+                    flush=True
+                )
+
+        return count
+
+    def rank(self, question, limit=12):
+        query = embed(
+            question,
+            'RETRIEVAL_QUERY'
+        )
 
         scores = {}
 
-        for doc_id, similarity in ranked:
-            scores[doc_id] = max(
-                scores.get(doc_id, -1),
-                similarity,
+        for doc_id, key, _ in self.entries:
+            similarity = sum(
+                a*b
+                for a, b in zip(
+                    query,
+                    self.vectors[key]
+                )
             )
 
+            scores[doc_id] = max(
+                scores.get(doc_id, -1),
+                similarity
+            )
+
+        # This is a retrieval cutoff,
+        # not a calibrated correctness probability.
         return sorted(
             (
                 (doc_id, score)
                 for doc_id, score in scores.items()
-                if score >= 0.55
+                if score >= .55
             ),
             key=lambda item: item[1],
-            reverse=True,
+            reverse=True
         )[:limit]
 
 
 class HybridSearch:
     def __init__(self, corpus, index):
-        self.corpus = corpus
-        self.index = index
+        self.corpus, self.index = corpus, index
 
-    def search(
-        self,
-        query: str,
-        limit: int = 6,
-    ):
+    def search(self, question, limit=3):
+        lexical = self.corpus.search(
+            question,
+            limit=12
+        )
+
+        if not self.index.ready:
+            return (
+                lexical[:limit],
+                'bm25',
+                'vector_index_not_ready'
+            )
+
+        try:
+            semantic = self.index.rank(
+                question,
+                limit=len(self.corpus.docs)
+            )
+
+        except (
+            OSError,
+            ValueError,
+            KeyError,
+            TypeError
+        ):
+            return (
+                lexical[:limit],
+                'bm25',
+                'query_embedding_failed'
+            )
+
         docs = {
-            doc["id"]: doc
+            doc['id']: doc
             for doc in self.corpus.docs
         }
 
-        eligible = self.corpus.eligible_ids(query)
-
-        #
-        # BM25 / lexical retrieval
-        #
-        lexical_results = self.corpus.search(
-            query,
-            limit=max(limit * 3, 12),
+        eligible = (
+            self.corpus.eligible_ids(question)
+            if hasattr(self.corpus, 'eligible_ids')
+            else set(docs)
         )
 
-        lexical = []
-
-        for result in lexical_results:
-            doc_id = result.get("id")
-
-            if doc_id and doc_id in eligible:
-                lexical.append(doc_id)
-
-        #
-        # Semantic / vector retrieval
-        #
-        fallback = None
-
-        if self.index.ready:
-            semantic = self.index.search(
-                query,
-                limit=max(limit * 3, 12),
-            )
-
-            semantic = [
-                (doc_id, score)
-                for doc_id, score in semantic
-                if doc_id in eligible
-            ]
-
-        else:
-            semantic = []
-            fallback = "vector_index_not_ready"
-
-        #
-        # Reciprocal Rank Fusion
-        #
-        scores = {}
-
-        rankings = [
-            lexical,
-            [doc_id for doc_id, _ in semantic],
+        semantic = [
+            (doc_id, score)
+            for doc_id, score in semantic
+            if doc_id in eligible
         ]
 
-        for ranking in rankings:
-            for rank, doc_id in enumerate(
-                ranking,
-                start=1,
-            ):
-                if doc_id not in docs:
+        scores = {}
+
+        # Deduplicate equivalent parent sections before assigning each rank.
+        for ranking in (
+            [doc['id'] for doc in lexical],
+            [doc_id for doc_id, _ in semantic]
+        ):
+            seen = set()
+            rank = 0
+
+            for doc_id in ranking:
+                fingerprint = ''.join(
+                    docs[doc_id]['text'].split()
+                )
+
+                if fingerprint in seen:
                     continue
 
-                doc = docs[doc_id]
-
-                #
-                # 동일 본문을 하나의 evidence로 취급한다.
-                #
-                fingerprint = re.sub(
-                    r"\s+",
-                    "",
-                    doc.get("text", ""),
-                )
+                seen.add(fingerprint)
+                rank += 1
 
                 representative, score = scores.get(
                     fingerprint,
-                    (doc_id, 0),
+                    (doc_id, 0)
                 )
 
-                #
-                # 기존에는 첫 번째 doc_id가 무조건 대표가 되었기
-                # 때문에 mfds-025가 반복적으로 대표 출처가 됐다.
-                #
-                # 특정 용량 질문에서는 해당 용량의 MFDS 문서를
-                # 대표로 교체한다.
-                #
-                representative = _choose_representative(
+                # 특정 함량 질문이라면 같은 본문을 가진 MFDS 문서 중
+                # 해당 함량의 source를 대표 evidence로 사용한다.
+                representative = choose_representative(
                     representative,
                     doc_id,
-                    query,
-                    docs,
+                    question,
+                    docs
                 )
 
                 scores[fingerprint] = (
                     representative,
-                    score + 1 / (60 + rank),
+                    score + 1 / (60 + rank)
                 )
 
-        ranked_scores = sorted(
-            scores.values(),
-            key=lambda item: item[1],
-            reverse=True,
-        )[:limit]
+                if rank == 12:
+                    break
 
         results = [
             dict(
                 docs[doc_id],
-                score=round(score, 6),
+                score=round(score, 6)
             )
-            for doc_id, score in ranked_scores
+            for doc_id, score in
+            sorted(
+                scores.values(),
+                key=lambda item: item[1],
+                reverse=True
+            )[:limit]
         ]
 
-        #
-        # MFDS 표시 제목 정규화.
-        #
-        # 중요:
-        # source_id/id는 변경하지 않는다.
-        #
-        results = _normalize_mfds_result_titles(
+        # 표시 제목만 정규화한다.
+        # 실제 evidence의 source_id/id/text는 그대로 보존한다.
+        results = normalize_mfds_titles(
             results,
-            query,
+            question
         )
 
-        return results, "hybrid", fallback
+        return results, 'hybrid', None
