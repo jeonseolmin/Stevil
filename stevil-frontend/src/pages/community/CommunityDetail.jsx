@@ -186,7 +186,7 @@ const CommunityDetail = () => {
     if (!reportReason.trim()) return alert("신고 사유를 입력해주세요.");
     try {
       await axiosInstance.post('/reports', {
-        targetType: reportTargetType, targetId: reportTargetId, category: 'ETC', reason: reportReason
+        targetType: reportTargetType, targetId: reportTargetId, category: 'OTHER', reason: reportReason
       });
       alert('신고가 정상적으로 접수되었습니다.');
       setIsReportModalOpen(false);
