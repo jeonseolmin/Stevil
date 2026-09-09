@@ -61,7 +61,8 @@ public class SocialAccountService {
             User user,
             ProviderType provider,
             String providerUserId,
-            String providerEmail
+            String providerEmail,
+            String accessToken
     ) {
         Optional<SocialAccount> existingAccount =
                 socialAccountRepository
@@ -80,6 +81,7 @@ public class SocialAccountService {
             }
 
             account.updateProviderEmail(providerEmail);
+            account.updateToken(accessToken);
             return account;
         }
 
@@ -87,7 +89,8 @@ public class SocialAccountService {
                 user,
                 provider,
                 providerUserId,
-                providerEmail
+                providerEmail,
+                accessToken
         );
 
         return socialAccountRepository.save(socialAccount);
