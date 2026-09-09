@@ -3,9 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance';
 import * as XLSX from 'xlsx';
-import ProfileCardModal from '../profile/ProfileCardModal'; 
-
-const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+import ProfileCardModal from '../profile/ProfileCardModal';
 
 const CommunityDetail = () => {
   const { id } = useParams();
@@ -58,7 +56,7 @@ const CommunityDetail = () => {
   const loadExcelPreview = async (file, idx) => {
     setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
     try {
-      const fileUrl = `${API_BASE_URL}${file.fileUrl}`;
+      const fileUrl = file.fileUrl;
       const response = await fetch(fileUrl);
       const blob = await response.blob();
       const buffer = await blob.arrayBuffer();
@@ -382,8 +380,8 @@ const CommunityDetail = () => {
             <div className="ste-post-files" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '30px' }}>
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
-                const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null; 
-                const fileDownloadUrl = `${API_BASE_URL}${file.fileUrl}`; 
+                const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null;
+                const fileDownloadUrl = file.fileUrl;
                 const fileSizeFormatted = formatFileSize(file.fileSize || file.size);
                 
                 return (
