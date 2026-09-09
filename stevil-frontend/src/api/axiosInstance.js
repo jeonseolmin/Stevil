@@ -17,3 +17,5 @@ axiosInstance.interceptors.request.use((config) => {
 
 
 export default axiosInstance;
+// Keep the current backend OAuth token contract.
+export const clearAccessToken = () => localStorage.removeItem("accessToken");

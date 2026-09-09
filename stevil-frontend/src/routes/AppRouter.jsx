@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import RootLayout from "../components/layout/RootLayout";
 import AuthLayout from "../components/layout/auth/AuthLayout.jsx";
@@ -6,12 +6,12 @@ import AuthLayout from "../components/layout/auth/AuthLayout.jsx";
 import HomePage from "../pages/homePage/HomePage";
 import LoginPage from "../pages/auth/LoginPage.jsx";
 import OnboardingPage from "../pages/onboarding/OnboardingPage";
-import Dashboard from "../pages/Dashboard";
-import ExerciseManagement from "../pages/ExerciseManagement.jsx";
+import Dashboard from "../pages/dashboard/Dashboard.jsx";
+import ExerciseManagement from "../pages/exerciseManagement/ExerciseManagement.jsx";
 import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
-import HospitalMapPage from "../pages/HospitalMapPage.jsx";
+import HospitalMapPage from "../pages/hospitalMap/HospitalMapPage.jsx";
 import CommunityList from "../pages/community/CommunityList.jsx";
 import CommunityDetail from "../pages/community/CommunityDetail.jsx";
 import CommunityWrite from "../pages/community/CommunityWrite.jsx";
@@ -39,6 +39,7 @@ export default function AppRouter() {
             {/* 공통 헤더를 사용하는 화면 */}
             <Route element={<RootLayout />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/wegovy-chat" element={<Navigate to="/dashboard?chat=wegovy" replace />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/exercise" element={<ExerciseManagement />} />
                 <Route path="/diet" element={<DietManagement />} />
