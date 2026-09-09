@@ -10,8 +10,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME:hyun010902@gmail.com}
-    password: ${MAIL_PASSWORD:zeklrqzhukifobqr}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -43,8 +43,8 @@ spring:
 
 naver:
   search:
-    client-id: ${NAVER_API_HUB_CLIENT_ID:}
-    client-secret: ${NAVER_API_HUB_CLIENT_SECRET:}
+    client-id: ${NAVER_API_HUB_CLIENT_ID}
+    client-secret: ${NAVER_API_HUB_CLIENT_SECRET}
     base-url: https://naverapihub.apigw.ntruss.com
 
 food:
