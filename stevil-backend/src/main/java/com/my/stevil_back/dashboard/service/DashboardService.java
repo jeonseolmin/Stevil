@@ -40,25 +40,29 @@ public class DashboardService {
 
         UserWeight latestWeight =
                 userWeightRepository
-                        .findFirstByUserIdOrderByRecordedAtDesc(
-                                userId
-                        )
-                        .orElseThrow(() ->
-                                new IllegalStateException(
-                                        "등록된 체중 정보가 없습니다."
-                                )
-                        );
+                        .findFirstByUserIdOrderByRecordedAtDesc(userId)
+                        .orElse(null);
+
+        // 체중 기록이 아직 없는 신규 사용자
+        if (latestWeight == null) {
+            return new DashboardResponse(
+                    user.getId(),
+                    user.getNickname(),
+                    user.getProfileImage(),
+                    null,       // startWeightKg
+                    null,       // currentWeightKg
+                    null,       // targetWeightKg
+                    ZERO,       // lostWeightKg
+                    ZERO,       // remainingWeightKg
+                    ZERO,       // progressRate
+                    Collections.emptyList()
+            );
+        }
 
         UserWeight firstWeight =
                 userWeightRepository
-                        .findFirstByUserIdOrderByRecordedAtAsc(
-                                userId
-                        )
-                        .orElseThrow(() ->
-                                new IllegalStateException(
-                                        "등록된 체중 정보가 없습니다."
-                                )
-                        );
+                        .findFirstByUserIdOrderByRecordedAtAsc(userId)
+                        .orElse(latestWeight);
 
         BigDecimal startWeight =
                 firstWeight.getWeight();
