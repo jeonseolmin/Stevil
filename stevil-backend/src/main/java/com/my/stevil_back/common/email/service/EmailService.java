@@ -21,15 +21,15 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
+
     public void sendFeedbackRequestEmail(String toEmail, String nickname) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-
-            // 발송자 이름 지정
             helper.setFrom(fromEmail, "Stevil");
-
             helper.setTo(toEmail);
             helper.setSubject("Stevil에서 당신의 건전한 피드백을 원합니다!");
 
@@ -42,14 +42,14 @@ public class EmailService {
                             Stevil 서비스를 이용해 주셔서 감사합니다.<br>
                             더 나은 서비스를 제공하기 위해 %s님의 소중한 의견을 듣고 싶습니다.
                         </p>
-                        <a href="http://localhost:3000/feedback" style="display: inline-block; padding: 14px 30px; background-color: #20bfa9; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
+                        <a href="%s/feedback" style="display: inline-block; padding: 14px 30px; background-color: #20bfa9; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
                             설문조사 참여하기
                         </a>
                         <p style="margin-top: 40px; font-size: 12px; color: #999999;">
                             본 메일은 발신 전용이며, 문의사항은 고객센터를 이용해 주세요.
                         </p>
                     </div>
-                    """.formatted(nickname, nickname);
+                    """.formatted(nickname, nickname, frontendBaseUrl);
 
             helper.setText(htmlContent, true);
             javaMailSender.send(mimeMessage);
