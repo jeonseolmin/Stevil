@@ -46,7 +46,7 @@
 
 .chat-body {
     flex: 1;
-    background: #f4f8f7;
+    background: var(--color-background);
     padding: 16px;
     overflow-y: auto;
     display: flex;

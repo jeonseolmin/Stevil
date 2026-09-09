@@ -5,7 +5,7 @@
     background:
         radial-gradient(
             circle at top right,
-            rgba(32, 191, 169, 0.12),
+            rgba(57, 135, 106, 0.12),
             transparent 34%
         ),
         var(--color-background);
@@ -156,7 +156,7 @@
 
 .weight-input-wrapper:focus-within {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(32, 191, 169, 0.12);
+    box-shadow: 0 0 0 4px rgba(57, 135, 106, 0.12);
 }
 
 .weight-input-wrapper input {
@@ -193,7 +193,7 @@
 
 .weight-date-input:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(32, 191, 169, 0.12);
+    box-shadow: 0 0 0 4px rgba(57, 135, 106, 0.12);
 }
 
 .weight-form-group small {
@@ -372,7 +372,7 @@
     margin-top: 22px;
     padding: 19px 22px;
 
-    background: #f4f8f7;
+    background: var(--color-background);
     border-left: 4px solid var(--color-primary);
     border-radius: 12px;
 }
