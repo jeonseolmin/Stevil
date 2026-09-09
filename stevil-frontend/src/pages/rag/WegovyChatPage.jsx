@@ -55,10 +55,10 @@ function Mark({ book = false }) {
 }
 
 /**
- * 동일 원문(source_id)의 여러 evidence chunk를
+ * 동일한 source_id를 가진 여러 evidence를
  * 사용자 화면에서는 하나의 출처로 묶는다.
  *
- * RAG가 반환한 sources 배열 자체는 변경하지 않는다.
+ * 실제 RAG 응답의 source 배열과 citation 번호는 유지한다.
  */
 function groupSources(sources = []) {
     const groups = [];
@@ -128,10 +128,10 @@ function uniqueSections(entries = []) {
 }
 
 function AnswerText({
-                        text,
+                        text = "",
                         messageIndex,
-                        sources,
-                        citationTargets,
+                        sources = [],
+                        citationTargets = [],
                     }) {
     return text
         .split(/(\[\d+\]|\*\*[^*]+\*\*)/g)
@@ -144,19 +144,18 @@ function AnswerText({
 
                 if (source) {
                     const groupIndex =
-                        citationTargets?.[sourceIndex] ?? sourceIndex;
+                        citationTargets[sourceIndex] ?? sourceIndex;
 
                     const id = `source-${messageIndex}-${groupIndex}`;
 
                     return (
                         <a
-                            key={index}
+                            key={`${part}-${index}`}
                             className="wegovy-chat__citation"
                             href={`#${id}`}
                             aria-label={`출처 ${match[1]} 확인`}
                             onClick={() => {
-                                const node =
-                                    document.getElementById(id);
+                                const node = document.getElementById(id);
 
                                 if (node) {
                                     node.open = true;
@@ -174,7 +173,7 @@ function AnswerText({
                 part.endsWith("**")
             ) {
                 return (
-                    <strong key={index}>
+                    <strong key={`${part}-${index}`}>
                         {part.slice(2, -2)}
                     </strong>
                 );
@@ -184,184 +183,154 @@ function AnswerText({
         });
 }
 
-function SourceList({ sources, messageIndex }) {
-    const { groups, citationTargets } =
-        groupSources(sources);
+function SourceList({ sources = [], messageIndex }) {
+    const { groups } = groupSources(sources);
 
-    return {
-        citationTargets,
-        node: (
-            <div className="wegovy-chat__sources">
-                <h3>
-                    <Mark book />
-                    답변에 참고한 자료{" "}
-                    <span>{groups.length}</span>
-                </h3>
+    return (
+        <div className="wegovy-chat__sources">
+            <h3>
+                <Mark book />
+                답변에 참고한 자료{" "}
+                <span>{groups.length}</span>
+            </h3>
 
-                {groups.map((group, groupIndex) => {
-                    const sections =
-                        uniqueSections(group.entries);
+            {groups.map((group, groupIndex) => {
+                const sections = uniqueSections(group.entries);
 
-                    return (
-                        <details
-                            className="wegovy-chat__source"
-                            id={`source-${messageIndex}-${groupIndex}`}
-                            key={group.key}
-                        >
-                            <summary>
-                                <span className="wegovy-chat__source-number">
-                                    {groupIndex + 1}
-                                </span>
+                return (
+                    <details
+                        className="wegovy-chat__source"
+                        id={`source-${messageIndex}-${groupIndex}`}
+                        key={group.key}
+                    >
+                        <summary>
+                            <span className="wegovy-chat__source-number">
+                                {groupIndex + 1}
+                            </span>
 
-                                <span className="wegovy-chat__source-summary">
-                                    <strong>
-                                        {group.title}
-                                    </strong>
+                            <span className="wegovy-chat__source-summary">
+                                <strong>
+                                    {group.title || "참고 자료"}
+                                </strong>
 
-                                    <small>
-                                        {COUNTRIES[
-                                                group.jurisdiction
-                                                ] ||
-                                            group.jurisdiction}
-                                        {" · "}
-                                        {TYPES[
-                                            group.document_type
-                                            ] || "참고 자료"}
-                                    </small>
-
-                                    {!!sections.length && (
-                                        <span className="wegovy-chat__source-sections">
-                                            {sections.map(
-                                                (section) => (
-                                                    <i
-                                                        key={
-                                                            section
-                                                        }
-                                                    >
-                                                        {
-                                                            section
-                                                        }
-                                                    </i>
-                                                )
-                                            )}
-                                        </span>
-                                    )}
-                                </span>
-                            </summary>
-
-                            <div className="wegovy-chat__source-body">
-                                <p>
-                                    수집{" "}
-                                    {group.collected_at
-                                        ? group.collected_at.slice(
-                                            0,
-                                            10
-                                        )
-                                        : "미확인"}
+                                <small>
+                                    {COUNTRIES[group.jurisdiction] ||
+                                        group.jurisdiction ||
+                                        "지역 미확인"}
                                     {" · "}
-                                    개정일{" "}
-                                    {group.revision_date ||
-                                        "미확인"}
-                                    <br />
-                                    {group.review_status ===
-                                    "approved"
-                                        ? "검토 승인"
-                                        : "검토 대기"}
-                                    {" · "}
-                                    최신성{" "}
-                                    {group.latest_version_verified
-                                        ? "확인"
-                                        : "미확인"}
-                                    {" · "}
-                                    {FORMS[
-                                        group.formulation
-                                        ] || "제형 미확인"}
-                                    {!group.formulation_verified &&
-                                        " (제형 검토 전)"}
-                                </p>
+                                    {TYPES[group.document_type] ||
+                                        "참고 자료"}
+                                </small>
 
-                                {Array.isArray(
-                                        group.variants
-                                    ) &&
-                                    group.variants.length >
-                                    0 && (
-                                        <p className="wegovy-chat__variants">
-                                            포함 함량:{" "}
-                                            {group.variants.join(
-                                                ", "
-                                            )}
-                                        </p>
-                                    )}
+                                {!!sections.length && (
+                                    <span className="wegovy-chat__source-sections">
+                                        {sections.map((section) => (
+                                            <i key={section}>
+                                                {section}
+                                            </i>
+                                        ))}
+                                    </span>
+                                )}
+                            </span>
+                        </summary>
 
-                                <div className="wegovy-chat__evidence-list">
-                                    {group.entries.map(
-                                        (
-                                            entry,
-                                            entryIndex
-                                        ) => (
-                                            <section
-                                                className="wegovy-chat__evidence"
-                                                key={
-                                                    entry.id ||
-                                                    `${group.key}-${entryIndex}`
-                                                }
-                                            >
-                                                <div className="wegovy-chat__evidence-heading">
-                                                    <strong>
-                                                        {entry.page
-                                                            ? `${entry.page}페이지`
-                                                            : entry.section ||
-                                                            `근거 ${
-                                                                entryIndex +
-                                                                1
-                                                            }`}
-                                                    </strong>
+                        <div className="wegovy-chat__source-body">
+                            <p>
+                                수집{" "}
+                                {group.collected_at
+                                    ? group.collected_at.slice(0, 10)
+                                    : "미확인"}
+                                {" · "}
+                                개정일{" "}
+                                {group.revision_date || "미확인"}
+                                <br />
 
-                                                    <span>
-                                                        답변 출처 [
-                                                        {
-                                                            entry.originalIndex +
-                                                            1
-                                                        }
-                                                        ]
-                                                    </span>
-                                                </div>
+                                {group.review_status === "approved"
+                                    ? "검토 승인"
+                                    : "검토 대기"}
+                                {" · "}
 
+                                최신성{" "}
+                                {group.latest_version_verified
+                                    ? "확인"
+                                    : "미확인"}
+                                {" · "}
+
+                                {FORMS[group.formulation] ||
+                                    "제형 미확인"}
+
+                                {!group.formulation_verified &&
+                                    " (제형 검토 전)"}
+                            </p>
+
+                            {Array.isArray(group.variants) &&
+                                group.variants.length > 0 && (
+                                    <p className="wegovy-chat__variants">
+                                        포함 함량:{" "}
+                                        {group.variants.join(", ")}
+                                    </p>
+                                )}
+
+                            <div className="wegovy-chat__evidence-list">
+                                {group.entries.map(
+                                    (entry, entryIndex) => (
+                                        <section
+                                            className="wegovy-chat__evidence"
+                                            key={
+                                                entry.id ||
+                                                `${group.key}-${entryIndex}`
+                                            }
+                                        >
+                                            <div className="wegovy-chat__evidence-heading">
+                                                <strong>
+                                                    {entry.page
+                                                        ? `${entry.page}페이지`
+                                                        : entry.section ||
+                                                        `근거 ${
+                                                            entryIndex + 1
+                                                        }`}
+                                                </strong>
+
+                                                <span>
+                                                    답변 출처 [
+                                                    {entry.originalIndex + 1}]
+                                                </span>
+                                            </div>
+
+                                            {entry.url && (
                                                 <a
-                                                    href={
-                                                        entry.url
-                                                    }
+                                                    href={entry.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
-                                                    출처 원문 보기
-                                                    ↗
+                                                    출처 원문 보기 ↗
                                                 </a>
+                                            )}
 
-                                                <div
-                                                    className="wegovy-chat__excerpt"
-                                                    tabIndex={0}
-                                                    aria-label={`${entry.section || "검색된"} 원문`}
-                                                >
-                                                    {
-                                                        entry.text
-                                                    }
-                                                </div>
-                                            </section>
-                                        )
-                                    )}
-                                </div>
+                                            <div
+                                                className="wegovy-chat__excerpt"
+                                                tabIndex={0}
+                                                aria-label={`${
+                                                    entry.section ||
+                                                    "검색된"
+                                                } 원문`}
+                                            >
+                                                {entry.text}
+                                            </div>
+                                        </section>
+                                    )
+                                )}
                             </div>
-                        </details>
-                    );
-                })}
-            </div>
-        ),
-    };
+                        </div>
+                    </details>
+                );
+            })}
+        </div>
+    );
 }
 
 function ChatTurn({ message, index }) {
-    const grouped = groupSources(message.sources);
+    const grouped = groupSources(message.sources || []);
 
     return (
         <article className="wegovy-chat__turn">
@@ -369,13 +338,18 @@ function ChatTurn({ message, index }) {
                 <span className="wegovy-chat__sr">
                     내 질문:{" "}
                 </span>
+
                 {message.question}
             </div>
 
             <div className="wegovy-chat__reply">
                 <div className="wegovy-chat__reply-label">
                     <Mark />
-                    <strong>위고비 도우미</strong>
+
+                    <strong>
+                        위고비 도우미
+                    </strong>
+
                     <span>
                         {message.mode === "evidence"
                             ? "원문 검색 결과"
@@ -386,11 +360,9 @@ function ChatTurn({ message, index }) {
                 <div className="wegovy-chat__answer">
                     <AnswerText
                         text={message.answer}
-                        sources={message.sources}
+                        sources={message.sources || []}
                         messageIndex={index}
-                        citationTargets={
-                            grouped.citationTargets
-                        }
+                        citationTargets={grouped.citationTargets}
                     />
                 </div>
 
@@ -400,7 +372,7 @@ function ChatTurn({ message, index }) {
                     </p>
                 )}
 
-                {!!message.sources.length && (
+                {!!message.sources?.length && (
                     <SourceList
                         sources={message.sources}
                         messageIndex={index}
@@ -536,9 +508,8 @@ export default function WegovyChatPage({
                         </h1>
 
                         <p>
-                            투약 중 궁금한 점을
-                            물어보고, 답변의 출처까지
-                            확인해 보세요.
+                            투약 중 궁금한 점을 물어보고,
+                            답변의 출처까지 확인해 보세요.
                         </p>
                     </header>
                 )}
@@ -555,6 +526,7 @@ export default function WegovyChatPage({
                                     <strong>
                                         위고비 AI 도우미
                                     </strong>
+
                                     <small>
                                         궁금한 점을 편하게
                                         물어보세요
@@ -563,6 +535,7 @@ export default function WegovyChatPage({
                             </div>
 
                             <button
+                                type="button"
                                 className="wegovy-chat__reset"
                                 disabled={
                                     !messages.length ||
@@ -581,8 +554,8 @@ export default function WegovyChatPage({
 
                         {embedded && (
                             <p className="wegovy-chat__embedded-notice">
-                                투약 결정은 의료진과
-                                상의해 주세요.
+                                투약 결정은 의료진과 상의해
+                                주세요.
                                 {status?.preview &&
                                     " · 검토 전 자료 미리보기"}
                             </p>
@@ -623,9 +596,8 @@ export default function WegovyChatPage({
                                                      text,
                                                  ]) => (
                                                     <button
-                                                        key={
-                                                            label
-                                                        }
+                                                        type="button"
+                                                        key={label}
                                                         onClick={() =>
                                                             selectQuestion(
                                                                 text
@@ -633,15 +605,13 @@ export default function WegovyChatPage({
                                                         }
                                                     >
                                                         <span>
-                                                            {
-                                                                label
-                                                            }
+                                                            {label}
                                                         </span>
+
                                                         <strong>
-                                                            {
-                                                                text
-                                                            }
+                                                            {text}
                                                         </strong>
+
                                                         <i aria-hidden="true">
                                                             ↗
                                                         </i>
@@ -675,6 +645,7 @@ export default function WegovyChatPage({
                                         <span aria-hidden="true">
                                             •••
                                         </span>
+
                                         관련 자료를 확인하고
                                         있어요
                                     </p>
@@ -743,9 +714,9 @@ export default function WegovyChatPage({
                             </form>
 
                             <p>
-                                질문마다 독립적으로
-                                검색해요. 이름 등 개인정보는
-                                입력하지 마세요.
+                                질문마다 독립적으로 검색해요.
+                                이름 등 개인정보는 입력하지
+                                마세요.
                             </p>
                         </div>
                     </div>
@@ -758,14 +729,13 @@ export default function WegovyChatPage({
                                 </span>
 
                                 <h2>
-                                    출처를 확인할 수 있는
-                                    답변
+                                    출처를 확인할 수 있는 답변
                                 </h2>
 
                                 <p>
-                                    답변의 숫자를 누르면
-                                    참고한 원문과 문서 정보를
-                                    확인할 수 있어요.
+                                    답변의 숫자를 누르면 참고한
+                                    원문과 문서 정보를 확인할 수
+                                    있어요.
                                 </p>
 
                                 <ul>
@@ -773,10 +743,10 @@ export default function WegovyChatPage({
                                         <strong>
                                             국내 허가사항부터
                                         </strong>
+
                                         <span>
                                             일반적인 질문은
-                                            식약처 자료를
-                                            찾아요.
+                                            식약처 자료를 찾아요.
                                         </span>
                                     </li>
 
@@ -784,6 +754,7 @@ export default function WegovyChatPage({
                                         <strong>
                                             더 궁금한 내용까지
                                         </strong>
+
                                         <span>
                                             미국·유럽 기준이나
                                             연구가 궁금하다면
@@ -796,6 +767,7 @@ export default function WegovyChatPage({
                                         <strong>
                                             원문과 함께 확인
                                         </strong>
+
                                         <span>
                                             해외 기준은 국내
                                             허가사항과 다를 수
@@ -813,8 +785,8 @@ export default function WegovyChatPage({
                                 <p>
                                     답변은 정보 제공을 위한
                                     참고 자료예요. 투약 여부와
-                                    용량 변경은 의료진과
-                                    상의해 주세요.
+                                    용량 변경은 의료진과 상의해
+                                    주세요.
                                 </p>
 
                                 {status?.preview && (
