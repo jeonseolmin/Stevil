@@ -4,7 +4,7 @@ import './Community.css';
 import axiosInstance from '../../api/axiosInstance'; 
 import * as XLSX from 'xlsx';
 
-const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+
 
 const CommunityEdit = () => {
   const { id } = useParams();
@@ -59,7 +59,7 @@ const CommunityEdit = () => {
             file: null, // 서버에 이미 저장된 파일은 File 객체가 없으므로 null
             name: file.originalFileName,
             size: file.fileSize || 0,
-            url: `${API_BASE_URL}${file.fileUrl}`
+            url: file.fileUrl,
           }));
           setSelectedFiles(existingFiles);
 
