@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import re
 from urllib.request import Request, urlopen
-
+import traceback
 from chat.prompts import SYSTEM_PROMPT
 
 from planner.food.catalog import FoodUnavailable

@@ -1,9 +1,9 @@
 package com.my.stevil_back.post.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.post.dto.request.PostRequest;
-import com.my.stevil_back.post.dto.response.PostResponse;
-import com.my.stevil_back.post.dto.request.VoteRequest;
+import com.my.stevil_back.post.dto.PostRequest;
+import com.my.stevil_back.post.dto.PostResponse;
+import com.my.stevil_back.post.dto.VoteRequest;
 import com.my.stevil_back.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 package com.my.stevil_back.comment.service;
 
-import com.my.stevil_back.comment.dto.request.CommentRequestDto;
-import com.my.stevil_back.comment.dto.response.CommentResponseDto;
+import com.my.stevil_back.comment.dto.CommentRequestDto;
+import com.my.stevil_back.comment.dto.CommentResponseDto;
 import com.my.stevil_back.comment.entity.Comment;
 import com.my.stevil_back.comment.repository.CommentRepository;
 import com.my.stevil_back.post.entity.Post;

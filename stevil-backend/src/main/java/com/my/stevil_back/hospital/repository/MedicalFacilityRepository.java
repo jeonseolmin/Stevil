@@ -13,21 +13,17 @@ public interface MedicalFacilityRepository
         extends JpaRepository<MedicalFacility, Long> {
 
     @Query("""
-            SELECT f
-            FROM MedicalFacility f
-            WHERE (:type IS NULL OR f.facilityType = :type)
-              AND (:status IS NULL OR f.approvalStatus = :status)
-              AND (
-                    :keyword IS NULL
-                    OR LOWER(f.name)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-                    OR LOWER(f.roadAddress)
-                        LIKE LOWER(CONCAT('%', :keyword, '%'))
-              )
+            SELECT mf 
+            FROM MedicalFacility mf 
+            WHERE (:facilityType IS NULL OR mf.facilityType = :facilityType) 
+              AND (:approvalStatus IS NULL OR mf.approvalStatus = :approvalStatus) 
+              AND (:keyword IS NULL 
+                   OR LOWER(mf.name) LIKE :keyword 
+                   OR LOWER(mf.roadAddress) LIKE :keyword)
             """)
     Page<MedicalFacility> searchForAdmin(
-            @Param("type") FacilityType type,
-            @Param("status") FacilityApprovalStatus status,
+            @Param("facilityType") FacilityType facilityType,
+            @Param("approvalStatus") FacilityApprovalStatus approvalStatus,
             @Param("keyword") String keyword,
             Pageable pageable
     );

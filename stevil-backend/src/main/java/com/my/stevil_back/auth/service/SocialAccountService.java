@@ -1,6 +1,6 @@
 package com.my.stevil_back.auth.service;
 
-import com.my.stevil_back.auth.social.dto.response.SocialAccountResponse;
+import com.my.stevil_back.auth.social.dto.SocialAccountResponse;
 import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
 import com.my.stevil_back.auth.social.entity.SocialAccount;
 import com.my.stevil_back.auth.social.repository.SocialAccountRepository;
@@ -61,7 +61,8 @@ public class SocialAccountService {
             User user,
             ProviderType provider,
             String providerUserId,
-            String providerEmail
+            String providerEmail,
+            String accessToken
     ) {
         Optional<SocialAccount> existingAccount =
                 socialAccountRepository
@@ -80,6 +81,7 @@ public class SocialAccountService {
             }
 
             account.updateProviderEmail(providerEmail);
+            account.updateToken(accessToken);
             return account;
         }
 
@@ -87,7 +89,8 @@ public class SocialAccountService {
                 user,
                 provider,
                 providerUserId,
-                providerEmail
+                providerEmail,
+                accessToken
         );
 
         return socialAccountRepository.save(socialAccount);

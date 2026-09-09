@@ -1,7 +1,7 @@
 package com.my.stevil_back.comment.controller;
 
-import com.my.stevil_back.comment.dto.request.CommentRequestDto;
-import com.my.stevil_back.comment.dto.response.CommentResponseDto;
+import com.my.stevil_back.comment.dto.CommentRequestDto;
+import com.my.stevil_back.comment.dto.CommentResponseDto;
 import com.my.stevil_back.comment.service.CommentService;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import lombok.RequiredArgsConstructor;

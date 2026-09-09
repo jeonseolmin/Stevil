@@ -4,6 +4,8 @@ import './Community.css';
 import axiosInstance from '../../api/axiosInstance'; 
 import * as XLSX from 'xlsx';
 
+const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+
 const CommunityEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -57,7 +59,7 @@ const CommunityEdit = () => {
             file: null, // 서버에 이미 저장된 파일은 File 객체가 없으므로 null
             name: file.originalFileName,
             size: file.fileSize || 0,
-            url: `http://localhost:8080${file.fileUrl}`
+            url: `${API_BASE_URL}${file.fileUrl}`
           }));
           setSelectedFiles(existingFiles);
 
@@ -274,7 +276,7 @@ const CommunityEdit = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-          </div>            
+          </div>           
           <div className="ste-form-group">
             <label>내용</label>
             <textarea 
@@ -306,7 +308,7 @@ const CommunityEdit = () => {
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '15px' }}>
                 <input type="checkbox" checked={autoSource} onChange={(e) => setAutoSource(e.target.checked)} style={{ width: '18px', height: '18px', margin: 0 }} /> 자동 출처 남기기
-              </label>              
+              </label>             
             </div>
           </div>
 

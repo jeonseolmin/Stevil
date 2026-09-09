@@ -26,7 +26,7 @@ export default function DoctorAdApplyPage() {
 
     const fetchMyAds = async () => {
         try {
-            const response = await axiosInstance.get("/doctor/ads");
+            const response = await axiosInstance.get("/ads/me");
             setMyAds(response.data);
         } catch (error) {
             console.error("내 광고 내역 불러오기 실패:", error);
@@ -56,7 +56,7 @@ export default function DoctorAdApplyPage() {
 
         setIsSubmitting(true);
         try {
-            await axiosInstance.post("/doctor/ads", {
+            await axiosInstance.post("/ads/request", {
                 adType: adType,
                 startDate: startDate,
                 endDate: endDate

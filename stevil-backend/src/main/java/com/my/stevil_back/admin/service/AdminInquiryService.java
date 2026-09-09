@@ -26,74 +26,11 @@ public class AdminInquiryService {
             String keyword,
             Pageable pageable
     ) {
-        String normalizedKeyword =
-                normalize(keyword);
+        String normalizedKeyword = normalizeKeyword(keyword);
 
-        Page<Inquiry> result;
-
-        if (normalizedKeyword != null) {
-
-            result = inquiryRepository.searchByKeyword(
-                    normalizedKeyword,
-                    status,
-                    category,
-                    pageable
-            );
-
-        } else if (
-                status != null &&
-                        category != null
-        ) {
-
-            result =
-                    inquiryRepository
-                            .findByStatusAndCategory(
-                                    status,
-                                    category,
-                                    pageable
-                            );
-
-        } else if (status != null) {
-
-            result =
-                    inquiryRepository
-                            .findByStatus(
-                                    status,
-                                    pageable
-                            );
-
-        } else if (category != null) {
-
-            result =
-                    inquiryRepository
-                            .findByCategory(
-                                    category,
-                                    pageable
-                            );
-
-        } else {
-
-            result =
-                    inquiryRepository
-                            .findAll(pageable);
-        }
-
-        return result.map(
-                AdminInquiryResponse::from
-        );
-    }
-
-    private String normalize(
-            String value
-    ) {
-        if (
-                value == null ||
-                        value.isBlank()
-        ) {
-            return null;
-        }
-
-        return value.trim();
+        return inquiryRepository
+                .searchForAdmin(status, category, normalizedKeyword, pageable)
+                .map(AdminInquiryResponse::from);
     }
 
     public AdminInquiryResponse getInquiry(Long inquiryId) {
@@ -166,7 +103,6 @@ public class AdminInquiryService {
         if (keyword == null || keyword.isBlank()) {
             return null;
         }
-
-        return keyword.trim();
+        return "%" + keyword.trim().toLowerCase() + "%";
     }
 }

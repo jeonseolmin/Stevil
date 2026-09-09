@@ -40,33 +40,44 @@ public class SocialAccount extends BaseEntity {
     @Column(name = "provider_email", length = 255)
     private String providerEmail;
 
+    @Column(length = 1000)
+    private String accessToken;
+
     private SocialAccount(
             User user,
             ProviderType provider,
             String providerUserId,
-            String providerEmail
+            String providerEmail,
+            String accessToken
     ) {
         this.user = user;
         this.provider = provider;
         this.providerUserId = providerUserId;
         this.providerEmail = providerEmail;
+        this.accessToken = accessToken;
     }
 
     public static SocialAccount create(
             User user,
             ProviderType provider,
             String providerUserId,
-            String providerEmail
+            String providerEmail,
+            String accessToken
     ) {
         return new SocialAccount(
                 user,
                 provider,
                 providerUserId,
-                providerEmail
+                providerEmail,
+                accessToken
         );
     }
 
     public void updateProviderEmail(String providerEmail) {
         this.providerEmail = providerEmail;
+    }
+
+    public void updateToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

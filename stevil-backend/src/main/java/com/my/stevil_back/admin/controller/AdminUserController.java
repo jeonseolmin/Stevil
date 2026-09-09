@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.my.stevil_back.common.email.service.EmailService;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -22,6 +23,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
+    private final EmailService emailService;
 
     @GetMapping
     public ResponseEntity<Page<AdminUserResponse>> getUsers(
@@ -85,5 +87,17 @@ public class AdminUserController {
         return ResponseEntity.ok(
                 adminUserService.releaseSuspension(userId)
         );
+    }
+
+    @PostMapping("/{userId}/feedback-email")
+    public ResponseEntity<Void> sendFeedbackEmail(@PathVariable Long userId) {
+        // 유저 정보 조회
+        AdminUserResponse user = adminUserService.getUser(userId);
+
+        // 해당 유저의 이메일로 피드백 요청 발송
+        String nickname = user.nickname() != null ? user.nickname() : "고객";
+        emailService.sendFeedbackRequestEmail(user.email(), nickname);
+
+        return ResponseEntity.ok().build();
     }
 }

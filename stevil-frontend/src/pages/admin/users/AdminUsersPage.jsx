@@ -1,4 +1,3 @@
-
 import {
     useCallback,
     useEffect,
@@ -121,6 +120,32 @@ export default function AdminUsersPage() {
             setErrorMessage(
                 error.response?.data?.message ??
                 "회원 상세 정보를 불러오지 못했습니다."
+            );
+        } finally {
+            setProcessingUserId(null);
+        }
+    };
+
+    const handleSendFeedback = async (user) => {
+        const confirmed = window.confirm(
+            `${user.email} 회원에게 피드백 요청 메일을 보내시겠습니까?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            setProcessingUserId(user.id);
+            setErrorMessage("");
+
+            await axiosInstance.post(`/admin/users/${user.id}/feedback-email`);
+
+            alert("피드백 요청 메일이 성공적으로 발송되었습니다.");
+        } catch (error) {
+            setErrorMessage(
+                error.response?.data?.message ??
+                "피드백 요청 메일 발송에 실패했습니다."
             );
         } finally {
             setProcessingUserId(null);
@@ -499,6 +524,22 @@ export default function AdminUsersPage() {
                                                     }
                                                 >
                                                     상세
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="admin-user-detail-button"
+                                                    style={{ backgroundColor: '#20bfa9', color: 'white', border: 'none' }}
+                                                    disabled={
+                                                        processing
+                                                    }
+                                                    onClick={() =>
+                                                        handleSendFeedback(
+                                                            user
+                                                        )
+                                                    }
+                                                >
+                                                    피드백 요청
                                                 </button>
 
                                                 {user.suspended ? (

@@ -25,6 +25,17 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      FRONTEND_URL: ${FRONTEND_URL:?required}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?required}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID:?required}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET:?required}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?required}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?required}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:?required}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:?required}
+      NAVER_API_HUB_CLIENT_ID: ${NAVER_API_HUB_CLIENT_ID:-}
+      NAVER_API_HUB_CLIENT_SECRET: ${NAVER_API_HUB_CLIENT_SECRET:-}
+      PLANNER_GENERATOR_URL: ${PLANNER_GENERATOR_URL:-http://rag-api:8091/api/plan}
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -39,12 +50,13 @@ services:
       context: ./stevil-frontend
       args:
         VITE_API_BASE_URL: /api
+        VITE_NAVER_MAP_CLIENT_ID: ${VITE_NAVER_MAP_CLIENT_ID:-}
     container_name: stevil-frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "3000:80"
+      - "80:80"
 
 volumes:
   postgres-data:

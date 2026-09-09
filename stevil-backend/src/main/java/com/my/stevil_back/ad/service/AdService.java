@@ -2,7 +2,7 @@ package com.my.stevil_back.ad.service;
 
 import com.my.stevil_back.ad.dto.AdDto;
 import com.my.stevil_back.ad.entity.AdRequest;
-import com.my.stevil_back.ad.entity.enumType.AdStatus;
+import com.my.stevil_back.ad.enums.AdStatus;
 import com.my.stevil_back.ad.repository.AdRequestRepository;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.repository.UserRepository;
