@@ -6,6 +6,7 @@ import com.my.stevil_back.common.security.oauth.handler.OAuth2FailureHandler;
 import com.my.stevil_back.common.security.oauth.handler.OAuth2SuccessHandler;
 import com.my.stevil_back.common.security.oauth.service.CustomOAuth2UserService;
 import com.my.stevil_back.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,9 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     public SecurityConfig(
             JwtUtil jwtUtil,
@@ -121,7 +125,8 @@ public class SecurityConfig {
 
                     config.setAllowedOriginPatterns(
                             List.of(
-                                    "http://localhost:3000"
+                                    "http://localhost:3000",
+                                    frontendUrl
                             )
                     );
 
