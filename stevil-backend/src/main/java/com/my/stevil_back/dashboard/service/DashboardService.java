@@ -1,7 +1,7 @@
 package com.my.stevil_back.dashboard.service;
 
-import com.my.stevil_back.dashboard.dto.response.DashboardResponse;
-import com.my.stevil_back.dashboard.dto.response.RecentWeightResponse;
+import com.my.stevil_back.dashboard.dto.DashboardResponse;
+import com.my.stevil_back.dashboard.dto.RecentWeightResponse;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.entity.UserWeight;
 import com.my.stevil_back.user.repository.UserRepository;
@@ -40,25 +40,29 @@ public class DashboardService {
 
         UserWeight latestWeight =
                 userWeightRepository
-                        .findFirstByUserIdOrderByRecordedAtDesc(
-                                userId
-                        )
-                        .orElseThrow(() ->
-                                new IllegalStateException(
-                                        "등록된 체중 정보가 없습니다."
-                                )
-                        );
+                        .findFirstByUserIdOrderByRecordedAtDesc(userId)
+                        .orElse(null);
+
+        // 체중 기록이 아직 없는 신규 사용자
+        if (latestWeight == null) {
+            return new DashboardResponse(
+                    user.getId(),
+                    user.getNickname(),
+                    user.getProfileImage(),
+                    null,       // startWeightKg
+                    null,       // currentWeightKg
+                    null,       // targetWeightKg
+                    ZERO,       // lostWeightKg
+                    ZERO,       // remainingWeightKg
+                    ZERO,       // progressRate
+                    Collections.emptyList()
+            );
+        }
 
         UserWeight firstWeight =
                 userWeightRepository
-                        .findFirstByUserIdOrderByRecordedAtAsc(
-                                userId
-                        )
-                        .orElseThrow(() ->
-                                new IllegalStateException(
-                                        "등록된 체중 정보가 없습니다."
-                                )
-                        );
+                        .findFirstByUserIdOrderByRecordedAtAsc(userId)
+                        .orElse(latestWeight);
 
         BigDecimal startWeight =
                 firstWeight.getWeight();

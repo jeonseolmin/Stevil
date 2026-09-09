@@ -13,7 +13,7 @@ export default function DoctorReportPage() {
     useEffect(() => {
         const fetchReports = async () => {
             try {
-                const response = await axiosInstance.get("/doctor/reports");
+                const response = await axiosInstance.get("/patient-reports/doctor");
                 setReports(response.data);
                 if (response.data.length > 0) {
                     setSelectedReport(response.data[0]);
@@ -41,8 +41,7 @@ export default function DoctorReportPage() {
 
         setIsSendingFeedback(true);
         try {
-            await axiosInstance.post("/doctor/feedback", {
-                reportId: selectedReport.id,
+            await axiosInstance.post(`/patient-reports/${selectedReport.id}/feedback`, {
                 content: feedbackText
             });
             alert("환자에게 피드백이 성공적으로 전송되었습니다!");

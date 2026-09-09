@@ -7,10 +7,22 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
   jwt:
     secret: mySuperSecretKeyForStevilProjectWhichIsVeryLongAndSecure12345!
-    access-expiration: 1800000
-    refresh-expiration: 1209600000
+    access-expiration: ${JWT_ACCESS_EXPIRATION:3600000}
 
   profiles:
     default: local
@@ -31,8 +43,8 @@ spring:
 
 naver:
   search:
-    client-id: ${NAVER_API_HUB_CLIENT_ID:}
-    client-secret: ${NAVER_API_HUB_CLIENT_SECRET:}
+    client-id: ${NAVER_API_HUB_CLIENT_ID}
+    client-secret: ${NAVER_API_HUB_CLIENT_SECRET}
     base-url: https://naverapihub.apigw.ntruss.com
 
 food:
@@ -42,3 +54,7 @@ food:
 
 server:
   port: ${SERVER_PORT:8080}
+
+app:
+  frontend:
+    base-url: ${FRONTEND_URL:http://localhost:5173}

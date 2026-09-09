@@ -1,7 +1,7 @@
 package com.my.stevil_back.weight.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.weight.dto.request.WeightRequest;
+import com.my.stevil_back.weight.dto.WeightRequest;
 import com.my.stevil_back.weight.service.WeightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -15,7 +15,12 @@ from pathlib import Path
 from lxml import html
 from pypdf import PdfReader
 
-from exercise_store import BASE, ROOT, PageText, connect
+from planner.exercise.store import (
+    ROOT,
+    EXERCISE_SOURCES_PATH,
+    PageText,
+    connect,
+)
 
 WHO_GROUPS = {
     'ch4.s1': 'Children and adolescents aged 5–17',
@@ -159,7 +164,11 @@ def prepare(source, path):
 
 
 def main(input_dir):
-    sources = json.loads((BASE / 'exercise_sources.json').read_text(encoding='utf-8'))
+    sources = json.loads(
+        EXERCISE_SOURCES_PATH.read_text(
+            encoding="utf-8"
+        )
+    )
     rows = []
     for source in sources:
         if source.get('ingestion') == 'sectioned':

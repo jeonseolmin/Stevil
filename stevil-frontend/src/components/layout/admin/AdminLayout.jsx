@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 
 import axiosInstance from "../../../api/axiosInstance";
-import { logout } from "../../../api/authApi";
 import "./AdminLayout.css";
 
 const ADMIN_MENU = [
@@ -45,8 +44,6 @@ export default function AdminLayout() {
     const [admin, setAdmin] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [loggingOut, setLoggingOut] = useState(false);
-    const [logoutError, setLogoutError] = useState("");
 
     useEffect(() => {
         const verifyAdmin = async () => {
@@ -83,16 +80,13 @@ export default function AdminLayout() {
         setSidebarOpen(false);
     }, [location.pathname]);
 
-    const handleLogout = async () => {
-        if (loggingOut) return;
-        setLoggingOut(true);
-        setLogoutError("");
-        try {
-            await logout();
-        } catch {
-            setLogoutError("로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.");
-            setLoggingOut(false);
-        }
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("userRole");
+
+        navigate("/", {
+            replace: true,
+        });
     };
 
     if (loading) {
@@ -178,11 +172,9 @@ export default function AdminLayout() {
                         type="button"
                         className="admin-logout-button"
                         onClick={handleLogout}
-                        disabled={loggingOut}
                     >
-                        {loggingOut ? "로그아웃 중…" : "로그아웃"}
+                        로그아웃
                     </button>
-                    {logoutError && <p role="alert">{logoutError}</p>}
                 </footer>
             </aside>
 

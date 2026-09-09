@@ -5,6 +5,8 @@ import axiosInstance from '../../api/axiosInstance';
 import * as XLSX from 'xlsx';
 import ProfileCardModal from '../profile/ProfileCardModal'; 
 
+const API_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+
 const CommunityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ const CommunityDetail = () => {
   const loadExcelPreview = async (file, idx) => {
     setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
     try {
-      const fileUrl = `http://localhost:8080${file.fileUrl}`;
+      const fileUrl = `${API_BASE_URL}${file.fileUrl}`;
       const response = await fetch(fileUrl);
       const blob = await response.blob();
       const buffer = await blob.arrayBuffer();
@@ -186,12 +188,15 @@ const CommunityDetail = () => {
     if (!reportReason.trim()) return alert("신고 사유를 입력해주세요.");
     try {
       await axiosInstance.post('/reports', {
-        targetType: reportTargetType, targetId: reportTargetId, category: 'ETC', reason: reportReason
+        targetType: reportTargetType, 
+        targetId: reportTargetId, 
+        category: 'OTHER', 
+        reason: reportReason
       });
       alert('신고가 정상적으로 접수되었습니다.');
       setIsReportModalOpen(false);
     } catch (error) {
-      alert('신고 처리 중 오류가 발생했습니다.');
+      alert(error.response?.data || '신고 처리 중 오류가 발생했습니다.');
     }
   };
 
@@ -213,7 +218,7 @@ const CommunityDetail = () => {
       const votedIds = response.data;
       
       if (votedIds && votedIds.length > 0) {
-        setHasVoted(true);           
+        setHasVoted(true);          
         setSelectedOptions(votedIds); 
       }
     } catch (error) {
@@ -378,7 +383,7 @@ const CommunityDetail = () => {
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
                 const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null; 
-                const fileDownloadUrl = `http://localhost:8080${file.fileUrl}`; 
+                const fileDownloadUrl = `${API_BASE_URL}${file.fileUrl}`; 
                 const fileSizeFormatted = formatFileSize(file.fileSize || file.size);
                 
                 return (

@@ -1,7 +1,7 @@
 package com.my.stevil_back.medical.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.medical.dto.request.InjectionRequestDto;
+import com.my.stevil_back.medical.dto.InjectionRequestDto;
 import com.my.stevil_back.medical.entity.InjectionLog;
 import com.my.stevil_back.medical.service.InjectionLogService;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.my.stevil_back.exercise.controller;
 
 import com.my.stevil_back.exercise.entity.Exercise;
 import com.my.stevil_back.exercise.service.ExerciseService;
-import com.my.stevil_back.exercise.dto.request.CalorieRequestDto;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,14 @@ public class ExerciseController {
     }
 
     // 1. 프론트엔드에서 넘어오는 다양한 타입의 데이터를 안전하게 받기 위한 DTO 클래스 추가
-
+    @Data
+    public static class CalorieRequestDto {
+        private int durationMinutes;
+        private Integer sets;
+        private Integer reps;
+        private Double weightKg;
+        private boolean isAerobic;
+    }
 
     // 2. Map 대신 DTO를 사용하여 바뀐 서비스 파라미터에 맞게 값을 넘겨줌
     @PostMapping("/{id}/calculate-calories")

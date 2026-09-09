@@ -1,7 +1,7 @@
 package com.my.stevil_back.user.controller;
 
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
-import com.my.stevil_back.post.dto.response.PostResponse;
+import com.my.stevil_back.post.dto.PostResponse;
 import com.my.stevil_back.user.dto.response.UserProfileResponse;
 import com.my.stevil_back.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;

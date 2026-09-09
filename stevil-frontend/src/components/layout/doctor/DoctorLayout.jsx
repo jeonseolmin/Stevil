@@ -16,6 +16,10 @@ const DOCTOR_MENU = [
         end: true,
     },
     {
+        path: "/doctor/patient-list",
+        label: "내 환자 목록",
+    },
+    {
         path: "/doctor/patients",
         label: "환자 관리",
     },
@@ -114,7 +118,7 @@ export default function DoctorLayout() {
 
                         <span>
                             <strong>Stevil</strong>
-                            <small>의사</small>
+                            <small>DOCTOR</small>
                         </span>
                     </button>
 
