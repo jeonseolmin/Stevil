@@ -32,6 +32,7 @@ import DoctorDashboardPage from "../pages/doctor/dashboard/DoctorDashboardPage.j
 import DoctorAdApplyPage from "../pages/doctor/doctorPage/DoctorAdApplyPage.jsx";
 import DoctorReportPage from "../pages/doctorReport/DoctorReportPage.jsx";
 import DoctorPatientListPage from "../pages/doctor/DoctorPatientListPage.jsx";
+import FeedbackPage from "../pages/feedback/FeedbackPage.jsx";
 
 export default function AppRouter() {
     return (
@@ -53,6 +54,7 @@ export default function AppRouter() {
                 <Route path="/weight" element={<WeightRecordPage />}/>
                 <Route path="/partnership" element={<PartnershipGuidePage />}/>
                 <Route path="/mypage" element={<MyPage />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
             </Route>
 
             {/* 인증 전용 화면 */}
