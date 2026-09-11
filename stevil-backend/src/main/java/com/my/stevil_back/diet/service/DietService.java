@@ -13,7 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,6 +30,8 @@ public class DietService {
     private final UserDietGoalRepository userDietGoalRepository;
     private final DietRecordRepository dietRecordRepository;
     private final UserRepository userRepository;
+    @Value("${app.upload-dir}")
+    private String uploadDir;
 
     // 💡 체중 연동을 위한 레포지토리 추가
     private final UserWeightRepository userWeightRepository;
@@ -222,40 +228,85 @@ public class DietService {
         return mockResults;
     }
 
-    // 식단 직접 입력 & 사진 등록 처리
     @Transactional
-    public void addRecord(Long userId, com.my.stevil_back.diet.dto.DietRecordRequest request, MultipartFile image) {
+    public void addRecord(
+            Long userId,
+            com.my.stevil_back.diet.dto.DietRecordRequest request,
+            MultipartFile image
+    ) {
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("가입된 회원이 아닙니다."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("가입된 회원이 아닙니다.")
+                );
 
         String imageUrl = null;
 
-        // 사진이 첨부되었다면 서버에 저장합니다.
         if (image != null && !image.isEmpty()) {
-            try {
-                String os = System.getProperty("os.name").toLowerCase();
-                String uploadDir = os.contains("win") ? "C:/uploads/" : "/home/ubuntu/uploads/";
 
-                java.io.File dir = new java.io.File(uploadDir);
-                if (!dir.exists()) dir.mkdirs();
+            try {
+                Path uploadPath = Paths.get(uploadDir)
+                        .toAbsolutePath()
+                        .normalize();
+
+                Files.createDirectories(uploadPath);
 
                 String originalFilename = image.getOriginalFilename();
-                String savedFilename = java.util.UUID.randomUUID() + "_diet_" + originalFilename;
-                java.io.File targetFile = new java.io.File(uploadDir + savedFilename);
-                image.transferTo(targetFile);
+
+                if (originalFilename == null || originalFilename.isBlank()) {
+                    originalFilename = "image";
+                }
+
+                // ../../ 같은 경로가 파일명으로 들어오는 것을 방지
+                originalFilename = Paths.get(originalFilename)
+                        .getFileName()
+                        .toString();
+
+                String savedFilename =
+                        UUID.randomUUID()
+                                + "_diet_"
+                                + originalFilename;
+
+                Path targetPath = uploadPath
+                        .resolve(savedFilename)
+                        .normalize();
+
+                // upload 디렉터리 밖으로 빠져나가는 경로 방지
+                if (!targetPath.startsWith(uploadPath)) {
+                    throw new IllegalArgumentException(
+                            "올바르지 않은 파일 경로입니다."
+                    );
+                }
+
+                image.transferTo(targetPath.toFile());
 
                 imageUrl = "/api/uploads/" + savedFilename;
+
             } catch (Exception e) {
-                throw new RuntimeException("식단 이미지 업로드 실패", e);
+                throw new RuntimeException(
+                        "식단 이미지 업로드 실패",
+                        e
+                );
             }
         }
 
-        // 프론트에서 받은 정보와 이미지 URL을 묶어서 DB에 저장합니다.
         DietRecord record = DietRecord.builder()
                 .user(user)
-                .recordDate(request.getRecordDate() != null ? request.getRecordDate() : LocalDate.now())
-                .recordTime(request.getRecordTime() != null ? request.getRecordTime() : java.time.LocalTime.now())
-                .mealType(request.getMealType() != null ? request.getMealType() : "기타")
+                .recordDate(
+                        request.getRecordDate() != null
+                                ? request.getRecordDate()
+                                : LocalDate.now()
+                )
+                .recordTime(
+                        request.getRecordTime() != null
+                                ? request.getRecordTime()
+                                : java.time.LocalTime.now()
+                )
+                .mealType(
+                        request.getMealType() != null
+                                ? request.getMealType()
+                                : "기타"
+                )
                 .foodName(request.getFoodName())
                 .imageUrl(imageUrl)
                 .calories(request.getCalories())
