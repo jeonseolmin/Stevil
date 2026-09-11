@@ -41,19 +41,48 @@ spring:
           options:
             model: gemini-3.6-flash
 
+
+# =========================================================
+# Planner
+# =========================================================
+
+planner:
+  generator-url: ${PLANNER_GENERATOR_URL:http://127.0.0.1:8091/api/plan}
+
+
+# =========================================================
+# Naver API
+# =========================================================
+
 naver:
   search:
     client-id: ${NAVER_API_HUB_CLIENT_ID}
     client-secret: ${NAVER_API_HUB_CLIENT_SECRET}
     base-url: https://naverapihub.apigw.ntruss.com
 
+
+# =========================================================
+# Food API
+# =========================================================
+
 food:
   api:
-    key: "9deb2f7d4304fe4a23865fb2c185c97355831fd327796c9f656b362ebb3458b0"
-    url: "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02"
+    key: ${FOOD_API_KEY:}
+    url: https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo02/getFoodNtrCpntDbInq02
+
+
+# =========================================================
+# Server
+# =========================================================
 
 server:
   port: ${SERVER_PORT:8080}
 
+
+# =========================================================
+# Application
+# =========================================================
+
 app:
-    frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  upload-dir: ${UPLOAD_DIR:./uploads}
