@@ -44,10 +44,6 @@ public class PlannerService {
 
     private final UserRepository users;
 
-    /**
-     * Diet에서 확정한 칼로리/단백질 목표를
-     * Planner에 연결하기 위해 사용한다.
-     */
     private final UserDietGoalRepository dietGoals;
 
     private final ObjectMapper json;
@@ -64,11 +60,9 @@ public class PlannerService {
                     )
                     .build();
 
-    /**
-     * 사용자별 Planner 생성 요청 제한.
-     */
     private final ConcurrentHashMap<Long, Instant> requests =
             new ConcurrentHashMap<>();
+
 
     public PlannerService(
             WeeklyPlanRepository repository,
@@ -90,6 +84,7 @@ public class PlannerService {
         this.generator = URI.create(url);
     }
 
+
     // =========================================================
     // Planner 생성
     // =========================================================
@@ -100,34 +95,20 @@ public class PlannerService {
     ) {
 
         /*
-         * 중요:
-         *
-         * 프론트에서 넘어온 nutritionGoal을 그대로 Python에
-         * 보내지 않고, Diet에서 확정된 목표가 있으면
-         * 그 값으로 덮어쓴다.
-         *
-         * 따라서:
-         *
-         * Diet 목표
-         *      ↓
-         * PlannerService
-         *      ↓
-         * Python Planner
-         *
-         * 가 같은 칼로리/단백질 목표를 사용한다.
+         * Diet에서 사용하는 확정 영양 목표가 있다면
+         * Planner에서도 동일한 값을 사용한다.
          */
-        preferences =
+        Preferences effectivePreferences =
                 applyDietGoal(
                         userId,
                         preferences
                 );
 
-        // 최종적으로 Python에 전달할 값 검증
         PlannerValidation.preferences(
-                preferences
+                effectivePreferences
         );
 
-        if (!preferences.aiConsent()) {
+        if (!effectivePreferences.aiConsent()) {
 
             throw new IllegalArgumentException(
                     "입력한 생활 정보를 AI에 전송하는 데 동의해 주세요."
@@ -135,14 +116,14 @@ public class PlannerService {
         }
 
         // =====================================================
-        // 요청 빈도 제한
+        // 사용자별 생성 요청 제한
         // =====================================================
 
         Instant now =
                 Instant.now();
 
         /*
-         * 오래된 요청 기록 제거.
+         * 5분 이상 지난 요청 기록 정리.
          */
         requests
                 .entrySet()
@@ -186,12 +167,12 @@ public class PlannerService {
         try {
 
             // =================================================
-            // Spring -> Python /api/plan
+            // Spring -> Python Planner
             // =================================================
 
             String requestBody =
                     json.writeValueAsString(
-                            preferences
+                            effectivePreferences
                     );
 
             HttpRequest request =
@@ -229,7 +210,7 @@ public class PlannerService {
                     "response";
 
             // =================================================
-            // 응답 크기 제한
+            // 응답 크기 방어
             // =================================================
 
             if (
@@ -245,24 +226,18 @@ public class PlannerService {
             }
 
             // =================================================
-            // Python 오류 응답
+            // Python 오류 처리
             // =================================================
 
             if (
                     response.statusCode() != 200
             ) {
 
-                /*
-                 * Python이 JSON 오류 응답을 보낸 경우.
-                 */
                 var failure =
                         json.readTree(
                                 response.body()
                         );
 
-                /*
-                 * 식품 데이터나 영양 매칭 데이터 준비 실패.
-                 */
                 if (
                         "FOOD_NOT_READY".equals(
                                 failure
@@ -292,7 +267,7 @@ public class PlannerService {
             }
 
             // =================================================
-            // Python 응답 DTO 변환
+            // Python 응답 검증
             // =================================================
 
             stage =
@@ -317,10 +292,13 @@ public class PlannerService {
             }
 
             /*
-             * AI가 만들어낸 이벤트를 서버에서 다시 검증한다.
+             * Python이 생성한 이벤트를 다시 서버에서 검증.
+             *
+             * 여기에서도 Diet 목표가 반영된
+             * effectivePreferences를 사용한다.
              */
             PlannerValidation.events(
-                    preferences,
+                    effectivePreferences,
                     draft.events()
             );
 
@@ -364,7 +342,8 @@ public class PlannerService {
             );
 
             /*
-             * 건강정보 / API Key / 응답 본문은 로그에 남기지 않는다.
+             * 개인정보 / 건강정보 / AI 응답 본문은
+             * 로그에 남기지 않는다.
              */
             log.warn(
                     "Planner generation failed: stage={}, type={}",
@@ -405,28 +384,11 @@ public class PlannerService {
         }
     }
 
+
     // =========================================================
     // Diet -> Planner 영양 목표 연결
     // =========================================================
 
-    /**
-     * UserDietGoal에 저장된 Protein First 목표를
-     * Planner의 NutritionGoal로 반영한다.
-     *
-     * Python Planner는 현재:
-     *
-     * protein =
-     * weightKg * proteinPerKg
-     *
-     * 방식으로 동작한다.
-     *
-     * 그래서 Diet의 targetProtein을 그대로 전달하는 대신:
-     *
-     * proteinPerKg =
-     * targetProtein / weightKg
-     *
-     * 로 역산해서 전달한다.
-     */
     private Preferences applyDietGoal(
             Long userId,
             Preferences preferences
@@ -443,8 +405,8 @@ public class PlannerService {
                 preferences.nutritionGoal();
 
         /*
-         * 현재 Planner UI에서 영양 목표 사용을 하지 않는 요청이면
-         * 기존 동작을 유지한다.
+         * nutritionGoal을 사용하지 않는 요청은
+         * 기존 동작 그대로 유지.
          */
         if (
                 originalGoal == null
@@ -459,8 +421,8 @@ public class PlannerService {
                 );
 
         /*
-         * Diet 목표가 아직 만들어지지 않은 사용자는
-         * 기존 Planner 입력값을 그대로 사용한다.
+         * Diet 목표가 없으면
+         * 프론트에서 받은 Planner 목표를 그대로 사용.
          */
         if (
                 dietGoalOptional.isEmpty()
@@ -476,10 +438,7 @@ public class PlannerService {
                 originalGoal.weightKg();
 
         /*
-         * 유효하지 않은 체중이면 원본 사용.
-         *
-         * DTO validation에서도 걸리지만
-         * 0으로 나누는 상황을 먼저 방어한다.
+         * 0으로 나누는 상황 방어.
          */
         if (
                 weightKg <= 0
@@ -491,10 +450,6 @@ public class PlannerService {
         double targetProtein =
                 dietGoal.getTargetProtein();
 
-        /*
-         * Diet 단백질 목표가 아직 설정되지 않았다면
-         * 기존 Planner 값을 유지한다.
-         */
         if (
                 targetProtein <= 0
         ) {
@@ -503,21 +458,24 @@ public class PlannerService {
         }
 
         // =====================================================
-        // Diet targetProtein -> Planner proteinPerKg
+        // Diet 단백질 목표를 Planner 형식으로 변환
         // =====================================================
 
+        /*
+         * Python Planner는 현재:
+         *
+         * protein =
+         * weightKg * proteinPerKg
+         *
+         * 로 계산한다.
+         *
+         * 따라서 Diet의 확정 targetProtein과
+         * 동일한 결과가 나오도록 역산한다.
+         */
         double proteinPerKg =
                 targetProtein
                         / weightKg;
 
-        /*
-         * 현재 Java DTO / Python Planner의 허용 범위:
-         *
-         * 0.1 ~ 3.0 g/kg
-         *
-         * 비정상 값으로 Planner 전체가 실패하지 않게
-         * 기술적 범위 내로 제한한다.
-         */
         proteinPerKg =
                 Math.max(
                         0.1,
@@ -528,7 +486,7 @@ public class PlannerService {
                 );
 
         // =====================================================
-        // 칼로리도 Diet 기준값 우선
+        // Diet 칼로리 목표 우선
         // =====================================================
 
         int targetCalories =
@@ -543,8 +501,7 @@ public class PlannerService {
         }
 
         /*
-         * 현재 NutritionGoal validation 범위를 초과하는
-         * DB 데이터가 있으면 기존 Planner 입력값을 사용한다.
+         * NutritionGoal / Python validation 범위.
          */
         if (
                 targetCalories < 1000
@@ -567,6 +524,7 @@ public class PlannerService {
                 mergedGoal
         );
     }
+
 
     // =========================================================
     // 저장된 Planner 조회
@@ -591,6 +549,7 @@ public class PlannerService {
                 );
     }
 
+
     // =========================================================
     // Planner 저장
     // =========================================================
@@ -601,15 +560,31 @@ public class PlannerService {
             Save request
     ) {
 
+        /*
+         * 핵심 수정.
+         *
+         * 생성 시와 동일하게 저장 시에도
+         * Diet의 영양 목표를 적용한다.
+         */
+        Preferences effectivePreferences =
+                applyDietGoal(
+                        userId,
+                        request.preferences()
+                );
+
+        /*
+         * Diet 목표가 반영된 기준으로
+         * 이벤트를 검증한다.
+         */
         PlannerValidation.events(
-                request.preferences(),
+                effectivePreferences,
                 request.events()
         );
 
-        /*
-         * 동일 사용자의 계획을 동시에 수정할 때
-         * revision 충돌을 막기 위한 lock.
-         */
+        // =====================================================
+        // 사용자 Lock
+        // =====================================================
+
         if (
                 users
                         .findByIdForUpdate(
@@ -627,23 +602,22 @@ public class PlannerService {
                 repository
                         .findByUserIdAndWeekStart(
                                 userId,
-                                request
-                                        .preferences()
+                                effectivePreferences
                                         .weekStart()
                         )
                         .orElseGet(
                                 () ->
                                         new WeeklyPlan(
                                                 userId,
-                                                request
-                                                        .preferences()
+                                                effectivePreferences
                                                         .weekStart()
                                         )
                         );
 
-        /*
-         * optimistic revision 검증.
-         */
+        // =====================================================
+        // Revision 검증
+        // =====================================================
+
         if (
                 plan.getRevision()
                         != request.revision()
@@ -655,10 +629,17 @@ public class PlannerService {
             );
         }
 
+        /*
+         * 여기에서도 원본 request.preferences()가 아니라
+         * Diet 목표가 반영된 effectivePreferences를 저장한다.
+         *
+         * 이렇게 해야 다음 번 loadWeek() 때도
+         * Planner 화면이 동일한 영양 목표를 유지한다.
+         */
         Saved result =
                 new Saved(
                         plan.getRevision() + 1,
-                        request.preferences(),
+                        effectivePreferences,
                         request.events()
                 );
 
@@ -674,6 +655,7 @@ public class PlannerService {
 
         return result;
     }
+
 
     // =========================================================
     // 저장 JSON -> DTO
