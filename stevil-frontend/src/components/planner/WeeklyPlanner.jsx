@@ -144,9 +144,9 @@ function createNutritionGoalFromProfile(
         weightKg,
 
         proteinPerKg:
-            roundOneDecimal(
-                proteinPerKg
-            ) ?? 0.8,
+            Number.isFinite(proteinPerKg)
+                ? proteinPerKg
+                : 0.8,
 
         calories,
 
