@@ -25,4 +25,6 @@ public interface SocialAccountRepository
     );
 
     long countByUserId(Long userId);
+
+    Optional<SocialAccount> findByUserIdAndProvider(Long userId, ProviderType provider);
 }
