@@ -1,8 +1,10 @@
-"""Collect a small source-backed optional snack catalog; no invented product nutrition."""
+"""Collect source-backed snack candidates from the public nutrition DB."""
 
 import json
 import os
 import re
+import sqlite3
+
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode, unquote
@@ -35,17 +37,12 @@ from planner.nutrition.matching import (
 # → rag/
 RAG_ROOT = Path(__file__).resolve().parents[2]
 
-# data-collection/wegovy/rag/config/snacks.json
 SNACKS_PATH = (
     RAG_ROOT
     / "config"
     / "snacks.json"
 )
 
-# rag
-# → wegovy
-# → data-collection
-# → repository root
 REPOSITORY_ROOT = (
     RAG_ROOT
     .parents[2]
@@ -63,22 +60,120 @@ BACKEND_SNACKS_PATH = (
 
 
 # ============================================================
+# Snack categories
+# ============================================================
+
+SNACK_CATEGORIES = [
+    "shake",
+    "chicken",
+    "egg",
+    "greek_yogurt",
+    "soy_milk",
+    "milk",
+    "banana",
+    "apple",
+    "sweet_potato",
+    "cheese",
+]
+
+
+PROTEIN_REQUIRED_KINDS = {
+    "shake",
+    "chicken",
+    "egg",
+    "greek_yogurt",
+    "soy_milk",
+    "milk",
+    "cheese",
+}
+
+
+SEARCH_TERMS = [
+    "쉐이크",
+    "프로틴",
+    "단백질",
+    "닭가슴살",
+    "달걀",
+    "계란",
+    "그릭요거트",
+    "그릭요구르트",
+    "두유",
+    "저지방우유",
+    "무지방우유",
+    "바나나",
+    "사과",
+    "고구마",
+    "치즈",
+]
+
+
+# ============================================================
+# Helpers
+# ============================================================
+
+def safe_float(value):
+    try:
+        return float(
+            number(value)
+            or 0
+        )
+    except (
+        TypeError,
+        ValueError,
+    ):
+        return 0.0
+
+
+def scaled_nutrients(
+    nutrients,
+    amount,
+    basis,
+):
+    return {
+        key: (
+            format(
+                safe_float(value)
+                * amount
+                / basis,
+                ".4f",
+            )
+            if value
+            else ""
+        )
+        for key, value
+        in nutrients.items()
+    }
+
+
+# ============================================================
 # Candidate
 # ============================================================
 
-def candidate(row, retrieved):
+def candidate(
+    row,
+    retrieved,
+):
     title = str(
         row.get(
             "FOOD_NM_KR",
             "",
         )
-    )
+    ).strip()
+
+    if not title:
+        return None
 
     basis = grams(
         row.get(
             "SERVING_SIZE"
         )
     )
+
+    if (
+        not basis
+        or basis <= 0
+    ):
+        return None
 
     nutrients = {
         key: nutrient_text(
@@ -93,7 +188,9 @@ def candidate(row, retrieved):
 
     nutrition = recipe_nutrition(
         {
-            "INFO_WGT": basis,
+            "INFO_WGT":
+                basis,
+
             **nutrients,
         }
     )
@@ -114,7 +211,10 @@ def candidate(row, retrieved):
     # --------------------------------------------------------
 
     if (
-        "쉐이크" in title
+        re.search(
+            r"쉐이크|프로틴",
+            title,
+        )
         and re.search(
             r"단백|프로틴",
             title,
@@ -136,13 +236,17 @@ def candidate(row, retrieved):
     # --------------------------------------------------------
 
     elif (
-        "닭가슴살" in title
+        "닭가슴살"
+        in title
         and re.search(
             r"삶은|찐|스팀|수비드|훈제",
             title,
         )
         and not re.search(
-            r"샌드|샐러드|볶음밥|김밥|소시지|핫도그|만두",
+            (
+                r"샌드|샐러드|볶음밥|김밥|"
+                r"소시지|핫도그|만두"
+            ),
             title,
         )
     ):
@@ -159,47 +263,259 @@ def candidate(row, retrieved):
             title,
         )
         and re.search(
-            r"삶은",
+            r"삶은|구운",
             title,
         )
         and not re.search(
-            r"흰자|노른자|난황|난백|샐러드|샌드|국수",
+            (
+                r"흰자|노른자|난황|난백|"
+                r"샐러드|샌드|국수"
+            ),
             title,
         )
     ):
         kind = "egg"
         amount = 50
 
+    # --------------------------------------------------------
+    # Greek yogurt
+    # --------------------------------------------------------
+
+    elif (
+        re.search(
+            (
+                r"그릭.*요거트|"
+                r"그릭.*요구르트|"
+                r"greek.*yog"
+            ),
+            title,
+            re.I,
+        )
+        and (
+            nutrition[
+                "protein"
+            ]
+            * 100
+            / basis
+            >= 5
+        )
+        and not re.search(
+            r"아이스크림|케이크|빵",
+            title,
+        )
+    ):
+        kind = "greek_yogurt"
+        amount = 100
+
+    # --------------------------------------------------------
+    # Soy milk
+    # --------------------------------------------------------
+
+    elif (
+        "두유"
+        in title
+        and not re.search(
+            (
+                r"초코|딸기|바나나맛|"
+                r"커피|카라멜"
+            ),
+            title,
+        )
+    ):
+        kind = "soy_milk"
+        amount = min(
+            190,
+            basis,
+        )
+
+    # --------------------------------------------------------
+    # Low-fat / skim milk
+    # --------------------------------------------------------
+
+    elif (
+        "우유"
+        in title
+        and re.search(
+            r"저지방|무지방",
+            title,
+        )
+        and not re.search(
+            r"초코|딸기|커피",
+            title,
+        )
+    ):
+        kind = "milk"
+        amount = min(
+            200,
+            basis,
+        )
+
+    # --------------------------------------------------------
+    # Banana
+    # --------------------------------------------------------
+
+    elif (
+        "바나나"
+        in title
+        and not re.search(
+            (
+                r"우유|쉐이크|칩|빵|"
+                r"케이크|요거트|요구르트|"
+                r"주스|스무디"
+            ),
+            title,
+        )
+    ):
+        kind = "banana"
+        amount = min(
+            100,
+            basis,
+        )
+
+    # --------------------------------------------------------
+    # Apple
+    # --------------------------------------------------------
+
+    elif (
+        "사과"
+        in title
+        and not re.search(
+            (
+                r"주스|즙|잼|파이|빵|"
+                r"케이크|샐러드|음료"
+            ),
+            title,
+        )
+    ):
+        kind = "apple"
+        amount = min(
+            150,
+            basis,
+        )
+
+    # --------------------------------------------------------
+    # Sweet potato
+    # --------------------------------------------------------
+
+    elif (
+        "고구마"
+        in title
+        and (
+            re.search(
+                r"삶은|찐|구운|군고구마",
+                title,
+            )
+            or title
+            in {
+                "고구마",
+                "고구마_찐것",
+                "고구마_구운것",
+            }
+        )
+        and not re.search(
+            (
+                r"맛탕|빵|케이크|튀김|"
+                r"칩|샐러드"
+            ),
+            title,
+        )
+    ):
+        kind = "sweet_potato"
+        amount = min(
+            100,
+            basis,
+        )
+
+    # --------------------------------------------------------
+    # Cheese
+    # --------------------------------------------------------
+
+    elif (
+        "치즈"
+        in title
+        and not re.search(
+            (
+                r"케이크|피자|핫도그|"
+                r"샌드위치|햄버거|소스"
+            ),
+            title,
+        )
+        and (
+            nutrition[
+                "protein"
+            ]
+            * 100
+            / basis
+            >= 10
+        )
+    ):
+        kind = "cheese"
+        amount = min(
+            30,
+            basis,
+        )
+
     if kind is None:
         return None
 
     # --------------------------------------------------------
-    # Scale nutrition to serving amount
+    # Scale nutrition
     # --------------------------------------------------------
 
-    scaled = {
-        key: (
-            format(
-                number(value)
-                * amount
-                / basis,
-                ".4f",
-            )
-            if value
-            else ""
+    scaled = scaled_nutrients(
+        nutrients,
+        amount,
+        basis,
+    )
+
+    calories = safe_float(
+        scaled.get(
+            "INFO_ENG"
         )
-        for key, value
-        in nutrients.items()
-    }
+    )
+
+    protein = safe_float(
+        scaled.get(
+            "INFO_PRO"
+        )
+    )
+
+    fat = safe_float(
+        scaled.get(
+            "INFO_FAT"
+        )
+    )
+
+    sodium = safe_float(
+        scaled.get(
+            "INFO_NA"
+        )
+    )
+
+    # --------------------------------------------------------
+    # Basic snack guardrails
+    # --------------------------------------------------------
 
     if (
-        float(
-            scaled[
-                "INFO_PRO"
-            ]
-        )
-        < 5
+        calories <= 0
+        or calories > 350
     ):
+        return None
+
+    if (
+        kind
+        in PROTEIN_REQUIRED_KINDS
+        and protein < 5
+    ):
+        return None
+
+    # 너무 고나트륨인 간식은 제외
+    if sodium > 800:
+        return None
+
+    # 치즈처럼 지방이 높을 수 있는 후보는
+    # 간식 한 번 기준 과도한 지방만 제외
+    if fat > 25:
         return None
 
     # --------------------------------------------------------
@@ -207,43 +523,55 @@ def candidate(row, retrieved):
     # --------------------------------------------------------
 
     component = {
-        "foodId": str(
-            row[
-                "FOOD_CD"
-            ]
-        ),
+        "foodId":
+            str(
+                row[
+                    "FOOD_CD"
+                ]
+            ),
 
-        "name": title,
+        "name":
+            title,
 
-        "role": "snack",
+        "role":
+            "snack",
 
-        "sourceUrl": SOURCE,
+        "sourceUrl":
+            SOURCE,
 
-        "retrievedAt": retrieved,
+        "retrievedAt":
+            retrieved,
 
-        "basisWeight": str(
-            basis
-        ),
+        "basisWeight":
+            str(
+                basis
+            ),
 
-        "servingWeight": str(
-            amount
-        ),
+        "servingWeight":
+            str(
+                amount
+            ),
 
-        "nutrition": nutrients,
+        "nutrition":
+            nutrients,
 
-        "amountNutrition": scaled,
+        "amountNutrition":
+            scaled,
 
-        "fingerprint": digest(
-            row
-        ),
+        "fingerprint":
+            digest(
+                row
+            ),
     }
 
     evidence = {
         "recipeId":
-            "snack:"
-            + digest(
-                component
-            )[:24],
+            (
+                "snack:"
+                + digest(
+                    component
+                )[:24]
+            ),
 
         "sourceUrl":
             SOURCE,
@@ -252,7 +580,10 @@ def candidate(row, retrieved):
             retrieved,
 
         "ingredients":
-            f"{title} {amount}g",
+            (
+                f"{title} "
+                f"{amount:g}g"
+            ),
 
         "servingWeight":
             str(
@@ -272,6 +603,28 @@ def candidate(row, retrieved):
         ],
     }
 
+    if kind == "shake":
+        note = (
+            "제품 자체 30g 기준이며 "
+            "섞는 우유·음료는 포함하지 않습니다."
+        )
+
+    elif kind in {
+        "banana",
+        "apple",
+        "sweet_potato",
+    }:
+        note = (
+            "먹는 부분의 중량 기준입니다. "
+            "크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요."
+        )
+
+    else:
+        note = (
+            "먹는 부분의 중량 기준입니다. "
+            "제품·조리법에 따라 실제 영양량은 달라질 수 있어요."
+        )
+
     return {
         "id":
             evidence[
@@ -285,14 +638,7 @@ def candidate(row, retrieved):
             title[:60],
 
         "note":
-            (
-                "제품 자체 30g 기준이며 "
-                "섞는 우유·음료는 포함하지 않습니다."
-                if kind == "shake"
-                else
-                "먹는 부분의 중량 기준입니다. "
-                "제품·조리법에 따라 달라질 수 있어요."
-            ),
+            note,
 
         "foodEvidence":
             evidence,
@@ -323,14 +669,7 @@ def collect():
 
     raw = {}
 
-    search_terms = [
-        "쉐이크",
-        "닭가슴살",
-        "달걀",
-        "삶은계란",
-    ]
-
-    for term in search_terms:
+    for term in SEARCH_TERMS:
 
         for page in range(
             1,
@@ -377,7 +716,10 @@ def collect():
                 and total
             ):
                 raise ValueError(
-                    "간식 API 페이지가 비었습니다."
+                    (
+                        "간식 API 페이지가 "
+                        f"비었습니다: {term}"
+                    )
                 )
 
             raw.update(
@@ -388,8 +730,13 @@ def collect():
                         ]
                     ):
                         row
+
                     for row
                     in rows
+
+                    if row.get(
+                        "FOOD_CD"
+                    )
                 }
             )
 
@@ -402,12 +749,287 @@ def collect():
 
         else:
             raise ValueError(
-                "간식 수집 상한에 도달했습니다."
+                (
+                    "간식 수집 상한에 "
+                    f"도달했습니다: {term}"
+                )
             )
 
     publish(
         raw,
         retrieved,
+    )
+
+
+# ============================================================
+# Selection
+# ============================================================
+
+def item_sort_key(
+    item,
+):
+    evidence = (
+        item
+        .get(
+            "foodEvidence",
+            {}
+        )
+    )
+
+    nutrition = (
+        evidence
+        .get(
+            "nutrition",
+            {}
+        )
+    )
+
+    sodium = safe_float(
+        nutrition.get(
+            "INFO_NA"
+        )
+    )
+
+    title = str(
+        item.get(
+            "title",
+            "",
+        )
+    )
+
+    return (
+        "브랜드"
+        in title,
+
+        len(
+            title
+        ),
+
+        sodium,
+    )
+
+
+def select_candidates(
+    raw,
+    retrieved,
+):
+    selected = []
+
+    per_category_limit = {
+        "shake": 6,
+        "chicken": 6,
+        "egg": 6,
+        "greek_yogurt": 8,
+        "soy_milk": 8,
+        "milk": 6,
+        "banana": 6,
+        "apple": 6,
+        "sweet_potato": 8,
+        "cheese": 6,
+    }
+
+    for kind in SNACK_CATEGORIES:
+
+        choices = [
+            item
+
+            for row
+            in raw.values()
+
+            if (
+                item := candidate(
+                    row,
+                    retrieved,
+                )
+            )
+
+            and (
+                item[
+                    "category"
+                ]
+                == kind
+            )
+        ]
+
+        choices.sort(
+            key=item_sort_key
+        )
+
+        seen_titles = set()
+
+        limit = (
+            per_category_limit[
+                kind
+            ]
+        )
+
+        for item in choices:
+
+            title = str(
+                item.get(
+                    "title",
+                    "",
+                )
+            ).strip()
+
+            if not title:
+                continue
+
+            normalized_title = (
+                re.sub(
+                    r"\s+",
+                    "",
+                    title,
+                )
+                .lower()
+            )
+
+            if (
+                normalized_title
+                in seen_titles
+            ):
+                continue
+
+            seen_titles.add(
+                normalized_title
+            )
+
+            selected.append(
+                item
+            )
+
+            if (
+                len(
+                    seen_titles
+                )
+                >= limit
+            ):
+                break
+
+        print(
+            "Snack category:",
+            kind,
+            "candidates=",
+            len(
+                choices
+            ),
+            "selected=",
+            len(
+                seen_titles
+            ),
+        )
+
+    if not selected:
+        raise ValueError(
+            "영양 기준을 충족하는 간식 후보가 없습니다."
+        )
+
+    return selected
+
+
+# ============================================================
+# DB
+# ============================================================
+
+def save_snacks_to_db(
+    selected,
+):
+    ROOT.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    db_path = (
+        ROOT
+        / "foods.sqlite3"
+    )
+
+    if not db_path.exists():
+        raise ValueError(
+            (
+                "foods.sqlite3가 없습니다. "
+                "먼저 nutrient_catalog를 수집해 주세요."
+            )
+        )
+
+    with sqlite3.connect(
+        db_path
+    ) as db:
+
+        db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS snacks (
+                id TEXT PRIMARY KEY,
+                category TEXT NOT NULL,
+                title TEXT NOT NULL,
+                priority INTEGER NOT NULL DEFAULT 100,
+                enabled INTEGER NOT NULL DEFAULT 1,
+                payload TEXT NOT NULL
+            )
+            """
+        )
+
+        with db:
+
+            db.execute(
+                """
+                DELETE FROM snacks
+                """
+            )
+
+            db.executemany(
+                """
+                INSERT INTO snacks (
+                    id,
+                    category,
+                    title,
+                    priority,
+                    enabled,
+                    payload
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        item[
+                            "id"
+                        ],
+
+                        item[
+                            "category"
+                        ],
+
+                        item[
+                            "title"
+                        ],
+
+                        index,
+
+                        1,
+
+                        json.dumps(
+                            item,
+                            ensure_ascii=False,
+                        ),
+                    )
+
+                    for index, item
+                    in enumerate(
+                        selected
+                    )
+                ],
+            )
+
+    print(
+        "Snack DB:",
+        db_path,
+    )
+
+    print(
+        "Saved DB snacks:",
+        len(
+            selected
+        ),
     )
 
 
@@ -419,104 +1041,10 @@ def publish(
     raw,
     retrieved,
 ):
-    selected = []
-
-    for kind in [
-        "shake",
-        "chicken",
-        "egg",
-    ]:
-
-        choices = [
-            item
-            for row
-            in raw.values()
-            if (
-                item := candidate(
-                    row,
-                    retrieved,
-                )
-            )
-            and (
-                item[
-                    "category"
-                ]
-                == kind
-            )
-        ]
-
-        # Prefer generic source entries where possible,
-        # then shorter names and lower sodium.
-        #
-        # This is selection logic only;
-        # it is not a brand endorsement.
-        choices.sort(
-            key=lambda item: (
-                "브랜드"
-                in item[
-                    "title"
-                ],
-
-                len(
-                    item[
-                        "title"
-                    ]
-                ),
-
-                float(
-                    item[
-                        "foodEvidence"
-                    ][
-                        "nutrition"
-                    ][
-                        "INFO_NA"
-                    ]
-                    or "inf"
-                ),
-            )
-        )
-
-        seen: set[str] = set()
-
-        for item in choices:
-            title = str(
-                item.get(
-                    "title",
-                    "",
-                )
-            )
-
-            if not title:
-                continue
-
-            if title in seen:
-                continue
-
-            seen.add(title)
-
-            selected.append(item)
-
-            if len(seen) == 2:
-                break
-
-            selected.append(
-                item
-            )
-
-            if (
-                len(
-                    seen
-                )
-                == 2
-            ):
-                break
-
-        if not seen:
-            raise ValueError(
-                "영양 기준을 확인한 "
-                "간식 후보가 부족합니다: "
-                + kind
-            )
+    selected = select_candidates(
+        raw,
+        retrieved,
+    )
 
     # --------------------------------------------------------
     # Save source cache
@@ -527,10 +1055,12 @@ def publish(
         exist_ok=True,
     )
 
-    (
+    source_path = (
         ROOT
         / "snack-source.json"
-    ).write_text(
+    )
+
+    source_path.write_text(
         json.dumps(
             {
                 "retrievedAt":
@@ -547,7 +1077,15 @@ def publish(
     )
 
     # --------------------------------------------------------
-    # Save Python planner config
+    # Save foods.sqlite3 snacks table
+    # --------------------------------------------------------
+
+    save_snacks_to_db(
+        selected
+    )
+
+    # --------------------------------------------------------
+    # Save Python planner JSON fallback
     # --------------------------------------------------------
 
     SNACKS_PATH.parent.mkdir(
@@ -565,7 +1103,7 @@ def publish(
     )
 
     # --------------------------------------------------------
-    # Save backend resource
+    # Save backend JSON fallback
     # --------------------------------------------------------
 
     BACKEND_SNACKS_PATH.parent.mkdir(
@@ -587,22 +1125,37 @@ def publish(
         len(
             selected
         ),
-        [
-            item[
-                "category"
-            ]
-            for item
-            in selected
-        ],
+    )
+
+    counts = {}
+
+    for item in selected:
+        category = item[
+            "category"
+        ]
+
+        counts[
+            category
+        ] = (
+            counts.get(
+                category,
+                0,
+            )
+            + 1
+        )
+
+    print(
+        "Snack categories:",
+        counts,
     )
 
     print(
-        "Planner snacks:",
+        "Planner fallback:",
         SNACKS_PATH,
     )
 
     print(
-        "Backend snacks:",
+        "Backend fallback:",
         BACKEND_SNACKS_PATH,
     )
 
@@ -613,8 +1166,6 @@ def publish(
 
 if __name__ == "__main__":
 
-    # app.py는 rag 루트에 있으므로,
-    # 이 파일을 module 방식으로 실행하는 것을 전제로 합니다.
     from app import load_env
 
     load_env()
@@ -631,6 +1182,14 @@ if __name__ == "__main__":
                 / "snack-source.json"
             )
 
+            if not source_path.exists():
+                raise ValueError(
+                    (
+                        "snack-source.json이 없습니다. "
+                        "먼저 간식 데이터를 수집해 주세요."
+                    )
+                )
+
             data = json.loads(
                 source_path.read_text(
                     encoding="utf-8"
@@ -645,11 +1204,13 @@ if __name__ == "__main__":
                         ]
                     ):
                         row
+
                     for row
                     in data[
                         "rows"
                     ]
                 },
+
                 data[
                     "retrievedAt"
                 ],
@@ -659,11 +1220,15 @@ if __name__ == "__main__":
             collect()
 
     except Exception as error:
+
         print(
             "Snack collection failed:",
             type(
                 error
             ).__name__,
+            str(
+                error
+            ),
         )
 
         raise SystemExit(1)

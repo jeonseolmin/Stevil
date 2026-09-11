@@ -279,8 +279,20 @@ def serve(corpus, port, model, host='127.0.0.1'):
                         return self.send(503, {'error': str(error), 'code': 'FOOD_NOT_READY'})
                     except (ValueError, KeyError, TypeError):
                         return self.send(400, {'error': '입력 정보 또는 AI 계획 형식을 확인해 주세요.'})
-                    except (OSError, RuntimeError, IndexError):
-                        return self.send(503, {'error': 'AI 계획을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.'})
+                    except (OSError, RuntimeError, IndexError) as error:
+                        print(
+                            '[PLANNER ERROR]',
+                            type(error).__name__,
+                            str(error),
+                            flush=True,
+                        )
+
+                        return self.send(
+                            503,
+                            {
+                                'error': 'AI 계획을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.'
+                            }
+                        )
                 question = data.get('question') if isinstance(data, dict) else None
                 if not isinstance(question, str) or not 2 <= len(question.strip()) <= 1000:
                     raise ValueError()
