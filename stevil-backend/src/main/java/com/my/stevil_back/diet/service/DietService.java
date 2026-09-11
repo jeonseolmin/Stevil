@@ -1,8 +1,10 @@
 package com.my.stevil_back.diet.service;
 
 import com.my.stevil_back.diet.dto.DietDashboardResponse;
+import com.my.stevil_back.diet.dto.DietRecordRequest;
 import com.my.stevil_back.diet.entity.DietRecord;
 import com.my.stevil_back.diet.entity.UserDietGoal;
+import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.DietRecordRepository;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.user.entity.User;
@@ -10,15 +12,16 @@ import com.my.stevil_back.user.entity.UserWeight;
 import com.my.stevil_back.user.repository.UserRepository;
 import com.my.stevil_back.user.repository.UserWeightRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,259 +33,903 @@ public class DietService {
     private final UserDietGoalRepository userDietGoalRepository;
     private final DietRecordRepository dietRecordRepository;
     private final UserRepository userRepository;
+    private final UserWeightRepository userWeightRepository;
+
+    /**
+     * 영양 목표 계산 정책.
+     */
+    private final NutritionPolicy nutritionPolicy;
+
+    /**
+     * application.yaml / application-local.yaml 등에 설정된
+     * 업로드 디렉터리.
+     */
     @Value("${app.upload-dir}")
     private String uploadDir;
 
-    // 💡 체중 연동을 위한 레포지토리 추가
-    private final UserWeightRepository userWeightRepository;
+    // =========================================================
+    // 식단 대시보드
+    // =========================================================
 
-    // 💡 데이터를 새로 저장(save)할 수도 있으므로 읽기/쓰기 트랜잭션으로 변경
     @Transactional
-    public DietDashboardResponse getDashboardData(Long userId, LocalDate targetDate) {
+    public DietDashboardResponse getDashboardData(
+            Long userId,
+            LocalDate targetDate
+    ) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "회원을 찾을 수 없습니다."
+                        )
+                );
 
-        // 1. 유저의 목표 설정 불러오기 (없으면 실제 체중을 기반으로 자동 계산하여 생성!)
-        UserDietGoal goal = userDietGoalRepository.findByUserId(userId)
-                .orElseGet(() -> calculatePersonalizedGoal(user));
+        /*
+         * 목표가 없는 경우 새로 생성한다.
+         *
+         * 기존 목표가 있는 사용자도
+         * 정책 버전이 오래되었으면 Protein First 정책으로
+         * 한 번 갱신한다.
+         */
+        UserDietGoal goal = userDietGoalRepository
+                .findByUserId(userId)
+                .map(existingGoal ->
+                        migrateNutritionPolicyIfNeeded(
+                                user,
+                                existingGoal
+                        )
+                )
+                .orElseGet(() ->
+                        calculatePersonalizedGoal(user)
+                );
 
-        // 2. 해당 날짜(오늘)의 식단 기록 전부 가져오기
-        List<DietRecord> dailyRecords = dietRecordRepository.findByUserIdAndRecordDate(userId, targetDate);
+        /*
+         * 조회 날짜가 null이면 오늘 사용.
+         */
+        LocalDate date = targetDate != null
+                ? targetDate
+                : LocalDate.now();
 
-        // 3. 오늘 하루 총 섭취량 계산용 변수들
+        List<DietRecord> dailyRecords =
+                dietRecordRepository
+                        .findByUserIdAndRecordDate(
+                                userId,
+                                date
+                        );
+
+        // =====================================================
+        // 오늘 섭취량 집계
+        // =====================================================
+
         int totalCalories = 0;
-        double totalCarbs = 0, totalProtein = 0, totalFat = 0;
-        double totalFiber = 0, totalCalcium = 0, totalVitaminC = 0, totalSodium = 0;
+
+        double totalCarbs = 0;
+        double totalProtein = 0;
+        double totalFat = 0;
+
+        double totalFiber = 0;
+        double totalCalcium = 0;
+        double totalVitaminC = 0;
+        double totalSodium = 0;
+
+        // =====================================================
+        // 알레르기
+        // =====================================================
 
         boolean hasWarning = false;
-        String warningFood = "";
-        List<String> detectedAllergens = new ArrayList<>();
-        List<String> userAllergies = goal.getAllergies() != null && !goal.getAllergies().isBlank()
-                ? Arrays.asList(goal.getAllergies().split(","))
-                : new ArrayList<>();
 
-        // 4. 먹은 음식들 영양소 합산 및 알레르기 검사 로직
+        String warningFood = "";
+
+        List<String> detectedAllergens =
+                new ArrayList<>();
+
+        List<String> userAllergies =
+                goal.getAllergies() != null
+                        && !goal.getAllergies().isBlank()
+                        ? Arrays.stream(
+                        goal.getAllergies()
+                        .split(",")
+                )
+                          .map(String::trim)
+                          .filter(allergy ->
+                                  !allergy.isBlank()
+                          )
+                          .collect(Collectors.toList())
+                        : new ArrayList<>();
+
+        // =====================================================
+        // 영양소 합산 + 알레르기 검사
+        // =====================================================
+
         for (DietRecord record : dailyRecords) {
+
             totalCalories += record.getCalories();
+
             totalCarbs += record.getCarbs();
             totalProtein += record.getProtein();
             totalFat += record.getFat();
+
             totalFiber += record.getFiber();
             totalCalcium += record.getCalcium();
             totalVitaminC += record.getVitaminC();
             totalSodium += record.getSodium();
 
-            // 알레르기 검사: 먹은 음식 이름에 알레르기 키워드가 포함되어 있는지 확인
+            /*
+             * 현재 알레르기 검사는 음식명 기반의 단순 검사.
+             *
+             * 추후 식품 성분 데이터가 확보되면
+             * ingredient 기반으로 변경 가능.
+             */
             for (String allergy : userAllergies) {
-                if (record.getFoodName() != null && record.getFoodName().contains(allergy.trim())) {
+
+                if (record.getFoodName() == null) {
+                    continue;
+                }
+
+                if (record.getFoodName().contains(allergy)) {
+
                     hasWarning = true;
-                    warningFood = record.getFoodName();
-                    if (!detectedAllergens.contains(allergy.trim())) {
-                        detectedAllergens.add(allergy.trim());
+
+                    warningFood =
+                            record.getFoodName();
+
+                    if (!detectedAllergens.contains(allergy)) {
+                        detectedAllergens.add(allergy);
                     }
                 }
             }
         }
 
-        // 5. 프론트엔드 리스트용 데이터 변환
-        List<DietDashboardResponse.DietRecordDto> recordDtos = dailyRecords.stream()
-                .map(r -> DietDashboardResponse.DietRecordDto.builder()
-                        .recordId(r.getId())
-                        .mealType(r.getMealType())
-                        .time(r.getRecordTime() != null ? r.getRecordTime().toString() : "")
-                        .foodName(r.getFoodName())
-                        .calories(r.getCalories())
-                        .build())
-                .collect(Collectors.toList());
+        // =====================================================
+        // 오늘 식단 기록 DTO
+        // =====================================================
 
-        // 6. 최종 응답(DTO) 조립
+        List<DietDashboardResponse.DietRecordDto> recordDtos =
+                dailyRecords.stream()
+                        .map(record ->
+                                DietDashboardResponse
+                                        .DietRecordDto
+                                        .builder()
+                                        .recordId(
+                                                record.getId()
+                                        )
+                                        .mealType(
+                                                record.getMealType()
+                                        )
+                                        .time(
+                                                record.getRecordTime()
+                                                        != null
+                                                        ? record.getRecordTime()
+                                                          .toString()
+                                                        : ""
+                                        )
+                                        .foodName(
+                                                record.getFoodName()
+                                        )
+                                        .calories(
+                                                record.getCalories()
+                                        )
+                                        .protein(
+                                                roundOneDecimal(
+                                                        record.getProtein()
+                                                )
+                                        )
+                                        .build()
+                        )
+                        .collect(Collectors.toList());
+
+        // =====================================================
+        // Protein First 계산
+        // =====================================================
+
+        double proteinAchievementRate =
+                nutritionPolicy
+                        .calculateProteinAchievementRate(
+                                totalProtein,
+                                goal.getTargetProtein()
+                        );
+
+        double proteinDeficit =
+                nutritionPolicy
+                        .calculateProteinDeficit(
+                                totalProtein,
+                                goal.getTargetProtein()
+                        );
+
+        // =====================================================
+        // 응답
+        // =====================================================
+
         return DietDashboardResponse.builder()
-                .todayTotalCalories(totalCalories)
-                .targetCalories(goal.getTargetCalories())
-                .todayCarbs(Math.round(totalCarbs * 10) / 10.0)
-                .todayProtein(Math.round(totalProtein * 10) / 10.0)
-                .todayFat(Math.round(totalFat * 10) / 10.0)
 
-                // 알레르기 주의보 데이터
-                .registeredAllergies(userAllergies)
-                .hasAllergyWarning(hasWarning)
-                .warningFoodName(warningFood)
-                .detectedAllergens(detectedAllergens)
+                // 오늘 기본 섭취량
+                .todayTotalCalories(
+                        totalCalories
+                )
+                .targetCalories(
+                        goal.getTargetCalories()
+                )
+                .todayCarbs(
+                        roundOneDecimal(totalCarbs)
+                )
+                .todayProtein(
+                        roundOneDecimal(totalProtein)
+                )
+                .todayFat(
+                        roundOneDecimal(totalFat)
+                )
 
-                // 영양 섭취 상세 상태 (적정/부족/과다 자동 계산)
-                .carbsDetail(calculateStatus(totalCarbs, goal.getTargetCarbs(), false))
-                .proteinDetail(calculateStatus(totalProtein, goal.getTargetProtein(), false))
-                .fatDetail(calculateStatus(totalFat, goal.getTargetFat(), false))
-                .fiberDetail(calculateStatus(totalFiber, goal.getTargetFiber(), false))
-                .calciumDetail(calculateStatus(totalCalcium, goal.getTargetCalcium(), false))
-                .vitaminCDetail(calculateStatus(totalVitaminC, goal.getTargetVitaminC(), false))
-                .sodiumDetail(calculateStatus(totalSodium, goal.getTargetSodium(), true)) // 나트륨은 적게 먹어야 함
+                // Protein First
+                .targetProtein(
+                        goal.getTargetProtein()
+                )
+                .proteinAchievementRate(
+                        proteinAchievementRate
+                )
+                .proteinDeficit(
+                        proteinDeficit
+                )
 
-                .targetWeight(goal.getTargetWeight())
-                .todayRecords(recordDtos)
+                // 알레르기
+                .registeredAllergies(
+                        userAllergies
+                )
+                .hasAllergyWarning(
+                        hasWarning
+                )
+                .warningFoodName(
+                        warningFood
+                )
+                .detectedAllergens(
+                        detectedAllergens
+                )
+
+                // 영양 섭취 상세
+                .carbsDetail(
+                        calculateStatus(
+                                totalCarbs,
+                                goal.getTargetCarbs(),
+                                false
+                        )
+                )
+                .proteinDetail(
+                        calculateStatus(
+                                totalProtein,
+                                goal.getTargetProtein(),
+                                false
+                        )
+                )
+                .fatDetail(
+                        calculateStatus(
+                                totalFat,
+                                goal.getTargetFat(),
+                                false
+                        )
+                )
+                .fiberDetail(
+                        calculateStatus(
+                                totalFiber,
+                                goal.getTargetFiber(),
+                                false
+                        )
+                )
+                .calciumDetail(
+                        calculateStatus(
+                                totalCalcium,
+                                goal.getTargetCalcium(),
+                                false
+                        )
+                )
+                .vitaminCDetail(
+                        calculateStatus(
+                                totalVitaminC,
+                                goal.getTargetVitaminC(),
+                                false
+                        )
+                )
+                .sodiumDetail(
+                        calculateStatus(
+                                totalSodium,
+                                goal.getTargetSodium(),
+                                true
+                        )
+                )
+
+                // 목표
+                .targetWeight(
+                        goal.getTargetWeight()
+                )
+
+                // 오늘 기록
+                .todayRecords(
+                        recordDtos
+                )
+
                 .build();
     }
 
-    // (핵심) 프론트를 위해 "적정/부족/과다"를 판별해주는 헬퍼 메서드
-    private DietDashboardResponse.NutritionDetail calculateStatus(double current, double target, boolean isLessBetter) {
+    // =========================================================
+    // 기존 영양 정책 마이그레이션
+    // =========================================================
+
+    /**
+     * 기존 UserDietGoal 데이터가 VERSION 1 또는 null인 경우
+     * Protein First 정책으로 한 번 변경한다.
+     *
+     * 기존 사용자의 목표 칼로리와 목표 체중은 유지하고,
+     * 탄수화물 / 단백질 / 지방 목표만 새로운 정책으로 계산한다.
+     */
+    private UserDietGoal migrateNutritionPolicyIfNeeded(
+            User user,
+            UserDietGoal goal
+    ) {
+
+        Integer currentVersion =
+                goal.getNutritionPolicyVersion();
+
+        if (currentVersion != null
+                && currentVersion
+                >= NutritionPolicy.CURRENT_VERSION) {
+
+            return goal;
+        }
+
+        UserWeight latestWeight =
+                getLatestWeight(user);
+
+        double currentWeight =
+                resolveCurrentWeight(latestWeight);
+
+        double targetWeight =
+                resolveExistingTargetWeight(
+                        goal,
+                        latestWeight,
+                        currentWeight
+                );
+
+        /*
+         * 기존 사용자의 목표 칼로리는 최대한 보존한다.
+         *
+         * 비정상 값(0 이하)인 경우에만 새로 계산.
+         */
+        int targetCalories =
+                goal.getTargetCalories();
+
+        if (targetCalories <= 0) {
+            targetCalories =
+                    calculateTargetCalories(
+                            currentWeight,
+                            targetWeight
+                    );
+        }
+
+        double targetProtein =
+                nutritionPolicy
+                        .calculateProteinTarget(
+                                currentWeight,
+                                targetWeight
+                        );
+
+        double targetCarbs =
+                nutritionPolicy
+                        .calculateCarbsTarget(
+                                targetCalories,
+                                targetProtein
+                        );
+
+        double targetFat =
+                nutritionPolicy
+                        .calculateFatTarget(
+                                targetCalories,
+                                targetProtein
+                        );
+
+        goal.setTargetWeight(targetWeight);
+
+        goal.setTargetCalories(targetCalories);
+
+        goal.setTargetProtein(targetProtein);
+
+        goal.setTargetCarbs(targetCarbs);
+
+        goal.setTargetFat(targetFat);
+
+        goal.setNutritionPolicyVersion(
+                NutritionPolicy.CURRENT_VERSION
+        );
+
+        /*
+         * @Transactional 상태라 dirty checking으로도 저장되지만,
+         * 정책 변경 의도를 명확히 하기 위해 save 호출.
+         */
+        return userDietGoalRepository.save(goal);
+    }
+
+    // =========================================================
+    // 영양 상태 판정
+    // =========================================================
+
+    /**
+     * 프론트에서 바로 사용할 수 있도록
+     * 적정 / 부족 / 과다 상태를 계산한다.
+     */
+    private DietDashboardResponse.NutritionDetail calculateStatus(
+            double current,
+            double target,
+            boolean isLessBetter
+    ) {
+
         String status = "적정";
 
         if (target > 0) {
-            double ratio = current / target;
+
+            double ratio =
+                    current / target;
+
             if (isLessBetter) {
-                // 나트륨(Sodium)처럼 적을수록 좋은 경우: 100% 넘으면 과다
-                if (ratio > 1.0) status = "과다";
-                else status = "적정";
+
+                /*
+                 * 나트륨처럼 제한량 개념인 경우.
+                 */
+                if (ratio > 1.0) {
+                    status = "과다";
+                } else {
+                    status = "적정";
+                }
+
             } else {
-                // 일반 영양소: 80% 미만은 부족, 120% 초과는 과다
-                if (ratio < 0.8) status = "부족";
-                else if (ratio > 1.2) status = "과다";
+
+                /*
+                 * 일반 영양소.
+                 *
+                 * 80% 미만 -> 부족
+                 * 80~120% -> 적정
+                 * 120% 초과 -> 과다
+                 */
+                if (ratio < 0.8) {
+
+                    status = "부족";
+
+                } else if (ratio > 1.2) {
+
+                    status = "과다";
+                }
             }
         }
 
-        return DietDashboardResponse.NutritionDetail.builder()
-                .currentAmount(Math.round(current * 10) / 10.0)
-                .targetAmount(target)
-                .status(status)
+        return DietDashboardResponse
+                .NutritionDetail
+                .builder()
+                .currentAmount(
+                        roundOneDecimal(current)
+                )
+                .targetAmount(
+                        roundOneDecimal(target)
+                )
+                .status(
+                        status
+                )
                 .build();
     }
 
-    // 💡 실제 체중(UserWeight)을 바탕으로 하루 권장 칼로리 & 탄단지 자동 계산!
-    private UserDietGoal calculatePersonalizedGoal(User user) {
+    // =========================================================
+    // 신규 사용자 영양 목표 생성
+    // =========================================================
 
-        // 회원이 기록한 가장 최근 체중 정보를 꺼내옵니다.
-        UserWeight latestWeight = userWeightRepository.findFirstByUserIdOrderByRecordedAtDesc(user.getId())
+    private UserDietGoal calculatePersonalizedGoal(
+            User user
+    ) {
+
+        UserWeight latestWeight =
+                getLatestWeight(user);
+
+        double currentWeight =
+                resolveCurrentWeight(
+                        latestWeight
+                );
+
+        double targetWeight =
+                resolveTargetWeight(
+                        latestWeight,
+                        currentWeight
+                );
+
+        int targetCalories =
+                calculateTargetCalories(
+                        currentWeight,
+                        targetWeight
+                );
+
+        /*
+         * Protein First
+         *
+         * 1. 단백질 목표를 체중 기반으로 먼저 결정
+         * 2. 남은 칼로리를 탄수화물 / 지방에 배분
+         */
+        double targetProtein =
+                nutritionPolicy
+                        .calculateProteinTarget(
+                                currentWeight,
+                                targetWeight
+                        );
+
+        double targetCarbs =
+                nutritionPolicy
+                        .calculateCarbsTarget(
+                                targetCalories,
+                                targetProtein
+                        );
+
+        double targetFat =
+                nutritionPolicy
+                        .calculateFatTarget(
+                                targetCalories,
+                                targetProtein
+                        );
+
+        UserDietGoal newGoal =
+                UserDietGoal.builder()
+                        .user(user)
+
+                        .targetWeight(
+                                targetWeight
+                        )
+
+                        .targetCalories(
+                                targetCalories
+                        )
+
+                        .targetCarbs(
+                                targetCarbs
+                        )
+
+                        .targetProtein(
+                                targetProtein
+                        )
+
+                        .targetFat(
+                                targetFat
+                        )
+
+                        .targetFiber(
+                                25
+                        )
+
+                        .targetCalcium(
+                                700
+                        )
+
+                        .targetVitaminC(
+                                100
+                        )
+
+                        .targetSodium(
+                                2000
+                        )
+
+                        .allergies(
+                                ""
+                        )
+
+                        .nutritionPolicyVersion(
+                                NutritionPolicy.CURRENT_VERSION
+                        )
+
+                        .build();
+
+        return userDietGoalRepository.save(
+                newGoal
+        );
+    }
+
+    // =========================================================
+    // 체중 / 칼로리 계산
+    // =========================================================
+
+    private UserWeight getLatestWeight(
+            User user
+    ) {
+
+        return userWeightRepository
+                .findFirstByUserIdOrderByRecordedAtDesc(
+                        user.getId()
+                )
                 .orElse(null);
+    }
 
-        // 체중 기록이 전혀 없는 회원을 위한 기본 방어값 (70kg)
-        double currentWeight = (latestWeight != null && latestWeight.getWeight() != null)
-                ? latestWeight.getWeight().doubleValue() : 70.0;
+    /**
+     * 현재 체중.
+     *
+     * 체중 기록이 없는 경우 기존 서비스와 동일하게
+     * 70kg 방어값 사용.
+     */
+    private double resolveCurrentWeight(
+            UserWeight latestWeight
+    ) {
 
-        double targetWeight = (latestWeight != null && latestWeight.getTargetWeight() != null)
-                ? latestWeight.getTargetWeight().doubleValue() : currentWeight - 5.0; // 기본 다이어트 -5kg
+        if (latestWeight != null
+                && latestWeight.getWeight() != null) {
 
-        // --- 다이어트 공식 적용 ---
-        // 1. 기초대사량(BMR) 약식 계산: 체중 * 24
-        double bmr = currentWeight * 24;
-
-        // 2. 하루 총 소비 칼로리(TDEE) = 기초대사량 * 1.3 (일반 활동량 기준)
-        double tdee = bmr * 1.3;
-
-        // 3. 다이어트 목표 칼로리 = 소비 칼로리에서 하루 500kcal 덜 먹기
-        int targetCalories = (int) tdee;
-        if (targetWeight < currentWeight) {
-            targetCalories -= 500;
-        } else if (targetWeight > currentWeight) {
-            targetCalories += 300; // 증량일 경우
+            return latestWeight
+                    .getWeight()
+                    .doubleValue();
         }
 
-        // 건강을 위해 최소 1200kcal 이하는 내려가지 않게 방어
-        if (targetCalories < 1200) targetCalories = 1200;
-
-        // 4. 탄단지 황금비율 계산 (다이어트: 탄 40%, 단 40%, 지 20%)
-        // 탄수화물/단백질은 1g당 4kcal, 지방은 1g당 9kcal
-        double targetCarbs = (targetCalories * 0.4) / 4.0;
-        double targetProtein = (targetCalories * 0.4) / 4.0;
-        double targetFat = (targetCalories * 0.2) / 9.0;
-
-        // 계산된 진짜 맞춤형 데이터를 생성하여 DB에 저장
-        UserDietGoal newGoal = UserDietGoal.builder()
-                .user(user)
-                .targetWeight(targetWeight)
-                .targetCalories(targetCalories)
-                .targetCarbs(Math.round(targetCarbs))
-                .targetProtein(Math.round(targetProtein))
-                .targetFat(Math.round(targetFat))
-                .targetFiber(25)     // 식이섬유 하루 권장량 고정
-                .targetCalcium(700)  // 칼슘 권장량 고정
-                .targetVitaminC(100) // 비타민C 고정
-                .targetSodium(2000)  // 나트륨 최대 허용치 고정
-                .allergies("")       // 추후 유저 알레르기 연동
-                .build();
-
-        return userDietGoalRepository.save(newGoal);
+        return 70.0;
     }
 
-    public Object searchFood(String keyword) {
-        // 프론트엔드가 화면을 테스트할 수 있도록 가짜 데이터를 먼저 넘겨줍니다.
-        List<Map<String, Object>> mockResults = new ArrayList<>();
+    /**
+     * 신규 목표 생성용 목표 체중.
+     */
+    private double resolveTargetWeight(
+            UserWeight latestWeight,
+            double currentWeight
+    ) {
 
-        Map<String, Object> mockFood1 = new HashMap<>();
-        mockFood1.put("foodName", keyword + " 샐러드");
-        mockFood1.put("calories", 150);
-        mockFood1.put("carbs", 10.5);
-        mockFood1.put("protein", 5.0);
-        mockFood1.put("fat", 3.2);
+        if (latestWeight != null
+                && latestWeight.getTargetWeight() != null) {
 
-        Map<String, Object> mockFood2 = new HashMap<>();
-        mockFood2.put("foodName", keyword + " 닭가슴살 볶음밥");
-        mockFood2.put("calories", 450);
-        mockFood2.put("carbs", 60.0);
-        mockFood2.put("protein", 25.0);
-        mockFood2.put("fat", 12.0);
+            return latestWeight
+                    .getTargetWeight()
+                    .doubleValue();
+        }
 
-        mockResults.add(mockFood1);
-        mockResults.add(mockFood2);
+        /*
+         * 기존 서비스와 동일한 기본값.
+         */
+        return Math.max(
+                currentWeight - 5.0,
+                1.0
+        );
+    }
+
+    /**
+     * 기존 UserDietGoal 마이그레이션용.
+     *
+     * 우선순위:
+     *
+     * 1. 최신 UserWeight의 targetWeight
+     * 2. 기존 UserDietGoal의 targetWeight
+     * 3. 현재 체중 -5kg
+     */
+    private double resolveExistingTargetWeight(
+            UserDietGoal goal,
+            UserWeight latestWeight,
+            double currentWeight
+    ) {
+
+        if (latestWeight != null
+                && latestWeight.getTargetWeight() != null) {
+
+            return latestWeight
+                    .getTargetWeight()
+                    .doubleValue();
+        }
+
+        if (goal.getTargetWeight() > 0) {
+            return goal.getTargetWeight();
+        }
+
+        return Math.max(
+                currentWeight - 5.0,
+                1.0
+        );
+    }
+
+    /**
+     * 기존 프로젝트에서 사용하던 칼로리 정책은
+     * 이번 단계에서는 유지한다.
+     *
+     * 추후 BMR/TDEE 정책은 별도로 개선 가능.
+     */
+    private int calculateTargetCalories(
+            double currentWeight,
+            double targetWeight
+    ) {
+
+        // 약식 BMR
+        double bmr =
+                currentWeight * 24;
+
+        // 일반 활동량 기준
+        double tdee =
+                bmr * 1.3;
+
+        int targetCalories =
+                (int) tdee;
+
+        if (targetWeight < currentWeight) {
+
+            // 감량
+            targetCalories -= 500;
+
+        } else if (targetWeight > currentWeight) {
+
+            // 증량
+            targetCalories += 300;
+        }
+
+        /*
+         * 기존 서비스 방어값 유지.
+         */
+        if (targetCalories < 1200) {
+            targetCalories = 1200;
+        }
+
+        return targetCalories;
+    }
+
+    // =========================================================
+    // 음식 검색
+    // =========================================================
+
+    public Object searchFood(
+            String keyword
+    ) {
+
+        /*
+         * 현재 프론트 테스트용 mock 데이터.
+         *
+         * 기존 기능을 그대로 유지한다.
+         */
+        List<Map<String, Object>> mockResults =
+                new ArrayList<>();
+
+        Map<String, Object> mockFood1 =
+                new HashMap<>();
+
+        mockFood1.put(
+                "foodName",
+                keyword + " 샐러드"
+        );
+
+        mockFood1.put(
+                "calories",
+                150
+        );
+
+        mockFood1.put(
+                "carbs",
+                10.5
+        );
+
+        mockFood1.put(
+                "protein",
+                5.0
+        );
+
+        mockFood1.put(
+                "fat",
+                3.2
+        );
+
+        Map<String, Object> mockFood2 =
+                new HashMap<>();
+
+        mockFood2.put(
+                "foodName",
+                keyword + " 닭가슴살 볶음밥"
+        );
+
+        mockFood2.put(
+                "calories",
+                450
+        );
+
+        mockFood2.put(
+                "carbs",
+                60.0
+        );
+
+        mockFood2.put(
+                "protein",
+                25.0
+        );
+
+        mockFood2.put(
+                "fat",
+                12.0
+        );
+
+        mockResults.add(
+                mockFood1
+        );
+
+        mockResults.add(
+                mockFood2
+        );
 
         return mockResults;
     }
 
+    // =========================================================
+    // 식단 기록 저장
+    // =========================================================
+
     @Transactional
     public void addRecord(
             Long userId,
-            com.my.stevil_back.diet.dto.DietRecordRequest request,
+            DietRecordRequest request,
             MultipartFile image
     ) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("가입된 회원이 아닙니다.")
-                );
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "가입된 회원이 아닙니다."
+                                )
+                        );
 
         String imageUrl = null;
 
-        if (image != null && !image.isEmpty()) {
+        // =====================================================
+        // 이미지 저장
+        // =====================================================
+
+        if (image != null
+                && !image.isEmpty()) {
 
             try {
-                Path uploadPath = Paths.get(uploadDir)
-                        .toAbsolutePath()
-                        .normalize();
 
-                Files.createDirectories(uploadPath);
+                Path uploadPath =
+                        Paths.get(uploadDir)
+                                .toAbsolutePath()
+                                .normalize();
 
-                String originalFilename = image.getOriginalFilename();
+                Files.createDirectories(
+                        uploadPath
+                );
 
-                if (originalFilename == null || originalFilename.isBlank()) {
-                    originalFilename = "image";
+                String originalFilename =
+                        image.getOriginalFilename();
+
+                if (originalFilename == null
+                        || originalFilename.isBlank()) {
+
+                    originalFilename =
+                            "image";
                 }
 
-                // ../../ 같은 경로가 파일명으로 들어오는 것을 방지
-                originalFilename = Paths.get(originalFilename)
-                        .getFileName()
-                        .toString();
+                /*
+                 * ../../ 등의 경로 이동 공격 방지.
+                 */
+                originalFilename =
+                        Paths.get(originalFilename)
+                                .getFileName()
+                                .toString();
 
                 String savedFilename =
                         UUID.randomUUID()
                                 + "_diet_"
                                 + originalFilename;
 
-                Path targetPath = uploadPath
-                        .resolve(savedFilename)
-                        .normalize();
+                Path targetPath =
+                        uploadPath
+                                .resolve(savedFilename)
+                                .normalize();
 
-                // upload 디렉터리 밖으로 빠져나가는 경로 방지
+                /*
+                 * 최종 경로가 upload 디렉터리를 벗어나는지 확인.
+                 */
                 if (!targetPath.startsWith(uploadPath)) {
+
                     throw new IllegalArgumentException(
                             "올바르지 않은 파일 경로입니다."
                     );
                 }
 
-                image.transferTo(targetPath.toFile());
+                image.transferTo(
+                        targetPath.toFile()
+                );
 
-                imageUrl = "/api/uploads/" + savedFilename;
+                imageUrl =
+                        "/api/uploads/"
+                                + savedFilename;
 
             } catch (Exception e) {
+
                 throw new RuntimeException(
                         "식단 이미지 업로드 실패",
                         e
@@ -290,35 +937,90 @@ public class DietService {
             }
         }
 
-        DietRecord record = DietRecord.builder()
-                .user(user)
-                .recordDate(
-                        request.getRecordDate() != null
-                                ? request.getRecordDate()
-                                : LocalDate.now()
-                )
-                .recordTime(
-                        request.getRecordTime() != null
-                                ? request.getRecordTime()
-                                : java.time.LocalTime.now()
-                )
-                .mealType(
-                        request.getMealType() != null
-                                ? request.getMealType()
-                                : "기타"
-                )
-                .foodName(request.getFoodName())
-                .imageUrl(imageUrl)
-                .calories(request.getCalories())
-                .carbs(request.getCarbs())
-                .protein(request.getProtein())
-                .fat(request.getFat())
-                .fiber(request.getFiber())
-                .calcium(request.getCalcium())
-                .vitaminC(request.getVitaminC())
-                .sodium(request.getSodium())
-                .build();
+        // =====================================================
+        // DietRecord 생성
+        // =====================================================
 
-        dietRecordRepository.save(record);
+        DietRecord record =
+                DietRecord.builder()
+
+                        .user(user)
+
+                        .recordDate(
+                                request.getRecordDate() != null
+                                        ? request.getRecordDate()
+                                        : LocalDate.now()
+                        )
+
+                        .recordTime(
+                                request.getRecordTime() != null
+                                        ? request.getRecordTime()
+                                        : LocalTime.now()
+                        )
+
+                        .mealType(
+                                request.getMealType() != null
+                                        ? request.getMealType()
+                                        : "기타"
+                        )
+
+                        .foodName(
+                                request.getFoodName()
+                        )
+
+                        .imageUrl(
+                                imageUrl
+                        )
+
+                        .calories(
+                                request.getCalories()
+                        )
+
+                        .carbs(
+                                request.getCarbs()
+                        )
+
+                        .protein(
+                                request.getProtein()
+                        )
+
+                        .fat(
+                                request.getFat()
+                        )
+
+                        .fiber(
+                                request.getFiber()
+                        )
+
+                        .calcium(
+                                request.getCalcium()
+                        )
+
+                        .vitaminC(
+                                request.getVitaminC()
+                        )
+
+                        .sodium(
+                                request.getSodium()
+                        )
+
+                        .build();
+
+        dietRecordRepository.save(
+                record
+        );
+    }
+
+    // =========================================================
+    // 공통 숫자 처리
+    // =========================================================
+
+    private double roundOneDecimal(
+            double value
+    ) {
+
+        return Math.round(
+                value * 10.0
+        ) / 10.0;
     }
 }
