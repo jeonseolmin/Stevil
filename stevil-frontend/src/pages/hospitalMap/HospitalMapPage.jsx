@@ -106,6 +106,8 @@ export default function HospitalMapPage() {
             .map(ad => ad.doctorName?.trim());
 
         // 3. 데이터에 광고 정보 매핑 및 정렬 (SEARCH_TOP인 병원을 맨 위로 이동)
+        // isPartner는 백엔드(/hospitals/search)가 판정해 내려주는 값을 그대로 신뢰한다.
+        // 프론트에서 병원명으로 제휴 여부를 다시 계산하지 않는다.
         const mapped = hospitals.map(hospital => {
             const hName = hospital.name?.trim();
             const isTop = topAdNames.some(name => hName.includes(name));
@@ -114,7 +116,8 @@ export default function HospitalMapPage() {
             return {
                 ...hospital,
                 isSearchTop: isTop,
-                isHighlight: isHighlight
+                isHighlight: isHighlight,
+                isPartner: Boolean(hospital.isPartner)
             };
         });
 
@@ -287,12 +290,19 @@ export default function HospitalMapPage() {
                 hospital.latitude,
                 hospital.longitude
             );
+            const isAd = hospital.isSearchTop || hospital.isHighlight;
+            const markerClassName = [
+                "hospital-map-marker",
+                isAd ? "is-ad" : "",
+                hospital.isPartner ? "is-partner" : "",
+            ].filter(Boolean).join(" ");
+
             const marker = new maps.Marker({
                 map,
                 position,
                 title: hospital.name,
                 icon: {
-                    content: `<span class="hospital-map-marker ${hospital.isSearchTop ? 'is-top' : ''}"><b>${index + 1}</b></span>`,
+                    content: `<span class="${markerClassName}"><b>${index + 1}</b></span>`,
                     anchor: new maps.Point(18, 42),
                 },
             });
@@ -399,10 +409,11 @@ export default function HospitalMapPage() {
                         {processedHospitals.map((hospital, index) => (
                             <li key={`${hospital.name}-${hospital.address}-${index}`}>
                                 <div
-                                    className={`hospital-card 
+                                    className={`hospital-card
                                         ${selectedIndex === index ? "hospital-card--selected" : ""}
                                         ${hospital.isSearchTop ? "hospital-card--search-top" : ""}
                                         ${hospital.isHighlight ? "hospital-card--highlight" : ""}
+                                        ${hospital.isPartner ? "hospital-card--partner" : ""}
                                     `}
                                     role="button"
                                     tabIndex={0}
@@ -418,9 +429,10 @@ export default function HospitalMapPage() {
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
                                             <div>
-                                                {/* 광고 뱃지 노출 영역 */}
-                                                {hospital.isSearchTop && <span className="ad-badge-top">추천 1위</span>}
-                                                {hospital.isHighlight && <span className="ad-badge-highlight">프리미엄</span>}
+                                                {/* 제휴/광고 뱃지 노출 영역 — 의료 품질을 암시하지 않는 중립적 표기만 사용 */}
+                                                {hospital.isPartner && <span className="partner-badge">제휴 병원</span>}
+                                                {hospital.isSearchTop && <span className="ad-badge-top">광고</span>}
+                                                {hospital.isHighlight && <span className="ad-badge-highlight">광고</span>}
                                                 <strong>{hospital.name}</strong>
                                             </div>
                                             {formatDistance(hospital.distanceKm) && (
