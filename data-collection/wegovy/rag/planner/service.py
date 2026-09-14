@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta
 import json
 import os
 import re
+import time
 import uuid
 from urllib.request import Request, urlopen
 
@@ -42,6 +43,14 @@ from planner.nutrition.matching import (
 MINIMUM_MATCHABLE_MEALS = 8
 MINIMUM_GEMINI_ELIGIBLE = 5
 FALLBACK_SEARCH_PER_IDEA = 8
+
+
+# =========================================================
+# Timing (stdlib only; measurement, never a behavior gate)
+# =========================================================
+
+def _log_timing(label, seconds):
+    print(f'[PLANNER TIMING] {label}={seconds:.3f}s', flush=True)
 
 
 # =========================================================
@@ -720,6 +729,8 @@ def generate_suggestions(
     p,
     model,
 ):
+    _gs_t0 = time.perf_counter()
+
     key = os.environ.get(
         "GEMINI_API_KEY"
     )
@@ -750,6 +761,9 @@ def generate_suggestions(
         )
     )
 
+    _gs_t_food = time.perf_counter()
+    _log_timing('food_retrieval', _gs_t_food - _gs_t0)
+
     nutrition_goal = (
         p.get(
             "nutritionGoal"
@@ -776,6 +790,9 @@ def generate_suggestions(
             food_candidates
         )
 
+    _gs_t_matchable = time.perf_counter()
+    _log_timing('matchable_foods', _gs_t_matchable - _gs_t_food)
+
     allowed_foods = {
         str(
             row[
@@ -798,12 +815,18 @@ def generate_suggestions(
         p
     )
 
+    _gs_t_exercise_catalog = time.perf_counter()
+    _log_timing('exercise_catalog', _gs_t_exercise_catalog - _gs_t_matchable)
+
     exercise_retrieval = (
         retrieve_exercise_evidence(
             p,
             limit=5,
         )
     )
+
+    _gs_t_exercise_evidence = time.perf_counter()
+    _log_timing('exercise_retrieval', _gs_t_exercise_evidence - _gs_t_exercise_catalog)
 
     # -----------------------------------------------------
     # User context
@@ -1004,6 +1027,8 @@ def generate_suggestions(
     # Gemini request
     # -----------------------------------------------------
 
+    _gs_t_gemini_start = time.perf_counter()
+
     body = {
         "systemInstruction": {
             "parts": [
@@ -1057,15 +1082,27 @@ def generate_suggestions(
         },
     )
 
+    _gs_t_urlopen_start = time.perf_counter()
+    _log_timing('gemini_request_prep', _gs_t_urlopen_start - _gs_t_gemini_start)
+
     with urlopen(
         request,
         timeout=90,
     ) as response:
-        candidate = json.load(
+        _gs_t_urlopen_done = time.perf_counter()
+        _log_timing('gemini_http', _gs_t_urlopen_done - _gs_t_urlopen_start)
+
+        _gemini_status = response.status
+
+        payload = json.load(
             response
-        )[
+        )
+        candidate = payload[
             "candidates"
         ][0]
+
+    _gs_t_response_parsed = time.perf_counter()
+    _log_timing('gemini_response_parse', _gs_t_response_parsed - _gs_t_urlopen_done)
 
     if (
         candidate.get(
@@ -1103,6 +1140,24 @@ def generate_suggestions(
         raise RuntimeError(
             "입력 조건을 충족하는 식단을 찾지 못했습니다."
         )
+
+    _gs_t_postprocess = time.perf_counter()
+    _log_timing('gemini_postprocess', _gs_t_postprocess - _gs_t_response_parsed)
+    _log_timing('gemini_generate_suggestions', _gs_t_postprocess - _gs_t_gemini_start)
+
+    # No new API call: only reads fields already present in the response
+    # already fetched above. No API key, prompt, or user content is logged.
+    _usage = payload.get('usageMetadata', {})
+    print(
+        '[PLANNER TIMING] gemini_meta '
+        f'status={_gemini_status} model={model} '
+        f'finishReason={candidate.get("finishReason")} '
+        f'candidateCount={len(payload.get("candidates", []))} '
+        f'textLength={len(generated)} '
+        f'promptTokens={_usage.get("promptTokenCount")} '
+        f'outputTokens={_usage.get("candidatesTokenCount")}',
+        flush=True,
+    )
 
     # -----------------------------------------------------
     # Snack validation
@@ -1158,6 +1213,8 @@ def generate_suggestions(
     # -----------------------------------------------------
     # Nutrition matching
     # -----------------------------------------------------
+
+    _gs_t_match_start = time.perf_counter()
 
     if nutrition_goal:
         ids = result.get(
@@ -1290,6 +1347,8 @@ def generate_suggestions(
             eligible_snacks,
         )
 
+    _log_timing('match_week', time.perf_counter() - _gs_t_match_start)
+
     # -----------------------------------------------------
     # Replace Gemini meals with deterministic matched meals
     # -----------------------------------------------------
@@ -1349,6 +1408,8 @@ def generate_suggestions(
                 }
             )
 
+    _gs_t_ground_start = time.perf_counter()
+
     grounded = ground_suggestions(
         result,
         allowed_foods,
@@ -1356,6 +1417,8 @@ def generate_suggestions(
         allowed_exercises,
         exercise_retrieval,
     )
+
+    _log_timing('grounding', time.perf_counter() - _gs_t_ground_start)
 
     if matched:
         for (
@@ -2017,9 +2080,14 @@ def make_plan(
     p,
     model,
 ):
+    _mp_t0 = time.perf_counter()
+
     validate_preferences(
         p
     )
+
+    _mp_t_validated = time.perf_counter()
+    _log_timing('validate_preferences', _mp_t_validated - _mp_t0)
 
     (
         suggestions,
@@ -2029,10 +2097,16 @@ def make_plan(
         model,
     )
 
+    _mp_t_suggested = time.perf_counter()
+    _log_timing('generate_suggestions_total', _mp_t_suggested - _mp_t_validated)
+
     result = schedule(
         p,
         suggestions,
     )
+
+    _mp_t_scheduled = time.perf_counter()
+    _log_timing('schedule', _mp_t_scheduled - _mp_t_suggested)
 
     result[
         "notices"
@@ -2043,8 +2117,13 @@ def make_plan(
         ]
     )
 
-    return complete_nutrition(
+    completed = complete_nutrition(
         p,
         result,
         suggestions,
     )
+
+    _log_timing('complete_nutrition', time.perf_counter() - _mp_t_scheduled)
+    _log_timing('make_plan_total', time.perf_counter() - _mp_t0)
+
+    return completed

@@ -5,7 +5,8 @@ import {
     generateWeek,
     saveWeek,
     loadPlannerProfile,
-    loadSnackCatalog
+    loadSnackCatalog,
+    updatePlannerActivityLevel
 } from "../../api/plannerApi";
 
 import {
@@ -15,12 +16,16 @@ import {
     monday,
     shiftDate,
     validatePlan,
+    hasHighProteinCalorieRatio,
     mealCalories,
     dayNutrition,
     calorieTargetStatus,
     dateKey,
     estimateCalories,
-    defaultExerciseWindow
+    estimatePlannerProteinTarget,
+    defaultExerciseWindow,
+    ACTIVITY_LEVEL_FACTORS,
+    ACTIVITY_FACTOR_TO_LEVEL
 } from "./plannerUtils";
 
 import "./WeeklyPlanner.css";
@@ -121,8 +126,7 @@ function createNutritionGoalFromProfile(
 
     const hasDietCalories =
         Number.isFinite(dietCalories)
-        && dietCalories >= 1000
-        && dietCalories <= 5000;
+        && dietCalories >= 1200;
 
     const proteinPerKg =
         hasDietProtein
@@ -161,6 +165,16 @@ function createNutritionGoalFromProfile(
  * 단백질/칼로리는 Diet 기준으로 동기화한다.
  *
  * 사용자가 Planner에서 입력한 기준 체중은 유지한다.
+ *
+ * 단백질은 Diet의 절대값(targetProtein)을 그대로 현재 체중으로
+ * 나누지 않는다(stale-backsolve). targetProtein은 backend가
+ * referenceWeight(목표 체중이 더 낮은 유효한 값이면 그 체중, 아니면
+ * 현재 체중)로 계산했을 수 있어서, 이걸 그대로 currentWeight로 나누면
+ * changeGoal()의 weightKg 분기에서 이미 고친 것과 같은 왜곡된
+ * proteinPerKg(예: 2.5g/kg)가 다시 생긴다(Phase12/Phase15D). 대신
+ * changeGoal()과 동일하게 estimatePlannerProteinTarget()으로 현재
+ * 체중 기준 절대 단백질을 다시 계산해서 나눈다 -- 1.2 상수를 새로
+ * 하드코딩하지 않고 그 helper의 정책을 그대로 재사용한다.
  */
 function syncNutritionGoalWithProfile(
     goal,
@@ -197,8 +211,15 @@ function syncNutritionGoalWithProfile(
 
     const hasDietCalories =
         Number.isFinite(dietCalories)
-        && dietCalories >= 1000
-        && dietCalories <= 5000;
+        && dietCalories >= 1200;
+
+    const recalculatedProtein =
+        hasDietProtein
+            ? estimatePlannerProteinTarget(
+                currentWeight,
+                Number(profile.targetWeight)
+            )
+            : null;
 
     return {
         ...goal,
@@ -207,8 +228,8 @@ function syncNutritionGoalWithProfile(
         currentWeight,
 
         proteinPerKg:
-            hasDietProtein
-                ? dietProtein / currentWeight
+            recalculatedProtein != null
+                ? recalculatedProtein / currentWeight
                 : goal.proteinPerKg,
 
         calories:
@@ -470,6 +491,19 @@ export default function WeeklyPlanner({
     ] =
         useState(true);
 
+    /**
+     * 사용자가 Planner에서 영양 계산 입력(체중/활동 수준)을 직접 바꿔서
+     * 로컬 protein/calories가 Diet의 원본 값과 달라졌는지 여부(Phase12).
+     * true가 되면, 이후 다른 입력을 바꾸더라도 Diet의 원본 targetProtein/
+     * targetCalories로 조용히 되돌리지 않는다. 세션 로컬 상태이며
+     * 새로고침/주 변경 시 초기화된다(DB에 저장하지 않음).
+     */
+    const [
+        plannerNutritionOverride,
+        setPlannerNutritionOverride
+    ] =
+        useState(false);
+
     const [
         events,
         setEvents
@@ -561,6 +595,9 @@ export default function WeeklyPlanner({
     const snackPanel =
         useRef(null);
 
+    const lastNutritionGoal =
+        useRef(null);
+
     const [
         focusSnack,
         setFocusSnack
@@ -576,8 +613,7 @@ export default function WeeklyPlanner({
         Number(profile?.targetProtein) > 0;
 
     const hasDietCalorieGoal =
-        Number(profile?.targetCalories) >= 1000
-        && Number(profile?.targetCalories) <= 5000;
+        Number(profile?.targetCalories) >= 1200;
 
     const hasDietGoal =
         hasDietProteinGoal
@@ -879,8 +915,28 @@ export default function WeeklyPlanner({
                             ?.nutritionGoal
                     );
 
+                    /*
+                     * Phase15D: backend에 저장된 activityLevel이 있으면
+                     * 그 값으로 초기화한다. 미설정(null)이면 기존과 같은
+                     * 로컬 preview 기본값(1.4)을 쓰되, 이건 "backend에
+                     * 설정된 값"이 아니라 "화면 임시 기본값"일 뿐이다 --
+                     * 실제 설정 여부는 이 값이 아니라 profile.activityLevel
+                     * 자체(null 여부)로 판단한다.
+                     */
                     setActivity(
-                        1.4
+                        ACTIVITY_LEVEL_FACTORS[
+                            effectiveProfile?.activityLevel
+                        ]
+                        || 1.4
+                    );
+
+                    /*
+                     * Phase12: override도 세션 로컬 상태이므로
+                     * 새로고침/주 변경 시 activity와 함께 초기화한다.
+                     * Diet의 원본 목표를 다시 authoritative source로 사용한다.
+                     */
+                    setPlannerNutritionOverride(
+                        false
                     );
 
                     setEvents(
@@ -1616,6 +1672,17 @@ export default function WeeklyPlanner({
                 return;
             }
 
+            /*
+             * 체중/단백질/칼로리 값이 실제로 달라졌을 때만
+             * confirmed를 다시 false로 되돌린다.
+             *
+             * 같은 값을 다시 입력한 것뿐이라면(문자열/숫자 타입 차이 포함)
+             * 이미 확인한 상태를 그대로 유지한다.
+             */
+            const valueChanged =
+                key !== "confirmed"
+                && Number(goal[key]) !== Number(value);
+
             let next = {
                 ...goal,
 
@@ -1625,26 +1692,65 @@ export default function WeeklyPlanner({
                 confirmed:
                     key === "confirmed"
                         ? value
-                        : false
+                        : (
+                            valueChanged
+                                ? false
+                                : goal.confirmed
+                        )
             };
 
             /*
-             * 기준 체중을 직접 변경해도
-             * Diet의 targetProtein 자체는 변하지 않는다.
+             * 체중을 실제로 바꾼 경우(Phase12):
+             * Diet의 targetProtein(체중 변경 전 절대값)을 그대로
+             * weightKg로 나누지 않는다. 대신 NutritionPolicy와 동일한
+             * 1.2g/kg 정책을 새 체중 기준으로 다시 계산한다.
+             * Diet 단백질 목표가 없는 사용자는 proteinPerKg를 직접
+             * 입력하므로 건드리지 않는다.
              *
-             * 그래서 새로운 체중 기준으로
-             * proteinPerKg만 다시 계산한다.
+             * 칼로리도 새 체중 + 현재 활동 수준 기준으로 함께
+             * 다시 추정해서, Diet 계산 당시 체중의 stale한 값이
+             * 남지 않게 한다.
+             *
+             * 이 시점부터 plannerNutritionOverride=true가 되고,
+             * 이후에는 (아래) Diet 원본 값으로 조용히 되돌리지 않는다.
              */
-            if (
+            const weightActuallyChanged =
                 key === "weightKg"
-                && hasDietProteinGoal
-                && Number(value) > 0
-            ) {
+                && valueChanged
+                && Number(value) > 0;
 
-                next.proteinPerKg =
-                    Number(
-                        profile.targetProtein
-                    ) / Number(value);
+            if (weightActuallyChanged) {
+
+                setPlannerNutritionOverride(true);
+
+                if (hasDietProteinGoal) {
+
+                    const recalculatedProtein =
+                        estimatePlannerProteinTarget(
+                            Number(value),
+                            Number(profile?.targetWeight)
+                        );
+
+                    if (recalculatedProtein != null) {
+
+                        next.proteinPerKg =
+                            recalculatedProtein
+                            / Number(value);
+                    }
+                }
+
+                const recalculatedCalories =
+                    estimateCalories(
+                        Number(value),
+                        profile,
+                        activity
+                    );
+
+                if (recalculatedCalories != null) {
+
+                    next.calories =
+                        recalculatedCalories;
+                }
             }
 
             /*
@@ -1666,8 +1772,18 @@ export default function WeeklyPlanner({
                     || 0;
             }
 
+            /*
+             * override(체중/활동 수준 변경으로 이미 Planner local
+             * 값을 다시 계산한 상태)가 시작되기 전까지만 Diet의
+             * 원본 칼로리 값을 그대로 사용한다.
+             *
+             * override가 시작된 뒤에는 이 입력이 weightKg가 아니어도
+             * (예: confirmed 체크) Diet의 원본 값으로 되돌리지 않는다.
+             */
             if (
                 hasDietCalorieGoal
+                && !plannerNutritionOverride
+                && !weightActuallyChanged
             ) {
 
                 next.calories =
@@ -2472,6 +2588,7 @@ export default function WeeklyPlanner({
                             <p className="planner-help">
                                 현재는 같은 날 기상·취침하는 일정을 지원해요.
                                 시간은 한국 시간 기준입니다.
+                                추천 시간이 이미 입력되어 있으니 필요할 때만 수정하세요.
                             </p>
 
                         </fieldset>
@@ -2479,11 +2596,16 @@ export default function WeeklyPlanner({
 
                         {/* 운동 / 영양 */}
 
-                        <fieldset disabled={!!busy}>
+                        <details
+                            className="planner-detail-disclosure planner-settings-disclosure"
+                            open={!!goal}
+                        >
 
-                            <legend>
-                                02 · 운동과 식사 선호
-                            </legend>
+                            <summary>
+                                02 · 운동과 식사 선호 (선택, 건너뛰어도 기본값으로 진행돼요)
+                            </summary>
+
+                        <fieldset disabled={!!busy}>
 
 
                             <div className="planner-goal-settings">
@@ -2495,11 +2617,24 @@ export default function WeeklyPlanner({
                                         onChange={
                                             event => {
 
+                                                /*
+                                                 * Phase12: 목표 사용을 끄거나 다시 켜면
+                                                 * override도 함께 초기화해서, 다시 켰을 때
+                                                 * Diet의 원본 값을 authoritative source로
+                                                 * 사용하는 초기 상태부터 시작한다.
+                                                 */
+                                                setPlannerNutritionOverride(
+                                                    false
+                                                );
+
                                                 if (
                                                     !event
                                                         .target
                                                         .checked
                                                 ) {
+
+                                                    lastNutritionGoal.current =
+                                                        goal;
 
                                                     update(
                                                         "nutritionGoal",
@@ -2509,7 +2644,7 @@ export default function WeeklyPlanner({
                                                     return;
                                                 }
 
-                                                const next =
+                                                const derived =
                                                     createNutritionGoalFromProfile(
                                                         profile,
                                                         activity
@@ -2533,6 +2668,32 @@ export default function WeeklyPlanner({
                                                         confirmed:
                                                             false
                                                     };
+
+                                                /*
+                                                 * 방금 껐던 목표를 다시 켠 것뿐이고
+                                                 * 체중/단백질/칼로리 값이 그대로라면
+                                                 * 이전에 확인했던 상태를 되살린다.
+                                                 *
+                                                 * 값이 실제로 달라졌다면 confirmed를
+                                                 * 임의로 true로 만들지 않는다.
+                                                 */
+                                                const snapshot =
+                                                    lastNutritionGoal.current;
+
+                                                const unchanged =
+                                                    snapshot
+                                                    && Number(snapshot.weightKg) === Number(derived.weightKg)
+                                                    && Number(snapshot.proteinPerKg) === Number(derived.proteinPerKg)
+                                                    && Number(snapshot.calories) === Number(derived.calories);
+
+                                                const next =
+                                                    unchanged
+                                                        ? {
+                                                            ...derived,
+                                                            confirmed:
+                                                                snapshot.confirmed
+                                                        }
+                                                        : derived;
 
                                                 update(
                                                     "nutritionGoal",
@@ -2709,8 +2870,7 @@ export default function WeeklyPlanner({
 
                                                     <input
                                                         type="number"
-                                                        min="1000"
-                                                        max="5000"
+                                                        min="1200"
                                                         step="1"
                                                         required
                                                         disabled={
@@ -2739,12 +2899,37 @@ export default function WeeklyPlanner({
                                                     활동 수준
 
                                                     <select
-                                                        disabled={
-                                                            hasDietCalorieGoal
-                                                        }
                                                         value={activity}
+                                                        disabled={busy === "activity"}
                                                         onChange={
                                                             event => {
+
+                                                                /*
+                                                                 * Phase12: 활동 수준은 Diet 목표
+                                                                 * 존재 여부와 관계없이 항상 직접
+                                                                 * 선택할 수 있다.
+                                                                 *
+                                                                 * Phase15D: 이제 activityLevel은
+                                                                 * backend User에도 저장되는 값이라,
+                                                                 * 로컬 state만 바꾸지 않고 PATCH
+                                                                 * /api/planner/profile/activity-level로
+                                                                 * 먼저 저장한 뒤 그 응답(최신
+                                                                 * PlannerProfileResponse)을 기준으로
+                                                                 * 화면을 갱신한다. 저장이 끝나기
+                                                                 * 전까지는 select를 잠그고, 실패하면
+                                                                 * activity/profile을 그대로 둬서(=
+                                                                 * 바꾸지 않아서) UI와 backend가
+                                                                 * 어긋나는 상태를 만들지 않는다.
+                                                                 *
+                                                                 * 이 endpoint는 activityLevel만
+                                                                 * 저장한다 -- targetCalories는 이
+                                                                 * 요청으로 절대 바뀌지 않는다.
+                                                                 */
+                                                                if (
+                                                                    operation.current
+                                                                ) {
+                                                                    return;
+                                                                }
 
                                                                 const value =
                                                                     Number(
@@ -2753,50 +2938,135 @@ export default function WeeklyPlanner({
                                                                             .value
                                                                     );
 
-                                                                setActivity(
-                                                                    value
-                                                                );
+                                                                const level =
+                                                                    ACTIVITY_FACTOR_TO_LEVEL[
+                                                                        value
+                                                                    ];
 
                                                                 if (
-                                                                    autoCalories
-                                                                    &&
-                                                                    !hasDietCalorieGoal
+                                                                    !level
                                                                 ) {
-
-                                                                    update(
-                                                                        "nutritionGoal",
-                                                                        {
-                                                                            ...goal,
-
-                                                                            calories:
-                                                                                estimateCalories(
-                                                                                    goal.weightKg,
-                                                                                    profile,
-                                                                                    value
-                                                                                )
-                                                                                || 0,
-
-                                                                            confirmed:
-                                                                                false
-                                                                        }
-                                                                    );
+                                                                    return;
                                                                 }
+
+                                                                operation.current =
+                                                                    true;
+
+                                                                setBusy(
+                                                                    "activity"
+                                                                );
+
+                                                                setError(
+                                                                    ""
+                                                                );
+
+                                                                updatePlannerActivityLevel(
+                                                                    level
+                                                                ).then(
+                                                                    updatedProfile => {
+
+                                                                        setProfile(
+                                                                            updatedProfile
+                                                                        );
+
+                                                                        setActivity(
+                                                                            value
+                                                                        );
+
+                                                                        setPlannerNutritionOverride(
+                                                                            true
+                                                                        );
+
+                                                                        /*
+                                                                         * backend가 authoritative
+                                                                         * recommendation source다
+                                                                         * (Phase15D). recommendedCalories를
+                                                                         * 계산할 수 없는 경우에만
+                                                                         * 기존처럼 frontend
+                                                                         * estimateCalories()로
+                                                                         * local preview를 만든다.
+                                                                         */
+                                                                        const recalculatedCalories =
+                                                                            updatedProfile
+                                                                                ?.recommendedCalories
+                                                                            ?? estimateCalories(
+                                                                                goal.weightKg,
+                                                                                updatedProfile,
+                                                                                value
+                                                                            );
+
+                                                                        if (
+                                                                            recalculatedCalories != null
+                                                                            && recalculatedCalories !== goal.calories
+                                                                        ) {
+
+                                                                            update(
+                                                                                "nutritionGoal",
+                                                                                {
+                                                                                    ...goal,
+
+                                                                                    calories:
+                                                                                        recalculatedCalories,
+
+                                                                                    confirmed:
+                                                                                        false
+                                                                                }
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                ).catch(
+                                                                    err => {
+
+                                                                        setError(
+                                                                            err
+                                                                                .response
+                                                                                ?.data
+                                                                                ?.message
+                                                                            ||
+                                                                            err.message
+                                                                            ||
+                                                                            "활동 수준을 저장하지 못했어요."
+                                                                        );
+                                                                    }
+                                                                ).finally(
+                                                                    () => {
+
+                                                                        operation.current =
+                                                                            false;
+
+                                                                        setBusy(
+                                                                            ""
+                                                                        );
+                                                                    }
+                                                                );
                                                             }
                                                         }
                                                     >
                                                         <option value={1.4}>
-                                                            낮음 · 1.4배
+                                                            낮은 활동량
                                                         </option>
 
                                                         <option value={1.6}>
-                                                            보통 · 1.6배
+                                                            보통 활동량
                                                         </option>
 
                                                         <option value={1.8}>
-                                                            높음 · 1.8배
+                                                            높은 활동량
                                                         </option>
                                                     </select>
                                                 </label>
+
+                                                {
+                                                    profile
+                                                        ?.activityLevel
+                                                    == null
+                                                    && (
+                                                        <p className="planner-help">
+                                                            아직 활동 수준이 설정되어 있지 않아요.
+                                                            선택하면 저장됩니다.
+                                                        </p>
+                                                    )
+                                                }
 
                                             </div>
 
@@ -2894,6 +3164,54 @@ export default function WeeklyPlanner({
                                             }
 
 
+                                            {/*
+                                             * Phase15D: recommendedCalories는 현재 profile +
+                                             * activity 기준 Stevil "참고" 값이며, 위에서 보여준
+                                             * targetCalories/추정 열량("실제 사용값")과는 별개다.
+                                             * 자동으로 적용하지 않고 표시만 한다(적용 버튼은
+                                             * targetCalories mutation API가 아직 없어 Phase15E로
+                                             * 미룸).
+                                             */}
+                                            {
+                                                profile
+                                                    ?.recommendedCalories
+                                                != null
+                                                && (
+                                                    <p className="planner-help">
+                                                        현재 정보 기준 Stevil 권장{" "}
+                                                        <strong>
+                                                            {
+                                                                Number(
+                                                                    profile
+                                                                        .recommendedCalories
+                                                                ).toLocaleString()
+                                                            } kcal
+                                                        </strong>
+                                                        {
+                                                            hasDietCalorieGoal
+                                                                ? " (참고용 · 현재 목표는 위 식단 관리 기준 값을 그대로 사용합니다)"
+                                                                : " (참고용)"
+                                                        }
+                                                    </p>
+                                                )
+                                            }
+
+                                            {
+                                                profile
+                                                    ?.recommendedCalories
+                                                == null
+                                                && profile
+                                                    ?.activityLevel
+                                                == null
+                                                && (
+                                                    <p className="planner-help">
+                                                        활동 수준을 설정하면 Stevil 권장 열량을
+                                                        보여드려요.
+                                                    </p>
+                                                )
+                                            }
+
+
                                             <p className="planner-help">
                                                 현재 Planner 단백질 목표{" "}
                                                 <strong>
@@ -2910,6 +3228,18 @@ export default function WeeklyPlanner({
                                                         : " Diet 목표가 없을 때만 Planner 입력값을 사용합니다."
                                                 }
                                             </p>
+
+
+                                            {
+                                                hasHighProteinCalorieRatio(goal)
+                                                && (
+                                                    <p className="planner-help">
+                                                        현재 단백질 목표가 전체 목표 칼로리에서
+                                                        차지하는 비중이 Stevil의 일반 관리 기준보다
+                                                        높습니다. Diet에서 설정한 목표를 참고해 주세요.
+                                                    </p>
+                                                )
+                                            }
 
 
                                             <label className="planner-goal-confirm">
@@ -3253,14 +3583,18 @@ export default function WeeklyPlanner({
 
                         </fieldset>
 
+                        </details>
+
 
                         {/* 고정 일정 */}
 
-                        <fieldset disabled={!!busy}>
+                        <details className="planner-detail-disclosure planner-settings-disclosure">
 
-                            <legend>
-                                03 · 이미 정해진 일정
-                            </legend>
+                            <summary>
+                                03 · 이미 정해진 일정 (선택, 건너뛰어도 기본값으로 진행돼요)
+                            </summary>
+
+                        <fieldset disabled={!!busy}>
 
                             <p className="planner-help">
                                 업무·수업 시간을 등록하세요.
@@ -3550,6 +3884,8 @@ export default function WeeklyPlanner({
                             </button>
 
                         </fieldset>
+
+                        </details>
 
 
                         <label className="planner-consent">

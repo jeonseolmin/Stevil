@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Stevil Backend",
+      "request": "launch",
+      "mainClass": "com.my.stevil_back.StevilBackApplication",
+      "cwd": "${workspaceFolder}/stevil-backend",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

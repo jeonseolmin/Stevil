@@ -107,6 +107,9 @@
 .planner-detail-meta b { color:#485f44; margin-left:8px; font-weight:500; }
 .planner-edit-disclosure { padding-bottom:0; }
 .planner-edit-disclosure fieldset { margin:14px 0 0; }
+.planner-settings-disclosure { border-top:0; padding:0 0 20px; }
+.planner-settings-disclosure summary { font-size:14px; font-weight:600; }
+.planner-settings-disclosure fieldset { margin:16px 0 0; }
 .planner-workout-summary { margin:20px 0; font-size:13px; color:#698061; line-height:1.8; }
 .planner-workout-summary > span { padding:5px 10px; border-radius:8px; background:#eff5e9; font-size:11px; }
 @media(max-width:600px) { .planner-detail { padding:18px; }.planner-detail-nutrients { flex-direction:column; }.planner-energy { flex-direction:row; align-items:center; justify-content:space-between; }.planner-detail-nutrients .planner-macros > span { padding:12px; }.planner-detail-heading h3 { font-size:18px; } }

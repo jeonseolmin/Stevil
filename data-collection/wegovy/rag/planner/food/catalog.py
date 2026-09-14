@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import re
 import sqlite3
+import time
 from urllib.request import urlopen
 from retrieval.hybrid import VectorIndex
 
@@ -93,18 +94,24 @@ class FoodCatalog:
         if preferences.get('allergies', '').strip() not in ('', '없음', '없어요', '해당 없음'):
             raise FoodUnavailable('현재 식품 DB는 알레르기 성분을 검증할 수 없어 자동 식단을 만들 수 없어요. 알레르기 정보를 지우지 말고 전문가에게 식단을 확인해 주세요.')
         query = '일주일 식사 밥 한 끼 메뉴 ' + preferences.get('preferences', '')
+        _t_rank_start = time.perf_counter()
         try:
             ranked = self.index.rank(query, limit=len(self.rows))
         except (OSError, ValueError, KeyError):
             raise FoodUnavailable('식품 검색 연결에 실패했어요. 잠시 후 다시 시도해 주세요.') from None
+        print(f'[PLANNER TIMING] food_retrieval.vector_rank={time.perf_counter() - _t_rank_start:.3f}s', flush=True)
+        _t_post_start = time.perf_counter()
         # Side dishes/desserts alone are not complete meal candidates.
         selected = [self.rows[key] for key, _ in ranked if not processed_meat(self.rows[key]) and self.rows[key].get('RCP_PAT2') in ('밥', '일품') and (not preferences.get('nutritionGoal') or recipe_nutrition(self.rows[key]) is not None)]
         selected = diverse_recipe_candidates(selected)
+        print(f'[PLANNER TIMING] food_retrieval.postprocess={time.perf_counter() - _t_post_start:.3f}s', flush=True)
         if (NUTRIENT_ROOT / 'foods.sqlite3').exists():
+            _t_nutrient_start = time.perf_counter()
             try:
                 meals = NutrientCatalog().retrieve_meals(preferences)
             except (OSError, ValueError, KeyError, sqlite3.Error):
                 raise FoodUnavailable('추가 영양정보 검색이 준비되지 않았어요. 수집과 임베딩 상태를 확인해 주세요.') from None
+            print(f'[PLANNER TIMING] food_retrieval.nutrient_catalog={time.perf_counter() - _t_nutrient_start:.3f}s', flush=True)
             if meals:
                 selected = selected[:max(12, 40-len(meals))] + meals
             else:

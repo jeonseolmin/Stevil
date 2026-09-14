@@ -2,7 +2,6 @@ package com.my.stevil_back.planner.dto;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
 public record NutritionGoal(
@@ -34,9 +33,11 @@ public record NutritionGoal(
 
         /**
          * 하루 목표 열량.
+         *
+         * Stevil 내부 서비스 정책상 하한만 둔다(의료적 안전기준 아님).
+         * 상한은 두지 않는다.
          */
-        @Min(1000)
-        @Max(5000)
+        @Min(1200)
         int calories,
 
         /**

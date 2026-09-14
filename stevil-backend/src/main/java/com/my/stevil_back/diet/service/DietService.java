@@ -391,6 +391,9 @@ public class DietService {
          * 기존 사용자의 목표 칼로리는 최대한 보존한다.
          *
          * 비정상 값(0 이하)인 경우에만 새로 계산.
+         *
+         * 보존하는 값이라도 Stevil 서비스 하한(1200kcal)보다 낮으면
+         * 그 값만 1200으로 올린다. 재계산은 하지 않는다.
          */
         int targetCalories =
                 goal.getTargetCalories();
@@ -401,6 +404,8 @@ public class DietService {
                             currentWeight,
                             targetWeight
                     );
+        } else if (targetCalories < 1200) {
+            targetCalories = 1200;
         }
 
         double targetProtein =
