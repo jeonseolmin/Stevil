@@ -5,7 +5,8 @@ import {
     generateWeek,
     saveWeek,
     loadPlannerProfile,
-    loadSnackCatalog
+    loadSnackCatalog,
+    updatePlannerActivityLevel
 } from "../../api/plannerApi";
 
 import {
@@ -22,7 +23,9 @@ import {
     dateKey,
     estimateCalories,
     estimatePlannerProteinTarget,
-    defaultExerciseWindow
+    defaultExerciseWindow,
+    ACTIVITY_LEVEL_FACTORS,
+    ACTIVITY_FACTOR_TO_LEVEL
 } from "./plannerUtils";
 
 import "./WeeklyPlanner.css";
@@ -162,6 +165,16 @@ function createNutritionGoalFromProfile(
  * 단백질/칼로리는 Diet 기준으로 동기화한다.
  *
  * 사용자가 Planner에서 입력한 기준 체중은 유지한다.
+ *
+ * 단백질은 Diet의 절대값(targetProtein)을 그대로 현재 체중으로
+ * 나누지 않는다(stale-backsolve). targetProtein은 backend가
+ * referenceWeight(목표 체중이 더 낮은 유효한 값이면 그 체중, 아니면
+ * 현재 체중)로 계산했을 수 있어서, 이걸 그대로 currentWeight로 나누면
+ * changeGoal()의 weightKg 분기에서 이미 고친 것과 같은 왜곡된
+ * proteinPerKg(예: 2.5g/kg)가 다시 생긴다(Phase12/Phase15D). 대신
+ * changeGoal()과 동일하게 estimatePlannerProteinTarget()으로 현재
+ * 체중 기준 절대 단백질을 다시 계산해서 나눈다 -- 1.2 상수를 새로
+ * 하드코딩하지 않고 그 helper의 정책을 그대로 재사용한다.
  */
 function syncNutritionGoalWithProfile(
     goal,
@@ -200,6 +213,14 @@ function syncNutritionGoalWithProfile(
         Number.isFinite(dietCalories)
         && dietCalories >= 1200;
 
+    const recalculatedProtein =
+        hasDietProtein
+            ? estimatePlannerProteinTarget(
+                currentWeight,
+                Number(profile.targetWeight)
+            )
+            : null;
+
     return {
         ...goal,
 
@@ -207,8 +228,8 @@ function syncNutritionGoalWithProfile(
         currentWeight,
 
         proteinPerKg:
-            hasDietProtein
-                ? dietProtein / currentWeight
+            recalculatedProtein != null
+                ? recalculatedProtein / currentWeight
                 : goal.proteinPerKg,
 
         calories:
@@ -894,8 +915,19 @@ export default function WeeklyPlanner({
                             ?.nutritionGoal
                     );
 
+                    /*
+                     * Phase15D: backend에 저장된 activityLevel이 있으면
+                     * 그 값으로 초기화한다. 미설정(null)이면 기존과 같은
+                     * 로컬 preview 기본값(1.4)을 쓰되, 이건 "backend에
+                     * 설정된 값"이 아니라 "화면 임시 기본값"일 뿐이다 --
+                     * 실제 설정 여부는 이 값이 아니라 profile.activityLevel
+                     * 자체(null 여부)로 판단한다.
+                     */
                     setActivity(
-                        1.4
+                        ACTIVITY_LEVEL_FACTORS[
+                            effectiveProfile?.activityLevel
+                        ]
+                        || 1.4
                     );
 
                     /*
@@ -2868,19 +2900,37 @@ export default function WeeklyPlanner({
 
                                                     <select
                                                         value={activity}
+                                                        disabled={busy === "activity"}
                                                         onChange={
                                                             event => {
 
                                                                 /*
                                                                  * Phase12: 활동 수준은 Diet 목표
                                                                  * 존재 여부와 관계없이 항상 직접
-                                                                 * 선택할 수 있다. 변경 시에는 항상
-                                                                 * 현재 Planner 체중(goal.weightKg,
-                                                                 * stale한 profile.weightKg 아님)
-                                                                 * 기준으로 칼로리를 다시 추정하고,
-                                                                 * override를 시작해서 이후 Diet의
-                                                                 * 원본 값으로 되돌아가지 않게 한다.
+                                                                 * 선택할 수 있다.
+                                                                 *
+                                                                 * Phase15D: 이제 activityLevel은
+                                                                 * backend User에도 저장되는 값이라,
+                                                                 * 로컬 state만 바꾸지 않고 PATCH
+                                                                 * /api/planner/profile/activity-level로
+                                                                 * 먼저 저장한 뒤 그 응답(최신
+                                                                 * PlannerProfileResponse)을 기준으로
+                                                                 * 화면을 갱신한다. 저장이 끝나기
+                                                                 * 전까지는 select를 잠그고, 실패하면
+                                                                 * activity/profile을 그대로 둬서(=
+                                                                 * 바꾸지 않아서) UI와 backend가
+                                                                 * 어긋나는 상태를 만들지 않는다.
+                                                                 *
+                                                                 * 이 endpoint는 activityLevel만
+                                                                 * 저장한다 -- targetCalories는 이
+                                                                 * 요청으로 절대 바뀌지 않는다.
                                                                  */
+                                                                if (
+                                                                    operation.current
+                                                                ) {
+                                                                    return;
+                                                                }
+
                                                                 const value =
                                                                     Number(
                                                                         event
@@ -2888,55 +2938,135 @@ export default function WeeklyPlanner({
                                                                             .value
                                                                     );
 
-                                                                setActivity(
-                                                                    value
-                                                                );
-
-                                                                setPlannerNutritionOverride(
-                                                                    true
-                                                                );
-
-                                                                const recalculatedCalories =
-                                                                    estimateCalories(
-                                                                        goal.weightKg,
-                                                                        profile,
+                                                                const level =
+                                                                    ACTIVITY_FACTOR_TO_LEVEL[
                                                                         value
-                                                                    );
+                                                                    ];
 
                                                                 if (
-                                                                    recalculatedCalories != null
-                                                                    && recalculatedCalories !== goal.calories
+                                                                    !level
                                                                 ) {
-
-                                                                    update(
-                                                                        "nutritionGoal",
-                                                                        {
-                                                                            ...goal,
-
-                                                                            calories:
-                                                                                recalculatedCalories,
-
-                                                                            confirmed:
-                                                                                false
-                                                                        }
-                                                                    );
+                                                                    return;
                                                                 }
+
+                                                                operation.current =
+                                                                    true;
+
+                                                                setBusy(
+                                                                    "activity"
+                                                                );
+
+                                                                setError(
+                                                                    ""
+                                                                );
+
+                                                                updatePlannerActivityLevel(
+                                                                    level
+                                                                ).then(
+                                                                    updatedProfile => {
+
+                                                                        setProfile(
+                                                                            updatedProfile
+                                                                        );
+
+                                                                        setActivity(
+                                                                            value
+                                                                        );
+
+                                                                        setPlannerNutritionOverride(
+                                                                            true
+                                                                        );
+
+                                                                        /*
+                                                                         * backend가 authoritative
+                                                                         * recommendation source다
+                                                                         * (Phase15D). recommendedCalories를
+                                                                         * 계산할 수 없는 경우에만
+                                                                         * 기존처럼 frontend
+                                                                         * estimateCalories()로
+                                                                         * local preview를 만든다.
+                                                                         */
+                                                                        const recalculatedCalories =
+                                                                            updatedProfile
+                                                                                ?.recommendedCalories
+                                                                            ?? estimateCalories(
+                                                                                goal.weightKg,
+                                                                                updatedProfile,
+                                                                                value
+                                                                            );
+
+                                                                        if (
+                                                                            recalculatedCalories != null
+                                                                            && recalculatedCalories !== goal.calories
+                                                                        ) {
+
+                                                                            update(
+                                                                                "nutritionGoal",
+                                                                                {
+                                                                                    ...goal,
+
+                                                                                    calories:
+                                                                                        recalculatedCalories,
+
+                                                                                    confirmed:
+                                                                                        false
+                                                                                }
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                ).catch(
+                                                                    err => {
+
+                                                                        setError(
+                                                                            err
+                                                                                .response
+                                                                                ?.data
+                                                                                ?.message
+                                                                            ||
+                                                                            err.message
+                                                                            ||
+                                                                            "활동 수준을 저장하지 못했어요."
+                                                                        );
+                                                                    }
+                                                                ).finally(
+                                                                    () => {
+
+                                                                        operation.current =
+                                                                            false;
+
+                                                                        setBusy(
+                                                                            ""
+                                                                        );
+                                                                    }
+                                                                );
                                                             }
                                                         }
                                                     >
                                                         <option value={1.4}>
-                                                            낮음 · 1.4배
+                                                            낮은 활동량
                                                         </option>
 
                                                         <option value={1.6}>
-                                                            보통 · 1.6배
+                                                            보통 활동량
                                                         </option>
 
                                                         <option value={1.8}>
-                                                            높음 · 1.8배
+                                                            높은 활동량
                                                         </option>
                                                     </select>
                                                 </label>
+
+                                                {
+                                                    profile
+                                                        ?.activityLevel
+                                                    == null
+                                                    && (
+                                                        <p className="planner-help">
+                                                            아직 활동 수준이 설정되어 있지 않아요.
+                                                            선택하면 저장됩니다.
+                                                        </p>
+                                                    )
+                                                }
 
                                             </div>
 
@@ -3030,6 +3160,54 @@ export default function WeeklyPlanner({
                                                             )
                                                         }
                                                     </>
+                                                )
+                                            }
+
+
+                                            {/*
+                                             * Phase15D: recommendedCalories는 현재 profile +
+                                             * activity 기준 Stevil "참고" 값이며, 위에서 보여준
+                                             * targetCalories/추정 열량("실제 사용값")과는 별개다.
+                                             * 자동으로 적용하지 않고 표시만 한다(적용 버튼은
+                                             * targetCalories mutation API가 아직 없어 Phase15E로
+                                             * 미룸).
+                                             */}
+                                            {
+                                                profile
+                                                    ?.recommendedCalories
+                                                != null
+                                                && (
+                                                    <p className="planner-help">
+                                                        현재 정보 기준 Stevil 권장{" "}
+                                                        <strong>
+                                                            {
+                                                                Number(
+                                                                    profile
+                                                                        .recommendedCalories
+                                                                ).toLocaleString()
+                                                            } kcal
+                                                        </strong>
+                                                        {
+                                                            hasDietCalorieGoal
+                                                                ? " (참고용 · 현재 목표는 위 식단 관리 기준 값을 그대로 사용합니다)"
+                                                                : " (참고용)"
+                                                        }
+                                                    </p>
+                                                )
+                                            }
+
+                                            {
+                                                profile
+                                                    ?.recommendedCalories
+                                                == null
+                                                && profile
+                                                    ?.activityLevel
+                                                == null
+                                                && (
+                                                    <p className="planner-help">
+                                                        활동 수준을 설정하면 Stevil 권장 열량을
+                                                        보여드려요.
+                                                    </p>
                                                 )
                                             }
 

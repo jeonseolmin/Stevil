@@ -1,4 +1,11 @@
 export const busyAllows = (slot, kind) => kind === "MEAL" && slot.allowMeals === true || kind === "SNACK" && slot.allowSnacks === true;
+
+// Backend ActivityLevel(LOW/MODERATE/HIGH) <-> frontend numeric activity
+// factor(1.4/1.6/1.8, used by estimateCalories()). Same three factors that
+// already existed pre-Phase15D; this just names them so both directions
+// convert through one place instead of scattering the mapping (Phase15D).
+export const ACTIVITY_LEVEL_FACTORS = { LOW: 1.4, MODERATE: 1.6, HIGH: 1.8 };
+export const ACTIVITY_FACTOR_TO_LEVEL = Object.fromEntries(Object.entries(ACTIVITY_LEVEL_FACTORS).map(([level, factor]) => [factor, level]));
 export const DAYS = ["월", "화", "수", "목", "금", "토", "일"];
 export function dateKey(date) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
