@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../api/axiosInstance";
-import { loadNaverMap } from "../api/naverMapLoader";
+import axiosInstance from "../../api/axiosInstance";
+import { loadNaverMap } from "../../api/naverMapLoader";
 import "./HospitalMapPage.css";
 
 const DEFAULT_POSITION = {

@@ -5,7 +5,7 @@
     background:
             radial-gradient(
                     circle at 8% 12%,
-                    rgba(32, 191, 169, 0.1),
+                    rgba(57, 135, 106, 0.1),
                     transparent 28%
             ),
             linear-gradient(180deg, #f8fcfb 0%, #ffffff 100%);
@@ -63,7 +63,7 @@
     padding: clamp(28px, 5vw, 48px);
 
     background: rgba(255, 255, 255, 0.94);
-    border: 1px solid rgba(32, 191, 169, 0.15);
+    border: 1px solid rgba(57, 135, 106, 0.15);
     border-radius: 28px;
     box-shadow: 0 24px 70px rgba(20, 100, 90, 0.1);
 }
@@ -192,7 +192,7 @@
 .onboarding-field input:focus,
 .onboarding-field select:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(32, 191, 169, 0.11);
+    box-shadow: 0 0 0 4px rgba(57, 135, 106, 0.11);
 }
 
 .onboarding-unit-input {
@@ -265,7 +265,7 @@
 }
 
 .onboarding-choice input:focus-visible + span {
-    box-shadow: 0 0 0 4px rgba(32, 191, 169, 0.12);
+    box-shadow: 0 0 0 4px rgba(57, 135, 106, 0.12);
 }
 
 .onboarding-summary,
@@ -273,7 +273,7 @@
     padding: 20px;
 
     background: #f8fcfb;
-    border: 1px solid rgba(32, 191, 169, 0.15);
+    border: 1px solid rgba(57, 135, 106, 0.15);
     border-radius: 18px;
 }
 

@@ -1,3 +1,4 @@
+import SavedPlanPanel from "../planner/SavedPlanPanel";
 import { useState, useEffect } from 'react';
 import './DietManagement.css';
 import axiosInstance from '../../api/axiosInstance'; 
@@ -259,6 +260,7 @@ const DietManagement = () => {
           </div>
         </header>
 
+        <SavedPlanPanel kind="food" />
         <div className="diet-grid">
           
           <div className="diet-left-panel">

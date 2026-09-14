@@ -929,3 +929,6 @@ FodyWeavers.xsd
 **/.gradle/
 **/node_modules/
 **/dist/
+# Local Codex / presentation files
+AGENTS.md
+docs/presentation-2/
