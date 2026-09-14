@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner.service;
 
+import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.dto.NutritionGoal;
 import com.my.stevil_back.planner.dto.Preferences;
@@ -46,6 +47,12 @@ public class PlannerService {
 
     private final UserDietGoalRepository dietGoals;
 
+    /**
+     * Diet의 protein 정책(1.2g/kg, referenceWeight 산정)을 Planner에서도
+     * 그대로 재사용하기 위함이다(Phase12). Planner가 새 상수를 만들지 않는다.
+     */
+    private final NutritionPolicy nutritionPolicy;
+
     private final ObjectMapper json;
 
     private final Validator validator;
@@ -68,6 +75,7 @@ public class PlannerService {
             WeeklyPlanRepository repository,
             UserRepository users,
             UserDietGoalRepository dietGoals,
+            NutritionPolicy nutritionPolicy,
             ObjectMapper json,
             Validator validator,
             @Value(
@@ -79,6 +87,7 @@ public class PlannerService {
         this.repository = repository;
         this.users = users;
         this.dietGoals = dietGoals;
+        this.nutritionPolicy = nutritionPolicy;
         this.json = json;
         this.validator = validator;
         this.generator = URI.create(url);
@@ -469,11 +478,24 @@ public class PlannerService {
          *
          * 로 계산한다.
          *
-         * 따라서 Diet의 확정 targetProtein과
-         * 동일한 결과가 나오도록 역산한다.
+         * Diet의 targetProtein을 그대로 weightKg로 나누면,
+         * Diet 계산 당시 체중과 지금 Planner weightKg가
+         * 다를 때(Phase12) proteinPerKg가 왜곡된다
+         * (예: 80kg 저장 당시 200g -> 이후 weightKg만 바뀌면
+         * proteinPerKg=2.5 같은 비현실적인 값이 됨).
+         *
+         * 따라서 targetProtein을 직접 나누는 대신,
+         * Diet와 동일한 정책(NutritionPolicy, 1.2g/kg)을
+         * 현재 weightKg 기준으로 재계산한다.
+         * Planner weightKg가 Diet 계산 당시 체중과 같다면
+         * 이 값은 Diet의 targetProtein과 동일하므로,
+         * 체중을 바꾸지 않은 정상 초기 로드는 영향받지 않는다.
          */
         double proteinPerKg =
-                targetProtein
+                nutritionPolicy.calculateProteinTarget(
+                        weightKg,
+                        dietGoal.getTargetWeight()
+                )
                         / weightKg;
 
         proteinPerKg =
@@ -501,11 +523,10 @@ public class PlannerService {
         }
 
         /*
-         * NutritionGoal / Python validation 범위.
+         * NutritionGoal 하한(Stevil 서비스 정책, 상한 없음).
          */
         if (
-                targetCalories < 1000
-                        || targetCalories > 5000
+                targetCalories < 1200
         ) {
 
             targetCalories =

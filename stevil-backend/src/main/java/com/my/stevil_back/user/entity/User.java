@@ -2,6 +2,7 @@ package com.my.stevil_back.user.entity;
 
 import com.my.stevil_back.auth.social.entity.SocialAccount;
 import com.my.stevil_back.common.entity.BaseEntity;
+import com.my.stevil_back.user.entity.enumType.ActivityLevel;
 import com.my.stevil_back.user.entity.enumType.Sex;
 import com.my.stevil_back.user.entity.enumType.UserRole;
 import jakarta.persistence.*;
@@ -42,6 +43,15 @@ public class User extends BaseEntity {
 
     @Column(name = "height_cm")
     private Double heightCm;
+
+    /**
+     * 개인화 calorie 계산(NutritionPolicy.calculateRecommendedCalories())의
+     * activity 입력값(Phase15B). Sex와 동일하게 nullable로 두어, 아직
+     * 설정하지 않은 기존 사용자는 null(=미설정)로 자연스럽게 남는다.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activity_level", length = 20)
+    private ActivityLevel activityLevel;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -130,6 +140,18 @@ public class User extends BaseEntity {
 
     public void updateBio(String bio) {
         this.bio = bio;
+    }
+
+    /**
+     * Activity Level만 단독으로 갱신한다(Phase15B).
+     *
+     * updateProfile()/completeOnboarding()과 분리해 둔 이유는, 아직
+     * onboarding/profile API가 activityLevel을 보내지 않기 때문이다
+     * (Phase15C/D에서 실제 호출부를 연결할 예정) -- 기존 두 메서드의
+     * 시그니처를 이번 phase에서 바꾸지 않기 위한 최소 변경.
+     */
+    public void updateActivityLevel(ActivityLevel activityLevel) {
+        this.activityLevel = activityLevel;
     }
 
     // 환자가 주치의를 등록할 때 사용하는 편의 메서드

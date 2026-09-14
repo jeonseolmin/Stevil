@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.controller.PlannerProfileController;
 import com.my.stevil_back.planner.service.PlannerProfileService;
 import com.my.stevil_back.user.entity.*;
@@ -21,7 +22,7 @@ class PlannerProfileTest {
         var measured=LocalDateTime.of(2026,9,1,8,0);
         when(weights.findFirstByUserIdAndRecordedAtLessThanEqualOrderByRecordedAtDescIdDesc(eq(17L),any()))
                 .thenReturn(Optional.of(UserWeight.create(user,new BigDecimal("72.30"),null,measured)));
-        var result=new PlannerProfileController(new PlannerProfileService(users,weights)).get(principal);
+        var result=new PlannerProfileController(new PlannerProfileService(users,weights,mock(UserDietGoalRepository.class))).get(principal);
         assertEquals(72.3,result.weightKg());assertEquals(measured,result.weightRecordedAt());assertEquals(175.0,result.heightCm());
         verify(weights).findFirstByUserIdAndRecordedAtLessThanEqualOrderByRecordedAtDescIdDesc(eq(17L),any());
         verifyNoMoreInteractions(weights);
@@ -31,7 +32,7 @@ class PlannerProfileTest {
         var principal=mock(CustomUserDetails.class);when(principal.getUserId()).thenReturn(8L);
         when(users.findById(8L)).thenReturn(Optional.of(User.builder().id(8L).build()));
         when(weights.findFirstByUserIdAndRecordedAtLessThanEqualOrderByRecordedAtDescIdDesc(eq(8L),any())).thenReturn(Optional.empty());
-        var result=new PlannerProfileController(new PlannerProfileService(users,weights)).get(principal);
+        var result=new PlannerProfileController(new PlannerProfileService(users,weights,mock(UserDietGoalRepository.class))).get(principal);
         assertNull(result.weightKg());assertNull(result.age());assertNull(result.sex());
     }
 }
