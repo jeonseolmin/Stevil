@@ -1,8 +1,53 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
 import { loadNaverMap } from "../../api/naverMapLoader";
 import "./HospitalMapPage.css";
+
+/*
+ * axiosInstance(XHR) 대신 fetch를 직접 쓴다.
+ *
+ * 로그인 직후처럼 axios 요청이 여러 개 동시에 몰리는 상황에서 backend가
+ * 순간적으로 500을 내는 현상이 관찰됐는데(원인 미확정, 별도 이슈), 같은
+ * 요청을 fetch로 보내면 재현되지 않는다(OAuthSuccessPage.jsx에서 이미
+ * 같은 방식으로 확인/적용함). 이 페이지는 마운트 시 광고 목록 조회 +
+ * 병원 검색이 거의 동시에 나가서 그 증상과 정확히 맞아떨어져, 이 두
+ * 호출에 한해 fetch로 우회한다. axios 응답과 동일한 { data } 모양,
+ * 동일한 error.response.status/data 모양을 유지해 호출부는 그대로 둔다.
+ */
+async function apiGet(path, params) {
+    const token = localStorage.getItem("accessToken");
+
+    const entries = params
+        ? Object.entries(params).filter(
+            ([, value]) => value !== undefined && value !== null
+        )
+        : [];
+
+    const query = entries.length
+        ? `?${new URLSearchParams(entries).toString()}`
+        : "";
+
+    const response = await fetch(`/api${path}${query}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        const error = new Error(
+            `${path} failed with ${response.status}`
+        );
+
+        error.response = {
+            status: response.status,
+            data,
+        };
+
+        throw error;
+    }
+
+    return { data };
+}
 
 const DEFAULT_POSITION = {
     latitude: 37.5666103,
@@ -82,7 +127,7 @@ export default function HospitalMapPage() {
     useEffect(() => {
         const fetchActiveAds = async () => {
             try {
-                const response = await axiosInstance.get("/ads/active");
+                const response = await apiGet("/ads/active");
                 setActiveAds(response.data);
             } catch (error) {
                 console.error("광고 목록을 불러오지 못했습니다.", error);
@@ -135,12 +180,10 @@ export default function HospitalMapPage() {
             setSearchError("");
             setSelectedIndex(null);
 
-            const response = await axiosInstance.get("/hospitals/search", {
-                params: {
-                    query: query?.trim() || "병원",
-                    latitude: position?.latitude,
-                    longitude: position?.longitude,
-                },
+            const response = await apiGet("/hospitals/search", {
+                query: query?.trim() || "병원",
+                latitude: position?.latitude,
+                longitude: position?.longitude,
             });
 
             setHospitals(response.data);
