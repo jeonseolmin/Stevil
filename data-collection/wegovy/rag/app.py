@@ -10,6 +10,7 @@ import math
 import os
 from pathlib import Path
 import re
+import time
 from urllib.request import Request, urlopen
 import traceback
 from chat.prompts import SYSTEM_PROMPT
@@ -273,14 +274,47 @@ def serve(corpus, port, model, host='127.0.0.1'):
                     raise ValueError()
                 data = json.loads(self.rfile.read(length))
                 if self.path == '/api/plan':
+                    _plan_t0 = time.perf_counter()
+                    _plan_outcome = 'ok'
                     try:
                         return self.send(200, make_plan(data, model))
                     except (FoodUnavailable, NutritionTargetUnavailable, FoodPolicyUnavailable) as error:
+                        _plan_outcome = 'food_not_ready'
                         return self.send(503, {'error': str(error), 'code': 'FOOD_NOT_READY'})
-                    except (ValueError, KeyError, TypeError):
+                    except (ValueError, KeyError, TypeError) as error:
+                        _plan_outcome = 'invalid_input'
+                        print(
+                            '[PLANNER ERROR]',
+                            type(error).__name__,
+                            str(error),
+                            flush=True,
+                        )
+                        if corpus.preview:
+                            traceback.print_exc()
                         return self.send(400, {'error': '입력 정보 또는 AI 계획 형식을 확인해 주세요.'})
-                    except (OSError, RuntimeError, IndexError):
-                        return self.send(503, {'error': 'AI 계획을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.'})
+                    except (OSError, RuntimeError, IndexError) as error:
+                        _plan_outcome = 'error'
+                        print(
+                            '[PLANNER ERROR]',
+                            type(error).__name__,
+                            str(error),
+                            flush=True,
+                        )
+                        if corpus.preview:
+                            traceback.print_exc()
+
+                        return self.send(
+                            503,
+                            {
+                                'error': 'AI 계획을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.'
+                            }
+                        )
+                    finally:
+                        print(
+                            f'[PLANNER TIMING] total={time.perf_counter() - _plan_t0:.3f}s '
+                            f'({_plan_outcome})',
+                            flush=True,
+                        )
                 question = data.get('question') if isinstance(data, dict) else None
                 if not isinstance(question, str) or not 2 <= len(question.strip()) <= 1000:
                     raise ValueError()

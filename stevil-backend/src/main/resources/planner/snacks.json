@@ -1,107 +1,295 @@
 [
   {
-    "id": "snack:f5da6eb3cb950ef9762e99cd",
+    "id": "snack:016da0e2554d1e23b76929f6",
     "category": "shake",
-    "title": "저당단백질쉐이크",
+    "title": "프로틴S",
     "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
     "foodEvidence": {
-      "recipeId": "snack:f5da6eb3cb950ef9762e99cd",
+      "recipeId": "snack:016da0e2554d1e23b76929f6",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
-      "ingredients": "저당단백질쉐이크 30g",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "프로틴S 30g",
       "servingWeight": "30",
       "nutrition": {
-        "INFO_ENG": "113.7000",
-        "INFO_CAR": "5.6940",
-        "INFO_PRO": "18.9330",
-        "INFO_FAT": "2.2110",
-        "INFO_NA": "175.5000"
+        "INFO_ENG": "121.5000",
+        "INFO_CAR": "10.5000",
+        "INFO_PRO": "15.0000",
+        "INFO_FAT": "2.1750",
+        "INFO_NA": "157.5000"
       },
-      "fingerprint": "f5da6eb3cb950ef9762e99cdc8e1c03812596adb70f9928ff3b65d496b0a8239",
+      "fingerprint": "016da0e2554d1e23b76929f6d703fc6f4deeb1ec52656a5fa63bd0d43b00eb92",
       "components": [
         {
-          "foodId": "P111-000010200-0082",
-          "name": "저당단백질쉐이크",
+          "foodId": "P110-500050000-0243",
+          "name": "프로틴S",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "30",
           "nutrition": {
-            "INFO_ENG": "379.000",
-            "INFO_CAR": "18.98",
-            "INFO_PRO": "63.11",
-            "INFO_FAT": "7.37",
-            "INFO_NA": "585.000"
+            "INFO_ENG": "405.000",
+            "INFO_CAR": "35.00",
+            "INFO_PRO": "50.00",
+            "INFO_FAT": "7.25",
+            "INFO_NA": "525.000"
           },
           "amountNutrition": {
-            "INFO_ENG": "113.7000",
-            "INFO_CAR": "5.6940",
-            "INFO_PRO": "18.9330",
-            "INFO_FAT": "2.2110",
-            "INFO_NA": "175.5000"
+            "INFO_ENG": "121.5000",
+            "INFO_CAR": "10.5000",
+            "INFO_PRO": "15.0000",
+            "INFO_FAT": "2.1750",
+            "INFO_NA": "157.5000"
           },
-          "fingerprint": "7d66f0df76868e6a5660e8f782f3b2a2d53da79391b19f12199042acf4d937ce"
+          "fingerprint": "9ee09bfacd9c648b8004b5ab6f29fabf013865e3aa195c08b9a04f9279b4434e"
         }
       ]
     }
   },
   {
-    "id": "snack:ad232ae485977a256090550e",
+    "id": "snack:31f54aff2008b2ac148b8b32",
     "category": "shake",
-    "title": "햄프프로틴쉐이크",
+    "title": "프로틴부스터",
     "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
     "foodEvidence": {
-      "recipeId": "snack:ad232ae485977a256090550e",
+      "recipeId": "snack:31f54aff2008b2ac148b8b32",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
-      "ingredients": "햄프프로틴쉐이크 30g",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "프로틴부스터 30g",
       "servingWeight": "30",
       "nutrition": {
-        "INFO_ENG": "119.7000",
-        "INFO_CAR": "13.7280",
-        "INFO_PRO": "13.1970",
-        "INFO_FAT": "1.3170",
-        "INFO_NA": "216.6000"
+        "INFO_ENG": "107.1000",
+        "INFO_CAR": "12.8580",
+        "INFO_PRO": "12.8580",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
       },
-      "fingerprint": "ad232ae485977a256090550ee11f0bf36ef5d618c63673de0ee56ebd48474448",
+      "fingerprint": "31f54aff2008b2ac148b8b32c9cbb44194f1ffe5b4485f3828768e12c441c70f",
       "components": [
         {
-          "foodId": "P124-200020000-2345",
-          "name": "햄프프로틴쉐이크",
+          "foodId": "P109-802080200-0814",
+          "name": "프로틴부스터",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "30",
           "nutrition": {
-            "INFO_ENG": "399.000",
-            "INFO_CAR": "45.76",
-            "INFO_PRO": "43.99",
-            "INFO_FAT": "4.39",
-            "INFO_NA": "722.000"
+            "INFO_ENG": "357.000",
+            "INFO_CAR": "42.86",
+            "INFO_PRO": "42.86",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
           },
           "amountNutrition": {
-            "INFO_ENG": "119.7000",
-            "INFO_CAR": "13.7280",
-            "INFO_PRO": "13.1970",
-            "INFO_FAT": "1.3170",
-            "INFO_NA": "216.6000"
+            "INFO_ENG": "107.1000",
+            "INFO_CAR": "12.8580",
+            "INFO_PRO": "12.8580",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
           },
-          "fingerprint": "32dfe7fa7f53c33018d52b124642a78e77106a5300742987c62d55d3eceb0b08"
+          "fingerprint": "4259648107df8a4fe8081e295993407113321e145771e98e68b9f1e6064c9729"
         }
       ]
     }
   },
   {
-    "id": "snack:cef626c365da38b91df9f687",
+    "id": "snack:b503fa5f3308c0a23ce4db1d",
+    "category": "shake",
+    "title": "프로틴초코볼",
+    "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
+    "foodEvidence": {
+      "recipeId": "snack:b503fa5f3308c0a23ce4db1d",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "프로틴초코볼 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "138.9000",
+        "INFO_CAR": "12.0000",
+        "INFO_PRO": "12.0000",
+        "INFO_FAT": "5.0010",
+        "INFO_NA": "21.9000"
+      },
+      "fingerprint": "b503fa5f3308c0a23ce4db1d757965c4c4fbbdcab306fa66b5a59af2ad55b965",
+      "components": [
+        {
+          "foodId": "P103-101020500-1084",
+          "name": "프로틴초코볼",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "463.000",
+            "INFO_CAR": "40.00",
+            "INFO_PRO": "40.00",
+            "INFO_FAT": "16.67",
+            "INFO_NA": "73.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "138.9000",
+            "INFO_CAR": "12.0000",
+            "INFO_PRO": "12.0000",
+            "INFO_FAT": "5.0010",
+            "INFO_NA": "21.9000"
+          },
+          "fingerprint": "0e4859f3babaf256e2123e9e78858d6a456e88e3bb9166613678a1a12d4a2450"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:5125733f238f1e3bdfc033cd",
+    "category": "shake",
+    "title": "초유프로틴볼",
+    "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
+    "foodEvidence": {
+      "recipeId": "snack:5125733f238f1e3bdfc033cd",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "초유프로틴볼 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "134.7000",
+        "INFO_CAR": "7.8000",
+        "INFO_PRO": "14.4000",
+        "INFO_FAT": "5.1000",
+        "INFO_NA": "30.3000"
+      },
+      "fingerprint": "5125733f238f1e3bdfc033cd51917f5245f1e21f6017c771041d8b6dc431b2ea",
+      "components": [
+        {
+          "foodId": "P103-102020500-3502",
+          "name": "초유프로틴볼",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "449.000",
+            "INFO_CAR": "26.00",
+            "INFO_PRO": "48.00",
+            "INFO_FAT": "17.00",
+            "INFO_NA": "101.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "134.7000",
+            "INFO_CAR": "7.8000",
+            "INFO_PRO": "14.4000",
+            "INFO_FAT": "5.1000",
+            "INFO_NA": "30.3000"
+          },
+          "fingerprint": "4a74fb6f69ff1bf2ff8cc4cb95d45992b2d2e12b0c7abdc2b49a34a132f6ff3b"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:1d4b380e2b0e3199a1cdf296",
+    "category": "shake",
+    "title": "임쓰프로틴바",
+    "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
+    "foodEvidence": {
+      "recipeId": "snack:1d4b380e2b0e3199a1cdf296",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "임쓰프로틴바 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "131.4000",
+        "INFO_CAR": "13.8900",
+        "INFO_PRO": "11.8500",
+        "INFO_FAT": "3.0600",
+        "INFO_NA": "85.5000"
+      },
+      "fingerprint": "1d4b380e2b0e3199a1cdf29664e5524d2d01017ed7bcafca0898a7c3ad9785e1",
+      "components": [
+        {
+          "foodId": "P101-106000100-2864",
+          "name": "임쓰프로틴바",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "438.000",
+            "INFO_CAR": "46.30",
+            "INFO_PRO": "39.50",
+            "INFO_FAT": "10.20",
+            "INFO_NA": "285.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "131.4000",
+            "INFO_CAR": "13.8900",
+            "INFO_PRO": "11.8500",
+            "INFO_FAT": "3.0600",
+            "INFO_NA": "85.5000"
+          },
+          "fingerprint": "992b343cc8edb7c9d22623c067143f94aff4f0f1b5be1dd64f20a56a6661716b"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:ce80200ea9039d608b73784d",
+    "category": "shake",
+    "title": "비욘드프로틴",
+    "note": "제품 자체 30g 기준이며 섞는 우유·음료는 포함하지 않습니다.",
+    "foodEvidence": {
+      "recipeId": "snack:ce80200ea9039d608b73784d",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "비욘드프로틴 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "121.5000",
+        "INFO_CAR": "4.5000",
+        "INFO_PRO": "24.0000",
+        "INFO_FAT": "0.7500",
+        "INFO_NA": "90.0000"
+      },
+      "fingerprint": "ce80200ea9039d608b73784d8079652edb53f8df8487f46b7022f271db7c55ff",
+      "components": [
+        {
+          "foodId": "P124-200020000-0449",
+          "name": "비욘드프로틴",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "405.000",
+            "INFO_CAR": "15.00",
+            "INFO_PRO": "80.00",
+            "INFO_FAT": "2.50",
+            "INFO_NA": "300.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "121.5000",
+            "INFO_CAR": "4.5000",
+            "INFO_PRO": "24.0000",
+            "INFO_FAT": "0.7500",
+            "INFO_NA": "90.0000"
+          },
+          "fingerprint": "faca7f9ccb594904f830a7aa4d969665c5e576bcfc8a46e7f6c0ee1823afb8e4"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:45a44a1c1cfe5f8e28b9dfff",
     "category": "chicken",
     "title": "훈제닭가슴살",
-    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 달라질 수 있어요.",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
     "foodEvidence": {
-      "recipeId": "snack:cef626c365da38b91df9f687",
+      "recipeId": "snack:45a44a1c1cfe5f8e28b9dfff",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
       "ingredients": "훈제닭가슴살 50g",
       "servingWeight": "50",
       "nutrition": {
@@ -111,14 +299,14 @@
         "INFO_FAT": "0.6500",
         "INFO_NA": "20.0000"
       },
-      "fingerprint": "cef626c365da38b91df9f687f84b81da5e125bda45562c31d7760358622adb34",
+      "fingerprint": "45a44a1c1cfe5f8e28b9dfff8ee0282fb18ff051e0e81b15499353d972ec274d",
       "components": [
         {
           "foodId": "P117-100010100-0166",
           "name": "훈제닭가슴살",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "50",
           "nutrition": {
@@ -141,61 +329,296 @@
     }
   },
   {
-    "id": "snack:5047b78f69a4903c29688caf",
+    "id": "snack:d30a72aa33680641da36a37b",
     "category": "chicken",
-    "title": "훈제 닭가슴살",
-    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 달라질 수 있어요.",
+    "title": "저염훈제닭가슴살",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
     "foodEvidence": {
-      "recipeId": "snack:5047b78f69a4903c29688caf",
+      "recipeId": "snack:d30a72aa33680641da36a37b",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
-      "ingredients": "훈제 닭가슴살 50g",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "저염훈제닭가슴살 50g",
       "servingWeight": "50",
       "nutrition": {
-        "INFO_ENG": "61.5000",
-        "INFO_CAR": "1.5000",
-        "INFO_PRO": "12.5000",
-        "INFO_FAT": "0.6500",
-        "INFO_NA": "204.0000"
+        "INFO_ENG": "65.0000",
+        "INFO_CAR": "0.0000",
+        "INFO_PRO": "14.0000",
+        "INFO_FAT": "1.0000",
+        "INFO_NA": "27.5000"
       },
-      "fingerprint": "5047b78f69a4903c29688cafaadf0d3b8948b1a1fe78d8df8feaceb9829f4153",
+      "fingerprint": "d30a72aa33680641da36a37b8fedf50435d80413b1cef821e874b9d6e3157972",
       "components": [
         {
-          "foodId": "P117-100010100-0683",
-          "name": "훈제 닭가슴살",
+          "foodId": "P117-100010100-0135",
+          "name": "저염훈제닭가슴살",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "50",
           "nutrition": {
-            "INFO_ENG": "123.000",
-            "INFO_CAR": "3.00",
-            "INFO_PRO": "25.00",
-            "INFO_FAT": "1.30",
-            "INFO_NA": "408.000"
+            "INFO_ENG": "130.000",
+            "INFO_CAR": "0.00",
+            "INFO_PRO": "28.00",
+            "INFO_FAT": "2.00",
+            "INFO_NA": "55.00"
           },
           "amountNutrition": {
-            "INFO_ENG": "61.5000",
-            "INFO_CAR": "1.5000",
-            "INFO_PRO": "12.5000",
-            "INFO_FAT": "0.6500",
-            "INFO_NA": "204.0000"
+            "INFO_ENG": "65.0000",
+            "INFO_CAR": "0.0000",
+            "INFO_PRO": "14.0000",
+            "INFO_FAT": "1.0000",
+            "INFO_NA": "27.5000"
           },
-          "fingerprint": "2aa1f3bf0655b9d544fbf56864366d85193720d7780523ebc89fb055739d9206"
+          "fingerprint": "df8a36bcfb9d34c97e0ccc1600eb25f4effdf6df05245a4f9bf6762d7e305753"
         }
       ]
     }
   },
   {
-    "id": "snack:54133c755617aa3350e1ca4e",
+    "id": "snack:62753c423ee6ceabd2109b4a",
+    "category": "chicken",
+    "title": "훈제닭가슴살무염",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:62753c423ee6ceabd2109b4a",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "훈제닭가슴살무염 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "67.5000",
+        "INFO_CAR": "1.5000",
+        "INFO_PRO": "13.0000",
+        "INFO_FAT": "0.7500",
+        "INFO_NA": "29.0000"
+      },
+      "fingerprint": "62753c423ee6ceabd2109b4a4230eec35b6811da014a894ee2fba927ced58fa9",
+      "components": [
+        {
+          "foodId": "P117-100010100-2000",
+          "name": "훈제닭가슴살무염",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "135.000",
+            "INFO_CAR": "3.00",
+            "INFO_PRO": "26.00",
+            "INFO_FAT": "1.50",
+            "INFO_NA": "58.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "67.5000",
+            "INFO_CAR": "1.5000",
+            "INFO_PRO": "13.0000",
+            "INFO_FAT": "0.7500",
+            "INFO_NA": "29.0000"
+          },
+          "fingerprint": "4d1e717871c6154463a8f4631de95f7c99e38d6519f45a848ada05ec22ad80df"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:509ed4cbbabf0f1c3e5aa7c9",
+    "category": "chicken",
+    "title": "수비드 닭가슴살",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:509ed4cbbabf0f1c3e5aa7c9",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "수비드 닭가슴살 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "52.0000",
+        "INFO_CAR": "0.0300",
+        "INFO_PRO": "11.2650",
+        "INFO_FAT": "0.4800",
+        "INFO_NA": "42.0000"
+      },
+      "fingerprint": "509ed4cbbabf0f1c3e5aa7c97b0d94e136d84c43b559b66cff7724c23fede7a9",
+      "components": [
+        {
+          "foodId": "P117-501050100-4236",
+          "name": "수비드 닭가슴살",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "104.000",
+            "INFO_CAR": "0.06",
+            "INFO_PRO": "22.53",
+            "INFO_FAT": "0.96",
+            "INFO_NA": "84.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "52.0000",
+            "INFO_CAR": "0.0300",
+            "INFO_PRO": "11.2650",
+            "INFO_FAT": "0.4800",
+            "INFO_NA": "42.0000"
+          },
+          "fingerprint": "7570b3962a899ea813e889d01368df72397ff26ebc48ea31cf7df7b8902b6e25"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:df10dd42a8b9a5c2570a4af0",
+    "category": "chicken",
+    "title": "닭가슴살훈제칠리",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:df10dd42a8b9a5c2570a4af0",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "닭가슴살훈제칠리 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "64.0000",
+        "INFO_CAR": "0.3950",
+        "INFO_PRO": "13.4950",
+        "INFO_FAT": "0.9350",
+        "INFO_NA": "56.5000"
+      },
+      "fingerprint": "df10dd42a8b9a5c2570a4af0a48fdfb335e98daf529e1592ad0c6fe2423fdfaa",
+      "components": [
+        {
+          "foodId": "P117-100010100-0042",
+          "name": "닭가슴살훈제칠리",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "128.000",
+            "INFO_CAR": "0.79",
+            "INFO_PRO": "26.99",
+            "INFO_FAT": "1.87",
+            "INFO_NA": "113.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "64.0000",
+            "INFO_CAR": "0.3950",
+            "INFO_PRO": "13.4950",
+            "INFO_FAT": "0.9350",
+            "INFO_NA": "56.5000"
+          },
+          "fingerprint": "b4b95707646ec5f5e8e20ff29ab5f0fe7aa45e484155b9764b678f45dcef6f91"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:d52984c1744b08a8fe9a461b",
+    "category": "chicken",
+    "title": "안심훈제닭가슴살",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:d52984c1744b08a8fe9a461b",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "안심훈제닭가슴살 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "60.0000",
+        "INFO_CAR": "0.3500",
+        "INFO_PRO": "13.5000",
+        "INFO_FAT": "0.5000",
+        "INFO_NA": "220.0000"
+      },
+      "fingerprint": "d52984c1744b08a8fe9a461b769fe548a838c3e3ce3b7c1e6cf49d32fc2bc565",
+      "components": [
+        {
+          "foodId": "P117-100010100-0095",
+          "name": "안심훈제닭가슴살",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "120.000",
+            "INFO_CAR": "0.70",
+            "INFO_PRO": "27.00",
+            "INFO_FAT": "1.00",
+            "INFO_NA": "440.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "60.0000",
+            "INFO_CAR": "0.3500",
+            "INFO_PRO": "13.5000",
+            "INFO_FAT": "0.5000",
+            "INFO_NA": "220.0000"
+          },
+          "fingerprint": "8c14aedc4a3df054c423638c0f9593fe3809fd06aa19840bfa2dc5d9e87274cd"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:dc3887c76e99d31f242dce65",
+    "category": "egg",
+    "title": "구운계란",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:dc3887c76e99d31f242dce65",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "구운계란 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "76.0000",
+        "INFO_CAR": "0.4000",
+        "INFO_PRO": "6.3000",
+        "INFO_FAT": "5.0000",
+        "INFO_NA": "70.0000"
+      },
+      "fingerprint": "dc3887c76e99d31f242dce658d0123f0a291c4378eda649653d18db861d5800b",
+      "components": [
+        {
+          "foodId": "P118-100010700-0439",
+          "name": "구운계란",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "152.000",
+            "INFO_CAR": "0.80",
+            "INFO_PRO": "12.60",
+            "INFO_FAT": "10.00",
+            "INFO_NA": "140.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "76.0000",
+            "INFO_CAR": "0.4000",
+            "INFO_PRO": "6.3000",
+            "INFO_FAT": "5.0000",
+            "INFO_NA": "70.0000"
+          },
+          "fingerprint": "bf18fd369b39f2c94f02e277092af24100d6707210c985b9bb103949f37a96eb"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:22f56aee297d79cbb9e903ed",
     "category": "egg",
     "title": "달걀_삶은것",
-    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 달라질 수 있어요.",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
     "foodEvidence": {
-      "recipeId": "snack:54133c755617aa3350e1ca4e",
+      "recipeId": "snack:22f56aee297d79cbb9e903ed",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
       "ingredients": "달걀_삶은것 50g",
       "servingWeight": "50",
       "nutrition": {
@@ -205,14 +628,14 @@
         "INFO_FAT": "5.3250",
         "INFO_NA": "63.5000"
       },
-      "fingerprint": "54133c755617aa3350e1ca4e9629d3476f4e595cc2cbc030c1351ee03b6b15ba",
+      "fingerprint": "22f56aee297d79cbb9e903ed18a2bb00e2bb0b1df4f64ae0148a86b7f43834d3",
       "components": [
         {
           "foodId": "D327-758010000-0001",
           "name": "달걀_삶은것",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "50",
           "nutrition": {
@@ -235,48 +658,2163 @@
     }
   },
   {
-    "id": "snack:6d018d1e1b08b067c43ecae2",
+    "id": "snack:d012e5b3e18abb8685bbd298",
     "category": "egg",
-    "title": "바로먹는 삶은계란",
-    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 달라질 수 있어요.",
+    "title": "직화구운계란",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
     "foodEvidence": {
-      "recipeId": "snack:6d018d1e1b08b067c43ecae2",
+      "recipeId": "snack:d012e5b3e18abb8685bbd298",
       "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-      "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
-      "ingredients": "바로먹는 삶은계란 50g",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "직화구운계란 50g",
       "servingWeight": "50",
       "nutrition": {
-        "INFO_ENG": "68.5000",
-        "INFO_CAR": "2.2200",
-        "INFO_PRO": "6.1100",
-        "INFO_FAT": "3.8900",
-        "INFO_NA": "75.0000"
+        "INFO_ENG": "71.0000",
+        "INFO_CAR": "2.8500",
+        "INFO_PRO": "7.1000",
+        "INFO_FAT": "3.4500",
+        "INFO_NA": "86.0000"
       },
-      "fingerprint": "6d018d1e1b08b067c43ecae29673e382ed875157f76a2941cbec29bb8106456a",
+      "fingerprint": "d012e5b3e18abb8685bbd298b904a85a31ad5044fb24421a2245f6d4a8b42b5a",
       "components": [
         {
-          "foodId": "P118-100010700-0055",
-          "name": "바로먹는 삶은계란",
+          "foodId": "P118-100010700-0107",
+          "name": "직화구운계란",
           "role": "snack",
           "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
-          "retrievedAt": "2026-09-03T02:48:01.425716+00:00",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
           "basisWeight": "100.0",
           "servingWeight": "50",
           "nutrition": {
-            "INFO_ENG": "137.000",
-            "INFO_CAR": "4.44",
-            "INFO_PRO": "12.22",
-            "INFO_FAT": "7.78",
-            "INFO_NA": "150.000"
+            "INFO_ENG": "142.000",
+            "INFO_CAR": "5.70",
+            "INFO_PRO": "14.20",
+            "INFO_FAT": "6.90",
+            "INFO_NA": "172.000"
           },
           "amountNutrition": {
-            "INFO_ENG": "68.5000",
-            "INFO_CAR": "2.2200",
-            "INFO_PRO": "6.1100",
-            "INFO_FAT": "3.8900",
-            "INFO_NA": "75.0000"
+            "INFO_ENG": "71.0000",
+            "INFO_CAR": "2.8500",
+            "INFO_PRO": "7.1000",
+            "INFO_FAT": "3.4500",
+            "INFO_NA": "86.0000"
           },
-          "fingerprint": "f9f14b81e21e3579c3651f1bd5c2495911e2a029569373a77c5c389fb787b7c9"
+          "fingerprint": "fab4d5126d637d082f7691030eddf6a962d5f606883fa9167940038cfce67521"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:81a383c94c3da3abbf2cd41e",
+    "category": "egg",
+    "title": "하림구운계란",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:81a383c94c3da3abbf2cd41e",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "하림구운계란 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "75.5000",
+        "INFO_CAR": "1.4300",
+        "INFO_PRO": "7.1450",
+        "INFO_FAT": "4.2850",
+        "INFO_NA": "90.0000"
+      },
+      "fingerprint": "81a383c94c3da3abbf2cd41e4d974396b45ac082b552376b99b09371838e4b0d",
+      "components": [
+        {
+          "foodId": "P118-100010700-0140",
+          "name": "하림구운계란",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "151.000",
+            "INFO_CAR": "2.86",
+            "INFO_PRO": "14.29",
+            "INFO_FAT": "8.57",
+            "INFO_NA": "180.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "75.5000",
+            "INFO_CAR": "1.4300",
+            "INFO_PRO": "7.1450",
+            "INFO_FAT": "4.2850",
+            "INFO_NA": "90.0000"
+          },
+          "fingerprint": "358f9a2408823c341dbc0a68c285493ad404f45137fadd45aa24661ef4c7307d"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:6d1ef590dc8c5ce605bbc8f6",
+    "category": "egg",
+    "title": "백색 구운계란",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:6d1ef590dc8c5ce605bbc8f6",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "백색 구운계란 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "71.0000",
+        "INFO_CAR": "2.6350",
+        "INFO_PRO": "7.6950",
+        "INFO_FAT": "3.3050",
+        "INFO_NA": "76.5000"
+      },
+      "fingerprint": "6d1ef590dc8c5ce605bbc8f6f543104e516ac9990f8be817972f3a3d22294fef",
+      "components": [
+        {
+          "foodId": "P118-100010700-0417",
+          "name": "백색 구운계란",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "142.000",
+            "INFO_CAR": "5.27",
+            "INFO_PRO": "15.39",
+            "INFO_FAT": "6.61",
+            "INFO_NA": "153.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "71.0000",
+            "INFO_CAR": "2.6350",
+            "INFO_PRO": "7.6950",
+            "INFO_FAT": "3.3050",
+            "INFO_NA": "76.5000"
+          },
+          "fingerprint": "2bd65d2f4dcb116644148a13f44a18750f74eded1c28974ce9dc3b2ac6cd262c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:de8c67aadae70c8651ec8167",
+    "category": "egg",
+    "title": "동하초구운계란",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:de8c67aadae70c8651ec8167",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "동하초구운계란 50g",
+      "servingWeight": "50",
+      "nutrition": {
+        "INFO_ENG": "83.5000",
+        "INFO_CAR": "1.1700",
+        "INFO_PRO": "7.3650",
+        "INFO_FAT": "5.5100",
+        "INFO_NA": "88.5000"
+      },
+      "fingerprint": "de8c67aadae70c8651ec816730e88e83aa75c84d982c358df296f41bc82cb6ee",
+      "components": [
+        {
+          "foodId": "P118-100010700-0258",
+          "name": "동하초구운계란",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "50",
+          "nutrition": {
+            "INFO_ENG": "167.000",
+            "INFO_CAR": "2.34",
+            "INFO_PRO": "14.73",
+            "INFO_FAT": "11.02",
+            "INFO_NA": "177.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "83.5000",
+            "INFO_CAR": "1.1700",
+            "INFO_PRO": "7.3650",
+            "INFO_FAT": "5.5100",
+            "INFO_NA": "88.5000"
+          },
+          "fingerprint": "da868e9e1cad59ddc3c5314866e1f8772c5609924fc2b48eedb8901a45a0ddc3"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:9246539fb73f99f65547cbd3",
+    "category": "greek_yogurt",
+    "title": "그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:9246539fb73f99f65547cbd3",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "227.0000",
+        "INFO_CAR": "6.5700",
+        "INFO_PRO": "13.9300",
+        "INFO_FAT": "16.0900",
+        "INFO_NA": "24.0000"
+      },
+      "fingerprint": "9246539fb73f99f65547cbd31d60cadaf7e82c287594868d0dae10e65cb1c6a8",
+      "components": [
+        {
+          "foodId": "P119-202040200-1019",
+          "name": "그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "227.000",
+            "INFO_CAR": "6.57",
+            "INFO_PRO": "13.93",
+            "INFO_FAT": "16.09",
+            "INFO_NA": "24.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "227.0000",
+            "INFO_CAR": "6.5700",
+            "INFO_PRO": "13.9300",
+            "INFO_FAT": "16.0900",
+            "INFO_NA": "24.0000"
+          },
+          "fingerprint": "45e17a35fb875c478726a1785fa4eb7f327b53bd890bc677ce09844431cf3022"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:2564ae5a152d39469c74991f",
+    "category": "greek_yogurt",
+    "title": "리얼그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:2564ae5a152d39469c74991f",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "리얼그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "147.0000",
+        "INFO_CAR": "5.6000",
+        "INFO_PRO": "10.0000",
+        "INFO_FAT": "9.4000",
+        "INFO_NA": "19.0000"
+      },
+      "fingerprint": "2564ae5a152d39469c74991f172f3ee81481b2f9fb320a6163553735282f4288",
+      "components": [
+        {
+          "foodId": "P119-202040200-0112",
+          "name": "리얼그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "147.000",
+            "INFO_CAR": "5.60",
+            "INFO_PRO": "10.00",
+            "INFO_FAT": "9.40",
+            "INFO_NA": "19.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "147.0000",
+            "INFO_CAR": "5.6000",
+            "INFO_PRO": "10.0000",
+            "INFO_FAT": "9.4000",
+            "INFO_NA": "19.0000"
+          },
+          "fingerprint": "6dd31df6caed865f90ee17d492a87d18dde22d1760295306ce99562013a2b164"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:12cdf8c62878029868b394af",
+    "category": "greek_yogurt",
+    "title": "망고그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:12cdf8c62878029868b394af",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "망고그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "162.0000",
+        "INFO_CAR": "14.0000",
+        "INFO_PRO": "11.0000",
+        "INFO_FAT": "8.0000",
+        "INFO_NA": "23.0000"
+      },
+      "fingerprint": "12cdf8c62878029868b394af2776b34de1ed9f9cdffbe035c70c63279acfe5d3",
+      "components": [
+        {
+          "foodId": "P119-202040200-0770",
+          "name": "망고그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "162.000",
+            "INFO_CAR": "14.00",
+            "INFO_PRO": "11.00",
+            "INFO_FAT": "8.00",
+            "INFO_NA": "23.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "162.0000",
+            "INFO_CAR": "14.0000",
+            "INFO_PRO": "11.0000",
+            "INFO_FAT": "8.0000",
+            "INFO_NA": "23.0000"
+          },
+          "fingerprint": "260c62f1aecca3407d325c5b659be96835b29fa8947228ecc0b06a03a47f5570"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:6b3d1a1e9b1496e6ec4d8e52",
+    "category": "greek_yogurt",
+    "title": "애플그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:6b3d1a1e9b1496e6ec4d8e52",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "애플그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "193.0000",
+        "INFO_CAR": "16.0000",
+        "INFO_PRO": "10.0000",
+        "INFO_FAT": "10.0000",
+        "INFO_NA": "25.0000"
+      },
+      "fingerprint": "6b3d1a1e9b1496e6ec4d8e5293ad5ecc63de6375e28562d52623a8c12f061a11",
+      "components": [
+        {
+          "foodId": "P119-202040200-0798",
+          "name": "애플그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "193.000",
+            "INFO_CAR": "16.00",
+            "INFO_PRO": "10.00",
+            "INFO_FAT": "10.00",
+            "INFO_NA": "25.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "193.0000",
+            "INFO_CAR": "16.0000",
+            "INFO_PRO": "10.0000",
+            "INFO_FAT": "10.0000",
+            "INFO_NA": "25.0000"
+          },
+          "fingerprint": "c2b316a20850ba00be69d53d2f97bd924b9d3907f492a754e2493905dd91944d"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:8dc6fdcdabde8b4817b039e4",
+    "category": "greek_yogurt",
+    "title": "딸기그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:8dc6fdcdabde8b4817b039e4",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "딸기그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "152.0000",
+        "INFO_CAR": "10.0000",
+        "INFO_PRO": "11.0000",
+        "INFO_FAT": "8.0000",
+        "INFO_NA": "30.0000"
+      },
+      "fingerprint": "8dc6fdcdabde8b4817b039e41b00b51fc51eefb702a67c2400ab15bbb632c881",
+      "components": [
+        {
+          "foodId": "P119-202040200-0761",
+          "name": "딸기그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "152.000",
+            "INFO_CAR": "10.00",
+            "INFO_PRO": "11.00",
+            "INFO_FAT": "8.00",
+            "INFO_NA": "30.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "152.0000",
+            "INFO_CAR": "10.0000",
+            "INFO_PRO": "11.0000",
+            "INFO_FAT": "8.0000",
+            "INFO_NA": "30.0000"
+          },
+          "fingerprint": "5f7d592a5a1b5738690d43f0e227c1676ded8056683d8343f04c9fde74ae6c8c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:7db80f1b7a043750fd71708b",
+    "category": "greek_yogurt",
+    "title": "그릭요거트 밤",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:7db80f1b7a043750fd71708b",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "그릭요거트 밤 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "159.0000",
+        "INFO_CAR": "18.9800",
+        "INFO_PRO": "7.8800",
+        "INFO_FAT": "5.7300",
+        "INFO_NA": "31.0000"
+      },
+      "fingerprint": "7db80f1b7a043750fd71708bd90afd2dc593d636cdaf6554c35d92483dd11c50",
+      "components": [
+        {
+          "foodId": "P119-202040200-1508",
+          "name": "그릭요거트 밤",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "159.000",
+            "INFO_CAR": "18.98",
+            "INFO_PRO": "7.88",
+            "INFO_FAT": "5.73",
+            "INFO_NA": "31.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "159.0000",
+            "INFO_CAR": "18.9800",
+            "INFO_PRO": "7.8800",
+            "INFO_FAT": "5.7300",
+            "INFO_NA": "31.0000"
+          },
+          "fingerprint": "2c38ca1f702fa1f092fd50070f9cf14767378229893ef27ff38feda063d51ba0"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:005dcad771862fcba7c4c416",
+    "category": "greek_yogurt",
+    "title": "찐한그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:005dcad771862fcba7c4c416",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "찐한그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "113.0000",
+        "INFO_CAR": "4.0000",
+        "INFO_PRO": "13.0000",
+        "INFO_FAT": "5.0000",
+        "INFO_NA": "35.0000"
+      },
+      "fingerprint": "005dcad771862fcba7c4c4160e1c040795477e762ba2fb677971d63d0c35a2be",
+      "components": [
+        {
+          "foodId": "P119-202040200-0476",
+          "name": "찐한그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "113.000",
+            "INFO_CAR": "4.00",
+            "INFO_PRO": "13.00",
+            "INFO_FAT": "5.00",
+            "INFO_NA": "35.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "113.0000",
+            "INFO_CAR": "4.0000",
+            "INFO_PRO": "13.0000",
+            "INFO_FAT": "5.0000",
+            "INFO_NA": "35.0000"
+          },
+          "fingerprint": "3afbf7d72633c682cdcb35d4df7bd89a0b805d6ae31077513e63eb342de5eb5c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:5f05a61db6ec7015043fe78a",
+    "category": "greek_yogurt",
+    "title": "녹차그릭요거트",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:5f05a61db6ec7015043fe78a",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "녹차그릭요거트 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "146.0000",
+        "INFO_CAR": "12.0000",
+        "INFO_PRO": "7.0000",
+        "INFO_FAT": "8.0000",
+        "INFO_NA": "40.0000"
+      },
+      "fingerprint": "5f05a61db6ec7015043fe78a7b8a5fc78ebffed78557d4732896d38128e0a002",
+      "components": [
+        {
+          "foodId": "P119-202040200-0053",
+          "name": "녹차그릭요거트",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "146.000",
+            "INFO_CAR": "12.00",
+            "INFO_PRO": "7.00",
+            "INFO_FAT": "8.00",
+            "INFO_NA": "40.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "146.0000",
+            "INFO_CAR": "12.0000",
+            "INFO_PRO": "7.0000",
+            "INFO_FAT": "8.0000",
+            "INFO_NA": "40.0000"
+          },
+          "fingerprint": "d9ab3152c3d2f7c3774525545692038809703fcae7a03df38cc52b201ac3b4dc"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:27084f1dd73f1a77a979f884",
+    "category": "soy_milk",
+    "title": "두유피",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:27084f1dd73f1a77a979f884",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "두유피 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "334.0000",
+        "INFO_CAR": "21.1000",
+        "INFO_PRO": "35.5000",
+        "INFO_FAT": "11.9000",
+        "INFO_NA": "76.0000"
+      },
+      "fingerprint": "27084f1dd73f1a77a979f884368daac403e6840561e2a32ef932da66a8223d03",
+      "components": [
+        {
+          "foodId": "P106-005000200-0007",
+          "name": "두유피",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "334.000",
+            "INFO_CAR": "21.10",
+            "INFO_PRO": "35.50",
+            "INFO_FAT": "11.90",
+            "INFO_NA": "76.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "334.0000",
+            "INFO_CAR": "21.1000",
+            "INFO_PRO": "35.5000",
+            "INFO_FAT": "11.9000",
+            "INFO_NA": "76.0000"
+          },
+          "fingerprint": "b94f152f5b243fb3ba0d93a629dae92dda4c1a62c8a0dc70013ee2d2f9c2cb02"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:78983cd8aca8ed94dec8786d",
+    "category": "soy_milk",
+    "title": "두유액",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:78983cd8aca8ed94dec8786d",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "두유액 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "48.0000",
+        "INFO_CAR": "2.0000",
+        "INFO_PRO": "5.0000",
+        "INFO_FAT": "2.1000",
+        "INFO_NA": "80.0000"
+      },
+      "fingerprint": "78983cd8aca8ed94dec8786d47b36abd0a3ee7f5e194dcd9041b4d9eb4882978",
+      "components": [
+        {
+          "foodId": "P116-703070300-0371",
+          "name": "두유액",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "48.00",
+            "INFO_CAR": "2.00",
+            "INFO_PRO": "5.00",
+            "INFO_FAT": "2.10",
+            "INFO_NA": "80.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "48.0000",
+            "INFO_CAR": "2.0000",
+            "INFO_PRO": "5.0000",
+            "INFO_FAT": "2.1000",
+            "INFO_NA": "80.0000"
+          },
+          "fingerprint": "6e2a90e772e8577faab50e24793b9692b40b38d9a55202ba028e0386559f0c3c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:3dbfc02c7f8535ee145f08eb",
+    "category": "soy_milk",
+    "title": "원액두유",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:3dbfc02c7f8535ee145f08eb",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "원액두유 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "34.0000",
+        "INFO_CAR": "2.0000",
+        "INFO_PRO": "6.0000",
+        "INFO_FAT": "1.1000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "3dbfc02c7f8535ee145f08ebe7ecdd1c37848f1491c16295d3fe41e58d116231",
+      "components": [
+        {
+          "foodId": "P109-500050100-0027",
+          "name": "원액두유",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "34.00",
+            "INFO_CAR": "2.00",
+            "INFO_PRO": "6.00",
+            "INFO_FAT": "1.10",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "34.0000",
+            "INFO_CAR": "2.0000",
+            "INFO_PRO": "6.0000",
+            "INFO_FAT": "1.1000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "72febfeb8c6d9dba053b5ef2e0a091974d2d820d29e1c51a8180180a7ae88118"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:60873ac652ada0b34cf66958",
+    "category": "soy_milk",
+    "title": "두유원액",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:60873ac652ada0b34cf66958",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "두유원액 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "48.0000",
+        "INFO_CAR": "2.0000",
+        "INFO_PRO": "5.0000",
+        "INFO_FAT": "2.1000",
+        "INFO_NA": "80.0000"
+      },
+      "fingerprint": "60873ac652ada0b34cf6695895c6d19cec467eb51b7b429abe40a3d519ed93b0",
+      "components": [
+        {
+          "foodId": "P116-703070300-0372",
+          "name": "두유원액",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "48.00",
+            "INFO_CAR": "2.00",
+            "INFO_PRO": "5.00",
+            "INFO_FAT": "2.10",
+            "INFO_NA": "80.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "48.0000",
+            "INFO_CAR": "2.0000",
+            "INFO_PRO": "5.0000",
+            "INFO_FAT": "2.1000",
+            "INFO_NA": "80.0000"
+          },
+          "fingerprint": "c2fd32eb4a346eed7e5c2258e4345f0d66b3472721da3f48f5049f4faab56955"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:7a4c5e31c430dd4b4e005946",
+    "category": "soy_milk",
+    "title": "하우두유부",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:7a4c5e31c430dd4b4e005946",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "하우두유부 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "197.0000",
+        "INFO_CAR": "34.3800",
+        "INFO_PRO": "5.2100",
+        "INFO_FAT": "4.1700",
+        "INFO_NA": "591.0000"
+      },
+      "fingerprint": "7a4c5e31c430dd4b4e00594698eaae0bbc565dc12ce650070d11f15d71d3a14d",
+      "components": [
+        {
+          "foodId": "P123-203020200-1070",
+          "name": "하우두유부",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "197.000",
+            "INFO_CAR": "34.38",
+            "INFO_PRO": "5.21",
+            "INFO_FAT": "4.17",
+            "INFO_NA": "591.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "197.0000",
+            "INFO_CAR": "34.3800",
+            "INFO_PRO": "5.2100",
+            "INFO_FAT": "4.1700",
+            "INFO_NA": "591.0000"
+          },
+          "fingerprint": "54432860b72714fbbb4bec21be24a010ec84421cb00bb76c0da598974db2bd34"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:1f6de8b4d305f3277577c0bd",
+    "category": "soy_milk",
+    "title": "단호박두유빵",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:1f6de8b4d305f3277577c0bd",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "단호박두유빵 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "262.0000",
+        "INFO_CAR": "45.8800",
+        "INFO_PRO": "8.4900",
+        "INFO_FAT": "4.9000",
+        "INFO_NA": "261.0000"
+      },
+      "fingerprint": "1f6de8b4d305f3277577c0bdb813ffb60ba21aff513163d761fa4217e6ea2b10",
+      "components": [
+        {
+          "foodId": "P101-405000400-4654",
+          "name": "단호박두유빵",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "262.000",
+            "INFO_CAR": "45.88",
+            "INFO_PRO": "8.49",
+            "INFO_FAT": "4.90",
+            "INFO_NA": "261.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "262.0000",
+            "INFO_CAR": "45.8800",
+            "INFO_PRO": "8.4900",
+            "INFO_FAT": "4.9000",
+            "INFO_NA": "261.0000"
+          },
+          "fingerprint": "cf5e3537cb1b6a5ba14d8a05d916de5e9123b6116594b03e13eb2e950ab0dc05"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:28b7e24cc8ede014bfc8432b",
+    "category": "soy_milk",
+    "title": "서리태콩물두유",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:28b7e24cc8ede014bfc8432b",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "서리태콩물두유 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "34.0000",
+        "INFO_CAR": "2.0000",
+        "INFO_PRO": "6.0000",
+        "INFO_FAT": "1.1000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "28b7e24cc8ede014bfc8432b70e8ac51f3f61a04c2fc99694630bdc19351b78b",
+      "components": [
+        {
+          "foodId": "P109-500050100-0026",
+          "name": "서리태콩물두유",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "34.00",
+            "INFO_CAR": "2.00",
+            "INFO_PRO": "6.00",
+            "INFO_FAT": "1.10",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "34.0000",
+            "INFO_CAR": "2.0000",
+            "INFO_PRO": "6.0000",
+            "INFO_FAT": "1.1000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "4b03006859adc35d20b703719b57c4a7843d0af22299d24c513c7212408e41bf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:c047bc1b26918da4108d697f",
+    "category": "soy_milk",
+    "title": "순수두유케이크",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:c047bc1b26918da4108d697f",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "순수두유케이크 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "321.0000",
+        "INFO_CAR": "29.1000",
+        "INFO_PRO": "5.2000",
+        "INFO_FAT": "20.4000",
+        "INFO_NA": "110.0000"
+      },
+      "fingerprint": "c047bc1b26918da4108d697f42d75f88360e7fbd1e017ae5e85a09e3f30d88b5",
+      "components": [
+        {
+          "foodId": "P101-409000400-4101",
+          "name": "순수두유케이크",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "321.000",
+            "INFO_CAR": "29.10",
+            "INFO_PRO": "5.20",
+            "INFO_FAT": "20.40",
+            "INFO_NA": "110.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "321.0000",
+            "INFO_CAR": "29.1000",
+            "INFO_PRO": "5.2000",
+            "INFO_FAT": "20.4000",
+            "INFO_NA": "110.0000"
+          },
+          "fingerprint": "e0a6df6af4a083fd89df10691822f253bdb59aa161795f00983cf1fbf1048f17"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:40fc372f83551db71935714d",
+    "category": "banana",
+    "title": "바나나",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:40fc372f83551db71935714d",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "바나나 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "82.0000",
+        "INFO_CAR": "19.0000",
+        "INFO_PRO": "1.0800",
+        "INFO_FAT": "0.1800",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "40fc372f83551db71935714dcee56353bd50197deb08afef656538eb3ed20d70",
+      "components": [
+        {
+          "foodId": "P116-701070100-2375",
+          "name": "바나나",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "82.00",
+            "INFO_CAR": "19.00",
+            "INFO_PRO": "1.08",
+            "INFO_FAT": "0.18",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "82.0000",
+            "INFO_CAR": "19.0000",
+            "INFO_PRO": "1.0800",
+            "INFO_FAT": "0.1800",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "61d5c52d427b1deea439ed7be486cce553d8466ad0a5cd1083650e5e4da6d52a"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:e5f59f9b9ee765d15a25af44",
+    "category": "banana",
+    "title": "바나나슈",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:e5f59f9b9ee765d15a25af44",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "바나나슈 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "246.0000",
+        "INFO_CAR": "35.0000",
+        "INFO_PRO": "5.6700",
+        "INFO_FAT": "11.6700",
+        "INFO_NA": "99.0000"
+      },
+      "fingerprint": "e5f59f9b9ee765d15a25af4492a7aedade2df613ef5196353267cf0bbe099853",
+      "components": [
+        {
+          "foodId": "P101-430000400-0636",
+          "name": "바나나슈",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "246.000",
+            "INFO_CAR": "35.00",
+            "INFO_PRO": "5.67",
+            "INFO_FAT": "11.67",
+            "INFO_NA": "99.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "246.0000",
+            "INFO_CAR": "35.0000",
+            "INFO_PRO": "5.6700",
+            "INFO_FAT": "11.6700",
+            "INFO_NA": "99.0000"
+          },
+          "fingerprint": "8dbdfa88dfcb33a2305d40d24ff58d45381439c56d5681fae58bf2faeb420bdf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:97341a1687b86a23b68eb57a",
+    "category": "banana",
+    "title": "바나나떡",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:97341a1687b86a23b68eb57a",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "바나나떡 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "283.0000",
+        "INFO_CAR": "51.4300",
+        "INFO_PRO": "2.0000",
+        "INFO_FAT": "8.5700",
+        "INFO_NA": "151.0000"
+      },
+      "fingerprint": "97341a1687b86a23b68eb57ac50ff98994b6e6528cd9da14396fc9b48abaf20e",
+      "components": [
+        {
+          "foodId": "P101-501000500-5229",
+          "name": "바나나떡",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "283.000",
+            "INFO_CAR": "51.43",
+            "INFO_PRO": "2.00",
+            "INFO_FAT": "8.57",
+            "INFO_NA": "151.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "283.0000",
+            "INFO_CAR": "51.4300",
+            "INFO_PRO": "2.0000",
+            "INFO_FAT": "8.5700",
+            "INFO_NA": "151.0000"
+          },
+          "fingerprint": "e19edd97211ae7788112d0ef41d0d773e0b90d177ff37b0c9816a0357878cf6e"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:9daf13329bd7fbb83226ec54",
+    "category": "banana",
+    "title": "바나나캔디",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:9daf13329bd7fbb83226ec54",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "바나나캔디 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "225.0000",
+        "INFO_CAR": "30.0000",
+        "INFO_PRO": "15.0000",
+        "INFO_FAT": "5.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "9daf13329bd7fbb83226ec54fc6a8fe2657c4111dccae3c9b112adce5f2bdaf1",
+      "components": [
+        {
+          "foodId": "P101-203000200-2045",
+          "name": "바나나캔디",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "225.000",
+            "INFO_CAR": "30.00",
+            "INFO_PRO": "15.00",
+            "INFO_FAT": "5.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "225.0000",
+            "INFO_CAR": "30.0000",
+            "INFO_PRO": "15.0000",
+            "INFO_FAT": "5.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "a8f8e9692d0a5a9194c258c4c9adc268c02e2294c49fcdd5b487556e953dd1a7"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:85a03a81db8aec07647417fa",
+    "category": "banana",
+    "title": "바나나양갱",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:85a03a81db8aec07647417fa",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "바나나양갱 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "300.0000",
+        "INFO_CAR": "71.4300",
+        "INFO_PRO": "2.8600",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "85a03a81db8aec07647417fae3c1289c5380d64334df869f981394e5e66054ff",
+      "components": [
+        {
+          "foodId": "P101-204000200-0053",
+          "name": "바나나양갱",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "300.000",
+            "INFO_CAR": "71.43",
+            "INFO_PRO": "2.86",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "300.0000",
+            "INFO_CAR": "71.4300",
+            "INFO_PRO": "2.8600",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "2bb2bdc4d000bf4ef0970f17763a2a05e8c72182e3e52c50db6999716a1f5a84"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:f8d71512d001c28c6fae58b2",
+    "category": "banana",
+    "title": "냉동바나나",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:f8d71512d001c28c6fae58b2",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "냉동바나나 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "90.0000",
+        "INFO_CAR": "22.0000",
+        "INFO_PRO": "1.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "f8d71512d001c28c6fae58b26c61b7523b5057629b5c9acc74660c2b7e62f92d",
+      "components": [
+        {
+          "foodId": "P116-701070100-0962",
+          "name": "냉동바나나",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "90.00",
+            "INFO_CAR": "22.00",
+            "INFO_PRO": "1.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "90.0000",
+            "INFO_CAR": "22.0000",
+            "INFO_PRO": "1.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "6fbe3dd6a6e9b40ad65a9b2829da840c23b93599aefe026d16aa671427fdea3f"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:36a0ad3362e4dbe5e6e7db5f",
+    "category": "apple",
+    "title": "사과",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:36a0ad3362e4dbe5e6e7db5f",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "105.0000",
+        "INFO_CAR": "26.0000",
+        "INFO_PRO": "0.1000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "5.0000"
+      },
+      "fingerprint": "36a0ad3362e4dbe5e6e7db5fafa72608d71b82c157ec3a70c337a8b6bf0502fa",
+      "components": [
+        {
+          "foodId": "P102-301030000-0899",
+          "name": "사과",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "105.000",
+            "INFO_CAR": "26.00",
+            "INFO_PRO": "0.10",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "5.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "105.0000",
+            "INFO_CAR": "26.0000",
+            "INFO_PRO": "0.1000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "5.0000"
+          },
+          "fingerprint": "8bb746a1f4a16358ec4a70c395ec7b7f3a80acfa4c9ce4a936b94c83e469fcb8"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:12a6365a77466dd4a6099fe3",
+    "category": "apple",
+    "title": "사과쨈",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:12a6365a77466dd4a6099fe3",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과쨈 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "250.0000",
+        "INFO_CAR": "60.0000",
+        "INFO_PRO": "0.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "12a6365a77466dd4a6099fe3d110a8c689d761ca3ede24d57bd7bfe44013015d",
+      "components": [
+        {
+          "foodId": "P105-001000100-0207",
+          "name": "사과쨈",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "250.000",
+            "INFO_CAR": "60.00",
+            "INFO_PRO": "0.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "250.0000",
+            "INFO_CAR": "60.0000",
+            "INFO_PRO": "0.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "fff663e679433e72a104079ad81815ce02a0b6074c49dc1679029200d2a496cb"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:91fd95576698e9a0165bb92f",
+    "category": "apple",
+    "title": "사과청",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:91fd95576698e9a0165bb92f",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과청 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "195.0000",
+        "INFO_CAR": "49.0000",
+        "INFO_PRO": "0.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "91fd95576698e9a0165bb92f7404fbc86ed1b7c4ed2f61c974fb03d15baaf917",
+      "components": [
+        {
+          "foodId": "P109-102010200-3951",
+          "name": "사과청",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "195.000",
+            "INFO_CAR": "49.00",
+            "INFO_PRO": "0.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "195.0000",
+            "INFO_CAR": "49.0000",
+            "INFO_PRO": "0.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "b4ec747532cf7eeb90c08c33312fb4b73524430fd0fe3a699960ef4af4e4a677"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:2626a64e16345c21e8540167",
+    "category": "apple",
+    "title": "사과만",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:2626a64e16345c21e8540167",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과만 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "248.0000",
+        "INFO_CAR": "61.1500",
+        "INFO_PRO": "0.8600",
+        "INFO_FAT": "0.0500",
+        "INFO_NA": "14.0000"
+      },
+      "fingerprint": "2626a64e16345c21e8540167af67cadbd1bfae8113e4513f7ac5238245a740c6",
+      "components": [
+        {
+          "foodId": "P105-001000200-0217",
+          "name": "사과만",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "248.000",
+            "INFO_CAR": "61.15",
+            "INFO_PRO": "0.86",
+            "INFO_FAT": "0.05",
+            "INFO_NA": "14.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "248.0000",
+            "INFO_CAR": "61.1500",
+            "INFO_PRO": "0.8600",
+            "INFO_FAT": "0.0500",
+            "INFO_NA": "14.0000"
+          },
+          "fingerprint": "4c3d7517e55b4a5145a8bf5817673186e357efd0d4e06d8fa1e034952451d854"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:fb2fcb08872e4336f0b60ba1",
+    "category": "apple",
+    "title": "사과떡",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:fb2fcb08872e4336f0b60ba1",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과떡 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "248.0000",
+        "INFO_CAR": "57.4600",
+        "INFO_PRO": "2.7500",
+        "INFO_FAT": "0.8000",
+        "INFO_NA": "295.0000"
+      },
+      "fingerprint": "fb2fcb08872e4336f0b60ba155539f884888e0c80b410ebfd3e511d44f4e1c06",
+      "components": [
+        {
+          "foodId": "P101-501000500-1808",
+          "name": "사과떡",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "248.000",
+            "INFO_CAR": "57.46",
+            "INFO_PRO": "2.75",
+            "INFO_FAT": "0.80",
+            "INFO_NA": "295.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "248.0000",
+            "INFO_CAR": "57.4600",
+            "INFO_PRO": "2.7500",
+            "INFO_FAT": "0.8000",
+            "INFO_NA": "295.0000"
+          },
+          "fingerprint": "e2b3ffd4db68335b42cc0d6c97629afa32f6457f9c1161fc5290290621deccf6"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:0a6d044d3fd0d58e7254fdf5",
+    "category": "apple",
+    "title": "사과아삭",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:0a6d044d3fd0d58e7254fdf5",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "사과아삭 100g",
+      "servingWeight": "100.0",
+      "nutrition": {
+        "INFO_ENG": "88.0000",
+        "INFO_CAR": "18.3300",
+        "INFO_PRO": "0.0000",
+        "INFO_FAT": "1.4200",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "0a6d044d3fd0d58e7254fdf5b2544b1bd8789f7da7db0d68cf36f625f53baa4b",
+      "components": [
+        {
+          "foodId": "P102-301030000-0162",
+          "name": "사과아삭",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100.0",
+          "nutrition": {
+            "INFO_ENG": "88.00",
+            "INFO_CAR": "18.33",
+            "INFO_PRO": "0.00",
+            "INFO_FAT": "1.42",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "88.0000",
+            "INFO_CAR": "18.3300",
+            "INFO_PRO": "0.0000",
+            "INFO_FAT": "1.4200",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "b8b85e3b604a19acc46de040aef76a1766aac003ccfe9e6bcf68f976eb6c2852"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:ab12e10832741a754b880ac9",
+    "category": "sweet_potato",
+    "title": "찐고구마",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:ab12e10832741a754b880ac9",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "찐고구마 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "163.0000",
+        "INFO_CAR": "39.5000",
+        "INFO_PRO": "1.1000",
+        "INFO_FAT": "0.1500",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "ab12e10832741a754b880ac9ec293d265b301112433a55aea2c9a376d51fcf1f",
+      "components": [
+        {
+          "foodId": "P116-704070400-0268",
+          "name": "찐고구마",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "163.000",
+            "INFO_CAR": "39.50",
+            "INFO_PRO": "1.10",
+            "INFO_FAT": "0.15",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "163.0000",
+            "INFO_CAR": "39.5000",
+            "INFO_PRO": "1.1000",
+            "INFO_FAT": "0.1500",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "5c8ceb13de1cee76fb7ac6f9efbbdaeab21fe1514de72747c37c498701cee056"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:17468aeea5107bcc790d13e3",
+    "category": "sweet_potato",
+    "title": "군고구마",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:17468aeea5107bcc790d13e3",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "군고구마 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "188.0000",
+        "INFO_CAR": "45.4800",
+        "INFO_PRO": "1.1300",
+        "INFO_FAT": "0.1600",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "17468aeea5107bcc790d13e327f0c0956919ccec8ee5611ec837e1ea009ac52e",
+      "components": [
+        {
+          "foodId": "P116-704070400-0863",
+          "name": "군고구마",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "188.000",
+            "INFO_CAR": "45.48",
+            "INFO_PRO": "1.13",
+            "INFO_FAT": "0.16",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "188.0000",
+            "INFO_CAR": "45.4800",
+            "INFO_PRO": "1.1300",
+            "INFO_FAT": "0.1600",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "4618c34fb74f6e5f817a9d77585a9b472aea919b349995c5ccfc4746387f0463"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:478a45e441b69bf3a5943ac5",
+    "category": "sweet_potato",
+    "title": "군고구마빠",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:478a45e441b69bf3a5943ac5",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "군고구마빠 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "108.0000",
+        "INFO_CAR": "25.0000",
+        "INFO_PRO": "1.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "64.0000"
+      },
+      "fingerprint": "478a45e441b69bf3a5943ac5d26a299c137118ebdc4e44aaa4239ef003ce2a64",
+      "components": [
+        {
+          "foodId": "P116-704070400-0564",
+          "name": "군고구마빠",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "108.000",
+            "INFO_CAR": "25.00",
+            "INFO_PRO": "1.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "64.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "108.0000",
+            "INFO_CAR": "25.0000",
+            "INFO_PRO": "1.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "64.0000"
+          },
+          "fingerprint": "a508b710269868395605f6e99ea1ebc110a141e472eb9bf46ef21509bfd430c4"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:c9ee429673092dc9b7522699",
+    "category": "sweet_potato",
+    "title": "찐꿀고구마",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:c9ee429673092dc9b7522699",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "찐꿀고구마 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "323.0000",
+        "INFO_CAR": "76.0000",
+        "INFO_PRO": "0.5000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "120.0000"
+      },
+      "fingerprint": "c9ee429673092dc9b7522699e736bae1262cba6b46b1c92c24eea8adc5fee4b7",
+      "components": [
+        {
+          "foodId": "P116-704070400-0483",
+          "name": "찐꿀고구마",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "323.000",
+            "INFO_CAR": "76.00",
+            "INFO_PRO": "0.50",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "120.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "323.0000",
+            "INFO_CAR": "76.0000",
+            "INFO_PRO": "0.5000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "120.0000"
+          },
+          "fingerprint": "6a9587131ff8ffba3965436b9a507bf00899342768323a18485c8cff133bd29a"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:8b15d98a50015f06910a3bbc",
+    "category": "sweet_potato",
+    "title": "군고구마양갱",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:8b15d98a50015f06910a3bbc",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "군고구마양갱 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "288.0000",
+        "INFO_CAR": "70.0000",
+        "INFO_PRO": "0.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "0.0000"
+      },
+      "fingerprint": "8b15d98a50015f06910a3bbc568f7cb65ace8f83c6ca5f1feff08b65d76cfd99",
+      "components": [
+        {
+          "foodId": "P101-204000200-0014",
+          "name": "군고구마양갱",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "288.000",
+            "INFO_CAR": "70.00",
+            "INFO_PRO": "0.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "0.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "288.0000",
+            "INFO_CAR": "70.0000",
+            "INFO_PRO": "0.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "0.0000"
+          },
+          "fingerprint": "41fd13be38734083c2776d008fc2da6a83c55d9aea6d8dcecda3442aab9725d0"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:beaa8438b4cb5f40c8b1eed0",
+    "category": "sweet_potato",
+    "title": "군고구마만쥬",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:beaa8438b4cb5f40c8b1eed0",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "군고구마만쥬 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "337.0000",
+        "INFO_CAR": "77.2300",
+        "INFO_PRO": "6.1100",
+        "INFO_FAT": "0.3900",
+        "INFO_NA": "4.0000"
+      },
+      "fingerprint": "beaa8438b4cb5f40c8b1eed06255ebaf408b7585557fe6fd31fc8a9f18c53697",
+      "components": [
+        {
+          "foodId": "P101-413000400-0446",
+          "name": "군고구마만쥬",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "337.000",
+            "INFO_CAR": "77.23",
+            "INFO_PRO": "6.11",
+            "INFO_FAT": "0.39",
+            "INFO_NA": "4.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "337.0000",
+            "INFO_CAR": "77.2300",
+            "INFO_PRO": "6.1100",
+            "INFO_FAT": "0.3900",
+            "INFO_NA": "4.0000"
+          },
+          "fingerprint": "0231788c4c20ab46c0bc6f9cc56da64163052f3ab18293e4bdcbb881c7b7e73c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:1487e9694557aaea60c31410",
+    "category": "sweet_potato",
+    "title": "군고구마앙금",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:1487e9694557aaea60c31410",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "군고구마앙금 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "255.0000",
+        "INFO_CAR": "61.0000",
+        "INFO_PRO": "3.0000",
+        "INFO_FAT": "0.0000",
+        "INFO_NA": "5.0000"
+      },
+      "fingerprint": "1487e9694557aaea60c3141072d6da09be20734d19bafbf874baad26093c4cba",
+      "components": [
+        {
+          "foodId": "P114-300030000-1358",
+          "name": "군고구마앙금",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "255.000",
+            "INFO_CAR": "61.00",
+            "INFO_PRO": "3.00",
+            "INFO_FAT": "0.00",
+            "INFO_NA": "5.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "255.0000",
+            "INFO_CAR": "61.0000",
+            "INFO_PRO": "3.0000",
+            "INFO_FAT": "0.0000",
+            "INFO_NA": "5.0000"
+          },
+          "fingerprint": "572153f73997ac42d3c81ac47f9ede4fe4a431b437af87bd41ba9665f866bcaf"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:dd85810ed09db76ba832cc21",
+    "category": "sweet_potato",
+    "title": "고구마_찐것",
+    "note": "먹는 부분의 중량 기준입니다. 크기와 조리 상태에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:dd85810ed09db76ba832cc21",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "고구마_찐것 100g",
+      "servingWeight": "100",
+      "nutrition": {
+        "INFO_ENG": "163.0000",
+        "INFO_CAR": "39.4100",
+        "INFO_PRO": "1.0800",
+        "INFO_FAT": "0.1500",
+        "INFO_NA": "6.0000"
+      },
+      "fingerprint": "dd85810ed09db76ba832cc213572a28b78e55e9c5b3b4811cb699041c6d512c2",
+      "components": [
+        {
+          "foodId": "R102-006000049-0000",
+          "name": "고구마_찐것",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "100",
+          "nutrition": {
+            "INFO_ENG": "163.000",
+            "INFO_CAR": "39.41",
+            "INFO_PRO": "1.08",
+            "INFO_FAT": "0.15",
+            "INFO_NA": "6.00"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "163.0000",
+            "INFO_CAR": "39.4100",
+            "INFO_PRO": "1.0800",
+            "INFO_FAT": "0.1500",
+            "INFO_NA": "6.0000"
+          },
+          "fingerprint": "052830503d5bcd4153d9aac7fdf5f2a70d824974ebe6dd55ed7bd1d80a72d501"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:9c38feb21a7c86722b0aeb7f",
+    "category": "cheese",
+    "title": "치즈번",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:9c38feb21a7c86722b0aeb7f",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "치즈번 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "117.6000",
+        "INFO_CAR": "15.0000",
+        "INFO_PRO": "5.0010",
+        "INFO_FAT": "5.4990",
+        "INFO_NA": "69.9000"
+      },
+      "fingerprint": "9c38feb21a7c86722b0aeb7f3049cce30fa706400d6a1bf0b568cd4d90482da4",
+      "components": [
+        {
+          "foodId": "P101-405000400-2008",
+          "name": "치즈번",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "392.000",
+            "INFO_CAR": "50.00",
+            "INFO_PRO": "16.67",
+            "INFO_FAT": "18.33",
+            "INFO_NA": "233.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "117.6000",
+            "INFO_CAR": "15.0000",
+            "INFO_PRO": "5.0010",
+            "INFO_FAT": "5.4990",
+            "INFO_NA": "69.9000"
+          },
+          "fingerprint": "92ce92c23396d72e7197c183fcc33c1969cf7b57f43f33c211fe84ec2798c289"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:061713ea258e2e76a31531ce",
+    "category": "cheese",
+    "title": "치즈볼",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:061713ea258e2e76a31531ce",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "치즈볼 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "68.7000",
+        "INFO_CAR": "3.5010",
+        "INFO_PRO": "6.1260",
+        "INFO_FAT": "3.6240",
+        "INFO_NA": "138.0000"
+      },
+      "fingerprint": "061713ea258e2e76a31531ceec04d6b9d7bd1b74eb556fba7e4d7025372477eb",
+      "components": [
+        {
+          "foodId": "P101-014000400-F046-002",
+          "name": "치즈볼",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "229.000",
+            "INFO_CAR": "11.67",
+            "INFO_PRO": "20.42",
+            "INFO_FAT": "12.08",
+            "INFO_NA": "460.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "68.7000",
+            "INFO_CAR": "3.5010",
+            "INFO_PRO": "6.1260",
+            "INFO_FAT": "3.6240",
+            "INFO_NA": "138.0000"
+          },
+          "fingerprint": "2c0adf27a78db981d1e7c56d4c29b9e4fa8e82e51789c8fbfe7a76bb7870d56a"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:2fd40bf127039d2083a7c562",
+    "category": "cheese",
+    "title": "치즈채",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:2fd40bf127039d2083a7c562",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "치즈채 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "123.9000",
+        "INFO_CAR": "8.1540",
+        "INFO_PRO": "11.9370",
+        "INFO_FAT": "4.8390",
+        "INFO_NA": "190.2000"
+      },
+      "fingerprint": "2fd40bf127039d2083a7c562d8ece0efd686f6209859b35fb3c1326485bb5733",
+      "components": [
+        {
+          "foodId": "P119-900090100-0741",
+          "name": "치즈채",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "413.000",
+            "INFO_CAR": "27.18",
+            "INFO_PRO": "39.79",
+            "INFO_FAT": "16.13",
+            "INFO_NA": "634.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "123.9000",
+            "INFO_CAR": "8.1540",
+            "INFO_PRO": "11.9370",
+            "INFO_FAT": "4.8390",
+            "INFO_NA": "190.2000"
+          },
+          "fingerprint": "4656b43f3686f13ad25a903368ac94968e9c1cde4f6b2787efdfa72cf21dde9c"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:5fdeb19cf2202e181a0de9cb",
+    "category": "cheese",
+    "title": "치즈포",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:5fdeb19cf2202e181a0de9cb",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "치즈포 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "152.7000",
+        "INFO_CAR": "1.5960",
+        "INFO_PRO": "11.3460",
+        "INFO_FAT": "11.2080",
+        "INFO_NA": "298.5000"
+      },
+      "fingerprint": "5fdeb19cf2202e181a0de9cb0f39f632a74c1d916239718f3f182746d894d986",
+      "components": [
+        {
+          "foodId": "P119-900090100-1733",
+          "name": "치즈포",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "509.000",
+            "INFO_CAR": "5.32",
+            "INFO_PRO": "37.82",
+            "INFO_FAT": "37.36",
+            "INFO_NA": "995.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "152.7000",
+            "INFO_CAR": "1.5960",
+            "INFO_PRO": "11.3460",
+            "INFO_FAT": "11.2080",
+            "INFO_NA": "298.5000"
+          },
+          "fingerprint": "f7f0167d0c7efa3ff9ee152811c1e26cd1d38c9ef264cdc18c0adf487f30e069"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:252986aca4d75d1b4d1f3a53",
+    "category": "cheese",
+    "title": "김치즈",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:252986aca4d75d1b4d1f3a53",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "김치즈 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "99.9000",
+        "INFO_CAR": "2.4990",
+        "INFO_PRO": "5.8350",
+        "INFO_FAT": "7.5000",
+        "INFO_NA": "300.0000"
+      },
+      "fingerprint": "252986aca4d75d1b4d1f3a53365c266ae3345fad4a1be503dab8cd60405f1dd4",
+      "components": [
+        {
+          "foodId": "P119-900090200-0849",
+          "name": "김치즈",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "333.000",
+            "INFO_CAR": "8.33",
+            "INFO_PRO": "19.45",
+            "INFO_FAT": "25.00",
+            "INFO_NA": "1000.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "99.9000",
+            "INFO_CAR": "2.4990",
+            "INFO_PRO": "5.8350",
+            "INFO_FAT": "7.5000",
+            "INFO_NA": "300.0000"
+          },
+          "fingerprint": "47aa116d481cca661c2f1b2b1e2b656b8e18b71a6beb40eba97db2b7a87fe1e4"
+        }
+      ]
+    }
+  },
+  {
+    "id": "snack:02dc02f87bfa3298abdbfaa8",
+    "category": "cheese",
+    "title": "치즈롤빵",
+    "note": "먹는 부분의 중량 기준입니다. 제품·조리법에 따라 실제 영양량은 달라질 수 있어요.",
+    "foodEvidence": {
+      "recipeId": "snack:02dc02f87bfa3298abdbfaa8",
+      "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+      "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+      "ingredients": "치즈롤빵 30g",
+      "servingWeight": "30",
+      "nutrition": {
+        "INFO_ENG": "111.9000",
+        "INFO_CAR": "20.6130",
+        "INFO_PRO": "5.6580",
+        "INFO_FAT": "2.5710",
+        "INFO_NA": "88.5000"
+      },
+      "fingerprint": "02dc02f87bfa3298abdbfaa85ecb82d1563238f2ce3d5fcea91f8f867790aef7",
+      "components": [
+        {
+          "foodId": "P101-405000400-2003",
+          "name": "치즈롤빵",
+          "role": "snack",
+          "sourceUrl": "https://www.data.go.kr/data/15127578/openapi.do",
+          "retrievedAt": "2026-09-11T06:23:43.692382+00:00",
+          "basisWeight": "100.0",
+          "servingWeight": "30",
+          "nutrition": {
+            "INFO_ENG": "373.000",
+            "INFO_CAR": "68.71",
+            "INFO_PRO": "18.86",
+            "INFO_FAT": "8.57",
+            "INFO_NA": "295.000"
+          },
+          "amountNutrition": {
+            "INFO_ENG": "111.9000",
+            "INFO_CAR": "20.6130",
+            "INFO_PRO": "5.6580",
+            "INFO_FAT": "2.5710",
+            "INFO_NA": "88.5000"
+          },
+          "fingerprint": "6d8eead0dd0d9cec68b925a2faeb62fcf1e584605a8bbc5f4f25e142f33ed834"
         }
       ]
     }

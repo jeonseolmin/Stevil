@@ -40,7 +40,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
             await axiosInstance.post('/reports', {
                 targetType: 'USER', // 유저 신고 타입
                 targetId: profile.id, // 유저 ID
-                category: 'ETC',
+                category: 'OTHER',
                 reason: reportReason
             });
             alert('사용자 신고가 정상적으로 접수되었습니다.');
