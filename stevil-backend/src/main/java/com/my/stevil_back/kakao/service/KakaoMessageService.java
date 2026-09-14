@@ -39,9 +39,19 @@ public class KakaoMessageService {
         headers.setBearerAuth(accessToken); // DB에서 꺼낸 토큰을 헤더에 삽입
 
         // 3. 메시지 템플릿 작성 (배포 환경 EC2 주소 적용)
+        String targetUrl = "http://15.165.242.94";
+
         String templateObject = String.format(
-                "{\"object_type\":\"text\",\"text\":\"%s\",\"link\":{\"web_url\":\"http://15.165.242.94:8080\"}}",
-                text
+                "{" +
+                        "  \"object_type\": \"text\"," +
+                        "  \"text\": \"%s\"," +
+                        "  \"link\": {" +
+                        "    \"web_url\": \"%s\"," +
+                        "    \"mobile_web_url\": \"%s\"" +
+                        "  }," +
+                        "  \"button_title\": \"피드백 남기기\"" +
+                        "}",
+                text, targetUrl, targetUrl
         );
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();

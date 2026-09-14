@@ -44,6 +44,7 @@ spring:
             scope:
               - profile_nickname
               - profile_image
+              - talk_message
             client-name: Kakao
 
         provider:

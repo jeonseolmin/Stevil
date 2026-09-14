@@ -33,7 +33,8 @@ public class NotificationService {
         if (isKakaoLinked) {
             log.info("{} 회원에게 카카오톡으로 피드백을 요청합니다.", user.getEmail());
 
-            String feedbackMessage = "Stevil 서비스 피드백을 남겨주세요! 참여해주셔서 감사합니다.";
+            String feedbackMessage = "Stevil 서비스 피드백을 남겨주세요! 참여해주셔서 감사합니다.\\n" +
+                    "http://15.165.242.94/feedback";
             kakaoMessageService.sendMessage(user.getId(), feedbackMessage);
 
         } else {
