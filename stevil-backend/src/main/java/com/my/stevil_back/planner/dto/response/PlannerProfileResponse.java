@@ -1,5 +1,7 @@
 package com.my.stevil_back.planner.dto.response;
 
+import com.my.stevil_back.user.entity.enumType.ActivityLevel;
+
 import java.time.LocalDateTime;
 
 public record PlannerProfileResponse(
@@ -57,6 +59,22 @@ public record PlannerProfileResponse(
          * 예:
          * 2 = Protein First
          */
-        Integer nutritionPolicyVersion
+        Integer nutritionPolicyVersion,
+
+        /**
+         * 개인화 calorie 계산의 activity 입력값(Phase15B).
+         *
+         * 아직 설정하지 않은 사용자는 null.
+         */
+        ActivityLevel activityLevel,
+
+        /**
+         * NutritionPolicy.calculateRecommendedCalories()로 계산한
+         * runtime 추천 칼로리(Phase15C).
+         *
+         * targetCalories(Diet에서 확정된 목표)와는 별개이며, DB에
+         * 저장하지 않는다. 필수 profile 값이 부족하면 null.
+         */
+        Integer recommendedCalories
 ) {
 }

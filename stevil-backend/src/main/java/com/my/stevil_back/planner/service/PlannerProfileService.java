@@ -1,7 +1,10 @@
 package com.my.stevil_back.planner.service;
 
+import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.dto.response.PlannerProfileResponse;
+import com.my.stevil_back.user.entity.User;
+import com.my.stevil_back.user.entity.enumType.ActivityLevel;
 import com.my.stevil_back.user.repository.UserRepository;
 import com.my.stevil_back.user.repository.UserWeightRepository;
 
@@ -26,15 +29,22 @@ public class PlannerProfileService {
      */
     private final UserDietGoalRepository dietGoals;
 
+    /**
+     * recommendedCalories(Phase15C) runtime 계산에 사용한다.
+     */
+    private final NutritionPolicy nutritionPolicy;
+
     public PlannerProfileService(
             UserRepository users,
             UserWeightRepository weights,
-            UserDietGoalRepository dietGoals
+            UserDietGoalRepository dietGoals,
+            NutritionPolicy nutritionPolicy
     ) {
 
         this.users = users;
         this.weights = weights;
         this.dietGoals = dietGoals;
+        this.nutritionPolicy = nutritionPolicy;
     }
 
     // =========================================================
@@ -46,14 +56,49 @@ public class PlannerProfileService {
             Long userId
     ) {
 
-        var user =
-                users.findById(userId)
-                        .orElseThrow(
-                                () ->
-                                        new ResponseStatusException(
-                                                HttpStatus.UNAUTHORIZED
-                                        )
-                        );
+        var user = findUser(userId);
+
+        return buildResponse(user);
+    }
+
+    // =========================================================
+    // Activity Level 변경(Phase15C)
+    // =========================================================
+
+    /**
+     * 현재 로그인 사용자의 activityLevel을 갱신한다.
+     *
+     * User.updateActivityLevel() 외의 다른 필드는 건드리지 않으며,
+     * targetCalories 등 UserDietGoal은 이 메서드에서 전혀 수정하지
+     * 않는다. 갱신 직후 값을 반영한 PlannerProfileResponse를
+     * 재계산해서 돌려준다(추가 조회 없이 이미 로드된 user 재사용).
+     */
+    @Transactional
+    public PlannerProfileResponse updateActivityLevel(
+            Long userId,
+            ActivityLevel activityLevel
+    ) {
+
+        var user = findUser(userId);
+
+        user.updateActivityLevel(activityLevel);
+
+        return buildResponse(user);
+    }
+
+    private User findUser(Long userId) {
+        return users.findById(userId)
+                .orElseThrow(
+                        () ->
+                                new ResponseStatusException(
+                                        HttpStatus.UNAUTHORIZED
+                                )
+                );
+    }
+
+    private PlannerProfileResponse buildResponse(
+            User user
+    ) {
 
         LocalDateTime now =
                 LocalDateTime.now(
@@ -116,7 +161,7 @@ public class PlannerProfileService {
         var dietGoal =
                 dietGoals
                         .findByUserId(
-                                userId
+                                user.getId()
                         )
                         .orElse(null);
 
@@ -145,6 +190,28 @@ public class PlannerProfileService {
                           .getNutritionPolicyVersion();
 
         // =====================================================
+        // 추천 칼로리(Phase15C)
+        //
+        // 필수 profile 값(성별/나이/키/현재 체중/activityLevel)이
+        // 부족하면 NutritionPolicy.calculateRecommendedCalories()가
+        // 자체적으로 null을 반환한다. 여기서는 fallback 값을 넣지
+        // 않고 그 결과를 그대로 사용한다. currentWeightKg는 primitive
+        // double 파라미터라 weightKg가 null이면 호출 자체를 생략한다.
+        // =====================================================
+
+        Integer recommendedCalories =
+                weightKg == null
+                        ? null
+                        : nutritionPolicy.calculateRecommendedCalories(
+                                user.getSex(),
+                                age,
+                                heightCm,
+                                weightKg,
+                                targetWeight == null ? 0.0 : targetWeight,
+                                user.getActivityLevel()
+                        );
+
+        // =====================================================
         // 응답
         // =====================================================
 
@@ -157,7 +224,9 @@ public class PlannerProfileService {
                 targetWeight,
                 targetCalories,
                 targetProtein,
-                nutritionPolicyVersion
+                nutritionPolicyVersion,
+                user.getActivityLevel(),
+                recommendedCalories
         );
     }
 }
