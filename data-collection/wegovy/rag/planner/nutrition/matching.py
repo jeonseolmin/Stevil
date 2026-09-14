@@ -4,6 +4,7 @@ from copy import deepcopy
 import hashlib
 import json
 import math
+import time
 from planner.food.policy import (
     choose_diverse_week,
     processed_meat,
@@ -12,6 +13,70 @@ from planner.food.policy import (
 
 class NutritionTargetUnavailable(ValueError):
     pass
+
+
+# Timing/counter measurement only (Phase8); never gates or changes results.
+def _log_timing(label, seconds):
+    print(f'[PLANNER TIMING] {label}={seconds:.3f}s', flush=True)
+
+
+# =========================================================
+# match_week() search-space policy (Phase10)
+#
+# These bound how many food/snack candidates match_week() explores.
+# They exist purely to keep the O(E^3 * S^2) combinatorial search
+# tractable -- they are NOT medical or nutrition limits.
+# =========================================================
+
+MAX_MATCH_FOOD_CANDIDATES = 20
+MAX_MATCH_SNACK_CANDIDATES = 12
+
+
+def _cap_snacks_by_category_quota(snacks, limit):
+    """
+    전역 priority top-K가 아니라 카테고리 quota로 snack 후보를 limit개로 줄인다.
+
+    각 카테고리 안에서는 기존에 이미 들어온 순서(= DB category,priority,title
+    정렬 순서)를 그대로 존중해 앞쪽(우선순위 높은) 항목부터 담는다. 카테고리
+    사이의 나머지 자리 배분은 새 영양/카테고리 기준을 만들지 않기 위해
+    입력 리스트에 카테고리가 처음 등장하는 순서를 그대로 사용한다(입력 자체가
+    이미 결정적으로 정렬돼 들어오므로 별도 판단을 추가하지 않는다).
+    """
+    if limit <= 0 or len(snacks) <= limit:
+        return list(snacks)
+
+    by_category = {}
+    category_order = []
+
+    for snack in snacks:
+        category = snack.get('category')
+        if category not in by_category:
+            by_category[category] = []
+            category_order.append(category)
+        by_category[category].append(snack)
+
+    base = limit // len(category_order)
+    remainder = limit % len(category_order)
+
+    selected_ids = set()
+    selected = []
+
+    for index, category in enumerate(category_order):
+        quota = base + (1 if index < remainder else 0)
+        for snack in by_category[category][:quota]:
+            selected_ids.add(id(snack))
+            selected.append(snack)
+
+    if len(selected) < limit:
+        for snack in snacks:
+            if len(selected) >= limit:
+                break
+            if id(snack) not in selected_ids:
+                selected_ids.add(id(snack))
+                selected.append(snack)
+
+    # 원래 (category, priority, title) 순서를 그대로 보존해서 반환한다.
+    return [snack for snack in snacks if id(snack) in selected_ids]
 
 
 def number(value):
@@ -23,15 +88,18 @@ def number(value):
 
 def validate_goal(goal):
     if not goal: return None
-    for key,low,high in [('weightKg',20,350),('proteinPerKg',0.1,3),('calories',1000,5000)]:
+    for key,low,high in [('weightKg',20,350),('proteinPerKg',0.1,3)]:
         value=number(goal.get(key))
         if isinstance(goal.get(key),bool) or value is None or not low<=value<=high:
             raise ValueError('체중·단백질 기준·목표 열량을 확인해 주세요.')
+    # calories는 Stevil 서비스 하한(1200kcal)만 두고 상한은 없다.
+    calories=number(goal.get('calories'))
+    if isinstance(goal.get('calories'),bool) or calories is None or calories<1200:
+        raise ValueError('체중·단백질 기준·목표 열량을 확인해 주세요.')
     if goal.get('confirmed') is not True:
         raise ValueError('성인 일반 식사 목표이며 제한 사항을 확인했다는 확인이 필요합니다.')
     protein=goal['weightKg']*goal['proteinPerKg']
-    if protein*4>goal['calories']*.35:
-        raise ValueError('단백질 목표가 열량의 35%를 넘습니다. 설정을 전문가와 확인해 주세요.')
+    # 35% is a Stevil soft management guideline; hard validation is intentionally not applied here.
     return {'calories':float(goal['calories']),'protein':round(protein,1)}
 
 
@@ -128,6 +196,23 @@ def macro_penalty(
     )
 
 
+def _protein_bounds(protein_target):
+    """
+    balanced_macros()가 판정에 쓰는 것과 동일한 단백질 허용 범위.
+
+    새 기준이 아니라, balanced_macros() 안에 있던 동일한 두 상수(0.80,
+    2.0/+60)를 재사용 목적으로 뽑아낸 것뿐이다(Phase10 lossless interval
+    pruning에서 재사용).
+    """
+    return (
+        protein_target * 0.80,
+        max(
+            protein_target * 2.0,
+            protein_target + 60,
+        ),
+    )
+
+
 def balanced_macros(
     carbs,
     protein,
@@ -137,11 +222,12 @@ def balanced_macros(
     if protein_target <= 0:
         return False
 
-    # 목표의 80%는 최소 확보
-    if protein < (
+    required_min, allowed_max = _protein_bounds(
         protein_target
-        * 0.80
-    ):
+    )
+
+    # 목표의 80%는 최소 확보
+    if protein < required_min:
         return False
 
     # 과도한 단백질 후보 방지용
@@ -150,10 +236,7 @@ def balanced_macros(
     # 이것은 개인별 의학적 단백질 처방값이 아니라
     # 자동 조합이 극단적으로 치우치는 것을 막는
     # 기술적 제한입니다.
-    if protein > max(
-        protein_target * 2.0,
-        protein_target + 60,
-    ):
+    if protein > allowed_max:
         return False
 
     return (
@@ -200,12 +283,20 @@ def balanced_meals(calories, target):
 def viable_portion_variants(
     row,
     goal,
+    nutrition=None,
+    target=None,
 ):
     """
     현재 nutritionGoal에서 이 음식이 한 끼 후보로
     사용할 수 있는 portion variant를 반환합니다.
 
     match_week()와 동일한 portion 범위를 사용합니다.
+
+    nutrition/target을 호출자가 이미 계산해뒀다면(match_week()의 eligible
+    구성 시처럼) 넘겨서 recipe_nutrition()/processed_meat()/validate_goal()
+    재계산을 건너뛸 수 있다(Phase10). 기본값(None)일 때는 기존과 완전히
+    동일하게 매번 새로 계산한다 -- is_viable_meal_candidate() 등 기존
+    호출부의 동작은 바뀌지 않는다.
 
     반환 예:
     [
@@ -223,25 +314,27 @@ def viable_portion_variants(
     한 끼 후보로 사용할 수 없습니다.
     """
 
-    target = validate_goal(
-        goal
-    )
+    if target is None:
+        target = validate_goal(
+            goal
+        )
 
     if target is None:
         return []
 
-    if (
-        recipe_nutrition(
-            row
-        )
-        is None
-    ):
-        return []
+    if nutrition is None:
+        if (
+            recipe_nutrition(
+                row
+            )
+            is None
+        ):
+            return []
 
-    if processed_meat(
-        row
-    ):
-        return []
+        if processed_meat(
+            row
+        ):
+            return []
 
     choices = []
 
@@ -318,6 +411,8 @@ def match_week(
     goal,
     snacks=(),
 ):
+    _mw_t0 = time.perf_counter()
+
     target = validate_goal(
         goal
     )
@@ -366,6 +461,30 @@ def match_week(
         )
     ]
 
+    # Phase10: search-space caps (performance policy, not medical/nutrition;
+    # see MAX_MATCH_FOOD_CANDIDATES/MAX_MATCH_SNACK_CANDIDATES).
+    #
+    # Food keeps its existing incoming order (vector relevance -> diversity
+    # selection -> Gemini eligible selection / grounded supplement, all
+    # decided upstream before match_week() is called) and only the top
+    # MAX_MATCH_FOOD_CANDIDATES are searched. No new ranking is introduced.
+    _mw_eligible_before_cap = len(eligible)
+
+    eligible = eligible[
+        :MAX_MATCH_FOOD_CANDIDATES
+    ]
+
+    _mw_eligible_after_cap = len(eligible)
+
+    _mw_snacks_before_cap = len(snacks)
+
+    snacks = _cap_snacks_by_category_quota(
+        snacks,
+        MAX_MATCH_SNACK_CANDIDATES,
+    )
+
+    _mw_snacks_after_cap = len(snacks)
+
     snack_sets = (
         [()]
         + [
@@ -383,9 +502,90 @@ def match_week(
         )
     )
 
+    # Top1 (Phase8/9 design, lossless): extra_kcal/protein/carbs/fat/desired
+    # depend only on the snack_set, never on which 3 foods are being
+    # evaluated. Precompute once per snack_set instead of once per
+    # (combo, snack_set) -- identical values, computed 원래 횟수(combo 수)만큼이
+    # 아니라 snack_set 수만큼만.
+    extra_totals = []
+
+    for extra in snack_sets:
+        extra_kcal = sum(
+            float(
+                snack[
+                    "foodEvidence"
+                ][
+                    "nutrition"
+                ][
+                    "INFO_ENG"
+                ]
+            )
+            for snack
+            in extra
+        )
+
+        extra_protein = sum(
+            float(
+                snack[
+                    "foodEvidence"
+                ][
+                    "nutrition"
+                ][
+                    "INFO_PRO"
+                ]
+            )
+            for snack
+            in extra
+        )
+
+        extra_carbs = sum(
+            float(
+                snack[
+                    "foodEvidence"
+                ][
+                    "nutrition"
+                ][
+                    "INFO_CAR"
+                ]
+            )
+            for snack
+            in extra
+        )
+
+        extra_fat = sum(
+            float(
+                snack[
+                    "foodEvidence"
+                ][
+                    "nutrition"
+                ][
+                    "INFO_FAT"
+                ]
+            )
+            for snack
+            in extra
+        )
+
+        desired = (
+            target[
+                "calories"
+            ]
+            - extra_kcal
+        ) / 3
+
+        extra_totals.append(
+            (
+                extra_kcal,
+                extra_protein,
+                extra_carbs,
+                extra_fat,
+                desired,
+            )
+        )
+
     variants = {}
 
-    for row, _ in eligible:
+    for row, nutrition in eligible:
         variants[
             str(
                 row[
@@ -395,112 +595,241 @@ def match_week(
         ] = viable_portion_variants(
             row,
             goal,
+            nutrition=nutrition,
+            target=target,
         )
+
+    _log_timing('match_week.prepare', time.perf_counter() - _mw_t0)
+
+    # Top2 (Phase8/9 design, lossless): the sorted top-3 portion choices
+    # for a food only depend on (food, desired), and desired only depends
+    # on the snack_set index -- never on which other 2 foods share the
+    # combo. Precompute once per (food, snack_set) instead of once per
+    # (combo, snack_set); same sort key, same input list, same result.
+    #
+    # kcal/protein min/max per entry are also cached here for the lossless
+    # interval pruning below (still derived from the same top-3 list).
+    _mw_t_choice_cache_start = time.perf_counter()
+
+    choice_cache = {}
+
+    for row, _ in eligible:
+        food_id = str(
+            row[
+                "RCP_SEQ"
+            ]
+        )
+
+        food_variants = variants[
+            food_id
+        ]
+
+        for index, (
+            extra_kcal,
+            extra_protein,
+            extra_carbs,
+            extra_fat,
+            desired,
+        ) in enumerate(
+            extra_totals
+        ):
+            top3 = sorted(
+                food_variants,
+                key=lambda value: (
+                    abs(
+                        value[1]
+                        - desired
+                    ),
+                    abs(
+                        value[0]
+                        - 1
+                    ),
+                ),
+            )[:3]
+
+            if top3:
+                kcal_values = [
+                    value[1]
+                    for value
+                    in top3
+                ]
+
+                protein_values = [
+                    value[2]
+                    for value
+                    in top3
+                ]
+
+                choice_cache[
+                    (food_id, index)
+                ] = (
+                    top3,
+                    min(kcal_values),
+                    max(kcal_values),
+                    min(protein_values),
+                    max(protein_values),
+                )
+            else:
+                choice_cache[
+                    (food_id, index)
+                ] = (
+                    (),
+                    None,
+                    None,
+                    None,
+                    None,
+                )
+
+    _log_timing('match_week.choice_cache', time.perf_counter() - _mw_t_choice_cache_start)
+
+    # Phase8 measurement only: counters/accumulators, never used to
+    # change which combination is selected.
+    _mw_combo_count = 0
+    _mw_combo_extra_pairs = 0
+    _mw_empty_choices_skips = 0
+    _mw_interval_pruned_pairs = 0
+    _mw_product_evals = 0
+    _mw_calorie_window_rejects = 0
+    _mw_macro_rejects = 0
+    _mw_score_evals = 0
+    _mw_best_updates = 0
+    _mw_t_product_eval = 0.0
+    _mw_t_combinations_start = time.perf_counter()
+
+    # Phase10 lossless interval pruning bounds. These reuse the exact same
+    # thresholds the unpruned loop below already enforces per-selection
+    # (balanced_macros' protein range via _protein_bounds(), and the
+    # +-5% calorie-total check) -- never a new/different threshold.
+    _mw_protein_required_min, _mw_protein_allowed_max = _protein_bounds(
+        target[
+            "protein"
+        ]
+    )
+
+    _mw_allowed_calorie_min = (
+        target["calories"] * 0.95
+    )
+
+    _mw_allowed_calorie_max = (
+        target["calories"] * 1.05
+    )
 
     for combo in combinations(
         eligible,
         3,
     ):
+        _mw_combo_count += 1
+
         best = None
 
-        for extra in snack_sets:
-            extra_kcal = sum(
-                float(
-                    snack[
-                        "foodEvidence"
-                    ][
-                        "nutrition"
-                    ][
-                        "INFO_ENG"
-                    ]
-                )
-                for snack
-                in extra
-            )
-
-            extra_protein = sum(
-                float(
-                    snack[
-                        "foodEvidence"
-                    ][
-                        "nutrition"
-                    ][
-                        "INFO_PRO"
-                    ]
-                )
-                for snack
-                in extra
-            )
-
-            extra_carbs = sum(
-                float(
-                    snack[
-                        "foodEvidence"
-                    ][
-                        "nutrition"
-                    ][
-                        "INFO_CAR"
-                    ]
-                )
-                for snack
-                in extra
-            )
-
-            extra_fat = sum(
-                float(
-                    snack[
-                        "foodEvidence"
-                    ][
-                        "nutrition"
-                    ][
-                        "INFO_FAT"
-                    ]
-                )
-                for snack
-                in extra
-            )
-
-            desired = (
-                target[
-                    "calories"
+        food_ids = [
+            str(
+                row[
+                    "RCP_SEQ"
                 ]
-                - extra_kcal
-            ) / 3
+            )
+            for row, _
+            in combo
+        ]
 
-            choices = [
-                sorted(
-                    variants[
-                        str(
-                            row[
-                                "RCP_SEQ"
-                            ]
-                        )
-                    ],
-                    key=lambda value: (
-                        abs(
-                            value[1]
-                            - desired
-                        ),
-                        abs(
-                            value[0]
-                            - 1
-                        ),
-                    ),
-                )[:3]
-                for row, _
-                in combo
+        for index, extra in enumerate(
+            snack_sets
+        ):
+            _mw_combo_extra_pairs += 1
+
+            (
+                extra_kcal,
+                extra_protein,
+                extra_carbs,
+                extra_fat,
+                desired,
+            ) = extra_totals[index]
+
+            entries = [
+                choice_cache[
+                    (food_id, index)
+                ]
+                for food_id
+                in food_ids
             ]
 
             if any(
-                not group
-                for group
-                in choices
+                not entry[0]
+                for entry
+                in entries
             ):
+                _mw_empty_choices_skips += 1
                 continue
+
+            # Lossless calorie-sum pruning: if even the best-case sum of
+            # each food's own min/max can't land within +-5% of target,
+            # no selection from product(*choices) could either -- the
+            # unpruned loop would reject every one of them anyway.
+            kcal_min = (
+                sum(
+                    entry[1]
+                    for entry
+                    in entries
+                )
+                + extra_kcal
+            )
+
+            kcal_max = (
+                sum(
+                    entry[2]
+                    for entry
+                    in entries
+                )
+                + extra_kcal
+            )
+
+            if (
+                kcal_max < _mw_allowed_calorie_min
+                or kcal_min > _mw_allowed_calorie_max
+            ):
+                _mw_interval_pruned_pairs += 1
+                continue
+
+            # Lossless protein-bound pruning: same reasoning, using the
+            # exact balanced_macros() protein range via _protein_bounds().
+            protein_min = (
+                sum(
+                    entry[3]
+                    for entry
+                    in entries
+                )
+                + extra_protein
+            )
+
+            protein_max = (
+                sum(
+                    entry[4]
+                    for entry
+                    in entries
+                )
+                + extra_protein
+            )
+
+            if (
+                protein_max < _mw_protein_required_min
+                or protein_min > _mw_protein_allowed_max
+            ):
+                _mw_interval_pruned_pairs += 1
+                continue
+
+            choices = [
+                entry[0]
+                for entry
+                in entries
+            ]
+
+            _mw_t_product_start = time.perf_counter()
 
             for selected in product(
                 *choices
             ):
+                _mw_product_evals += 1
+
                 factors = tuple(
                     value[0]
                     for value
@@ -538,6 +867,7 @@ def match_week(
                     ]
                     * 0.05
                 ):
+                    _mw_calorie_window_rejects += 1
                     continue
 
                 protein = (
@@ -575,7 +905,10 @@ def match_week(
                         "protein"
                     ],
                 ):
+                    _mw_macro_rejects += 1
                     continue
+
+                _mw_score_evals += 1
 
                 score = (
                     2
@@ -639,10 +972,32 @@ def match_week(
                         extra,
                     )
 
+                    _mw_best_updates += 1
+
+            _mw_t_product_eval += time.perf_counter() - _mw_t_product_start
+
         if best is not None:
             options.append(
                 best
             )
+
+    _log_timing('match_week.combinations', time.perf_counter() - _mw_t_combinations_start)
+    _log_timing('match_week.combinations.product_eval', _mw_t_product_eval)
+
+    print(
+        '[PLANNER TIMING] match_week.counts '
+        f'eligible_before_cap={_mw_eligible_before_cap} eligible_after_cap={_mw_eligible_after_cap} '
+        f'snacks_before_cap={_mw_snacks_before_cap} snacks_after_cap={_mw_snacks_after_cap} '
+        f'snack_sets={len(snack_sets)} '
+        f'combos={_mw_combo_count} combo_extra_pairs={_mw_combo_extra_pairs} '
+        f'empty_choices_skips={_mw_empty_choices_skips} interval_pruned_pairs={_mw_interval_pruned_pairs} '
+        f'product_evals={_mw_product_evals} '
+        f'calorie_window_rejects={_mw_calorie_window_rejects} macro_rejects={_mw_macro_rejects} '
+        f'score_evals={_mw_score_evals} best_updates={_mw_best_updates} options={len(options)}',
+        flush=True,
+    )
+
+    _mw_t_selection_start = time.perf_counter()
 
     # =====================================================
     # Debug output
@@ -872,6 +1227,9 @@ def match_week(
                 "표시된 제안량 기준입니다."
             )
         )
+
+    _log_timing('match_week.selection', time.perf_counter() - _mw_t_selection_start)
+    _log_timing('match_week.total', time.perf_counter() - _mw_t0)
 
     return (
         days,
