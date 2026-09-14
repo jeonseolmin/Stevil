@@ -10,15 +10,90 @@ from planner.nutrition.matching  import number, validate_goal, balanced_meals, b
 
 
 def load_snacks():
-    snacks_path = (
-        Path(__file__).resolve().parents[2]
-        / "config"
-        / "snacks.json"
-    )
+  import sqlite3
 
-    return json.loads(
-        snacks_path.read_text(encoding="utf-8")
+  rag_root = (
+    Path(__file__)
+    .resolve()
+    .parents[2]
+  )
+
+  db_path = (
+          rag_root
+          / "cache"
+          / "nutrition"
+          / "foods.sqlite3"
+  )
+
+  # -----------------------------------------------------
+  # 1. DB snack catalog 우선
+  # -----------------------------------------------------
+
+  if db_path.exists():
+    try:
+      with sqlite3.connect(
+              db_path
+      ) as db:
+
+        exists = db.execute(
+          """
+          SELECT 1
+          FROM sqlite_master
+          WHERE type = 'table'
+            AND name = 'snacks'
+          """
+        ).fetchone()
+
+        if exists:
+          rows = db.execute(
+            """
+            SELECT payload
+            FROM snacks
+            WHERE enabled = 1
+            ORDER BY
+                category,
+                priority,
+                title
+            """
+          ).fetchall()
+
+          snacks = [
+            json.loads(payload)
+            for payload,
+            in rows
+          ]
+
+          if snacks:
+            return snacks
+
+    except (
+        sqlite3.Error,
+        ValueError,
+        TypeError,
+        json.JSONDecodeError,
+    ):
+      # DB 간식 카탈로그에 문제가 있어도
+      # 기존 JSON fallback은 유지합니다.
+      pass
+
+  # -----------------------------------------------------
+  # 2. 기존 JSON fallback
+  # -----------------------------------------------------
+
+  snacks_path = (
+          rag_root
+          / "config"
+          / "snacks.json"
+  )
+
+  if not snacks_path.exists():
+    return []
+
+  return json.loads(
+    snacks_path.read_text(
+      encoding="utf-8"
     )
+  )
 
 def complete_nutrition(p, result, suggestions):
     validate_food_policy(result['events'])

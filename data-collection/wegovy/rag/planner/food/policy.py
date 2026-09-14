@@ -178,46 +178,244 @@ def diverse_recipe_candidates(rows, limit=40):
 
 def choose_diverse_week(options):
     """Bounded beam search avoids a greedy early choice exhausting later days."""
-    prepared=[]
+    prepared = []
+
     for item in options:
-        rows=[row for row,_ in item[1]]
-        if any(processed_meat(row) for row in rows): continue
-        dishes=Counter();groups=Counter()
+        rows = [
+            row
+            for row, _
+            in item[1]
+        ]
+
+        if any(
+            processed_meat(row)
+            for row in rows
+        ):
+            continue
+
+        dishes = Counter()
+        groups = Counter()
+
         for row in rows:
-            d,g=main_food_keys(row);dishes.update(d);groups.update(g)
-        if max(dishes.values(),default=0)>1 or max(groups.values(),default=0)>1: continue
-        prepared.append((item,dishes,groups))
-    states=[(0.0,[],Counter(),Counter())]
+            d, g = main_food_keys(row)
+
+            dishes.update(d)
+            groups.update(g)
+
+        # 같은 정확한 메뉴는 하루에 중복하지 않음.
+        #
+        # 주요 단백질 family는
+        # 하루 최대 2회까지 허용합니다.
+        #
+        # 예:
+        # 닭가슴살 덮밥 + 닭고기 샐러드까지는 허용 가능하지만
+        # 하루 세 끼가 모두 chicken family인 경우는 제외합니다.
+        if (
+            max(
+                dishes.values(),
+                default=0,
+            ) > 1
+            or max(
+                groups.values(),
+                default=0,
+            ) > 2
+        ):
+            continue
+
+        prepared.append(
+            (
+                item,
+                dishes,
+                groups,
+            )
+        )
+
+    states = [
+        (
+            0.0,
+            [],
+            Counter(),
+            Counter(),
+        )
+    ]
+
     for _ in range(7):
-        successors={}
-        for score,chosen,used_dishes,used_groups in states:
-            candidates=[]
-            for item,dishes,groups in prepared:
-                if any(used_dishes[k]+n>2 for k,n in dishes.items()): continue
-                if any(used_groups[k]+n>5 for k,n in groups.items()): continue
-                rank=item[0]+.1*sum(used_groups[k] for k in groups)
-                candidates.append((rank,item,dishes,groups))
-            for rank,item,dishes,groups in sorted(candidates,key=lambda c:c[0])[:24]:
-                next_dishes=used_dishes+dishes;next_groups=used_groups+groups
-                signature=(tuple(sorted(next_dishes.items())),tuple(sorted(next_groups.items())))
-                state=(score+rank,chosen+[item],next_dishes,next_groups)
-                if signature not in successors or state[0]<successors[signature][0]: successors[signature]=state
-        states=sorted(successors.values(),key=lambda s:s[0])[:24]
+        successors = {}
+
+        for (
+            score,
+            chosen,
+            used_dishes,
+            used_groups,
+        ) in states:
+
+            candidates = []
+
+            for (
+                item,
+                dishes,
+                groups,
+            ) in prepared:
+
+                # 같은 정확한 메뉴는
+                # 주 최대 2회.
+                if any(
+                    used_dishes[k] + n > 2
+                    for k, n
+                    in dishes.items()
+                ):
+                    continue
+
+                # 같은 주요 단백질 family는
+                # 주 최대 5회.
+                if any(
+                    used_groups[k] + n > 5
+                    for k, n
+                    in groups.items()
+                ):
+                    continue
+
+                rank = (
+                    item[0]
+                    + 0.1
+                    * sum(
+                        used_groups[k]
+                        for k
+                        in groups
+                    )
+                )
+
+                candidates.append(
+                    (
+                        rank,
+                        item,
+                        dishes,
+                        groups,
+                    )
+                )
+
+            for (
+                rank,
+                item,
+                dishes,
+                groups,
+            ) in sorted(
+                candidates,
+                key=lambda candidate:
+                    candidate[0],
+            )[:24]:
+
+                next_dishes = (
+                    used_dishes
+                    + dishes
+                )
+
+                next_groups = (
+                    used_groups
+                    + groups
+                )
+
+                signature = (
+                    tuple(
+                        sorted(
+                            next_dishes.items()
+                        )
+                    ),
+                    tuple(
+                        sorted(
+                            next_groups.items()
+                        )
+                    ),
+                )
+
+                state = (
+                    score + rank,
+                    chosen + [item],
+                    next_dishes,
+                    next_groups,
+                )
+
+                if (
+                    signature
+                    not in successors
+                    or state[0]
+                    < successors[
+                        signature
+                    ][0]
+                ):
+                    successors[
+                        signature
+                    ] = state
+
+        states = sorted(
+            successors.values(),
+            key=lambda state:
+                state[0],
+        )[:24]
+
         if not states:
-            raise FoodPolicyUnavailable('영양 조건과 음식 다양성을 함께 충족할 후보가 부족합니다. 같은 반찬은 주 2회, 같은 주요 단백질 재료는 하루 1회·주 5회 이내로 배치합니다. 음식 선호·제한 또는 후보 구성을 확인해 주세요.')
+            raise FoodPolicyUnavailable(
+                "영양 조건과 음식 다양성을 함께 충족할 후보가 부족합니다. "
+                "같은 반찬은 주 2회, "
+                "같은 주요 단백질 재료는 하루 2회·주 5회 이내로 배치합니다. "
+                "음식 선호·제한 또는 후보 구성을 확인해 주세요."
+            )
+
     return states[0][1]
 
 
 def validate_food_policy(events):
-    dishes=Counter();groups=Counter();daily={}
+    dishes = Counter()
+    groups = Counter()
+    daily = {}
+
     for event in events:
-        if event.get('kind') not in ('MEAL','SNACK'): continue
+        if event.get("kind") not in (
+            "MEAL",
+            "SNACK",
+        ):
+            continue
+
         if processed_meat(event):
-            raise FoodPolicyUnavailable('가공육이 포함된 음식은 기본 자동 식단에서 제외합니다.')
-        # Repeated snacks are allowed; meal protein rotation is checked independently.
-        if event['kind']!='MEAL': continue
-        d,g=main_food_keys(event)
-        dishes.update(d);groups.update(g)
-        day=event['start'][:10];daily.setdefault(day,Counter()).update(g)
-        if any(dishes[k]>2 for k in d) or any(groups[k]>5 or daily[day][k]>1 for k in g):
-            raise FoodPolicyUnavailable('같은 반찬 또는 주요 단백질 재료가 반복되어 식단을 반환하지 않았습니다. 후보를 다양하게 선택해 다시 생성해 주세요.')
+            raise FoodPolicyUnavailable(
+                "가공육이 포함된 음식은 기본 자동 식단에서 제외합니다."
+            )
+
+        # 간식 반복은 허용하고,
+        # 식사의 주요 단백질/메뉴 반복만 검사합니다.
+        if event["kind"] != "MEAL":
+            continue
+
+        d, g = main_food_keys(event)
+
+        dishes.update(d)
+        groups.update(g)
+
+        day = event["start"][:10]
+
+        daily.setdefault(
+            day,
+            Counter(),
+        ).update(g)
+
+        # 같은 정확한 메뉴:
+        # 주 최대 2회
+        #
+        # 같은 주요 단백질 family:
+        # 하루 최대 2회
+        # 주 최대 5회
+        if any(
+            dishes[key] > 2
+            for key in d
+        ) or any(
+            groups[key] > 5
+            or daily[day][key] > 2
+            for key in g
+        ):
+            raise FoodPolicyUnavailable(
+                "같은 반찬 또는 주요 단백질 재료가 반복되어 "
+                "식단을 반환하지 않았습니다. "
+                "같은 반찬은 주 2회, "
+                "같은 주요 단백질 재료는 하루 2회·주 5회 이내로 "
+                "후보를 다양하게 선택해 다시 생성해 주세요."
+            )

@@ -64,3 +64,4 @@ logging:
 
 app:
   frontend-url: ${FRONTEND_URL}
+  upload-dir: ${UPLOAD_DIR:./uploads}
