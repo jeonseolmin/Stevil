@@ -10,7 +10,8 @@ const mins = value => { const [h, m, seconds = "0"] = value.split(":"); return N
 const clock = value => `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
 export function validatePlan(preferences, events) {
     const goal = preferences.nutritionGoal;
-    if (goal && (!goal.confirmed || !Number.isFinite(goal.weightKg) || goal.weightKg < 20 || goal.weightKg > 350 || !Number.isFinite(goal.proteinPerKg) || goal.proteinPerKg < .1 || goal.proteinPerKg > 3 || !Number.isInteger(goal.calories) || goal.calories < 1000 || goal.calories > 5000 || goal.weightKg * goal.proteinPerKg * 4 > goal.calories * .35)) return "체중·목표량·적용 대상 확인을 완료해 주세요. 단백질 목표는 열량의 35% 이하여야 합니다.";
+    if (goal && !goal.confirmed) return "영양 목표와 적용 대상 확인이 필요합니다.";
+    if (goal && (!Number.isFinite(goal.weightKg) || goal.weightKg < 20 || goal.weightKg > 350 || !Number.isFinite(goal.proteinPerKg) || goal.proteinPerKg < .1 || goal.proteinPerKg > 3 || !Number.isInteger(goal.calories) || goal.calories < 1200)) return "체중·목표량을 확인해 주세요.";
     if (mins(preferences.wakeTime) >= mins(preferences.sleepTime)) return "기상·취침은 같은 날 기준으로 입력해 주세요.";
     if (preferences.busySlots.some(slot => mins(slot.start) >= mins(slot.end) || !slot.title.trim())) return "고정 일정의 제목과 시작·종료 시간을 확인해 주세요.";
     const windows = preferences.exerciseWindows || [];
@@ -33,6 +34,11 @@ export function validatePlan(preferences, events) {
         if (preferences.busySlots.some(slot => slot.day === day && !busyAllows(slot, event.kind) && mins(start) < mins(slot.end) && mins(end) > mins(slot.start))) return "고정 일정과 겹치는 계획이 있습니다. 시간을 조정해 주세요.";
     }
     return "";
+}
+// Stevil 내부 관리 기준(권장 비중)일 뿐 의료적 상한이 아니다. 표시 여부만 판단하며 Planner 진행을 막지 않는다.
+export function hasHighProteinCalorieRatio(goal) {
+    if (!goal || !Number.isFinite(goal.weightKg) || !Number.isFinite(goal.proteinPerKg) || !Number.isFinite(goal.calories)) return false;
+    return goal.weightKg * goal.proteinPerKg * 4 > goal.calories * .35;
 }
 // A deterministic UI example, never presented as AI output or saved to the server.
 export function exampleWeek(p) {
@@ -313,7 +319,22 @@ export function estimateCalories(weightKg, profile, activity = 1.4) {
     if (!Number.isFinite(weightKg) || weightKg < 20 || weightKg > 350 || !profile || !Number.isFinite(profile.heightCm) || profile.heightCm < 120 || profile.heightCm > 230 || !Number.isInteger(profile.age) || profile.age < 19 || profile.age > 78 || !["MALE", "FEMALE"].includes(profile.sex) || ![1.4, 1.6, 1.8].includes(activity)) return null;
     const resting = 10 * weightKg + 6.25 * profile.heightCm - 5 * profile.age + (profile.sex === "MALE" ? 5 : -161);
     const estimate = Math.round(resting * activity / 10) * 10;
-    return estimate >= 1000 && estimate <= 5000 ? estimate : null;
+    return estimate >= 1200 ? estimate : null;
+}
+
+// Mirrors backend NutritionPolicy.calculateProteinTarget(): 1.2g protein per kg
+// of reference weight (targetWeight if it's a real, lower goal weight, else
+// currentWeight). Single source of truth so the frontend never scatters 1.2
+// across JSX (Phase12).
+const DEFAULT_PROTEIN_PER_KG = 1.2;
+
+export function estimatePlannerProteinTarget(currentWeightKg, targetWeightKg) {
+    if (!Number.isFinite(currentWeightKg) || currentWeightKg <= 0) return null;
+    const referenceWeight =
+        Number.isFinite(targetWeightKg) && targetWeightKg > 0 && targetWeightKg <= currentWeightKg
+            ? targetWeightKg
+            : currentWeightKg;
+    return Math.round(referenceWeight * DEFAULT_PROTEIN_PER_KG);
 }
 
 export function defaultExerciseWindow(p, day) {
