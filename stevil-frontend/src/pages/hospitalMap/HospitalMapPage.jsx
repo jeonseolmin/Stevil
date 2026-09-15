@@ -1,8 +1,53 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
 import { loadNaverMap } from "../../api/naverMapLoader";
 import "./HospitalMapPage.css";
+
+/*
+ * axiosInstance(XHR) 대신 fetch를 직접 쓴다.
+ *
+ * 로그인 직후처럼 axios 요청이 여러 개 동시에 몰리는 상황에서 backend가
+ * 순간적으로 500을 내는 현상이 관찰됐는데(원인 미확정, 별도 이슈), 같은
+ * 요청을 fetch로 보내면 재현되지 않는다(OAuthSuccessPage.jsx에서 이미
+ * 같은 방식으로 확인/적용함). 이 페이지는 마운트 시 광고 목록 조회 +
+ * 병원 검색이 거의 동시에 나가서 그 증상과 정확히 맞아떨어져, 이 두
+ * 호출에 한해 fetch로 우회한다. axios 응답과 동일한 { data } 모양,
+ * 동일한 error.response.status/data 모양을 유지해 호출부는 그대로 둔다.
+ */
+async function apiGet(path, params) {
+    const token = localStorage.getItem("accessToken");
+
+    const entries = params
+        ? Object.entries(params).filter(
+            ([, value]) => value !== undefined && value !== null
+        )
+        : [];
+
+    const query = entries.length
+        ? `?${new URLSearchParams(entries).toString()}`
+        : "";
+
+    const response = await fetch(`/api${path}${query}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        const error = new Error(
+            `${path} failed with ${response.status}`
+        );
+
+        error.response = {
+            status: response.status,
+            data,
+        };
+
+        throw error;
+    }
+
+    return { data };
+}
 
 const DEFAULT_POSITION = {
     latitude: 37.5666103,
@@ -82,7 +127,7 @@ export default function HospitalMapPage() {
     useEffect(() => {
         const fetchActiveAds = async () => {
             try {
-                const response = await axiosInstance.get("/ads/active");
+                const response = await apiGet("/ads/active");
                 setActiveAds(response.data);
             } catch (error) {
                 console.error("광고 목록을 불러오지 못했습니다.", error);
@@ -106,6 +151,8 @@ export default function HospitalMapPage() {
             .map(ad => ad.doctorName?.trim());
 
         // 3. 데이터에 광고 정보 매핑 및 정렬 (SEARCH_TOP인 병원을 맨 위로 이동)
+        // isPartner는 백엔드(/hospitals/search)가 판정해 내려주는 값을 그대로 신뢰한다.
+        // 프론트에서 병원명으로 제휴 여부를 다시 계산하지 않는다.
         const mapped = hospitals.map(hospital => {
             const hName = hospital.name?.trim();
             const isTop = topAdNames.some(name => hName.includes(name));
@@ -114,7 +161,8 @@ export default function HospitalMapPage() {
             return {
                 ...hospital,
                 isSearchTop: isTop,
-                isHighlight: isHighlight
+                isHighlight: isHighlight,
+                isPartner: Boolean(hospital.isPartner)
             };
         });
 
@@ -132,12 +180,10 @@ export default function HospitalMapPage() {
             setSearchError("");
             setSelectedIndex(null);
 
-            const response = await axiosInstance.get("/hospitals/search", {
-                params: {
-                    query: query?.trim() || "병원",
-                    latitude: position?.latitude,
-                    longitude: position?.longitude,
-                },
+            const response = await apiGet("/hospitals/search", {
+                query: query?.trim() || "병원",
+                latitude: position?.latitude,
+                longitude: position?.longitude,
             });
 
             setHospitals(response.data);
@@ -287,12 +333,19 @@ export default function HospitalMapPage() {
                 hospital.latitude,
                 hospital.longitude
             );
+            const isAd = hospital.isSearchTop || hospital.isHighlight;
+            const markerClassName = [
+                "hospital-map-marker",
+                isAd ? "is-ad" : "",
+                hospital.isPartner ? "is-partner" : "",
+            ].filter(Boolean).join(" ");
+
             const marker = new maps.Marker({
                 map,
                 position,
                 title: hospital.name,
                 icon: {
-                    content: `<span class="hospital-map-marker ${hospital.isSearchTop ? 'is-top' : ''}"><b>${index + 1}</b></span>`,
+                    content: `<span class="${markerClassName}"><b>${index + 1}</b></span>`,
                     anchor: new maps.Point(18, 42),
                 },
             });
@@ -399,10 +452,11 @@ export default function HospitalMapPage() {
                         {processedHospitals.map((hospital, index) => (
                             <li key={`${hospital.name}-${hospital.address}-${index}`}>
                                 <div
-                                    className={`hospital-card 
+                                    className={`hospital-card
                                         ${selectedIndex === index ? "hospital-card--selected" : ""}
                                         ${hospital.isSearchTop ? "hospital-card--search-top" : ""}
                                         ${hospital.isHighlight ? "hospital-card--highlight" : ""}
+                                        ${hospital.isPartner ? "hospital-card--partner" : ""}
                                     `}
                                     role="button"
                                     tabIndex={0}
@@ -418,9 +472,10 @@ export default function HospitalMapPage() {
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
                                             <div>
-                                                {/* 광고 뱃지 노출 영역 */}
-                                                {hospital.isSearchTop && <span className="ad-badge-top">추천 1위</span>}
-                                                {hospital.isHighlight && <span className="ad-badge-highlight">프리미엄</span>}
+                                                {/* 제휴/광고 뱃지 노출 영역 — 의료 품질을 암시하지 않는 중립적 표기만 사용 */}
+                                                {hospital.isPartner && <span className="partner-badge">제휴 병원</span>}
+                                                {hospital.isSearchTop && <span className="ad-badge-top">광고</span>}
+                                                {hospital.isHighlight && <span className="ad-badge-highlight">광고</span>}
                                                 <strong>{hospital.name}</strong>
                                             </div>
                                             {formatDistance(hospital.distanceKm) && (
