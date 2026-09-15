@@ -91,4 +91,34 @@ class PlannerServiceApplyDietGoalTest {
         assertEquals(dietGoal.getTargetProtein() / 80, merged.proteinPerKg(), 1e-9);
         assertEquals(1.2, merged.proteinPerKg(), 1e-9);
     }
+
+    // =========================================================
+    // plannerOverride: 사용자가 Planner에서 직접 설정한 calories/
+    // proteinPerKg는 Diet 목표가 있어도 덮어쓰지 않는다.
+    // =========================================================
+
+    @Test
+    void plannerOverrideTrueKeepsFrontendSuppliedCaloriesAndProteinUnchanged() throws Exception {
+        // Diet 목표는 80kg 기준 96g protein / 1996kcal로 저장되어 있음.
+        var dietGoal = UserDietGoal.builder()
+                .targetWeight(80)
+                .targetProtein(96)
+                .targetCalories(1996)
+                .build();
+        var dietGoals = mock(UserDietGoalRepository.class);
+        when(dietGoals.findByUserId(3L)).thenReturn(Optional.of(dietGoal));
+
+        // 사용자가 Planner에서 직접 설정한 값(Diet 값과 의도적으로 다름) + override=true.
+        var overriddenGoal = new NutritionGoal(80, 2.0, 2500, false, true);
+        var base = new Preferences(LocalDate.of(2026, 9, 7), LocalTime.of(7, 0), LocalTime.of(23, 0),
+                LocalTime.of(8, 0), LocalTime.of(12, 30), LocalTime.of(18, 30), LocalTime.of(19, 30), 30,
+                List.of(0, 2, 4), "초보", "가볍게", "", "", "", List.of(), true).withNutritionGoal(overriddenGoal);
+
+        var merged = applyDietGoal(service(dietGoals), 3L, base);
+
+        // Diet의 96g / 1996kcal로 되돌아가지 않고, 사용자가 입력한 값 그대로 유지되어야 한다.
+        assertEquals(2.0, merged.proteinPerKg(), 1e-9);
+        assertEquals(2500, merged.calories());
+        assertTrue(merged.plannerOverride());
+    }
 }

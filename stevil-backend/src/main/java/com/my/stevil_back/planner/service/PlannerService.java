@@ -424,6 +424,17 @@ public class PlannerService {
             return preferences;
         }
 
+        /*
+         * 사용자가 Planner에서 calories/protein을 직접 override했다면
+         * Diet 목표가 있어도 이 목표를 건드리지 않는다.
+         */
+        if (
+                originalGoal.plannerOverride()
+        ) {
+
+            return preferences;
+        }
+
         var dietGoalOptional =
                 dietGoals.findByUserId(
                         userId
