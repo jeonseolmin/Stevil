@@ -33,6 +33,7 @@ import DoctorAdApplyPage from "../pages/doctor/doctorPage/DoctorAdApplyPage.jsx"
 import DoctorReportPage from "../pages/doctorReport/DoctorReportPage.jsx";
 import DoctorPatientListPage from "../pages/doctor/DoctorPatientListPage.jsx";
 import FeedbackPage from "../pages/feedback/FeedbackPage.jsx";
+import DesignPreviewApp from "../design-preview/DesignPreviewApp.jsx";
 
 export default function AppRouter() {
     return (
@@ -81,6 +82,9 @@ export default function AppRouter() {
 
             {/* 최초 로그인 후 추가 정보 입력 */}
             <Route path="/onboarding" element={<OnboardingPage />} />
+
+            {/* 로컬 전용 디자인 시안 — production 네비게이션에서 연결되지 않음 */}
+            <Route path="/design-preview/*" element={<DesignPreviewApp />} />
         </Routes>
     );
 }
