@@ -114,16 +114,9 @@
     background: var(--color-surface);
 
     border: 1px solid #e6ece5;
-    border-radius: 22px;
+    border-radius: var(--app-radius-lg);
 
-    box-shadow:
-        0 5px 24px
-        rgba(
-            35,
-            68,
-            51,
-            0.015
-        );
+    box-shadow: var(--app-elevation-1);
 }
 
 .dashboard-weight-summary {
@@ -199,7 +192,7 @@
     background: #f4f6f1;
 
     border: 0;
-    border-radius: 17px;
+    border-radius: var(--app-radius-md);
 }
 
 .weight-card:nth-child(3) {
@@ -479,6 +472,7 @@
     gap: 14px;
 
     width: 100%;
+    min-height: var(--app-tap-min);
 
     padding: 13px;
 
@@ -490,7 +484,7 @@
         1px solid
         #eef1e9;
 
-    border-radius: 14px;
+    border-radius: var(--app-radius-md);
 
     cursor: pointer;
 
@@ -587,7 +581,7 @@ button
         1px solid
         #eef1e9;
 
-    border-radius: 16px;
+    border-radius: var(--app-radius-md);
 }
 
 .daily-card-status {

@@ -2,7 +2,7 @@ const cards = [["식단", "오늘 먹은 음식과 영양 정보를 기록해 �
 
 export default function DashboardDailyCards({ navigate }) {
     return (
-        <section className="dashboard-daily-section">
+        <section className="dashboard-daily-section" id="daily-records">
             <div className="dashboard-section-heading"><div><span>오늘의 기록</span><h2>아직 기록하지 않은 항목</h2></div></div>
             <div className="daily-card-grid">{cards.map(([title, description, label, path]) => (
                 <article className="daily-card" key={path}><span className="daily-card-status">기록 전</span><h3>{title}</h3><p>{description}</p><button type="button" onClick={() => navigate(path)}>{label}</button></article>
