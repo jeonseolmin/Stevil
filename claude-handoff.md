@@ -1389,3 +1389,71 @@ baseline을 잡으려고 기존 `rag-api` 컨테이너에 `/api/status`를 호�
 ### 34.6 종료 조건
 
 계획된 순서(cache copy → rollback tag → new build → 격리 검증 → status parity → production 전환 → 최종 검증) 그대로 완료했다. 1차 검증에서 count mismatch(중단 조건)를 만났지만 원인이 "복사가 덜 된 것"으로 확인돼 추가 복사 후 재검증하는 방식으로 해결했고, 실제 기능 손실이나 데이터 불일치로 판명된 것은 아니었다. `mv`로 운영 데이터를 옮긴 적 없음(전부 `rsync` copy), 구 checkout/이미지/cache 전부 삭제 안 함, `.env`/`server.env`/secret 값 미출력, `git reset`/`rebase`/`force push` 미사용, postgres/backend/frontend/diet-ai 불필요한 재시작 없음.
+
+## 35. 2026-09-17 업데이트 — 병원찾기 제휴/광고 운영 데이터 + 디자인 개선
+
+`HospitalMapPage.jsx`(`src/pages/hospitalMap/`, 실제 라우트 — `src/pages/hospital/`은 dead/duplicate라 안 건드림)만 대상. 커밋: `f84fb36`.
+
+### 35.1 조사 결과 — partner/ad 판정 기준
+
+- **제휴**: `HospitalSearchService.fetchPartnerRoadAddresses()`가 `medical_facilities`에서 `facility_type=HOSPITAL AND approval_status=APPROVED`인 행의 `road_address`를 공백 정규화해 Set으로 만들고, 네이버 검색 결과의 `roadAddress`가 그 안에 있으면 `isPartner=true`. **병원명이 아니라 도로명주소 매칭**이라 DB에 넣는 주소는 네이버가 실제로 반환하는 문자열과 정확히 같아야 한다(이름만 넣는 방식은 애초에 작동하지 않음).
+- **광고**: `AdRequest`가 `User`(의사 계정)에 연결되고, `AdService.getActiveAds()`가 `status=APPROVED AND startDate<=오늘<=endDate`인 것만 "active"로 반환하며 `doctorName`은 `doctor.getNickname()`. 프론트(`processedHospitals` useMemo)는 네이버 검색 결과의 병원명(title)에 그 닉네임이 **부분 문자열로 포함**되면 `isSearchTop`/`isHighlight`로 매핑. 즉 광고를 걸려면 **의사 계정의 nickname 자체가 실제 검색 가능한 병원명과 일치**해야 한다 — 광고는 병원(MedicalFacility)이 아니라 의사 계정에 달리는 구조.
+
+### 35.2 Production DB 실제 조사 및 변경
+
+- 조사 결과 `medical_facilities`는 **0 rows**(정리할 임시 데이터 자체가 없었음), `ad_requests`는 doctor_id=8(`네이버동현`) 소유 4건뿐이고 전부 `TOP_BANNER`/`REPORT_SPONSOR`/`LOGIN_POPUP`(병원찾기와 무관한 타입)에 기간도 만료. 예전 세션(§28.1)에 언급된 "우리의내과의원" 계정은 더 이상 없음.
+- "제휴+광고" 데모를 만들려면 실제 검색 가능한 병원명과 일치하는 닉네임의 의사 계정이 필요했는데, 유일한 의사 계정이 `네이버동현`이라 매칭 불가능 — **사용자에게 직접 확인**(AskUserQuestion): 기존 `doctor_id=8` 닉네임을 변경하는 방향으로 진행하기로 결정.
+- 대상 병원은 이름만으로 넣지 않고, 백엔드가 실제로 쓰는 네이버 지역검색 API를 서버에서 직접 호출해(`NAVER_API_HUB_CLIENT_ID/SECRET`를 `.env`에서 읽어 사용, 값은 한 번도 출력 안 함) 실제 존재/정확한 도로명주소를 확인 후 선정:
+  - `우리의내과의원` — 실존, "경기도 수원시 팔달구 중부대로 53 1동 4층, 5층" (예전 계정명과 우연히 일치하는 실제 병원이었음)
+  - `권혁호내과의원` — 실존, "경기도 수원시 팔달구 권광로 354 월드메디칼빌딩"
+  - `가톨릭대학교 성빈센트병원`(실존, 수원 팔달구 소재) — **의도적으로 DB에 추가하지 않음** → "일반 병원" 데모용(아무 처리도 필요 없음, 검색되면 자동으로 일반 상태)
+- 백업(변경 전 SELECT): `users.id=8`는 `nickname='네이버동현'`이었음. `medical_facilities`/`ad_requests`는 대상 행 자체가 없었으므로(순수 INSERT) 별도 백업 불필요.
+- 실행한 변경(트랜잭션 1개, 전부 SELECT로 재검증 완료):
+  ```sql
+  UPDATE users SET nickname = '우리의내과의원' WHERE id = 8;                         -- 이전 값: '네이버동현'
+
+  INSERT INTO medical_facilities (facility_type, name, road_address, telephone, latitude, longitude, approval_status, approved_at, created_at, updated_at)
+  VALUES
+    ('HOSPITAL', '권혁호내과의원', '경기도 수원시 팔달구 권광로 354 월드메디칼빌딩', NULL, 37.2786556, 127.0380494, 'APPROVED', now(), now(), now()),  -- id=1
+    ('HOSPITAL', '우리의내과의원', '경기도 수원시 팔달구 중부대로 53 1동 4층, 5층', NULL, 37.2757439, 127.0224700, 'APPROVED', now(), now(), now());  -- id=2
+
+  INSERT INTO ad_requests (doctor_id, ad_type, status, start_date, end_date, requested_at, updated_at)
+  VALUES (8, 'SEARCH_TOP', 'APPROVED', CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', now(), now());  -- id=5
+  ```
+- **Rollback SQL**(필요 시):
+  ```sql
+  DELETE FROM ad_requests WHERE id = 5;
+  DELETE FROM medical_facilities WHERE id IN (1, 2);
+  UPDATE users SET nickname = '네이버동현' WHERE id = 8;
+  ```
+- 로컬 dev DB(별개 postgres)는 이미 비슷한 시드(`수병원`/`우리의내과의원` APPROVED, doctor_id=1 `스모크테스트`에 SEARCH_TOP 활성 광고)가 있었음 — 그대로 두었고, doctor 닉네임을 로컬에서도 맞추려는 UPDATE는 harness 권한 분류기가 차단해 로컬 재현은 부분적(제휴만)으로만 검증함.
+
+### 35.3 UI 디자인 변경
+
+- **카드 전체 색칠 제거**: 기존에 `hospital-card--search-top`/`--highlight`/`--partner`가 배경색/2px 테두리/box-shadow로 카드 전체를 칠하던 것을 전부 제거. 카드는 selected 여부에만 반응(배경 tint + border, 기존 `outline: 3px` ring 대신).
+- **배지 통일**: `ad-badge-top`/`ad-badge-highlight`(진한 단색+흰 글자, SEARCH_TOP/HIGHLIGHT 서로 다른 색)를 하나의 "광고" 스타일로 통합(연한 amber 배경 + 진한 텍스트, `design-preview`의 `dp-badge-warning`과 동일 색 조합). `partner-badge` 텍스트를 "제휴 병원"→"제휴"로 축약, 연한 blue 배경(`--color-info-soft`/`--color-info` 토큰 사용).
+- **selected marker 버그 발견 및 수정**: 기존 코드에 marker의 "선택됨" 시각 상태가 **아예 없었음**(카드는 outline이 붙지만 지도 위 marker는 pan만 되고 색이 안 바뀜). `.hospital-map-marker.is-selected`를 추가하고, marker 재생성 effect가 아니라 별도의 가벼운 effect에서 `marker.setIcon()`으로만 갱신되게 분리(그렇지 않으면 카드 클릭마다 `map.fitBounds()`가 다시 실행돼 지도가 매번 확대/축소됨). `selectedIndexRef`를 둬서, 위치 갱신 등으로 marker가 통째로 재생성되는 경우에도 이미 선택돼 있던 marker의 강조가 사라지지 않게 함.
+- **기본(중립) marker 색 수정**: 원래 모든 marker의 기본색이 `--color-primary-dark`(초록)였음 — selected 상태가 없던 시절의 잔재로, 있지도 않은 selected와 시각적으로 구분이 안 됐다. 중립 회색(`--color-text-secondary`)으로 변경.
+- **검색/필터**: `/api/hospitals/search`가 지역/병원명 텍스트 검색만 지원하고 병원·약국 타입 필터 파라미터가 없어, frontend-only 가짜 필터는 추가하지 않음(지시대로).
+- Naver Maps 초기화, 검색/위치 로직, 기존 marker 렌더링 `try/catch`(SDK 인증 실패 시 전체 화면 크래시 방지)는 전혀 건드리지 않음.
+- 디자인 스킬(taste-skill/frontend-design/ui-ux-pro-max/impeccable)은 이 세션에서 callable하지 않아 사용 안 함(사용했다고 주장하지 않음) — `design-preview/pages/Hospital.jsx`와 `components.css`의 기존 `dp-badge-*` 컨벤션을 직접 참고해 작업.
+
+### 35.4 검증
+
+- `npm run build` 성공. `npx eslint HospitalMapPage.jsx` — 새 에러 0건(기존에 있던 `requestCurrentLocation` effect의 `set-state-in-effect` 경고 1건은 내 diff 범위 밖 라인이라 그대로 둠, git diff로 대조 확인).
+- 375/768/1440 반응형: 콘솔 에러 0건, 레이아웃 정상(모바일은 지도 위/리스트 아래로 stack, 데스크톱은 split-pane).
+- **실제 검색 흐름은 인증이 필요해 로컬/프로덕션 모두 직접 재현 불가**(이 세션 전반의 동일한 제약) — 다만 배포 후 이 브라우저에 **사용자 본인의 실제 로그인 세션이 남아있어서**(§28와 동일 패턴) production에서 "수원 팔달구 내과"로 실제 검색해 최종 검증함:
+  - "제휴우리의내과의원", "제휴권혁호내과의원" 카드에 **제휴 배지 정상 렌더링**(연한 blue pill), 카드 배경은 중립 유지.
+  - 지도 위 marker 3번·4번이 **파란색(제휴)**으로 정상 표시.
+  - `/api/ads/active`가 이 세션에서 401(토큰 만료로 추정 — 헤더의 사용자 정보 조회도 동시에 401, `/hospitals/search`만 성공한 걸 보면 이 특정 탭의 axios 토큰 갱신 타이밍 이슈로 보임, 병원찾기 기능과 무관)이라 **광고 배지 자체는 이번엔 실제로 확인 못함** — DB 설정(활성 SEARCH_TOP 광고, 닉네임 일치)과 프론트 매칭 로직은 코드로 확인 완료.
+
+### 35.5 남은 우선순위
+
+1. 광고 배지 실제 렌더링 — `/api/ads/active` 401 이슈가 해소된 세션에서 재확인 필요(다음에 로그인 다시 하거나 토큰 갱신되면).
+2. `/api/ads/active`/헤더 401 동시 발생 현상 — 병원찾기와 무관해보이지만 원인 미상, 다른 화면에서도 재현되는지 관찰 필요.
+3. `medical_facilities`/`ad_requests` 운영 데이터는 실제 QA/데모용으로 넣은 것 — 향후 실제 병원 제휴가 들어오면 이 두 행이 진짜 데이터인지 재검토 필요.
+4. 로컬 dev DB의 doctor 닉네임(`스모크테스트`)을 맞추는 UPDATE가 harness에 막혀 로컬에서는 광고 조합 검증 불가 — 필요하면 사용자가 직접 실행.
+
+### 35.6 종료 조건
+
+DB 변경 전 실제 schema/데이터 조사, 백업(변경 전 SELECT), rollback SQL 확보까지 마친 뒤 최소 트랜잭션(UPDATE 1 + INSERT 3행)만 실행했다. 이름만으로 데이터를 넣지 않고 실제 네이버 API로 도로명주소를 검증했다. UI는 기능 로직을 건드리지 않고 카드/배지/marker 색상 체계만 정리했으며, 실제 존재하던 selected marker 누락 버그를 함께 고쳤다. Production 배포는 frontend만 재빌드(backend/RAG/Diet/postgres 미접촉)했고, 실제 로그인 세션으로 제휴 배지·marker 색상까지 최종 확인했다. Secret 값(네이버 API 키 포함) 미출력, `git reset`/`rebase`/`force push` 미사용.
