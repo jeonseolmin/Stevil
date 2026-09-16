@@ -106,6 +106,11 @@ export default function HospitalMapPage() {
     const mapsRef = useRef(null);
     const markersRef = useRef([]);
     const currentMarkerRef = useRef(null);
+    // 마커 재생성 effect는 selectedIndex를 의존성에 넣지 않는다(넣으면 카드
+    // 클릭마다 지도가 fitBounds로 다시 확대/축소됨) — 대신 재생성 시점의
+    // 선택 상태를 ref로 읽어, 위치 갱신 등으로 마커가 다시 그려져도 이미
+    // 선택돼 있던 마커의 강조 표시가 사라지지 않게 한다.
+    const selectedIndexRef = useRef(null);
 
     const [keyword, setKeyword] = useState("");
     const [hospitals, setHospitals] = useState([]);
@@ -342,21 +347,32 @@ export default function HospitalMapPage() {
                     hospital.longitude
                 );
                 const isAd = hospital.isSearchTop || hospital.isHighlight;
-                const markerClassName = [
+                // "is-selected"는 여기서 넣지 않는다 — 선택은 이 마커 재생성
+                // effect와 별개로(아래 selectedIndex effect에서 marker.setIcon만
+                // 호출해) 갱신해서, 카드를 클릭할 때마다 지도가 다시 fitBounds
+                // 되며 확대/축소가 튀는 일이 없게 한다.
+                const baseClassName = [
                     "hospital-map-marker",
                     isAd ? "is-ad" : "",
                     hospital.isPartner ? "is-partner" : "",
                 ].filter(Boolean).join(" ");
+
+                const initialClassName = index === selectedIndexRef.current
+                    ? `${baseClassName} is-selected`
+                    : baseClassName;
 
                 const marker = new maps.Marker({
                     map,
                     position,
                     title: hospital.name,
                     icon: {
-                        content: `<span class="${markerClassName}"><b>${index + 1}</b></span>`,
+                        content: `<span class="${initialClassName}"><b>${index + 1}</b></span>`,
                         anchor: new maps.Point(18, 42),
                     },
                 });
+
+                marker.stevilBaseClassName = baseClassName;
+                marker.stevilLabel = index + 1;
 
                 maps.Event.addListener(marker, "click", () => {
                     setSelectedIndex(index);
@@ -381,6 +397,29 @@ export default function HospitalMapPage() {
             console.error("지도 마커 표시 실패", error);
         }
     }, [currentPosition, processedHospitals, isMapReady]);
+
+    // 선택된 마커만 강조 표시로 다시 그린다(마커를 전부 재생성하는 effect와
+    // 분리 — 그러면 카드를 클릭할 때마다 지도가 fitBounds로 다시 확대/축소되는
+    // 일 없이, 이미 만들어진 marker의 아이콘만 setIcon으로 교체한다).
+    useEffect(() => {
+        selectedIndexRef.current = selectedIndex;
+        const maps = mapsRef.current;
+
+        if (!maps) {
+            return;
+        }
+
+        markersRef.current.forEach((marker, index) => {
+            const className = index === selectedIndex
+                ? `${marker.stevilBaseClassName} is-selected`
+                : marker.stevilBaseClassName;
+
+            marker.setIcon({
+                content: `<span class="${className}"><b>${marker.stevilLabel}</b></span>`,
+                anchor: new maps.Point(18, 42),
+            });
+        });
+    }, [selectedIndex]);
 
     useEffect(() => {
         if (selectedIndex === null || !mapRef.current) {
@@ -484,7 +523,7 @@ export default function HospitalMapPage() {
                                         <span className="hospital-card-title-row">
                                             <div>
                                                 {/* 제휴/광고 뱃지 노출 영역 — 의료 품질을 암시하지 않는 중립적 표기만 사용 */}
-                                                {hospital.isPartner && <span className="partner-badge">제휴 병원</span>}
+                                                {hospital.isPartner && <span className="partner-badge">제휴</span>}
                                                 {hospital.isSearchTop && <span className="ad-badge-top">광고</span>}
                                                 {hospital.isHighlight && <span className="ad-badge-highlight">광고</span>}
                                                 <strong>{hospital.name}</strong>
