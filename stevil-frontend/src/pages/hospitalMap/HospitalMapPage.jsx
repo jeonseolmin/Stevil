@@ -526,7 +526,15 @@ export default function HospitalMapPage() {
                                         }
                                     }}
                                 >
-                                    <span className="hospital-card-number">{index + 1}</span>
+                                    <span
+                                        className={`hospital-card-number
+                                            ${hospital.isPartner ? "is-partner" : ""}
+                                            ${hospital.isSearchTop || hospital.isHighlight ? "is-ad" : ""}
+                                            ${selectedIndex === index ? "is-selected" : ""}
+                                        `}
+                                    >
+                                        {index + 1}
+                                    </span>
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
                                             <div>

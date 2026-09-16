@@ -1,4 +1,15 @@
 .hospital-page {
+    /*
+     * marker 색 의미를 여기(페이지 루트)에 한 번만 정의해서, 결과 리스트의
+     * 번호 배지(.hospital-card-number)와 지도 위 marker(.hospital-map-marker,
+     * Naver 커스텀 오버레이로 이 트리 하위에 렌더링됨)가 항상 같은 값을
+     * 상속해 쓰게 한다 — 리스트와 지도에서 같은 병원의 색이 어긋나지 않는다.
+     */
+    --map-marker-normal: var(--color-text-secondary);
+    --map-marker-partner: #2563eb;
+    --map-marker-ad: #c2410c;
+    --map-marker-selected: var(--color-primary-dark);
+
     width: min(calc(100% - 40px), 1280px);
     margin: 0 auto;
     padding: 48px 0 72px;
@@ -174,8 +185,26 @@
     color: white;
     font-size: 13px;
     font-weight: 800;
-    background: var(--color-primary);
+    background: var(--map-marker-normal);
     border-radius: 50%;
+}
+
+/* Same state hierarchy as .hospital-map-marker (normal < partner < ad < selected). */
+.hospital-card-number.is-partner {
+    background: var(--map-marker-partner);
+}
+
+.hospital-card-number.is-ad {
+    background: var(--map-marker-ad);
+}
+
+.hospital-card-number.is-ad.is-partner {
+    background: var(--map-marker-ad);
+    box-shadow: 0 0 0 2px var(--map-marker-partner);
+}
+
+.hospital-card-number.is-selected {
+    background: var(--map-marker-selected) !important;
 }
 
 .hospital-card-body {
@@ -273,15 +302,10 @@
  * 34x40 박스를 돌려서 만들어 찌그러져 보였다. 지금은 고정된 정사각형
  * width/height(+aspect-ratio로 이중 보장)만으로 원을 만들고, 숫자 크기
  * 때문에 박스가 늘어나지 않도록 padding 대신 flex 중앙 정렬만 쓴다.
- * 색 의미는 custom property로 한 곳에 모아 marker와 result card 배지가
- * 같은 의미를 가리키게 한다.
+ * 색 의미는 .hospital-page에 정의한 custom property를 그대로 상속해 쓴다
+ * (marker와 result card의 번호 배지가 같은 값을 참조 — 색이 어긋나지 않음).
  */
 .hospital-map-marker {
-    --map-marker-normal: var(--color-text-secondary);
-    --map-marker-partner: #2563eb;
-    --map-marker-ad: #c2410c;
-    --map-marker-selected: var(--color-primary-dark);
-
     display: flex;
     align-items: center;
     justify-content: center;
