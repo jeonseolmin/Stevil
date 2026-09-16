@@ -3,7 +3,7 @@ services:
     image: stevil-rag-api:local
     build:
       context: ../../..
-      dockerfile: wegovy/rag/deploy/Dockerfile
+      dockerfile: ai-services/rag/deploy/Dockerfile
     restart: unless-stopped
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY:?required}

@@ -16,7 +16,7 @@ Python 3.10 이상, 추가 패키지 없이 실행하는 JSON API입니다. 화�
 
 ## Gemini 연결
 
-**키를 붙여넣는 파일: `data-collection/wegovy/rag/.env`**
+**키를 붙여넣는 파일: `data-collection/ai-services/rag/.env`**
 
 ```dotenv
 GEMINI_API_KEY=본인의_API_키

@@ -22,7 +22,16 @@ from planner.service import make_plan
 
 from retrieval.hybrid import HybridSearch, VectorIndex
 
-ROOT = Path(__file__).resolve().parents[1]
+SERVICE_ROOT = Path(__file__).resolve().parent
+
+# Raw collection artifacts (sources.json/runs/raw) are produced by the
+# data-collection pipeline in the sibling data-collection/wegovy directory;
+# this service reads them but does not own them, so they were not moved
+# alongside the ai-services reorg (Python AI runtime migration).
+ROOT = SERVICE_ROOT.parents[1] / "wegovy"
+
+CACHE_DIR = SERVICE_ROOT / "cache"
+
 SECTIONS = {'_ee_doc': '효능효과', '_ud_doc': '용법용량', '_nb_doc': '사용상의 주의사항'}
 
 
@@ -135,7 +144,7 @@ class Corpus:
                     records = [dict(section=SECTIONS[section], anchor=section, text=part, formulation='injection', formulation_verified=False)
                                for section, body in parser.sections.items() for part in chunks(body)]
                 else:
-                    extracted = json.loads((root / 'rag/cache/extracted' / (source['id'] + '.json')).read_text(encoding='utf-8'))
+                    extracted = json.loads((CACHE_DIR / 'extracted' / (source['id'] + '.json')).read_text(encoding='utf-8'))
                     if extracted['sha256'] != result['sha256'] or extracted['version'] != 1:
                         raise ValueError('추출 캐시 갱신 필요')
                     records = extracted['records']

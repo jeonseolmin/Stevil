@@ -937,7 +937,7 @@ docs/presentation-2/
 .playwright-mcp/
 
 # AI 대용량 DB 및 데이터 제외
-data-collection/diet/chroma_db/
-data-collection/diet/data/
+data-collection/ai-services/diet/chroma_db/
+data-collection/ai-services/diet/data/
 *.xlsx
 *.csv
