@@ -14,6 +14,10 @@
 .planner-week-nav strong { font-size:13px; font-variant-numeric:tabular-nums; }
 .planner-week-nav > span { font-size:11px; color:#768374; }
 .planner-status,.planner-help { font-size:12px; color:var(--color-text-muted); line-height:1.7; }
+.planner-status { display:flex; align-items:center; gap:var(--app-space-2); }
+.planner-spinner { width:13px; height:13px; flex-shrink:0; border-radius:50%; border:2px solid var(--color-border-light); border-top-color:var(--color-primary-dark); animation:planner-spin .7s linear infinite; }
+@keyframes planner-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) { .planner-spinner { animation:none; } }
 .planner-error { padding:12px; background:var(--color-danger-soft); border-radius:var(--app-radius-sm); color:#a4473c; font-size:13px; }
 .planner-error button { background:transparent; text-decoration:underline; color:inherit; }
 .planner-legend { display:flex; gap:var(--app-space-4); align-items:center; font-size:11px; margin:var(--app-space-5) 0 var(--app-space-3); }
@@ -160,9 +164,19 @@
 .planner-target-status { padding: var(--app-space-3); border-radius: var(--app-radius-sm); background: #fff5e9; }
 .planner-target-status--within { color: #176345; }
 .planner-target-status--low, .planner-target-status--high, .planner-target-status--missing { color: #974411; }
-.planner-week-targets { display: flex; flex-wrap: wrap; gap: var(--app-space-2); margin: var(--app-space-3) 0; }
-.planner-week-targets button { min-height:var(--app-tap-min); padding: var(--app-space-2) var(--app-space-3); border: 1px solid currentColor; border-radius: var(--app-radius-sm); background: white; cursor: pointer; }
-.planner-week-targets button[aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* Compact per-day status: letter + dot instead of a repeated text
+   label per day (7x "확인 불가" read as noise, not information). The
+   dot alone carries ok/warn/unavailable; the accessible label carries
+   the detail via aria-label. Selected state is a filled background,
+   not a second border/outline layered on top of the resting border. */
+.planner-week-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--app-space-1); margin: var(--app-space-3) 0; }
+.planner-week-day { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: var(--app-tap-min); padding: var(--app-space-2) 0; border-radius: var(--app-radius-sm); background: transparent; color: var(--color-text-secondary); font-size: 12px; }
+.planner-week-day[aria-pressed="true"] { background: var(--color-primary-soft); color: var(--color-primary-dark); font-weight: 600; }
+.planner-week-day-dot { width: 6px; height: 6px; border-radius: 50%; }
+.planner-week-day-dot--ok { background: var(--color-success); }
+.planner-week-day-dot--warn { background: var(--color-warning); }
+.planner-week-day-dot--muted { background: var(--color-border-light); }
 
 .planner-busy-row { grid-template-columns: 70px minmax(90px,1fr) 100px 100px auto auto 30px; }
 @media(max-width:900px) { .planner-busy-row { grid-template-columns: repeat(2,minmax(0,1fr)); } }

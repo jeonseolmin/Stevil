@@ -34,6 +34,26 @@ import { snackRecommendations } from "./snackRecommendations.js";
 import ExerciseDetails from "./ExerciseDetails";
 import { updatePlannerEvent } from "./plannerEventUtils";
 
+const DAY_STATUS_LABELS = {
+    macro_unbalanced: "탄단지 조정 필요",
+    unbalanced: "끼니 불균형",
+    within: "목표 충족",
+    low: "목표 대비 부족",
+    high: "목표 대비 초과",
+    missing: "식사 누락",
+    unknown: "확인 불가"
+};
+
+const DAY_STATUS_TIER = {
+    within: "ok",
+    macro_unbalanced: "warn",
+    unbalanced: "warn",
+    low: "warn",
+    high: "warn",
+    missing: "warn",
+    unknown: "muted"
+};
+
 
 function formatNutrient(value) {
 
@@ -606,6 +626,9 @@ export default function WeeklyPlanner({
         useRef(null);
 
     const lastNutritionGoal =
+        useRef(null);
+
+    const results =
         useRef(null);
 
     const [
@@ -1310,6 +1333,13 @@ export default function WeeklyPlanner({
             setDirty(true);
             setFormOpen(false);
 
+            results
+                .current
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
             const meals =
                 result.events.filter(
                     item =>
@@ -1522,6 +1552,33 @@ export default function WeeklyPlanner({
                 * goal.proteinPerKg
             )
             : null;
+
+    const dayStates =
+        DAYS.map(
+            (day, index) => {
+
+                const date =
+                    shiftDate(
+                        preferences.weekStart,
+                        index
+                    );
+
+                return {
+                    day,
+                    date,
+                    state:
+                        calorieTargetStatus(
+                            preferences,
+                            events.filter(
+                                event =>
+                                    event.start
+                                        .slice(0, 10)
+                                    === date
+                            )
+                        )
+                };
+            }
+        );
 
     const snackOffer =
         snackRecommendations(
@@ -2129,84 +2186,53 @@ export default function WeeklyPlanner({
 
             {
                 goal?.confirmed
+                && dayStates.some(
+                    entry =>
+                        entry.state.state
+                        !== "unknown"
+                )
                 && (
                     <div
-                        className="planner-week-targets"
+                        className="planner-week-days"
                         aria-label="요일별 목표 열량 충족 상태"
                     >
                         {
-                            DAYS.map(
-                                (
+                            dayStates.map(
+                                ({
                                     day,
-                                    index
-                                ) => {
-
-                                    const date =
-                                        shiftDate(
-                                            preferences.weekStart,
-                                            index
-                                        );
-
-                                    const state =
-                                        calorieTargetStatus(
-                                            preferences,
-                                            events.filter(
-                                                event =>
-                                                    event.start
-                                                        .slice(0, 10)
-                                                    === date
-                                            )
-                                        );
-
-                                    return (
-                                        <button
-                                            key={date}
-                                            type="button"
-                                            onClick={
-                                                () =>
-                                                    setSummaryDate(
-                                                        date
-                                                    )
-                                            }
-                                            className={
-                                                `planner-target-status--${state.state}`
-                                            }
-                                            aria-pressed={
-                                                summaryDate
-                                                === date
-                                            }
-                                        >
+                                    date,
+                                    state
+                                }) => (
+                                    <button
+                                        key={date}
+                                        type="button"
+                                        onClick={
+                                            () =>
+                                                setSummaryDate(
+                                                    date
+                                                )
+                                        }
+                                        className="planner-week-day"
+                                        aria-pressed={
+                                            summaryDate
+                                            === date
+                                        }
+                                        aria-label={
+                                            `${day} ${date.slice(5).replace("-", ".")} · ${DAY_STATUS_LABELS[state.state]}`
+                                        }
+                                    >
+                                        <span aria-hidden="true">
                                             {day}
-                                            {" · "}
-                                            {
-                                                {
-                                                    macro_unbalanced:
-                                                        "탄단지 조정",
+                                        </span>
 
-                                                    unbalanced:
-                                                        "끼니 불균형",
-
-                                                    within:
-                                                        "충족",
-
-                                                    low:
-                                                        "부족",
-
-                                                    high:
-                                                        "초과",
-
-                                                    missing:
-                                                        "식사 누락",
-
-                                                    unknown:
-                                                        "확인 불가"
-                                                }[
-                                                    state.state
-                                                    ]
+                                        <span
+                                            aria-hidden="true"
+                                            className={
+                                                `planner-week-day-dot planner-week-day-dot--${DAY_STATUS_TIER[state.state]}`
                                             }
-                                        </button>
-                                    );
-                                }
+                                        />
+                                    </button>
+                                )
                             )
                         }
                     </div>
@@ -2518,8 +2544,18 @@ export default function WeeklyPlanner({
                 role="status"
             >
                 {
+                    !!busy
+                    && (
+                        <span
+                            className="planner-spinner"
+                            aria-hidden="true"
+                        />
+                    )
+                }
+
+                {
                     busy === "generate"
-                        ? "선호와 일정을 살펴보고 한 주를 구성하고 있어요…"
+                        ? "한 주 계획을 만들고 있어요. 생활 패턴과 목표를 바탕으로 운동·식단·일정을 구성하고 있습니다…"
                         : (
                             busy === "load"
                                 ? "주간 일정 불러오는 중…"
@@ -4226,6 +4262,7 @@ export default function WeeklyPlanner({
             {/* ================================================= */}
 
             <div
+                ref={results}
                 className="planner-calendar"
                 role="region"
                 aria-label="주간 식사 운동 캘린더"
