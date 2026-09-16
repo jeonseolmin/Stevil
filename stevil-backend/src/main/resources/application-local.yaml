@@ -95,6 +95,7 @@ server:
 
 planner:
   generator-url: ${PLANNER_GENERATOR_URL:http://127.0.0.1:8091/api/plan}
+  diet-generator-url: ${DIET_GENERATOR_URL:http://127.0.0.1:8092/api/plan}
 
 naver:
   search:

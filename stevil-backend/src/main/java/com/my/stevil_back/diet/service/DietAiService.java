@@ -12,8 +12,8 @@ import java.util.Map;
 @Service
 public class DietAiService {
 
-    // 파이썬 FastAPI 서버 주소 (8000번 포트)
-    @Value("${PYTHON_AI_URL:http://localhost:8000/api/ai/ask}")
+    // 식단 전용 파이썬 FastAPI 서버 주소 (8092번 포트, 도커 호스트 통신 주소 반영)
+    @Value("${planner.diet-generator-url:http://127.0.0.1:8092/api/plan}")
     private String pythonAiUrl;
 
     public String askPythonAiServer(String question) {
