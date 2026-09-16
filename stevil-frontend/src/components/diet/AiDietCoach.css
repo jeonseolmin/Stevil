@@ -1,0 +1,147 @@
+/* 플로팅 버튼 스타일 */
+.diet-chat-fab {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-primary-dark, #206d5c);
+  color: white;
+  padding: 12px 24px 12px 16px;
+  border-radius: 999px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.diet-chat-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+.diet-chat-fab__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+.diet-chat-fab__text {
+  text-align: left;
+}
+.diet-chat-fab__text strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.diet-chat-fab__text span {
+  display: block;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* 팝업 창 스타일 */
+.diet-chat-window {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 9999;
+  width: 420px;
+  max-width: calc(100vw - 40px);
+  height: 650px;
+  max-height: calc(100vh - 80px);
+  background: var(--color-surface, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--color-border-light, #eaeaea);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: diet-slide-up 0.3s ease-out forwards;
+}
+
+@keyframes diet-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.diet-chat__panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--color-text-primary, #333);
+}
+
+/* 툴바 */
+.diet-chat__toolbar {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-light, #eaeaea);
+  background: #fcfcfc;
+}
+.diet-chat__identity { display: flex; align-items: center; gap: 12px; }
+.diet-chat__identity strong { font-size: 15px; display: block;}
+.diet-chat__identity small { display: block; color: var(--color-text-secondary, #666); font-size: 11px; margin-top: 2px; }
+.diet-chat__avatar, .diet-chat__welcome-icon { display: grid; place-items: center; background: var(--color-primary-soft, #e6f4f1); color: var(--color-primary-dark, #206d5c); border-radius: 12px; width: 40px; height: 40px; flex-shrink: 0; }
+
+.diet-chat__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.diet-chat__reset, .diet-chat__close { background: transparent; border: none; color: var(--color-text-secondary, #666); cursor: pointer; font-size: 12px; padding: 6px; }
+.diet-chat__reset:disabled { opacity: 0.4; cursor: default; }
+.diet-chat__close { font-size: 18px; line-height: 1; padding: 4px 8px; }
+.diet-chat__close:hover { color: #000; }
+
+/* 채팅 메시지 영역 */
+.diet-chat__messages { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: thin; background: #fafafa; }
+.diet-chat__welcome { text-align: center; margin-top: 10px; }
+.diet-chat__welcome-icon { margin: 0 auto 16px; width: 50px; height: 50px; border-radius: 16px; }
+.diet-chat__welcome h2 { font-size: 20px; margin: 0 0 8px; letter-spacing: -0.5px; }
+.diet-chat__welcome > p { font-size: 13px; color: var(--color-text-secondary, #666); margin-bottom: 24px; line-height: 1.5; }
+.diet-chat__examples { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.diet-chat__examples button { position: relative; padding: 14px 40px 14px 16px; text-align: left; border-radius: 12px; border: 1px solid var(--color-border, #ddd); background: #fff; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.diet-chat__examples button:hover { background: var(--color-primary-soft, #e6f4f1); border-color: var(--color-primary, #45a089); }
+.diet-chat__examples span { display: block; color: var(--color-primary-dark, #206d5c); font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+.diet-chat__examples strong { display: block; font-size: 13px; line-height: 1.5; word-break: keep-all; }
+.diet-chat__examples i { position: absolute; top: 14px; right: 14px; font-style: normal; color: var(--color-primary-dark, #206d5c); font-size: 14px; }
+
+/* 대화 말풍선 */
+.diet-chat__turn { margin-bottom: 24px; overflow-wrap: anywhere; }
+.diet-chat__question { width: fit-content; max-width: 85%; margin: 0 0 20px auto; padding: 12px 16px; background: var(--color-primary-soft, #e6f4f1); border-radius: 16px 16px 4px 16px; color: var(--color-primary-dark, #206d5c); font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+.diet-chat__reply-label { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+.diet-chat__reply-label svg { color: var(--color-primary-dark, #206d5c); width: 18px; height: 18px;}
+.diet-chat__reply-label > span { font-size: 10px; color: var(--color-text-secondary, #666); background: #eee; padding: 2px 6px; border-radius: 4px; }
+.diet-chat__answer { font-size: 14px; line-height: 1.8; white-space: pre-wrap; padding-left: 26px; }
+
+/* 로딩 애니메이션 */
+.diet-chat__loading { font-size: 13px; color: var(--color-text-secondary, #666); display: flex; gap: 10px; align-items: center; padding-left: 26px; }
+.diet-chat__loading > span { letter-spacing: 2px; color: var(--color-primary-dark, #206d5c); font-weight: bold; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* 하단 입력창 */
+.diet-chat__composer { padding: 16px 20px; border-top: 1px solid var(--color-border-light, #eaeaea); background: #fff; }
+.diet-chat__composer form { border: 1px solid var(--color-border, #ddd); border-radius: 14px; padding: 12px; background: var(--color-background, #fff); transition: border-color 0.2s; }
+.diet-chat__composer form:focus-within { border-color: var(--color-primary-dark, #206d5c); box-shadow: 0 0 0 3px var(--color-primary-soft, #e6f4f1); }
+.diet-chat__composer textarea { width: 100%; display: block; border: 0; resize: none; min-height: 48px; max-height: 120px; outline: 0; background: transparent; font-size: 13px; line-height: 1.6; }
+.diet-chat__composer textarea::placeholder { color: var(--color-text-secondary, #999); }
+.diet-chat__send-row { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-top: 6px; }
+.diet-chat__send-row > span { color: var(--color-text-secondary, #999); font-size: 11px; }
+.diet-chat__send-row button { display: flex; align-items: center; gap: 8px; background: var(--color-primary-dark, #206d5c); color: white; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+.diet-chat__send-row button:disabled { opacity: 0.5; cursor: default; }
+.diet-chat__send-row button > span { font-size: 16px; line-height: 1; }
+.diet-chat__composer > p { margin: 8px 0 0; color: var(--color-text-secondary, #999); font-size: 11px; text-align: center; }
+
+.diet-chat__sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.diet-chat__error { color: #d32f2f; font-size: 12px; margin: 0 0 10px; text-align: center; }
+
+@media (max-width: 480px) {
+  .diet-chat-window { bottom: 0; right: 0; width: 100%; max-width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; }
+  .diet-chat-fab { bottom: 20px; right: 20px; }
+}

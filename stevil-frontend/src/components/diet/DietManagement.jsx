@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import SavedPlanPanel from '../planner/SavedPlanPanel';
 import axiosInstance from '../../api/axiosInstance';
 import './DietManagement.css';
+import AiDietCoach from './AiDietCoach';
 
 const EMPTY_RECORD_FORM = {
   mealType: '점심',
@@ -1053,6 +1054,8 @@ const DietManagement = () => {
           </button>
         </div>
       )}
+
+      <AiDietCoach />
     </div>
   );
 };
@@ -1105,4 +1108,4 @@ const NutrientRow = ({
   );
 };
 
-export default DietManagement; 
+export default DietManagement;

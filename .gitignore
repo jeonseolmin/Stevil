@@ -935,3 +935,9 @@ docs/presentation-2/
 
 # Playwright MCP scratch output (screenshots/console logs)
 .playwright-mcp/
+
+# AI 대용량 DB 및 데이터 제외
+data-collection/diet/chroma_db/
+data-collection/diet/data/
+*.xlsx
+*.csv
