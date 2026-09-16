@@ -29,7 +29,7 @@ const AiDietCoach = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/rag-api/chat', { 
+      const response = await axios.post('/diet-api/chat', { 
         question: newQuestion 
       });
       if (response.data.answer) {
