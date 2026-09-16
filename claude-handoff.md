@@ -1347,3 +1347,45 @@ Diet는 계획대로 copy 기반 전환을 완료하고 운영 요청까지 실�
 ### 33.5 종료 조건
 
 조사 + 비교 + 권장안까지만 수행하고 실제 migration은 하지 않았다. `/home/ubuntu/stevil-rag/source/`의 branch 전환/파일 변경/삭제 없음, 기존 `rag-api` 컨테이너 rebuild/restart 없음, `~/Stevil`로 production 경로 변경 없음, runtime data 이동 없음. Secret 값(env var 이름만 나열, 값은 미출력)을 포함해 세션 내내 한 번도 출력하지 않았다.
+
+## 34. 2026-09-16 업데이트 — Production RAG Canonical Migration 실행 완료
+
+§33에서 세운 계획대로 RAG production을 `/home/ubuntu/stevil-rag/source/`에서 `~/Stevil/data-collection/ai-services/rag`로 전환했다. **성공.**
+
+### 34.1 시작 전 발견한 부수적 장애
+
+baseline을 잡으려고 기존 `rag-api` 컨테이너에 `/api/status`를 호출했더니 연결이 거부됐다 — `docker ps`는 "Up 10 hours"였지만 실제로는 8091용 `docker-proxy` 프로세스 자체가 없었다(postgres/backend/frontend는 다 있는데 rag-api만 없었음). 컨테이너가 `2026-09-16T02:14:40`에 재시작된 기록은 있어 그 시점(추정: 호스트 또는 Docker 데몬 재시작) 전후로 포트 바인딩이 누락된 것으로 보인다. **이번 세션이 만든 문제가 아니다** — 손대기 전부터 이미 RAG는 외부에서 접근 불가 상태였다. 같은 이미지로 `docker restart`만 해서 복구하고(소스 변경 없음), 그걸 진짜 baseline(`chunks=305`, 6/12 indexed, `vector_ready`/`generation_ready` true)으로 삼았다.
+
+### 34.2 실행 순서 (계획 §33.4 그대로)
+
+1. `~/Stevil`을 최신(`8a55f29`)으로 pull.
+2. `wegovy/rag/cache/`(188MB, 106개 파일) → `ai-services/rag/cache/`로 `rsync -a` 복사. 파일 수·총 바이트·`embeddings.sqlite3`(메인+food+nutrition+exercise 4개)·`extracted/*.json`(4개) 전부 md5 일치 확인.
+3. `stevil-rag-api:local`(당시 image id `758244d2dd2d`) → `stevil-rag-api:before-20260916T115242Z`로 롤백 태그. 태그 후 image id 동일함 확인.
+4. `~/Stevil/data-collection/ai-services/rag/deploy/compose.server.yaml` 기준(`--env-file /home/ubuntu/stevil-rag/server.env`는 그대로 재사용, 값 미열람) 이미지 빌드 성공.
+5. **1차 격리 검증에서 불일치 발견**: 임시 포트(18091)에 새 이미지를 올려 `/api/status`를 비교했더니 `chunks=214`(baseline 305) — mfds-025/05/17가 SHA-256 불일치로 인덱싱 실패. 원인 추적: `data-collection/wegovy/raw/`·`runs/`에도 production 쪽에만 있던 **두 번째 수집 실행분**(`2026-09-09T04-41-25...`, 8.4MB)이 있었다 — `cache/`와 같은 성격의 git 미추적 runtime 데이터인데 처음 조사(§33) 때는 "sources.json이 같으니 필수 아닐 것"이라고 추측했던 바로 그 데이터. `rsync`로 이것도 복사(원본 보존, checksum 일치 확인)하고 재빌드하니 **`chunks=305=305`, 소스별 차이 0건**으로 완전히 일치.
+6. 재검증(임시 포트) 통과 후 `docker compose -p stevil-rag -f .../ai-services/rag/deploy/compose.server.yaml up -d --no-build rag-api`로 **production 컨테이너를 새 이미지로 교체**(같은 project/service 이름이라 같은 컨테이너 이름 `stevil-rag-rag-api-1`을 그대로 재사용, container/network 중복 없음).
+7. 전환 후 확인: `docker inspect`의 `compose.project.config_files` 라벨이 새 경로를 가리킴, `/api/status` baseline과 완전 일치, nginx `/rag-api/chat` 401(정상), 외부(`http://15.165.242.94/rag-api/chat`) 401(정상), 실제 "임신" 질의에 실제 Gemini 생성 응답(`mode: generated_draft`) 확인, 로그에 에러/traceback 없음, postgres/backend/frontend/diet-ai 전부 uptime 그대로(재시작 안 됨).
+
+### 34.3 보존된 롤백 자산
+
+- **이미지**: `stevil-rag-api:before-20260916T115242Z`(마이그레이션 전 production 이미지, 삭제 안 함).
+- **구 checkout**: `/home/ubuntu/stevil-rag/source/`(branch `feature/wegovy`) — **legacy production rollback source**로 지정. 삭제하지 않음, 향후 안정화 후 별도 cleanup Task에서 제거 여부 판단.
+- **구 cache/raw/runs 원본**: `/home/ubuntu/stevil-rag/source/data-collection/wegovy/rag/cache/`, `raw/2026-09-09.../`, `runs/2026-09-09....json` 전부 그대로 남아 있음(전부 `rsync` copy만 했음, `mv` 안 씀).
+- **롤백 절차**(문제 생기면): `docker tag stevil-rag-api:before-20260916T115242Z stevil-rag-api:local` → `docker compose -p stevil-rag -f /home/ubuntu/stevil-rag/source/data-collection/wegovy/rag/deploy/compose.server.yaml up -d --no-build rag-api`.
+
+### 34.4 CI/CD에 남은 영향
+
+향후 GitHub Actions workflow(§31.2에서 harness가 차단해 아직 미작성)를 만들 때 RAG 배포 대상 경로는 이제 `~/Stevil/data-collection/ai-services/rag`가 canonical이다. `data-collection/wegovy/rag` 참조가 workflow/스크립트에 남아있으면 그게 stale 경로다. 이번 Task에서 GitHub Actions 자체는 건드리지 않았다.
+
+### 34.5 남은 우선순위 (갱신)
+
+1. `/home/ubuntu/stevil-rag/source/`(legacy) — 안정화 확인 후 별도 cleanup Task에서 삭제 여부 결정.
+2. `data-collection/diet/`(구 경로, §32) — 마찬가지로 별도 cleanup Task.
+3. GitHub Actions `deploy.yml` — 여전히 harness 차단, 미해결. RAG canonical 경로 확정됐으니 이제 작성 가능.
+4. Planner day-chip 실제 인증 세션 클릭 검증 — 미수행.
+5. `feature/fixetc` 브랜치 — 폐기 여부 팀 확인 필요.
+6. rag-api의 "docker-proxy 누락" 재발 감시 — §34.1 참고, 근본 원인(왜 처음에 바인딩이 빠졌는지)은 못 밝힘. 재발하면 `docker restart stevil-rag-rag-api-1`로 우선 복구.
+
+### 34.6 종료 조건
+
+계획된 순서(cache copy → rollback tag → new build → 격리 검증 → status parity → production 전환 → 최종 검증) 그대로 완료했다. 1차 검증에서 count mismatch(중단 조건)를 만났지만 원인이 "복사가 덜 된 것"으로 확인돼 추가 복사 후 재검증하는 방식으로 해결했고, 실제 기능 손실이나 데이터 불일치로 판명된 것은 아니었다. `mv`로 운영 데이터를 옮긴 적 없음(전부 `rsync` copy), 구 checkout/이미지/cache 전부 삭제 안 함, `.env`/`server.env`/secret 값 미출력, `git reset`/`rebase`/`force push` 미사용, postgres/backend/frontend/diet-ai 불필요한 재시작 없음.
