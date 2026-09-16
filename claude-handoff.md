@@ -1538,3 +1538,24 @@ Rollback: `DELETE FROM medical_facilities WHERE id IN (4,5,6,7,8,9);`
 ### 37.5 종료 조건
 
 코드 변경 없음(DB만). 전부 실제 네이버 API로 주소를 확인한 뒤 INSERT/UPDATE했고, 중복 병원 없음, 기존 행 삭제 없음. `.env`/네이버 API 키 값 미출력. `git` 작업 없음(변경 대상 자체가 코드가 아님).
+
+## 38. 2026-09-17 업데이트 — 병원찾기 리스트 번호 배지 색을 marker와 통일
+
+§36의 marker 색 계층(`--map-marker-normal/partner/ad/selected`, normal < partner < ad < selected)이 지도 위에만 적용돼 있어, 같은 병원인데 리스트의 번호 배지(`.hospital-card-number`)와 지도 marker(`.hospital-map-marker`) 색이 어긋나 보이는 문제. 사용자 요청: "여기[리스트]도 제휴면 제휴 색에 맞게 번호도 파란색으로, 지도에도 마찬가지로".
+
+### 38.1 변경 내용
+
+- `HospitalMapPage.css`: `--map-marker-*` custom property 선언을 `.hospital-map-marker` 내부에서 상위 `.hospital-page`로 이동(리스트의 번호 배지와 지도 marker가 둘 다 `.hospital-page`의 하위 DOM이라 동일 값을 상속받게 함 — Naver 커스텀 오버레이도 이 트리 하위에 렌더링됨). `.hospital-card-number`에 `.is-partner`/`.is-ad`/`.is-ad.is-partner`/`.is-selected` modifier를 `.hospital-map-marker`와 동일한 우선순위로 추가.
+- `HospitalMapPage.jsx`: `<span className="hospital-card-number">` → `hospital.isPartner`/`hospital.isSearchTop || hospital.isHighlight`/`selectedIndex === index`로 동일한 상태 class를 계산해 부여 (marker의 `baseClassName` 로직과 같은 조건, 이미 scope에 있던 값 재사용).
+
+### 38.2 검증
+
+`npm run build` 성공, `npx eslint` 기존에 있던 line 291 무관 오류(`requestCurrentLocation` effect 내 setState) 외 새 오류 없음. 실시간 브라우저 검증은 로그인 세션 만료로 이번에도 생략(§37.4와 동일 사유) — CSS 규칙과 class 부여 로직만 코드 리뷰로 확인.
+
+### 38.3 배포
+
+커밋 `68131fc` (frontend만 변경) → `origin/local/design-preview` push → 서버에서 `git pull --ff-only` (`f5bec6e..68131fc`) → `docker compose build frontend && docker compose up -d frontend` → `curl http://localhost:80/` 200 확인. backend/RAG/Diet/postgres 미접촉.
+
+### 38.4 종료 조건
+
+색 의미(상태→색 매핑)는 `.hospital-page`에 한 곳에만 정의되어 있어 이후 색을 바꾸려면 그 한 곳만 수정하면 리스트/지도 둘 다 반영됨. marker click, 제휴/광고 판정 로직, DB는 전혀 건드리지 않음.
