@@ -1270,3 +1270,46 @@ EC2(`15.165.242.94`, `~/Stevil`)는 이 세션 시작 시점에 `feature/diet`(`
 ### 31.7 종료 조건
 
 3개 커밋 모두 `local/design-preview`에 반영, EC2 프로덕션(backend/frontend만) 배포 및 검증 완료, Python 서비스 물리 이동은 로컬 검증까지 완료 후 커밋(프로덕션은 미반영, 다음 단계로 명시적으로 남김). Secret 값은 세션 내내 한 번도 출력하지 않았고, 운영 데이터(vector DB, chroma_db, postgres)는 전혀 건드리지 않았다. `git reset`/`rebase`/`force push` 사용 안 함.
+
+## 32. 2026-09-16 업데이트 — Python Production Migration: Diet 전환, RAG 보류
+
+§31.5에서 남겨둔 "Production Python migration"을 이어서 진행. Diet는 실제로 새 경로로 전환했고, RAG는 **의도적으로 손대지 않았다** — 조사 중 예상 밖의 구조를 발견해서다.
+
+### 32.1 RAG — 이번 migration에서 제외 (중요 발견)
+
+실제 운영 `rag-api` 컨테이너의 compose 라벨을 직접 확인한 결과, `~/Stevil`이 아니라 **완전히 별도의 git 체크아웃**에서 빌드되고 있었다:
+
+- 경로: `/home/ubuntu/stevil-rag/source/`
+- 이것도 `origin https://github.com/jeonseolmin/Stevil.git`을 추적하는 정상적인 git repo이지만, **branch가 `feature/wegovy`**(commit `ae2b703`, `~/Stevil`의 어떤 브랜치와도 다름)이고 `local/design-preview`의 Python 재구성 커밋을 전혀 포함하지 않는다.
+- 이 checkout 자체에도 `data-collection/wegovy/raw/2026-09-09T...`처럼 **이 checkout에서만 실행된 별도의 수집 결과**(untracked)가 있다 — 즉 단순 복사본이 아니라 실제로 독립적으로 사용되어 온 checkout으로 보인다.
+- `docs/SERVER_DEPLOYMENT.md`/`scripts/server_migrate.py`가 언급하는 `/home/ubuntu/stevil-rag/wegovy/...`(레거시 release 구조)와도 다른, **세 번째 경로**다. 즉 현재 파악된 rag 관련 경로만 셋: `~/Stevil/data-collection/ai-services/rag`(git 기준 canonical, 미사용), `/home/ubuntu/stevil-rag/source/`(실제 운영 중), `/home/ubuntu/stevil-rag/`의 releases/backups(레거시, docs에만 남음).
+
+사용자 지시대로 이번엔 **아무것도 바꾸지 않았다**: `/home/ubuntu/stevil-rag/source/`의 branch 전환 없음, `local/design-preview`로 전환 없음, 기존 `rag-api` 컨테이너 rebuild 없음, 파일 변경 없음. 현재 운영 중인 RAG는 그대로 유지.
+
+**남은 조사 과제**(다음 세션, 별도 Task): `/home/ubuntu/stevil-rag/source/`의 git remote/branch/commit을 `~/Stevil`의 RAG 코드와 diff, 이 별도 checkout이 왜 존재하게 됐는지(의도적 격리? 과거 마이그레이션의 부산물?), 어느 branch가 canonical RAG production source인지 확인 — 그 결과 없이 두 checkout을 강제 통합하지 않는다.
+
+### 32.2 Diet — Production migration 완료
+
+**전략**: `mv` 대신 copy(원본 보존) → 새 venv → 격리 포트 테스트 → systemd 전환 → 검증 → 구버전은 삭제하지 않고 보존.
+
+1. **조사**(읽기 전용): 기존 unit(`WorkingDirectory`/`ExecStart`가 구 경로), `EnvironmentFile` 없음(GEMINI_API_KEY는 `python-dotenv`가 상위 디렉터리를 탐색해서 루트 `.env`를 찾음), venv Python 3.14.4, `chroma_db` 559MB / `data` 210MB / `filtered` 23MB / `venv` 730MB, 디스크 여유 5.1GB.
+2. **데이터 복사**: `rsync -a`로 `chroma_db`/`data`/`filtered`를 새 경로로 복사(`mv` 안 씀). 파일 수·바이트 수·`chroma.sqlite3`의 md5 checksum까지 전부 old/new 일치 확인.
+3. **새 venv**: 새 경로에 `python3.14 -m venv venv`로 새로 생성(기존 venv를 옮기지 않음). 기존 운영 venv에서 실제 `pip freeze`를 뽑아(124개 패키지) 그대로 설치 — 처음에 추측으로 적어뒀던 `requirements.txt`(`langchain-community` 포함)가 실제로는 운영에 설치돼 있지 않은 걸 이 과정에서 발견해서 실제 freeze로 교체(`6961a6a`). 버전 임의 업그레이드 없음.
+4. **전환 전 격리 테스트**: 새 venv로 `import ai_server` 성공, 벡터 카운트 41,346개 확인(복사본이 실제로 로드됨), 기존 8092는 그대로 둔 채 **임시 포트 8093**에서 새 runtime을 띄워 실제 `/api/chat` 질문 → 실제 Gemini 응답 확인 → 종료.
+5. **systemd 백업**: `sudo cp .../diet-ai.service .../diet-ai.service.before-20260916T110757Z`.
+6. **systemd 전환**: `WorkingDirectory`/`ExecStart`만 `data-collection/ai-services/diet`로 수정(포트/host/workers/Restart 정책 등 나머지 전부 그대로) → `daemon-reload` → `restart`.
+7. **실제 프로덕션 검증**: `systemctl status`(active, 새 경로의 venv python 확인) → `journalctl`에 에러/traceback 없음 → `curl localhost:8092/api/chat` 실제 응답(HTTP 200, ~12초, 실제 Gemini 텍스트) → nginx `/diet-api/chat`(비인증 401, 정상) → **외부**(`http://15.165.242.94/diet-api/chat`)에서도 401 정상 확인.
+
+**결과**: `diet-ai.service`는 현재 `/home/ubuntu/Stevil/data-collection/ai-services/diet`에서 정상 운영 중. 구 경로(`data-collection/diet/`)의 `chroma_db`/`data`/`filtered`/`venv`/로그는 **전부 그대로 보존**(삭제 안 함) — 문제 생기면 백업 unit으로 즉시 롤백 가능. 디스크는 5.1GB → 3.7GB 여유로 감소(새 venv+데이터 복사분), 급하진 않지만 다음 정리 때 구 경로 삭제하면 회수 가능.
+
+### 32.3 남은 우선순위 (갱신)
+
+1. **RAG production 정리** — §32.1의 "남은 조사 과제" 먼저 수행한 뒤에만 진행. 지금처럼 git의 canonical 경로와 실제 서버가 다른 채로 오래 두면 다음 사람이 헷갈리니 우선순위 높음.
+2. `data-collection/diet/`(구 경로) 정리 — Diet가 새 경로에서 안정적으로 며칠 운영된 뒤, 별도 cleanup Task로 삭제 여부 결정.
+3. GitHub Actions `deploy.yml` — 여전히 harness 차단, 미해결.
+4. Planner day-chip 실제 인증 세션 클릭 검증 — 미수행.
+5. `feature/fixetc` 브랜치 — 폐기 여부 팀 확인 필요.
+
+### 32.4 종료 조건
+
+Diet는 계획대로 copy 기반 전환을 완료하고 운영 요청까지 실증했다. RAG는 계획대로 손대지 않았고, 대신 production 구조가 예상과 다르다는(별도 checkout, 다른 branch) 사실만 조사해 기록했다 — 강제 통합 시도 없음. `mv`로 운영 데이터를 옮기지 않았고(전부 `rsync` copy), 기존 diet 경로 삭제 안 함, `.env`/secret 값 미출력, `git reset`/`rebase`/`force push` 미사용.
