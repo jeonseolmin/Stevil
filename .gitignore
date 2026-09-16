@@ -932,3 +932,9 @@ FodyWeavers.xsd
 # Local Codex / presentation files
 AGENTS.md
 docs/presentation-2/
+
+# AI 대용량 DB 및 데이터 제외
+data-collection/diet/chroma_db/
+data-collection/diet/data/
+*.xlsx
+*.csv
