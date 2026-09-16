@@ -267,28 +267,49 @@
     color: var(--color-text-secondary);
 }
 
+/*
+ * marker는 항상 완전한 원이어야 한다 — 예전의 "회전시킨 물방울 pin"
+ * (border-radius 50% 50% 50% 8px + rotate(-45deg))은 정사각형이 아닌
+ * 34x40 박스를 돌려서 만들어 찌그러져 보였다. 지금은 고정된 정사각형
+ * width/height(+aspect-ratio로 이중 보장)만으로 원을 만들고, 숫자 크기
+ * 때문에 박스가 늘어나지 않도록 padding 대신 flex 중앙 정렬만 쓴다.
+ * 색 의미는 custom property로 한 곳에 모아 marker와 result card 배지가
+ * 같은 의미를 가리키게 한다.
+ */
 .hospital-map-marker {
+    --map-marker-normal: var(--color-text-secondary);
+    --map-marker-partner: #2563eb;
+    --map-marker-ad: #c2410c;
+    --map-marker-selected: var(--color-primary-dark);
+
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
+    box-sizing: border-box;
+    width: 40px;
     height: 40px;
-    padding-bottom: 6px;
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
-    /* 중립 기본색 — selected(green)와 겹치지 않도록 회색 계열로 시작한다 */
-    background: var(--color-text-secondary);
+    min-width: 40px;
+    min-height: 40px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
     border: 3px solid white;
-    border-radius: 50% 50% 50% 8px;
-    box-shadow: 0 4px 10px rgba(24, 58, 55, 0.25);
+    background: var(--map-marker-normal);
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(24, 58, 55, 0.28);
     cursor: pointer;
-    transform: rotate(-45deg);
+}
+
+.hospital-map-marker.is-double-digit {
+    font-size: 12px;
 }
 
 .hospital-map-marker b {
-    font-weight: 900;
-    transform: rotate(45deg);
+    font-weight: 800;
+    line-height: 1;
 }
 
 .hospital-current-marker {
@@ -379,28 +400,42 @@
     color: #8a5e13;
 }
 
-/* 지도 위 마커 — 기본은 중립(회색), partner/ad는 배경색으로만 구분 */
+/*
+ * 지도 위 marker 등급 — 일반(회색, 가장 차분) < 제휴(blue) < 광고(amber) <
+ * 선택(가장 진한 강조). 등급이 올라갈수록 shadow도 자연스럽게 조금씩
+ * 커진다. partner+ad가 겹치면 광고 배경 위에 제휴 표시를 흰 테두리
+ * 바깥의 파란 ring으로 얹어 둘 다 식별 가능하게 한다 — result card의
+ * "제휴"+"광고" badge 두 개가 동시에 붙는 것과 같은 의미 조합이다.
+ */
 .hospital-map-marker.is-partner {
-    background: #2563eb;
+    background: var(--map-marker-partner);
+    box-shadow: 0 3px 8px rgba(37, 99, 235, 0.4);
 }
 
 .hospital-map-marker.is-ad {
-    background: #c2410c;
+    background: var(--map-marker-ad);
+    box-shadow: 0 3px 10px rgba(194, 65, 12, 0.45);
 }
 
 .hospital-map-marker.is-ad.is-partner {
-    background: #c2410c;
-    box-shadow: 0 0 0 3px #2563eb, 0 5px 14px rgba(24, 58, 55, 0.3);
+    background: var(--map-marker-ad);
+    box-shadow: 0 0 0 3px var(--map-marker-partner), 0 3px 10px rgba(194, 65, 12, 0.45);
 }
 
 /*
- * selected는 partner/ad 배색과 무관하게 항상 이겨야 한다 — 클래스 특정성이
- * 아니라 의미상 최우선 규칙이므로 !important로 명시한다(이 파일에서 이미
- * is-ad 배경 override에 쓰던 것과 동일한 패턴).
+ * selected는 등급(normal/partner/ad)과 무관하게 항상 가장 눈에 띄어야
+ * 하는 임시 UI 상태다 — 데이터 의미(제휴/광고 여부)는 그대로 유지한 채
+ * !important로 색/그림자만 최우선으로 덮어쓴다(클래스 특정성이 아니라
+ * "selected가 등급보다 위"라는 의도를 명시하기 위함, 이 파일의 기존
+ * 패턴과 동일). 완전한 원을 유지한 채 살짝만 커진다(scale이 아니라
+ * 실제 width/height를 키워 anchor도 함께 재계산 — JSX 참고).
  */
 .hospital-map-marker.is-selected {
-    background: var(--color-primary-dark) !important;
-    box-shadow: 0 0 0 3px white, 0 6px 16px rgba(24, 58, 55, 0.45) !important;
-    transform: rotate(-45deg) scale(1.12);
+    background: var(--map-marker-selected) !important;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    box-shadow: 0 0 0 3px white, 0 0 0 6px var(--map-marker-selected), 0 6px 14px rgba(24, 58, 55, 0.4) !important;
     z-index: 10;
 }

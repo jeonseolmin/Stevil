@@ -355,11 +355,17 @@ export default function HospitalMapPage() {
                     "hospital-map-marker",
                     isAd ? "is-ad" : "",
                     hospital.isPartner ? "is-partner" : "",
+                    index + 1 >= 10 ? "is-double-digit" : "",
                 ].filter(Boolean).join(" ");
 
-                const initialClassName = index === selectedIndexRef.current
+                const isInitiallySelected = index === selectedIndexRef.current;
+                const initialClassName = isInitiallySelected
                     ? `${baseClassName} is-selected`
                     : baseClassName;
+                // marker는 완전한 원이라 anchor를 항상 정중앙(size/2)으로 잡아야
+                // 좌표 위치가 원 중심에 오고, selected(44px)일 때도 커진 만큼만
+                // 살짝 더 커 보일 뿐 위치가 튀지 않는다.
+                const markerSize = isInitiallySelected ? 44 : 40;
 
                 const marker = new maps.Marker({
                     map,
@@ -367,7 +373,7 @@ export default function HospitalMapPage() {
                     title: hospital.name,
                     icon: {
                         content: `<span class="${initialClassName}"><b>${index + 1}</b></span>`,
-                        anchor: new maps.Point(18, 42),
+                        anchor: new maps.Point(markerSize / 2, markerSize / 2),
                     },
                 });
 
@@ -410,13 +416,15 @@ export default function HospitalMapPage() {
         }
 
         markersRef.current.forEach((marker, index) => {
-            const className = index === selectedIndex
+            const isNowSelected = index === selectedIndex;
+            const className = isNowSelected
                 ? `${marker.stevilBaseClassName} is-selected`
                 : marker.stevilBaseClassName;
+            const markerSize = isNowSelected ? 44 : 40;
 
             marker.setIcon({
                 content: `<span class="${className}"><b>${marker.stevilLabel}</b></span>`,
-                anchor: new maps.Point(18, 42),
+                anchor: new maps.Point(markerSize / 2, markerSize / 2),
             });
         });
     }, [selectedIndex]);
