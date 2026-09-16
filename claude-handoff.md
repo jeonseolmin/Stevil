@@ -1457,3 +1457,35 @@ baseline을 잡으려고 기존 `rag-api` 컨테이너에 `/api/status`를 호�
 ### 35.6 종료 조건
 
 DB 변경 전 실제 schema/데이터 조사, 백업(변경 전 SELECT), rollback SQL 확보까지 마친 뒤 최소 트랜잭션(UPDATE 1 + INSERT 3행)만 실행했다. 이름만으로 데이터를 넣지 않고 실제 네이버 API로 도로명주소를 검증했다. UI는 기능 로직을 건드리지 않고 카드/배지/marker 색상 체계만 정리했으며, 실제 존재하던 selected marker 누락 버그를 함께 고쳤다. Production 배포는 frontend만 재빌드(backend/RAG/Diet/postgres 미접촉)했고, 실제 로그인 세션으로 제휴 배지·marker 색상까지 최종 확인했다. Secret 값(네이버 API 키 포함) 미출력, `git reset`/`rebase`/`force push` 미사용.
+
+## 36. 2026-09-17 업데이트 — 병원찾기 marker geometry 재설계
+
+§35 후속. 커밋: `41f54fb`. `HospitalMapPage.css`/`.jsx`만 대상.
+
+### 36.1 문제
+
+기존 marker는 `width:34px height:40px`(정사각형 아님) 박스에 `border-radius: 50% 50% 50% 8px` + `transform: rotate(-45deg)`를 적용해 "회전시킨 물방울"로 원을 흉내낸 구조였다. 정사각형이 아닌 박스를 45도 돌리면 필연적으로 찌그러져 보이고, 숫자(`<b>`)도 반대로 카운터-회전시켜 넣는 방식이라 정중앙 정렬이 불안정했다 — 사용자가 스크린샷으로 지적한 "일부가 찌그러져 보인다"는 정확히 이 구조 때문이었다.
+
+### 36.2 재설계
+
+- **Geometry**: `width:height:40px`(고정) + `aspect-ratio:1/1`(이중 보장) + `border-radius:50%` + flex 중앙정렬. `rotate` 트릭 전부 제거. 숫자가 두 자리(10 이상)일 때만 `is-double-digit` 클래스로 `font-size`를 15px→12px로 살짝 줄여 원 밖으로 안 삐져나가게 함.
+- **색상 semantic**: `--map-marker-normal`(중립 회색, 기존 유지)/`--map-marker-partner`(blue)/`--map-marker-ad`(amber)/`--map-marker-selected`(primary green)를 marker 규칙 안에 custom property로 모아 한 곳에서 관리.
+- **Hierarchy**: normal(가장 옅은 shadow) < partner(파란빛 shadow) < ad(주황빛 shadow, partner보다 살짝 진함) < selected(44px로 확대 + 흰 테두리와 초록 ring 이중 + 가장 진한 shadow, `!important`로 등급색 위에 항상 이김 — 기존에 이미 있던 "selected가 무조건 이긴다"는 패턴을 유지). partner+ad 조합은 광고색(배경) 위에 제휴색(ring)을 얹는 기존 방식 유지.
+- **Anchor 재계산**: 정원이라 marker 중심이 곧 좌표 위치와 일치해야 하므로, anchor를 예전의 고정값(`18,42`, pin 끝단 기준) 대신 `size/2`(정중앙)로 매번 계산 — 40px/44px 크기가 바뀔 때(선택/해제)마다 anchor도 같이 갱신해서 확대되어도 좌표 위치가 안 튀게 함(marker 생성 effect·selection 동기화 effect 둘 다 수정).
+
+### 36.3 검증
+
+빌드/lint 통과(새 에러 없음, §35와 동일한 pre-existing 1건만). Production 배포 후 실제 로그인 세션으로 "수원 팔달구 내과" 검색해 **DOM에서 marker 5개의 computed style을 직접 읽어** 확인:
+- 일반 3개: `40px × 40px`, `border-radius: 50%`, 회색(`rgb(88,110,97)`)
+- 제휴만(권혁호내과의원): `40px × 40px`, 원형, blue(`rgb(37,99,235)`)
+- 선택+제휴(우리의내과의원, 클릭해서 선택시킴): `44px × 44px`, 원형, **selected green(`rgb(35,95,75)`)이 partner blue를 정확히 덮어씀**
+
+전부 정확한 정원, 의도한 크기/색 계층 그대로 확인됨. `/api/ads/active` 401은 이번에도 재현(§35.4에서 이미 기록한 이슈, 병원찾기 marker 작업과 무관 — 이번 검증에서 `is-ad` 클래스 자체가 안 붙어서 광고 marker 색은 이번에도 실제 렌더링으로는 확인 못 함, CSS 규칙 자체는 코드로 확인).
+
+### 36.4 남은 것
+
+광고 marker(`is-ad`) 실제 렌더링 — §35.5-1/2와 동일하게 `/api/ads/active` 401이 풀린 뒤 재확인 필요.
+
+### 36.5 종료 조건
+
+Naver Maps marker click, selected↔card 연결, 병원 카드 scroll/focus, 제휴/광고 판정 로직은 전혀 건드리지 않고 marker의 시각적 표현(geometry·색·크기·anchor)만 재작업했다. Production은 frontend만 재빌드, backend/RAG/Diet/postgres 미접촉.
