@@ -1202,3 +1202,71 @@ Secret 커맨드라인 노출을 줄이고 싶다면(이번엔 미적용, 제안
 ### 30.8 종료 조건
 
 `.idea` 설정(두 프로젝트 모두), `build.gradle`, 컴파일된 class의 실제 metadata(`javap`)를 조사해 §29의 "IntelliJ가 -parameters를 누락했다"는 가설을 검증했고, 더 근거가 탄탄한 "재시작 안 된 장기 실행 JVM" 가설로 대체했다. Secret 값은 이번에도 한 번도 읽거나 출력하지 않았고, `.idea`/Run Configuration/`build.gradle`/`.env`를 포함해 어떤 설정도 실제로 변경하지 않았다. 현재 정상 동작 중인 Gradle backend도 그대로 유지했다. 조사와 권장안 제시까지만 수행하고 종료한다.
+
+## 31. 2026-09-16 업데이트 — 다른 PC: local/design-preview 통합, EC2 배포, Planner UX, Python AI 서비스 재구성
+
+다른 PC(원격 `stevil-key`)에서 이어받은 세션. `local/design-preview`(당시 tip `dfd3a38`)로 전환한 뒤 진행. 이 세션에서 만든 커밋(전부 `local/design-preview`):
+`1dd11a9`(merge feature/diet) → `04d4c41`(Planner UX) → `7491960`(Python AI 서비스 재구성).
+
+### 31.1 팀 브랜치 통합 (`1dd11a9`)
+
+원격 브랜치 전수 조사(`develop`/`integration/*`/`feature/*` 전부) 결과 실질적으로 새로운 것은 `feature/diet`(AI 다이어트 코치, 당일 팀원 작업) 하나뿐이었음 — 나머지는 이미 `local/design-preview`의 조상이거나(예: `develop`, `merge/wegovy-fixetc-to-develop`) 실질 diff가 0(`main`)이었다. `feature/fixetc`는 `local/design-preview`와 직접 비교 시 −24,891줄(`.claude/rules`, `CLAUDE.md`, `claude-handoff.md`, `DietService.java` 등 대량 삭제 포함) — stale/superseded로 판단해 **병합하지 않음**(사용자 확인받음).
+
+`feature/diet` 병합: `.gitignore` 충돌 1건만 발생(양쪽 ignore 패턴 모두 보존). `DietManagement.jsx`는 자동 병합됐고 실제 파일을 확인해 design-preview의 디자인 토큰/재시도 버튼과 `feature/diet`의 `AiDietCoach` 컴포넌트가 모두 살아있음을 검증. `nginx.conf`/`vite.config.js`/`compose.yaml`/`application-local.yaml`은 전부 기존 `rag-api`/wegovy 패턴을 그대로 따라 `/diet-api`용 설정을 additive하게 추가한 것.
+
+**중요 아키텍처 발견**: `AiDietCoach.jsx`는 Java backend(`DietAiController`/`DietAiService`, `/api/diet/ai/ask`)를 거치지 않고 nginx `/diet-api/` 프록시로 Python(`ai_server.py`)에 **직접** 요청한다(`/diet-api/chat` → `host.docker.internal:8092/api/chat`). 즉 Java의 diet AI 관련 클래스는 현재 아키텍처에서 **죽은 코드**(wegovy RAG와 동일 패턴) — 버그 아니고 의도된 설계로 보이나, 다음에 diet AI 쪽을 건드릴 때 이 사실을 염두에 둘 것.
+
+### 31.2 EC2 실제 배포 + CI/CD
+
+EC2(`15.165.242.94`, `~/Stevil`)는 이 세션 시작 시점에 `feature/diet`(`6f3bb3f`)를 **수동으로 직접 체크아웃**해서 돌리고 있었다(CI/CD 전무, git push로 재배포 불가능한 상태). 사용자와 함께 배포 대상 브랜치를 `local/design-preview`로, Diet AI Python 서비스(`diet-ai.service`)는 이번 자동화 범위에서 **제외**하기로 결정.
+
+- 배포 전 `docker tag stevil-backend:latest stevil-backend:before-20260916T100242Z`(frontend도 동일)로 팀의 기존 롤백 컨벤션에 맞춰 롤백 태그 생성.
+- EC2에서 `git checkout -B local/design-preview origin/local/design-preview` → `docker compose build backend frontend` → `up -d backend frontend`. postgres/rag-api/diet-ai.service는 전혀 건드리지 않음.
+- 검증: 컨테이너 전부 정상 기동, API들 정상 응답(`/api/community` 200, `/api/users/me/posts` 302, `/diet-api/chat` 401 비인증), 외부(`http://15.165.242.94`)에서 브라우저로 `/diet` 페이지 확인 — AI 다이어트 코치 위젯 정상 렌더, 콘솔 에러 0건.
+- **GitHub Actions 워크플로 파일(`​.github/workflows/deploy.yml`) 작성은 harness 권한 분류기가 차단**했다(CI/CD 자동 배포 트리거 구성 파일이라 고위험 분류로 추정). 초안 내용(SSH 기반 `appleboy/ssh-action` 사용, `local/design-preview` push 트리거, `EC2_HOST`/`EC2_USER`/`EC2_SSH_KEY` secret 필요)은 사용자에게 텍스트로만 전달했고 실제 파일 생성/커밋은 하지 않았다. **다음 세션에서 사용자가 직접 파일을 만들거나 권한을 조정해야 진행 가능.**
+
+### 31.3 Planner UI/UX 개선 (`04d4c41`)
+
+`WeeklyPlanner.jsx`/`.css`만 수정, 새 state 없이 기존 `busy`/`operation.current`를 그대로 재사용.
+
+- **날짜별 영양 상태**(구 `.planner-week-targets`): "월 · 확인 불가" 식으로 7번 반복되던 텍스트 버튼을 `design-preview/pages/Planner.jsx`(`.dp-week-nav-day` + `.dp-status-dot`)와 동일한 언어로 재설계 — 요일 글자 + 작은 상태 dot(`ok`/`warn`/`muted` 3단계)만 표시, 상세 텍스트는 `aria-label`로만 제공. **7일 전부 `unknown`이면 이 줄 자체를 렌더링하지 않음**(상단 `targetStatus` 한 줄과의 중복 제거). 선택 상태는 `border+outline` 이중 표현 대신 배경색 채움으로 단순화. 날짜 선택 기능(`setSummaryDate`) 자체는 그대로 유지 — 캘린더 그리드 쪽 `.planner-day-select`(별도 메커니즘)도 안 건드림.
+- **생성 로딩 UX**: 상태 문단(`.planner-status`)에 `busy` truthy일 때만 보이는 CSS 스피너(`.planner-spinner`, `prefers-reduced-motion` 가드 포함) 추가. `generate()` 성공 시 `results`(캘린더 grid) ref로 `scrollIntoView`. 중복 제출 방지/버튼 disabled/이전·다음 주 이동 disabled/실패 시 기존 데이터 유지/재시도 가능 — **전부 기존 코드에 이미 있었음**(신규 state 없이 그대로 통과).
+- **week nav 헤더**(prev/next 44px tap target, typography, spacing): 코드 확인 결과 `--app-tap-min: 44px`로 이미 요구사항 충족 — **변경 없음**.
+- **검증 한계**: `goal?.confirmed` 게이트 때문에 실제 day-chip은 영양 목표가 확정된 인증 세션에서만 렌더링됨. 이 세션은 새 PC라 기존 로그인 세션이 없어 **실제 화면에서 day-chip을 직접 보지는 못했다** — `npm run build`/`eslint` 통과, `design-preview` 참조 컴포넌트와의 일치, 375/768/1440에서 콘솔 에러 0건(다른 화면 기준)까지만 확인. 다음 세션에서 로그인 상태로 직접 클릭 검증 권장.
+
+### 31.4 Python AI 서비스 디렉토리 재구성 (`7491960`)
+
+**이동**: `data-collection/wegovy/rag/` → `data-collection/ai-services/rag/`, `data-collection/diet/` → `data-collection/ai-services/diet/` (`git mv`, 41+5 파일 모두 100% rename으로 인식됨). `wegovy/`는 실제 원본 수집 데이터(`collect.py`, `sources.json`, `raw/`, `runs/`, `summary/`)가 남아있어 그대로 유지 — `rag/app.py`가 이 데이터를 직접 읽는 구조라 함께 옮기지 않음.
+
+**경로 의존성 전수조사 결과**(파일 단위로 전부 직접 확인): `rag/` 내부 대부분의 `parents[N]` 계산은 `rag/`를 기준으로 한 내부 참조라 이동해도 깊이가 그대로라 **자동으로 안전**했다(`wegovy`↔`ai-services`가 같은 트리 깊이). 실제로 고쳐야 했던 건 3곳뿐:
+1. `rag/app.py`의 `ROOT`(구 `parents[1]`) — 예전엔 "wegovy 데이터 폴더"와 "`rag/`의 캐시(`rag/cache/extracted`)" 두 가지 의미를 동시에 담당했는데, 이동 후 둘이 다른 디렉터리가 되어 분리 필요. `SERVICE_ROOT`(=`rag/` 자기 자신) / `ROOT`(=`wegovy/`, 이름으로 명시 탐색) / `CACHE_DIR`(=`SERVICE_ROOT/cache`) 세 개로 명확히 분리.
+2. `rag/deploy/Dockerfile` — `WORKDIR`/`COPY` 경로를 `wegovy/rag`→`ai-services/rag`로 변경, `wegovy` 데이터는 별도 `COPY wegovy /app/wegovy`로 유지.
+3. `rag/deploy/compose.server.yaml` — `dockerfile:` 경로만 수정(`context: ../../..`는 깊이가 동일해 그대로 둬도 맞음, 검증 완료).
+
+**의도적으로 안 고친 것**: `rag/`의 flat import(`chat.prompts`, `planner.food.catalog` 등, 패키지 접두사 없음) — `app.py`가 있는 디렉터리가 곧 `sys.path[0]`가 되는 구조라 `rag/` 서브트리가 통째로 이동하는 한 항상 안전함을 실행으로 검증했고, `rag.chat.prompts` 식으로 바꾸려면 `__init__.py` 추가+WORKDIR/CMD 변경+30개 가까운 파일의 import문을 전부 고쳐야 해서 이동 자체와 무관한 리스크만 키운다고 판단해 보존하기로 결정(사용자에게 미리 설명 안 하고 진행 — 명백한 저위험 판단이라 "사소한 판단"으로 처리). `docs/SERVER_DEPLOYMENT.md`와 `scripts/server_migrate.py`의 `wegovy/rag` 문자열은 `~/Stevil`과 무관한 **별개의 레거시 배포 위치**(`/home/ubuntu/stevil-rag/`)를 가리키는 것으로 확인돼 그대로 둠. `docs/README.md`의 `.env` 안내 경로만 실행 가능한 현재형 지침이라 갱신.
+
+**로컬 검증**(전부 실제로 실행, 추측 없음):
+- `python -m compileall` 양쪽 서비스 클린.
+- `rag`: 새 경로에서 `import app` → `Corpus(preview=True)`가 실제 sources.json/runs/raw를 읽어 **72개 문서 로드**, "임신" 검색 실제 히트 확인. `planner.exercise.catalog`/`snack_catalog`/`exercise.store`의 `EXERCISE_CSV`/`SNACKS_PATH`/`BACKEND_SNACKS_PATH`/`EXERCISE_SOURCES_PATH` 전부 `.exists()==True` 확인.
+- `rag` unittest: 57/60 통과. 나머지 3개(`test_extra.py`, US/foreign 관할 문서 관련)는 git-ignore된 `cache/extracted/`(오프라인 PDF 추출 캐시, 이 머신에서 한 번도 생성된 적 없음)가 없어서 실패 — `except (OSError, ValueError, KeyError)`로 소스 단위로 우아하게 skip되는 구조라 이동 전에도 이 머신에서는 동일하게 실패했을 pre-existing 조건임을 코드로 확인(회귀 아님).
+- `rag` Docker: 새 Dockerfile로 이미지 빌드 성공 → 컨테이너 기동 → `/api/status`가 동일한 72 chunks 반환, `/api/chat`으로 "임신" 질의 시 실제 MFDS 문서 텍스트 반환 확인 후 컨테이너/이미지 정리.
+- `diet`: 새 경로에서 `ai_server.py` import 성공, 실제로 uvicorn 기동(포트 8092) 후 `/api/chat`에 실제 질문을 보내 **실제 Gemini 응답**(단백질 식품 추천 전체 답변) 수신 확인 — `GEMINI_API_KEY`는 `python-dotenv`의 상위 디렉터리 탐색으로 루트 `.env`를 그대로 찾아써서 이동으로 인한 추가 설정 불필요함을 실증. 이후 로컬 서버 종료.
+- Backend `compileJava compileTestJava` BUILD SUCCESSFUL(UP-TO-DATE, Java 무변경). Frontend `npm run build` 성공.
+
+**추가한 표준 파일**: `data-collection/README.md`, `data-collection/ai-services/README.md`(서비스별 경로/포트/런타임/운영 방식 표), `data-collection/ai-services/diet/{requirements.txt,README.md,.env.example}`(EC2의 실제 `pip freeze` 버전을 기준으로 작성, 버전 임의 업그레이드 없음).
+
+### 31.5 아직 안 한 것 — Production migration (Python 재구성)
+
+이번 세션은 **로컬 검증까지만** 완료했다. EC2는 여전히 `docker rag-api` 이미지가 옛 `wegovy/rag` 경로 기준으로 빌드된 상태이고, `diet-ai.service`의 `WorkingDirectory`/`ExecStart`도 여전히 `/home/ubuntu/Stevil/data-collection/diet`를 가리킨다 — **push된 `local/design-preview`를 그대로 EC2에서 pull해서 기존 방식대로 재기동하면 rag-api는 정상 작동하지만(경로가 저장소 안에서 알아서 옮겨감), diet-ai.service는 반드시 systemd unit의 두 경로를 `/home/ubuntu/Stevil/data-collection/ai-services/diet`로 수동 수정하고 `daemon-reload`+`restart`해야 한다.** 백업(`diet-ai.service.before-<timestamp>`)을 먼저 만들 것. 다음 세션 우선순위.
+
+### 31.6 남은 우선순위
+
+1. **Production Python migration** — 위 31.5, 다음 세션에서 진행.
+2. GitHub Actions `deploy.yml` — harness가 차단, 사용자가 직접 만들거나 권한 조정 필요(초안 내용은 이 대화 기록 참고).
+3. Planner day-chip 실제 인증 세션에서 클릭 검증 — 아직 미수행.
+4. `AiDietCoach.jsx`가 공용 `axiosInstance` 대신 raw `axios` 사용 — 기능엔 문제없으나 컨벤션 이탈, 발견만 하고 미수정.
+5. `feature/fixetc` 브랜치 — 여전히 원격에 stale 상태로 남아있음, 폐기 여부 팀 확인 필요.
+
+### 31.7 종료 조건
+
+3개 커밋 모두 `local/design-preview`에 반영, EC2 프로덕션(backend/frontend만) 배포 및 검증 완료, Python 서비스 물리 이동은 로컬 검증까지 완료 후 커밋(프로덕션은 미반영, 다음 단계로 명시적으로 남김). Secret 값은 세션 내내 한 번도 출력하지 않았고, 운영 데이터(vector DB, chroma_db, postgres)는 전혀 건드리지 않았다. `git reset`/`rebase`/`force push` 사용 안 함.
