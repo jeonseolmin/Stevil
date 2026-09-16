@@ -29,9 +29,19 @@ const AiDietCoach = () => {
     setIsLoading(true);
 
     try {
+      // 로컬스토리지에서 인증 토큰 가져오기
+      const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+
       const response = await axios.post('/diet-api/chat', { 
         question: newQuestion 
+      }, {
+        headers: {
+          // Nginx 인증 관문을 통과하기 위해 Bearer 토큰 탑재
+          Authorization: token ? `Bearer ${token}` : undefined
+        },
+        withCredentials: true // 쿠키 기반 인증을 함께 쓰는 경우 대비
       });
+
       if (response.data.answer) {
         setChatLog((prev) => [...prev, { type: 'bot', text: response.data.answer }]);
       } else if (response.data.error) {
@@ -42,7 +52,12 @@ const AiDietCoach = () => {
       
     } catch (error) {
       console.error("AI 서버 통신 에러:", error);
-      setChatLog((prev) => [...prev, { type: 'bot', text: '서버와 연결할 수 없습니다. 다시 시도해 주세요.' }]);
+      const status = error.response?.status;
+      if (status === 401) {
+        setChatLog((prev) => [...prev, { type: 'bot', text: '로그인 인증이 만료되었거나 필요합니다. 다시 로그인해 주세요.' }]);
+      } else {
+        setChatLog((prev) => [...prev, { type: 'bot', text: '서버와 연결할 수 없습니다. 다시 시도해 주세요.' }]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -69,11 +84,10 @@ const AiDietCoach = () => {
                 {chat.text}
               </div>
             ))}
-            {isLoading && <div className="ai-chat-bubble bot typing">답변을 요리하고 있어요...</div>}
+            {isLoading && <div className="ai-coach-bubble bot typing">답변을 요리하고 있어요...</div>}
             <div ref={chatEndRef} />
           </div>
 
-          {/* 껍데기를 div에서 form으로 변경하여 엔터키 완벽 제어 */}
           <form className="ai-coach-input" onSubmit={handleAsk}>
             <input 
               type="text" 
