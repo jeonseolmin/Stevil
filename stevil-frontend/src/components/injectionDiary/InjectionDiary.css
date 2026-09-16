@@ -29,11 +29,10 @@
 }
 
 .header-text .main-title {
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 800;
+  font: var(--app-text-page-title);
   color: var(--color-text-primary);
   margin: 0 0 8px 0;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
 }
 
 .header-text .sub-title {
@@ -73,7 +72,7 @@
 .mode-toggle .toggle-btn.active {
   background-color: var(--color-surface);
   color: var(--color-primary-dark);
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--app-elevation-1);
 }
 
 @media (max-width: 768px) {
@@ -102,8 +101,8 @@
 .card {
   background: var(--color-surface);
   padding: 30px;
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-small);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-elevation-1);
   border: 1px solid var(--color-border-light);
 }
 
@@ -223,9 +222,9 @@
   gap: 14px;
   background: #fffbeb;
   padding: 24px;
-  border-radius: var(--radius-large);
+  border-radius: var(--app-radius-md);
   border: 1px solid #fde68a;
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--app-elevation-1);
 }
 
 .info-icon { font-size: 24px; }
@@ -309,8 +308,8 @@
 .r-card {
   background: var(--color-surface);
   padding: 24px;
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-small);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-elevation-1);
   text-align: center;
   border: 1px solid var(--color-border-light);
   border-top: 4px solid var(--color-border);
@@ -384,4 +383,96 @@
   border-left: 3px solid var(--color-border);
   line-height: 1.4;
   word-break: keep-all;
+}
+
+/* Doctor-report send panel + feedback inbox — previously built entirely
+   from inline styles with raw hex; moved here and mapped onto theme
+   tokens (Task 23). */
+.injection-soft-panel {
+  background: var(--color-surface-soft);
+  border: 1px solid var(--color-border-light);
+}
+
+.injection-send-panel {
+  height: 100%;
+}
+
+.injection-send-panel h3 {
+  margin-top: 0;
+  color: var(--color-text-primary);
+}
+
+.injection-send-panel > p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.injection-send-button {
+  width: 100%;
+  padding: 12px;
+  color: #fff;
+  background: var(--color-info);
+  border: none;
+  border-radius: var(--app-radius-sm);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.injection-send-button:disabled {
+  background: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.injection-ai-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--app-radius-sm);
+}
+
+.injection-ai-summary-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-success);
+}
+
+.injection-ai-summary p {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.injection-feedback-item {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--app-radius-md);
+  padding: 20px;
+  background: var(--color-surface-soft);
+}
+
+.injection-feedback-item-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.injection-feedback-doctor {
+  color: var(--color-primary-dark);
+}
+
+.injection-feedback-meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.injection-feedback-content {
+  margin: 0;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  white-space: pre-wrap;
+  line-height: 1.6;
 }

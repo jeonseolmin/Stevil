@@ -49,7 +49,7 @@
     line-height: 1;
 
     background: var(--color-primary);
-    border-radius: 11px;
+    border-radius: var(--app-radius-sm);
     box-shadow: 0 6px 16px rgba(57, 135, 106, 0.18);
 }
 
@@ -70,39 +70,25 @@
 .header-navigation > a {
     position: relative;
 
-    padding: 8px 0;
+    padding: 9px 14px;
 
     color: var(--color-text-secondary);
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-}
 
-.header-navigation > a::after {
-    position: absolute;
-    right: 0;
-    bottom: 2px;
-    left: 0;
+    border-radius: var(--radius-round);
 
-    height: 2px;
-
-    content: "";
-    background: var(--color-primary);
-    border-radius: 999px;
-    transform: scaleX(0);
-    transform-origin: center;
-
+    transition:
+            background-color 140ms ease,
+            color 140ms ease;
 }
 
 .header-navigation > a:hover,
 .header-navigation > a:focus-visible {
-    color: var(--color-primary);
-}
-
-.header-navigation > a:hover::after,
-.header-navigation > a:focus-visible::after {
-    transform: scaleX(1);
+    color: var(--color-primary-dark);
+    background: var(--color-primary-soft);
 }
 
 /* 로그인 및 시작 버튼 */
@@ -123,13 +109,13 @@
     align-items: center;
     justify-content: center;
 
-    min-height: 42px;
+    min-height: var(--app-tap-min);
     padding: 0 18px;
 
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
-    border-radius: 12px;
+    border-radius: var(--app-radius-sm);
 
     transition:
             background-color 160ms ease,
@@ -181,7 +167,7 @@
 
     background: transparent;
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: var(--app-radius-sm);
     cursor: pointer;
 }
 
@@ -250,10 +236,11 @@
         padding: 12px;
 
         visibility: hidden;
-        background: rgba(255, 255, 255, 0.98);
+        background: var(--color-surface);
+        isolation: isolate;
         border: 1px solid var(--color-border);
-        border-radius: 18px;
-        box-shadow: 0 18px 45px rgba(24, 58, 55, 0.14);
+        border-radius: var(--app-radius-md);
+        box-shadow: var(--app-elevation-2);
         opacity: 0;
         transform: translateY(-8px);
         pointer-events: none;
@@ -276,11 +263,7 @@
         padding: 13px 14px;
 
         color: #31514d;
-        border-radius: 11px;
-    }
-
-    .header-navigation > a::after {
-        display: none;
+        border-radius: var(--app-radius-sm);
     }
 
     .header-navigation > a:hover,
@@ -309,7 +292,7 @@
     align-items: center;
     justify-content: center;
 
-    min-height: 42px;
+    min-height: var(--app-tap-min);
     padding: 0 18px;
 
     color: #ffffff;
@@ -319,7 +302,7 @@
 
     background: var(--color-text-primary);
     border: 1px solid var(--color-text-primary);
-    border-radius: 12px;
+    border-radius: var(--app-radius-sm);
     box-shadow: 0 7px 18px rgba(41, 73, 68, 0.18);
 
     transition:
@@ -354,7 +337,7 @@
         height: 31px;
 
         font-size: 16px;
-        border-radius: 10px;
+        border-radius: var(--app-radius-sm);
     }
 
     .brand-name {
@@ -372,7 +355,7 @@
     .header-login-link,
     .header-start-button {
         width: 100%;
-        min-height: 44px;
+        min-height: var(--app-tap-min);
     }
 }
 
@@ -380,7 +363,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .header-navigation,
-    .header-navigation > a::after,
+    .header-navigation > a,
     .header-menu-button span,
     .header-login-link,
     .header-start-button {
@@ -391,10 +374,7 @@
 .header-navigation-link--active {
     color: var(--color-primary-dark) !important;
     font-weight: 800 !important;
-}
-
-.header-navigation-link--active::after {
-    transform: scaleX(1) !important;
+    background: var(--color-primary-soft);
 }
 
 @media (max-width: 900px) {

@@ -932,3 +932,6 @@ FodyWeavers.xsd
 # Local Codex / presentation files
 AGENTS.md
 docs/presentation-2/
+
+# Playwright MCP scratch output (screenshots/console logs)
+.playwright-mcp/

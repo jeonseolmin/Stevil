@@ -75,7 +75,7 @@ const ExerciseManagement = () => {
       const response = await axiosInstance.get('/exercise-logs/details', {
         params: { startDate, endDate } 
       });
-      setExerciseStats(response.data); 
+      setExerciseStats(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("통계 조회 실패", error);
       setExerciseStats([]);
@@ -302,17 +302,17 @@ const ExerciseManagement = () => {
             <div className="summary-card">
               <div className="sum-title">운동 시간</div>
               <div className="sum-value">{dailyDuration} <span>분</span></div>
-              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyDuration/60 * 100, 100)}%`, background: '#38bdf8'}}></div></div>
+              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailyDuration/60 * 100, 100)}%`, background: 'var(--color-info)'}}></div></div>
             </div>
             <div className="summary-card">
               <div className="sum-title">총 수행 세트</div>
               <div className="sum-value">{dailySets} <span>세트</span></div>
-              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailySets/20 * 100, 100)}%`, background: '#818cf8'}}></div></div>
+              <div className="progress-bar"><div className="fill" style={{width: `${Math.min(dailySets/20 * 100, 100)}%`, background: 'var(--color-success)'}}></div></div>
             </div>
             <div className="summary-card">
               <div className="sum-title">남은 목표 체중</div>
               <div className="sum-value">{(currentWeight - targetWeight).toFixed(1)} <span>kg</span></div>
-              <div className="progress-bar"><div className="fill" style={{width: '70%', background: '#fbbf24'}}></div></div>
+              <div className="progress-bar"><div className="fill" style={{width: '70%', background: 'var(--color-warning)'}}></div></div>
             </div>
           </div>
 

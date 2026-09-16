@@ -15,8 +15,25 @@ const H = 100;
 const PAD_X = 6;
 const PAD_TOP = 24;
 const PAD_BOTTOM = 6;
-const TOOLTIP_W = 66;
-const TOOLTIP_H = 30;
+
+// Tooltip is plain SVG (a <rect> + two <text> baselines) — SVG text has no
+// padding/line-height, so every number below is a deliberate baseline
+// offset, not a magic constant. Derived from the two font sizes actually
+// used (see .dp-linechart-tooltip-date/-value in components.css) plus the
+// vertical padding/gap the design calls for, so the box height falls out
+// of the content instead of being forced to fit a fixed number.
+const TOOLTIP_DATE_SIZE = 10.5;
+const TOOLTIP_VALUE_SIZE = 13.5;
+const TOOLTIP_PAD_Y = 6;
+const TOOLTIP_LINE_GAP = 2;
+// Fixed but generous: comfortably fits "9월 10일" / "72.9kg" at these sizes
+// with ~11px of horizontal breathing room on each side.
+const TOOLTIP_MIN_W = 76;
+// cap-height-to-baseline and descender ratios for a Noto Sans KR-ish face
+const TOOLTIP_DATE_BASELINE = TOOLTIP_PAD_Y + TOOLTIP_DATE_SIZE * 0.78;
+const TOOLTIP_VALUE_BASELINE = TOOLTIP_DATE_BASELINE + TOOLTIP_LINE_GAP + TOOLTIP_VALUE_SIZE * 0.78;
+const TOOLTIP_H = TOOLTIP_VALUE_BASELINE + TOOLTIP_VALUE_SIZE * 0.24 + TOOLTIP_PAD_Y;
+const TOOLTIP_TOP = 2;
 
 export default function WeightChart({ data }) {
     const [hoverIndex, setHoverIndex] = useState(null);
@@ -39,7 +56,7 @@ export default function WeightChart({ data }) {
 
     const active = activeIndex !== null ? data[activeIndex] : null;
     const activeX = activeIndex !== null ? x(activeIndex) : 0;
-    const tooltipX = Math.min(Math.max(activeX - TOOLTIP_W / 2, 2), W - TOOLTIP_W - 2);
+    const tooltipX = Math.min(Math.max(activeX - TOOLTIP_MIN_W / 2, 2), W - TOOLTIP_MIN_W - 2);
 
     const first = data[0];
     const last = data[lastIndex];
@@ -59,8 +76,15 @@ export default function WeightChart({ data }) {
                 <polyline className="dp-linechart-line" points={linePath} />
 
                 {points.map(([px, py], i) => (
-                    i !== lastIndex && <circle key={`dot-${i}`} className="dp-linechart-dot" cx={px} cy={py} r="2.5" />
+                    i !== lastIndex && i !== activeIndex && <circle key={`dot-${i}`} className="dp-linechart-dot" cx={px} cy={py} r="2.5" />
                 ))}
+                {/* The hovered/tapped point (when it isn't already "today")
+                    gets its own highlight so the tooltip clearly belongs to
+                    a specific, visibly-marked point, not just a floating
+                    label above the line. */}
+                {activeIndex !== null && activeIndex !== lastIndex && (
+                    <circle className="dp-linechart-dot-active" cx={points[activeIndex][0]} cy={points[activeIndex][1]} r="4" />
+                )}
                 <circle className="dp-linechart-dot-current" cx={points[lastIndex][0]} cy={points[lastIndex][1]} r="4.5" />
 
                 {points.map(([px], i) => (
@@ -77,10 +101,23 @@ export default function WeightChart({ data }) {
                 ))}
 
                 {active && (
-                    <g style={{ pointerEvents: "none" }}>
-                        <rect className="dp-linechart-tooltip-bg" x={tooltipX} y={4} width={TOOLTIP_W} height={TOOLTIP_H} rx="6" />
-                        <text className="dp-linechart-tooltip-date" x={tooltipX + TOOLTIP_W / 2} y={16} textAnchor="middle">{active.date}</text>
-                        <text className="dp-linechart-tooltip-value" x={tooltipX + TOOLTIP_W / 2} y={28} textAnchor="middle">{active.value.toFixed(1)}kg</text>
+                    <g className="dp-linechart-tooltip" style={{ pointerEvents: "none" }}>
+                        <rect
+                            className="dp-linechart-tooltip-bg"
+                            x={tooltipX} y={TOOLTIP_TOP} width={TOOLTIP_MIN_W} height={TOOLTIP_H} rx="8"
+                        />
+                        <text
+                            className="dp-linechart-tooltip-date"
+                            x={tooltipX + TOOLTIP_MIN_W / 2} y={TOOLTIP_TOP + TOOLTIP_DATE_BASELINE} textAnchor="middle"
+                        >
+                            {active.date}
+                        </text>
+                        <text
+                            className="dp-linechart-tooltip-value"
+                            x={tooltipX + TOOLTIP_MIN_W / 2} y={TOOLTIP_TOP + TOOLTIP_VALUE_BASELINE} textAnchor="middle"
+                        >
+                            {active.value.toFixed(1)}kg
+                        </text>
                     </g>
                 )}
             </svg>

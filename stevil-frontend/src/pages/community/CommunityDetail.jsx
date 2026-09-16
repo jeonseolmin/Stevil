@@ -301,13 +301,13 @@ const CommunityDetail = () => {
           </div>
 
           {currentPost.externalLink && (
-            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+            <div className="ste-external-link" style={{ marginTop: '20px', padding: '15px', background: 'var(--color-surface-soft)', borderRadius: '8px', border: '1px solid var(--color-border-light)' }}>
               <span style={{ marginRight: '10px' }}><strong>링크 :</strong></span>
               <a 
                 href={currentPost.externalLink.startsWith('http') ? currentPost.externalLink : `https://${currentPost.externalLink}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                style={{ color: '#0ea5e9', textDecoration: 'underline', wordBreak: 'break-all' }}
+                style={{ color: 'var(--color-info)', textDecoration: 'underline', wordBreak: 'break-all' }}
               >
                 {currentPost.externalLink}
               </a>
@@ -315,11 +315,11 @@ const CommunityDetail = () => {
           )}
 
           {currentPost.vote && (
-            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: '#fff', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+            <div className="ste-vote-container" style={{ marginTop: '30px', padding: '25px', background: 'var(--color-surface)', borderRadius: '12px', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h3 style={{ marginTop: 0, marginBottom: '5px', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                  {currentPost.vote.title}
               </h3>
-              <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
                 {currentPost.vote.allowMultiple ? '다중 선택 가능' : '단일 선택'}
               </p>
 
@@ -334,9 +334,9 @@ const CommunityDetail = () => {
                       onClick={() => !hasVoted && handleVoteOptionSelect(option.id)}
                       style={{ 
                         position: 'relative', padding: '12px 16px', borderRadius: '8px', 
-                        border: selectedOptions.includes(option.id) ? '2px solid #0ea5e9' : '1px solid #cbd5e1',
+                        border: selectedOptions.includes(option.id) ? '2px solid var(--color-info)' : '1px solid var(--color-border)',
                         cursor: hasVoted ? 'default' : 'pointer', overflow: 'hidden',
-                        background: selectedOptions.includes(option.id) ? '#f0f9ff' : '#fff',
+                        background: selectedOptions.includes(option.id) ? '#f0f9ff' : 'var(--color-surface)',
                       }}
                     >
                       {hasVoted && (
@@ -358,7 +358,7 @@ const CommunityDetail = () => {
                           </span>
                         </div>
                         {hasVoted && (
-                          <span style={{ fontSize: '14px', color: '#0ea5e9', fontWeight: 'bold' }}>
+                          <span style={{ fontSize: '14px', color: 'var(--color-info)', fontWeight: 'bold' }}>
                             {percent}% ({option.voteCount}명)
                           </span>
                         )}
@@ -385,7 +385,7 @@ const CommunityDetail = () => {
                 const fileSizeFormatted = formatFileSize(file.fileSize || file.size);
                 
                 return (
-                  <div key={idx} className="ste-file-item" style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <div key={idx} className="ste-file-item" style={{ background: 'var(--color-surface-soft)', padding: '16px', borderRadius: '12px', border: '1px solid var(--color-border-light)' }}>
                     {isImage && (
                       <div style={{ marginBottom: '14px', textAlign: 'center' }}>
                         <img 
@@ -398,14 +398,14 @@ const CommunityDetail = () => {
                     )}
 
                     {isExcel && loadingPreviews[idx] && (
-                      <div style={{ marginBottom: '12px', padding: '16px', textAlign: 'center', background: '#fff', borderRadius: '8px', color: '#0d9488', fontWeight: 'bold' }}>
+                      <div style={{ marginBottom: '12px', padding: '16px', textAlign: 'center', background: 'var(--color-surface)', borderRadius: '8px', color: 'var(--color-primary-dark)', fontWeight: 'bold' }}>
                         ⏳ 데이터를 분석하여 미리보기를 생성하는 중입니다...
                       </div>
                     )}
 
                     {isExcel && !loadingPreviews[idx] && excelPreviews[idx] && (
-                      <div style={{ marginBottom: '14px', width: '100%', background: '#fff', borderRadius: '8px', border: '1px solid #cbd5e1', overflow: 'hidden' }}>
-                        <div style={{ padding: '8px 12px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', color: '#475569' }}>
+                      <div style={{ marginBottom: '14px', width: '100%', background: 'var(--color-surface)', borderRadius: '8px', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
+                        <div style={{ padding: '8px 12px', background: 'var(--color-surface-soft)', borderBottom: '1px solid var(--color-border)', fontSize: '13px', fontWeight: 'bold', color: 'var(--color-text-secondary)' }}>
                           데이터 미리보기 (상위 15줄)
                         </div>
                         <div style={{ overflowX: 'auto', padding: '12px' }}>
@@ -414,7 +414,7 @@ const CommunityDetail = () => {
                               {excelPreviews[idx].map((row, rowIdx) => (
                                 <tr key={rowIdx}>
                                   {row.map((cell, colIdx) => (
-                                    <td key={colIdx} style={{ border: '1px solid #e2e8f0', padding: '6px 10px', background: rowIdx === 0 ? '#f8fafc' : '#fff', fontWeight: rowIdx === 0 ? 'bold' : 'normal', color: '#1e293b' }}>
+                                    <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '6px 10px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : 'var(--color-surface)', fontWeight: rowIdx === 0 ? 'bold' : 'normal', color: 'var(--color-text-primary)' }}>
                                       {cell}
                                     </td>
                                   ))}
@@ -435,7 +435,7 @@ const CommunityDetail = () => {
                         첨부파일 다운로드: {file.originalFileName}
                       </button>
                       {fileSizeFormatted && (
-                        <span style={{ fontSize: '13px', fontWeight: '600', color: '#64748b' }}>
+                        <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
                           용량: {fileSizeFormatted}
                         </span>
                       )}

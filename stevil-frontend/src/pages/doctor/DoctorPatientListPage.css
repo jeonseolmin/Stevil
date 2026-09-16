@@ -11,7 +11,7 @@
 .back-btn {
     background: none;
     border: none;
-    color: #8b9b98;
+    color: var(--color-text-muted);
     font-weight: 600;
     cursor: pointer;
     padding: 0;
@@ -20,12 +20,12 @@
 
 .page-header h1 {
     font-size: 28px;
-    color: #183a37;
+    color: var(--color-text-primary);
     margin: 0 0 8px 0;
 }
 
 .page-header p {
-    color: #657b78;
+    color: var(--color-text-secondary);
     margin: 0;
 }
 
@@ -38,14 +38,14 @@
 .patient-card {
     background: white;
     border-radius: 16px;
-    border: 1px solid #e2e8e8;
+    border: 1px solid var(--color-border-light);
     padding: 24px;
     transition: 0.2s;
 }
 
 .patient-card:hover {
     box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    border-color: #20bfa9;
+    border-color: var(--color-primary);
 }
 
 .patient-info {
@@ -69,12 +69,12 @@
 .patient-info h3 {
     margin: 0 0 4px 0;
     font-size: 18px;
-    color: #183a37;
+    color: var(--color-text-primary);
 }
 
 .patient-info span {
     font-size: 13px;
-    color: #657b78;
+    color: var(--color-text-secondary);
     background: #f8fbfb;
     padding: 2px 8px;
     border-radius: 4px;
@@ -83,15 +83,15 @@
 .patient-email {
     margin: 8px 0 0 0;
     font-size: 13px;
-    color: #8b9b98;
+    color: var(--color-text-muted);
 }
 
 .patient-actions button {
     width: 100%;
     padding: 12px;
-    border: 1px solid #20bfa9;
+    border: 1px solid var(--color-primary);
     background: white;
-    color: #20bfa9;
+    color: var(--color-primary);
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
@@ -99,7 +99,7 @@
 }
 
 .patient-actions button:hover {
-    background: #20bfa9;
+    background: var(--color-primary);
     color: white;
 }
 
@@ -108,7 +108,7 @@
     padding: 60px 0;
     background: #f8fbfb;
     border-radius: 16px;
-    border: 1px dashed #dce9e6;
+    border: 1px dashed var(--color-border-light);
 }
 
 .empty-state span {
@@ -118,6 +118,6 @@
 }
 
 .empty-state p {
-    color: #657b78;
+    color: var(--color-text-secondary);
     font-size: 15px;
 }

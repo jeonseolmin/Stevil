@@ -1455,11 +1455,26 @@ select.dp-select-inline:focus {
     stroke-width: 2;
 }
 
+/* The hovered/tapped point, when it's not already the emphasized "today"
+   point — a lighter version of the current-point treatment so the two
+   stay visually distinct (today's dot is still the most prominent). */
+.dp-linechart-dot-active {
+    fill: var(--dp-surface);
+    stroke: var(--dp-accent-hero);
+    stroke-width: 2;
+}
+
 .dp-linechart-hit { fill: transparent; cursor: pointer; }
 
-.dp-linechart-tooltip-bg { fill: var(--dp-ink); }
-.dp-linechart-tooltip-date { fill: rgba(255, 255, 255, 0.68); font-size: 8.5px; font-weight: 600; }
-.dp-linechart-tooltip-value { fill: #fff; font-size: 10.5px; font-weight: 700; }
+/* Tooltip: font sizes here are read directly by WeightChart.jsx to derive
+   the text baselines and box height, so changing a size here means
+   updating TOOLTIP_DATE_SIZE/TOOLTIP_VALUE_SIZE in that file to match. */
+.dp-linechart-tooltip-bg {
+    fill: var(--dp-ink);
+    filter: drop-shadow(0 2px 5px rgba(20, 30, 24, 0.22));
+}
+.dp-linechart-tooltip-date { fill: rgba(255, 255, 255, 0.72); font-size: 10.5px; font-weight: 600; }
+.dp-linechart-tooltip-value { fill: #fff; font-size: 13.5px; font-weight: 700; }
 
 /* ============================================================ */
 /* Bar-style macro proportion bar (Planner) — a different, still  */

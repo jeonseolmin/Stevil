@@ -321,53 +321,64 @@ export default function HospitalMapPage() {
         markersRef.current.forEach((marker) => marker.setMap(null));
         markersRef.current = [];
 
-        const bounds = new maps.LatLngBounds();
-        let hasPosition = false;
+        // Naver Maps can report the SDK as loaded (loadNaverMap() resolves,
+        // isMapReady becomes true) while its auth callback still failed —
+        // internal constructors like LatLngBounds then throw synchronously
+        // inside this effect. There is no error boundary in this app, so an
+        // uncaught throw here unmounts the entire React tree, not just the
+        // map. Guard it so a broken/unauthenticated SDK degrades to "no
+        // markers" instead of a blank screen.
+        try {
+            const bounds = new maps.LatLngBounds();
+            let hasPosition = false;
 
-        processedHospitals.forEach((hospital, index) => {
-            if (hospital.latitude === null || hospital.longitude === null) {
-                return;
+            processedHospitals.forEach((hospital, index) => {
+                if (hospital.latitude === null || hospital.longitude === null) {
+                    return;
+                }
+
+                const position = new maps.LatLng(
+                    hospital.latitude,
+                    hospital.longitude
+                );
+                const isAd = hospital.isSearchTop || hospital.isHighlight;
+                const markerClassName = [
+                    "hospital-map-marker",
+                    isAd ? "is-ad" : "",
+                    hospital.isPartner ? "is-partner" : "",
+                ].filter(Boolean).join(" ");
+
+                const marker = new maps.Marker({
+                    map,
+                    position,
+                    title: hospital.name,
+                    icon: {
+                        content: `<span class="${markerClassName}"><b>${index + 1}</b></span>`,
+                        anchor: new maps.Point(18, 42),
+                    },
+                });
+
+                maps.Event.addListener(marker, "click", () => {
+                    setSelectedIndex(index);
+                });
+
+                markersRef.current.push(marker);
+                bounds.extend(position);
+                hasPosition = true;
+            });
+
+            if (currentPosition) {
+                bounds.extend(new maps.LatLng(
+                    currentPosition.latitude,
+                    currentPosition.longitude
+                ));
             }
 
-            const position = new maps.LatLng(
-                hospital.latitude,
-                hospital.longitude
-            );
-            const isAd = hospital.isSearchTop || hospital.isHighlight;
-            const markerClassName = [
-                "hospital-map-marker",
-                isAd ? "is-ad" : "",
-                hospital.isPartner ? "is-partner" : "",
-            ].filter(Boolean).join(" ");
-
-            const marker = new maps.Marker({
-                map,
-                position,
-                title: hospital.name,
-                icon: {
-                    content: `<span class="${markerClassName}"><b>${index + 1}</b></span>`,
-                    anchor: new maps.Point(18, 42),
-                },
-            });
-
-            maps.Event.addListener(marker, "click", () => {
-                setSelectedIndex(index);
-            });
-
-            markersRef.current.push(marker);
-            bounds.extend(position);
-            hasPosition = true;
-        });
-
-        if (currentPosition) {
-            bounds.extend(new maps.LatLng(
-                currentPosition.latitude,
-                currentPosition.longitude
-            ));
-        }
-
-        if (hasPosition) {
-            map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
+            if (hasPosition) {
+                map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
+            }
+        } catch (error) {
+            console.error("지도 마커 표시 실패", error);
         }
     }, [currentPosition, processedHospitals, isMapReady]);
 

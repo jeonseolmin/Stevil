@@ -269,7 +269,12 @@ const DietManagement = () => {
     return (
       <div className="diet-page">
         <div className="diet-container">
-          <div className="diet-loading">식단 목표 정보를 불러오지 못했습니다.</div>
+          <div className="diet-loading">
+            <p>식단 목표 정보를 불러오지 못했습니다.</p>
+            <button type="button" className="diet-loading-retry" onClick={fetchDashboardData}>
+              다시 시도
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -424,7 +429,7 @@ const DietManagement = () => {
             </div>
 
             {/* 계란 / 닭가슴살 비유 알림 */}
-            <p className="diet-protein-message" style={{ fontWeight: 'bold', color: '#0d9488', background: '#f0fdf4', padding: '10px 14px', borderRadius: '8px', border: '1px solid #bbf7d0' }}>
+            <p className="diet-protein-message">
              {proteinFunMessage}
             </p>
 
@@ -613,47 +618,47 @@ const DietManagement = () => {
               </div>
 
               {/* 진짜 막대형(Bar Chart) 분석 그래프 */}
-              <div style={{ marginTop: '35px', padding: '24px', background: '#ffffff', borderRadius: '16px', border: '1px solid #cbd5e1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <div style={{ marginTop: '35px', padding: '24px', background: 'var(--color-surface)', borderRadius: '16px', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     단백질 섭취량 달성도 분석 그래프
                   </h4>
-                  <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0d9488', background: '#f0fdf4', padding: '4px 10px', borderRadius: '20px', border: '1px solid #bbf7d0' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--color-primary-dark)', background: 'var(--color-primary-soft)', padding: '4px 10px', borderRadius: '20px', border: '1px solid var(--color-primary-light)' }}>
                     달성률 {Math.round(effectiveProteinRate)}%
                   </span>
                 </div>
 
-                <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>
-                  기록된 단백질 총 <strong style={{ color: '#0f172a' }}>{todayProtein.toFixed(1)}g</strong> / 일일 권장 목표 <strong style={{ color: '#0f172a' }}>{effectiveProteinTarget}g</strong>
+                <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '20px' }}>
+                  기록된 단백질 총 <strong style={{ color: 'var(--color-text-primary)' }}>{todayProtein.toFixed(1)}g</strong> / 일일 권장 목표 <strong style={{ color: 'var(--color-text-primary)' }}>{effectiveProteinTarget}g</strong>
                 </p>
 
                 {/* Vertical Bar Chart 구조 */}
-                <div style={{ display: 'flex', height: '160px', alignItems: 'flex-end', justifyContent: 'space-around', marginTop: '20px', paddingBottom: '10px', borderBottom: '2px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', height: '160px', alignItems: 'flex-end', justifyContent: 'space-around', marginTop: '20px', paddingBottom: '10px', borderBottom: '2px solid var(--color-border-light)' }}>
                   
                   {/* 현재 섭취량 막대 */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', width: '40%' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#0d9488', marginBottom: '8px' }}>{todayProtein.toFixed(1)}g</span>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--color-primary-dark)', marginBottom: '8px' }}>{todayProtein.toFixed(1)}g</span>
                     <div style={{ 
                       width: '60px', 
                       height: `${Math.max(proteinBarPercent, 5)}%`, 
-                      background: 'linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%)', 
+                      background: 'linear-gradient(180deg, var(--color-primary-light), var(--color-primary-dark))', 
                       borderRadius: '8px 8px 0 0',
                       transition: 'height 1s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 4px 6px -1px rgba(13, 148, 136, 0.3)'
+                      boxShadow: '0 4px 6px -1px rgba(35, 95, 75, 0.3)'
                     }}></div>
-                    <span style={{ marginTop: '12px', fontSize: '13px', fontWeight: 'bold', color: '#475569' }}>오늘 섭취량</span>
+                    <span style={{ marginTop: '12px', fontSize: '13px', fontWeight: 'bold', color: 'var(--color-text-secondary)' }}>오늘 섭취량</span>
                   </div>
 
                   {/* 목표량 막대 */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', width: '40%' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#64748b', marginBottom: '8px' }}>{effectiveProteinTarget}g</span>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>{effectiveProteinTarget}g</span>
                     <div style={{ 
                       width: '60px', 
                       height: '100%', 
-                      background: '#e2e8f0', 
+                      background: 'var(--color-border-light)', 
                       borderRadius: '8px 8px 0 0' 
                     }}></div>
-                    <span style={{ marginTop: '12px', fontSize: '13px', fontWeight: 'bold', color: '#475569' }}>일일 권장량</span>
+                    <span style={{ marginTop: '12px', fontSize: '13px', fontWeight: 'bold', color: 'var(--color-text-secondary)' }}>일일 권장량</span>
                   </div>
 
                 </div>

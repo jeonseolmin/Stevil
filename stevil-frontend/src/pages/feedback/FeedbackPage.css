@@ -3,29 +3,29 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f6f8;
+    background-color: var(--color-background);
     padding: 20px;
 }
 
 .feedback-card, .feedback-success-card {
-    background: #ffffff;
+    background: var(--color-surface);
     padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: var(--app-radius-md);
+    box-shadow: var(--app-elevation-1);
     width: 100%;
     max-width: 480px;
     text-align: center;
 }
 
 .feedback-card h1 {
-    color: #20bfa9;
+    color: var(--color-primary);
     font-size: 24px;
     margin-bottom: 8px;
     font-weight: 800;
 }
 
 .feedback-card p {
-    color: #666;
+    color: var(--color-text-secondary);
     margin-bottom: 32px;
     font-size: 15px;
 }
@@ -40,7 +40,7 @@
     display: block;
     font-weight: 600;
     margin-bottom: 12px;
-    color: #333;
+    color: var(--color-text-primary);
     font-size: 15px;
 }
 
@@ -80,8 +80,8 @@
 .feedback-content textarea {
     width: 100%;
     padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-sm);
     resize: none;
     font-size: 14px;
     outline: none;
@@ -91,13 +91,13 @@
 }
 
 .feedback-content textarea:focus {
-    border-color: #20bfa9;
+    border-color: var(--color-primary);
 }
 
 .feedback-content small {
     display: block;
     text-align: right;
-    color: #999;
+    color: var(--color-text-muted);
     margin-top: 6px;
     font-size: 12px;
 }
@@ -106,10 +106,10 @@
 .feedback-success-card button {
     width: 100%;
     padding: 16px;
-    background-color: #20bfa9;
+    background-color: var(--color-primary);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -118,21 +118,21 @@
 
 .feedback-submit-btn:hover:not(:disabled), 
 .feedback-success-card button:hover {
-    background-color: #1a9c8a;
+    background-color: var(--color-primary-dark);
 }
 
 .feedback-submit-btn:disabled {
-    background-color: #a0dec5;
+    background-color: var(--color-primary-light);
     cursor: not-allowed;
 }
 
 .feedback-success-card h2 {
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 16px;
 }
 
 .feedback-success-card p {
-    color: #666;
+    color: var(--color-text-secondary);
     margin-bottom: 32px;
     line-height: 1.6;
 }

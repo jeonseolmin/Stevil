@@ -120,16 +120,16 @@
     width: 28px;
     height: 28px;
     
-    color: #ffffff;
+    color: var(--color-text-white);
     font-size: 16px;
     font-weight: 900;
-    
-    background-color: var(--color-primary, #20bfa9);
+
+    background-color: var(--color-primary);
     border-radius: 8px;
 }
 
 .auth-brand-name {
-    color: var(--color-primary-dark, #183a37);
+    color: var(--color-primary-dark);
     font-size: 26px;
     font-weight: 800;
     line-height: 1;
@@ -138,11 +138,11 @@
 }
 
 .auth-logo:hover .auth-brand-name {
-    color: var(--color-primary, #20bfa9);
+    color: var(--color-primary);
 }
 
 .auth-logo:focus-visible {
-    outline: 3px solid rgba(32, 191, 169, 0.22);
+    outline: 3px solid rgba(57, 135, 106, 0.3);
     outline-offset: 6px;
     border-radius: 6px;
 }

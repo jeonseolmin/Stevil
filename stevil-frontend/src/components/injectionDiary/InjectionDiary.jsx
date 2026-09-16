@@ -338,29 +338,24 @@ const InjectionDiary = () => {
           </div>
 
           <div style={{ width: '320px' }}>
-            <div className="card" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', height: '100%' }}>
-              <h3 style={{ marginTop: 0, color: '#1e293b' }}>담당 의사에게 전송</h3>
-              <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.5', marginBottom: '20px' }}>
+            <div className="card injection-soft-panel injection-send-panel">
+              <h3>담당 의사에게 전송</h3>
+              <p>
                 현재까지 작성된 일지 내역을 PDF 형태로 의료진에게 전송합니다. AI가 증상을 요약하여 진료를 보조합니다.
               </p>
-              
-              <button 
-                onClick={handleSendToDoctor} 
+
+              <button
+                onClick={handleSendToDoctor}
                 disabled={isSending || recentLogs.length === 0}
-                style={{ 
-                  width: '100%', padding: '12px', 
-                  backgroundColor: isSending || recentLogs.length === 0 ? '#94a3b8' : '#3b82f6', 
-                  color: 'white', border: 'none', borderRadius: '6px', 
-                  fontWeight: 'bold', cursor: isSending || recentLogs.length === 0 ? 'not-allowed' : 'pointer' 
-                }}
+                className="injection-send-button"
               >
                 {isSending ? 'AI 분석 및 전송 중...' : '투약일지 전송하기'}
               </button>
 
               {aiSummaryResult && (
-                <div style={{ marginTop: '20px', padding: '15px', backgroundColor: 'white', border: '1px solid #cbd5e1', borderRadius: '6px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#10b981' }}>✓ 의사에게 전달된 AI 분석 초안</span>
-                  <p style={{ fontSize: '13px', color: '#333', whiteSpace: 'pre-wrap', marginTop: '8px', marginBottom: 0, lineHeight: '1.6' }}>
+                <div className="injection-ai-summary">
+                  <span className="injection-ai-summary-label">✓ 의사에게 전달된 AI 분석 초안</span>
+                  <p>
                     {aiSummaryResult}
                   </p>
                 </div>
@@ -373,21 +368,21 @@ const InjectionDiary = () => {
 
         <div className="card" style={{ padding: '32px' }}>
           <h2>담당 주치의 피드백 수신함</h2>
-          <p style={{ color: '#64748b', marginBottom: '24px' }}>주치의 선생님이 회원님의 투약일지를 검토하고 남긴 소중한 코멘트입니다.</p>
-          
+          <p style={{ color: 'var(--color-text-secondary)', marginBottom: '24px' }}>주치의 선생님이 회원님의 투약일지를 검토하고 남긴 소중한 코멘트입니다.</p>
+
           {feedbacks.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8' }}>
+            <div style={{ textAlign: 'center', padding: '60px', color: 'var(--color-text-muted)' }}>
               <p>아직 도착한 주치의 피드백이 없습니다.</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {feedbacks.map(fb => (
-                <div key={fb.id} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', backgroundColor: '#f8fafc' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <strong style={{ color: '#0f766e' }}>{fb.doctorName} 주치의 선생님</strong>
-                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>{fb.sentAt}</span>
+                <div key={fb.id} className="injection-feedback-item">
+                  <div className="injection-feedback-item-head">
+                    <strong className="injection-feedback-doctor">{fb.doctorName} 주치의 선생님</strong>
+                    <span className="injection-feedback-meta">{fb.sentAt}</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '15px', color: '#1e293b', whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                  <p className="injection-feedback-content">
                     {fb.content}
                   </p>
                 </div>
