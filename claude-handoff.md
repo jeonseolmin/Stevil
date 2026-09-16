@@ -1313,3 +1313,37 @@ EC2(`15.165.242.94`, `~/Stevil`)는 이 세션 시작 시점에 `feature/diet`(`
 ### 32.4 종료 조건
 
 Diet는 계획대로 copy 기반 전환을 완료하고 운영 요청까지 실증했다. RAG는 계획대로 손대지 않았고, 대신 production 구조가 예상과 다르다는(별도 checkout, 다른 branch) 사실만 조사해 기록했다 — 강제 통합 시도 없음. `mv`로 운영 데이터를 옮기지 않았고(전부 `rsync` copy), 기존 diet 경로 삭제 안 함, `.env`/secret 값 미출력, `git reset`/`rebase`/`force push` 미사용.
+
+## 33. 2026-09-16 업데이트 — Production RAG Source Reconciliation (조사만, migration 안 함)
+
+§32.1에서 발견한 별도 checkout(`/home/ubuntu/stevil-rag/source/`)을 정밀 조사. **실제 migration은 하지 않았다** — 조사 중 발견한 runtime data 결합 때문에 중단 조건에 해당해 계획까지만 세우고 멈췄다.
+
+### 33.1 별도 checkout 발견 경위 / 실체
+
+`docker inspect stevil-rag-rag-api-1`의 compose 라벨로 확인: 실제 production `rag-api`는 `~/Stevil`이 아니라 `/home/ubuntu/stevil-rag/source/`(같은 GitHub repo의 **별도 git clone**, branch `feature/wegovy` @ `ae2b703`, `origin/feature/wegovy`와 동기화됨, working tree clean)에서 `-p stevil-rag -f .../deploy/compose.server.yaml --env-file /home/ubuntu/stevil-rag/server.env`로 빌드/기동된다. Volume mount 없음(`docker inspect ... .Mounts` → `[]`) — 모든 데이터가 `docker build`의 `COPY`로 **이미지에 구워 넣어짐**.
+
+### 33.2 비교 결과
+
+- **Git history**: `feature/wegovy`(`ae2b703`)는 **이미 `local/design-preview`의 조상**(`git merge-base --is-ancestor origin/feature/wegovy local/design-preview` → true). feature/wegovy 전용 커밋 0개, local/design-preview가 65개 커밋 더 앞섬(선형 히스토리 — feature/wegovy가 develop 경유로 그대로 병합돼 들어와 있음). **production-only 코드 없음.**
+- **코드 diff**: `requirements-server.txt` byte-identical. `Dockerfile`/`compose.server.yaml`의 diff는 §32(§31.4?) 이동 커밋 `7491960`이 만든 경로 변경분과 **정확히 일치**(그 외 차이 없음). `sources.json`/`DB/exercises.csv` byte-identical.
+- **Runtime data — 유일한 실질 차이**: `data-collection/wegovy/rag/cache/`(188MB, 2026-09-08 생성, git 미추적)에 실제 Gemini 임베딩(`cache/embeddings.sqlite3`, `food|nutrition|exercise/embeddings.sqlite3`)과 오프라인 추출 캐시(`cache/extracted/{us-pi,eu-pi,select,ema-naion}.json` — 로컬 검증(§32 이전 세션)에서 없어서 테스트 3개가 실패했던 바로 그 파일들)가 있다. `~/Stevil`엔 이 디렉터리 자체가 없다. Dockerfile이 `COPY wegovy /app/wegovy`로 빌드 시점에 통째로 구워 넣는 구조라, 소스만 `~/Stevil` 기준으로 바꾸면 이 캐시를 재생성해야 한다(API 비용 + 시간).
+  - (참고: `cache/`에는 RAG와 무관한 각종 배포 스크립트/스크린샷/tar.gz도 섞여 있음 — 이 checkout이 RAG 전용이 아니라 배포 스테이징 겸용으로 쓰여온 것으로 보임. `raw/`에도 production에만 있는 여분의 수집 run 1건(2026-09-09) 존재 — `sources.json`이 동일해 필수 데이터는 아닌 것으로 보이나 확실치 않음.)
+
+### 33.3 canonical source 결정 — Option A 권장 (실행은 다음 Task)
+
+코드/히스토리 장벽은 없음(4단계 확인) → **Option A(`~/Stevil`의 `ai-services/rag`로 통일)를 권장**. Option B(별도 유지)를 정당화할 이유를 찾지 못했다(독립 release lifecycle 등 근거 없음 — 과거 배포 중 우연히 분리된 채 안 합쳐진 것으로 보임). Option C(선행 이식)는 이식할 production-only 코드가 없어 불필요.
+
+**단, §33.2의 runtime data 결합(중단 조건 3번: "runtime data가 source 경로와 강하게 결합돼 있음") 때문에 이번 Task에서는 실제 migration을 진행하지 않고 여기서 멈췄다** — 사용자 확인 후 별도 Task에서 진행.
+
+### 33.4 실제 migration 시 필요한 작업 (다음 Task, 계획만)
+
+1. `wegovy/rag/cache/`(188MB) → `~/Stevil/data-collection/ai-services/rag/cache/`로 `rsync` 복사(원본 보존, `mv` 금지 — Diet 때와 동일 패턴).
+2. `stevil-rag-api:local` → `stevil-rag-api:before-<timestamp>` 롤백 태그.
+3. `~/Stevil`의 `deploy/compose.server.yaml`/`Dockerfile` 기준으로 이미지 재빌드(캐시 복사 후).
+4. 새 컨테이너 기동 → `/api/status`가 기존과 동일한 문서/소스 상태(캐시 반영) 반환하는지 확인 → 교체.
+5. `stevil-rag` compose project 실행 위치를 `/home/ubuntu/stevil-rag/source/`에서 `~/Stevil/data-collection/ai-services/rag/deploy/`로 전환(`--env-file /home/ubuntu/stevil-rag/server.env`는 그대로 유지 가능, 경로 자체는 안 옮겨도 됨).
+6. 검증 완료 후에도 `/home/ubuntu/stevil-rag/source/`는 즉시 삭제하지 않고 별도 정리 Task로 남김(롤백용, Diet의 구 경로와 동일 원칙).
+
+### 33.5 종료 조건
+
+조사 + 비교 + 권장안까지만 수행하고 실제 migration은 하지 않았다. `/home/ubuntu/stevil-rag/source/`의 branch 전환/파일 변경/삭제 없음, 기존 `rag-api` 컨테이너 rebuild/restart 없음, `~/Stevil`로 production 경로 변경 없음, runtime data 이동 없음. Secret 값(env var 이름만 나열, 값은 미출력)을 포함해 세션 내내 한 번도 출력하지 않았다.
