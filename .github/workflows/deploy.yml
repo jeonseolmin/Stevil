@@ -1,0 +1,73 @@
+name: Deploy to production
+
+# Scope: backend + frontend containers only (compose.yaml), matching how
+# production has been deployed manually so far. RAG (ai-services/rag) and
+# Diet (ai-services/diet, diet-ai.service) are intentionally excluded —
+# they're deployed separately and aren't part of this automation.
+on:
+  push:
+    branches: [local/design-preview]
+    paths:
+      - "stevil-backend/**"
+      - "stevil-frontend/**"
+      - "compose.yaml"
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Backend compile check
+        working-directory: stevil-backend
+        run: ./gradlew compileJava compileTestJava --no-daemon
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Frontend build check
+        working-directory: stevil-frontend
+        run: |
+          npm ci
+          npm run build
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/local/design-preview'
+    steps:
+      - name: SSH deploy (backend + frontend only)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/Stevil
+
+            current_branch=$(git rev-parse --abbrev-ref HEAD)
+            if [ "$current_branch" != "local/design-preview" ]; then
+              echo "server is on branch '$current_branch', expected 'local/design-preview' — aborting" >&2
+              exit 1
+            fi
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "server working tree is dirty — aborting" >&2
+              exit 1
+            fi
+
+            git pull --ff-only origin local/design-preview
+            docker compose build backend frontend
+            docker compose up -d backend frontend
