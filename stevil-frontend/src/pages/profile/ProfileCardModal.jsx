@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import './ProfileCardModal.css';
 import ChatModal from '../chat/ChatModal';
-import axiosInstance from '../../api/axiosInstance'; 
+import axiosInstance from '../../api/axiosInstance';
+import { IconProfile } from '../../components/icons/Icons.jsx';
 
 export default function ProfileCardModal({ targetUserEmail, onClose }) {
     const [profile, setProfile] = useState(null);
@@ -90,7 +91,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
                         {profile.profileImage ? (
                             <img src={profile.profileImage} alt="프로필" />
                         ) : (
-                            <div className="profile-placeholder">👤</div>
+                            <div className="profile-placeholder"><IconProfile width={44} height={44} /></div>
                         )}
                     </div>
                     <div className="profile-info">

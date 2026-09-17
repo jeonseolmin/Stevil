@@ -3,6 +3,7 @@ import SavedPlanPanel from '../planner/SavedPlanPanel';
 import axiosInstance from '../../api/axiosInstance';
 import './DietManagement.css';
 import AiDietCoach from './AiDietCoach';
+import { IconSearch } from '../icons/Icons.jsx';
 
 const EMPTY_RECORD_FORM = {
   mealType: '점심',
@@ -346,7 +347,7 @@ const DietManagement = () => {
           <div className="diet-action-bar">
             {/* 음식 검색창 */}
             <div className="diet-search-wrapper">
-              <span className="diet-search-icon">🔍</span>
+              <span className="diet-search-icon"><IconSearch /></span>
               <input
                 type="text"
                 placeholder="음식 검색"

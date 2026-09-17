@@ -1,4 +1,5 @@
 import { useLocation, NavLink } from "react-router-dom";
+import { IconHome, IconRecord, IconPlanner, IconHospital, IconProfile } from "../icons/Icons.jsx";
 
 // Mobile/tablet app-shell navigation. Desktop (>=900px, matching Header's
 // existing breakpoint) keeps the current top navigation in Header and hides
@@ -10,11 +11,11 @@ import { useLocation, NavLink } from "react-router-dom";
 // guessing routes. Same approach validated in design-preview (see
 // src/design-preview/nav.js).
 const NAV_ITEMS = [
-    { key: "home", label: "홈", icon: "🏠", to: "/dashboard" },
-    { key: "records", label: "기록", icon: "📋", to: "/dashboard#daily-records" },
-    { key: "planner", label: "Planner", icon: "🗓", to: "/dashboard#weekly-planner" },
-    { key: "hospital", label: "병원", icon: "🏥", to: "/hospitals" },
-    { key: "my", label: "MY", icon: "👤", to: "/mypage" },
+    { key: "home", label: "홈", Icon: IconHome, to: "/dashboard" },
+    { key: "records", label: "기록", Icon: IconRecord, to: "/dashboard#daily-records" },
+    { key: "planner", label: "Planner", Icon: IconPlanner, to: "/dashboard#weekly-planner" },
+    { key: "hospital", label: "병원", Icon: IconHospital, to: "/hospitals" },
+    { key: "my", label: "MY", Icon: IconProfile, to: "/mypage" },
 ];
 
 function isActive(item, pathname, hash) {
@@ -35,7 +36,7 @@ export default function BottomNav() {
                     to={item.to}
                     className={`bottom-nav-item ${isActive(item, pathname, hash) ? "bottom-nav-item--active" : ""}`}
                 >
-                    <span className="bottom-nav-icon" aria-hidden="true">{item.icon}</span>
+                    <span className="bottom-nav-icon"><item.Icon /></span>
                     <span>{item.label}</span>
                 </NavLink>
             ))}

@@ -166,7 +166,13 @@
 
     z-index: 2;
 
-    font-size: 14px;
+    display: flex;
+    color: var(--color-text-muted);
+}
+
+.diet-search-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 .diet-search-loading {

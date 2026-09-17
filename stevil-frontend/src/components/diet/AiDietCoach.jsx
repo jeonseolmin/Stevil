@@ -116,9 +116,9 @@ export default function AiDietCoach() {
       if (response.data.answer) {
         answerText = response.data.answer;
       } else if (response.data.error) {
-        answerText = `🚨 파이썬 내부 에러: ${response.data.error}`;
+        answerText = `[오류] 파이썬 내부 에러: ${response.data.error}`;
       } else {
-        answerText = `🚨 알 수 없는 응답: ${JSON.stringify(response.data)}`;
+        answerText = `[오류] 알 수 없는 응답: ${JSON.stringify(response.data)}`;
       }
 
       setMessages((prev) => [...prev, { question: text, answer: answerText }]);

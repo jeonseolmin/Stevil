@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './InjectionDiary.css';
 import axiosInstance from '../../api/axiosInstance';
+import { IconInfo } from '../icons/Icons.jsx';
 
 const InjectionDiary = () => {
   const [viewMode, setViewMode] = useState('RECORD'); // 'RECORD' | 'REPORT' | 'FEEDBACK'
@@ -243,7 +244,7 @@ const InjectionDiary = () => {
 
           <div className="right-panel">
             <div className="info-banner">
-              <span className="info-icon">💡</span>
+              <span className="info-icon"><IconInfo /></span>
               <div>
                 <h4>올바른 주사 부위 순환</h4>
                 <p>피부 손상을 막기 위해 주사 부위는 매일 번갈아가며 투여하는 것이 좋습니다. (예: 좌측 복부 → 우측 복부)</p>

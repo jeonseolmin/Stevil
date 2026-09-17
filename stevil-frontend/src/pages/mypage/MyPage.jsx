@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import ChatModal from '../chat/ChatModal'; 
 import AttendingDoctorModal from './AttendingDoctorModal';
-import './MyPage.css'; 
+import './MyPage.css';
+import { IconProfile } from '../../components/icons/Icons.jsx';
 
 export default function MyPage() {
     const navigate = useNavigate();
@@ -98,7 +99,7 @@ export default function MyPage() {
                             {profile.profileImage ? (
                                 <img src={profile.profileImage} alt="프로필" />
                             ) : (
-                                <span>👤</span>
+                                <span><IconProfile width={36} height={36} /></span>
                             )}
                         </div>
                         <div className="mypage-info">
