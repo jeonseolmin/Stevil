@@ -12,6 +12,8 @@ import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 import HospitalMapPage from "../pages/hospitalMap/HospitalMapPage.jsx";
+import PharmacyMapPage from "../pages/pharmacyMap/PharmacyMapPage.jsx";
+import AdminPharmaciesPage from "../pages/admin/pharmacies/AdminPharmaciesPage.jsx";
 import CommunityList from "../pages/community/CommunityList.jsx";
 import CommunityDetail from "../pages/community/CommunityDetail.jsx";
 import CommunityWrite from "../pages/community/CommunityWrite.jsx";
@@ -48,6 +50,7 @@ export default function AppRouter() {
                 <Route path="/diary" element={<InjectionDiary />} />
                 <Route path="/oauth-success" element={<OAuthSuccessPage />} />
                 <Route path="/hospitals" element={<HospitalMapPage />}/>                
+                <Route path="/pharmacies" element={<PharmacyMapPage />} />
                 <Route path="/community" element={<CommunityList />} />
                 <Route path="/community/write" element={<CommunityWrite />} />
                 <Route path="/community/:id" element={<CommunityDetail />} />
@@ -67,6 +70,7 @@ export default function AppRouter() {
                 <Route index element={<AdminDashboardPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="facilities" element={<AdminFacilitiesPage />} />
+                <Route path="pharmacies" element={<AdminPharmaciesPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="inquiries" element={<AdminInquiriesPage />} />
                 <Route path="contents" element={<AdminContentsPage />} />
