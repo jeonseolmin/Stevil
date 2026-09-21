@@ -1,12 +1,13 @@
 name: Deploy to production
 
+# Production deploy branch = main.
 # Scope: backend + frontend containers only (compose.yaml), matching how
 # production has been deployed manually so far. RAG (ai-services/rag) and
 # Diet (ai-services/diet, diet-ai.service) are intentionally excluded —
 # they're deployed separately and aren't part of this automation.
 on:
   push:
-    branches: [local/design-preview]
+    branches: [main]
     paths:
       - "stevil-backend/**"
       - "stevil-frontend/**"
@@ -50,7 +51,7 @@ jobs:
   deploy:
     needs: verify
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/local/design-preview'
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: SSH deploy (backend + frontend only)
         uses: appleboy/ssh-action@v1.2.0
@@ -63,8 +64,8 @@ jobs:
             cd ~/Stevil
 
             current_branch=$(git rev-parse --abbrev-ref HEAD)
-            if [ "$current_branch" != "local/design-preview" ]; then
-              echo "server is on branch '$current_branch', expected 'local/design-preview' — aborting" >&2
+            if [ "$current_branch" != "main" ]; then
+              echo "server is on branch '$current_branch', expected 'main' — aborting" >&2
               exit 1
             fi
 
@@ -73,6 +74,6 @@ jobs:
               exit 1
             fi
 
-            git pull --ff-only origin local/design-preview
+            git pull --ff-only origin main
             docker compose build backend frontend
             docker compose up -d backend frontend
