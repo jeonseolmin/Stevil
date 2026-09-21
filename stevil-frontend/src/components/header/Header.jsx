@@ -392,6 +392,22 @@ export default function Header() {
                             </NavLink>
 
                             <NavLink
+                                to="/pharmacies"
+                                onClick={
+                                    closeMenu
+                                }
+                                className={({
+                                                isActive,
+                                            }) =>
+                                    isActive
+                                        ? "header-navigation-link--active"
+                                        : ""
+                                }
+                            >
+                                약국 찾기
+                            </NavLink>
+
+                            <NavLink
                                 to="/diet"
                                 onClick={
                                     closeMenu

@@ -35,6 +35,8 @@ services:
       NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:?required}
       NAVER_API_HUB_CLIENT_ID: ${NAVER_API_HUB_CLIENT_ID:-}
       NAVER_API_HUB_CLIENT_SECRET: ${NAVER_API_HUB_CLIENT_SECRET:-}
+      MAIL_USERNAME: ${MAIL_USERNAME:?required}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:?required}
       PLANNER_GENERATOR_URL: ${PLANNER_GENERATOR_URL:-http://rag-api:8091/api/plan}
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
@@ -53,10 +55,16 @@ services:
         VITE_NAVER_MAP_CLIENT_ID: ${VITE_NAVER_MAP_CLIENT_ID:-}
     container_name: stevil-frontend
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - backend
+    volumes:
+      - /var/www/certbot:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
+      - "443:443"
 
 volumes:
   postgres-data:

@@ -16,6 +16,10 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/rag-api/, '/api'),
         timeout: 110000, proxyTimeout: 110000,
       },
+      '/diet-api': {
+        target: 'http://127.0.0.1:8092',
+        rewrite: path => path.replace(/^\/diet-api/, '/api'),
+      },
     },
   },
 });

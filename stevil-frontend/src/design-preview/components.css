@@ -1,0 +1,1639 @@
+/*
+ * Design Preview — shared component styles (v5).
+ * Everything is scoped under .dp-app so production pages are untouched.
+ *
+ * v4 changes vs v3: "remove every card" was overcorrection — the app lost
+ * structure along with the AI-slop cards. Cards are back, but scoped:
+ * used only where content is genuinely a group (today's status, a set of
+ * quick actions, a settings group), never as decoration and never as 8
+ * identical repeated tiles. See `.dp-card` below.
+ *
+ * v5: layout-grid rules made explicit and shared (not re-decided per
+ * screen), plus a typography-as-component pass so small UI text (date,
+ * prev/next, sort, tab labels) renders through a named class instead of
+ * being a bare styled span.
+ *
+ * ---- LAYOUT GRID (one system, referenced everywhere) ----
+ * Mobile  (<640px):  content inset  var(--dp-space-4) (16px), 1 column.
+ * Tablet  (640-899): container max-width 640px, centered, still 1 column
+ *                    (a wider single column, not a scaled-up phone screen —
+ *                    cards/rows reflow to the extra width, see Hospital's
+ *                    carousel and MyPage's metric-row at this breakpoint).
+ * Desktop (>=900px): container max-width 1200px, inset var(--dp-space-8)
+ *                    (40px), two canonical column patterns — never a third
+ *                    ad hoc ratio invented per screen:
+ *                      .dp-zone-grid     1.7fr / 1fr  (content-balanced —
+ *                        Dashboard: primary health column + secondary
+ *                        actions column, sized so total visual mass in
+ *                        each column is comparable, not just the ratio)
+ *                      .dp-hospital-layout  minmax(320,380) / 1fr (utility-
+ *                        fixed — a list needs a comfortable reading width,
+ *                        a map benefits from all the rest)
+ * Vertical section gap: var(--dp-space-6) (32px) between page sections.
+ * Page header spacing: var(--dp-space-5) (24px) below the title block.
+ * Card internal padding: var(--dp-space-5) (24px), fixed everywhere.
+ */
+
+.dp-app * { box-sizing: border-box; }
+.dp-app a { color: inherit; text-decoration: none; }
+.dp-app button { font: inherit; }
+
+/* ============================================================ */
+/* App shell                                                     */
+/* ============================================================ */
+
+.dp-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--dp-bg);
+}
+
+.dp-shell-body {
+    flex: 1;
+    display: flex;
+}
+
+.dp-shell-main {
+    flex: 1;
+    min-width: 0;
+    padding: var(--dp-space-6) var(--dp-space-4) calc(96px + var(--dp-safe-bottom));
+    max-width: 640px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (min-width: 900px) {
+    .dp-shell-main {
+        max-width: 1200px;
+        padding: var(--dp-space-8) var(--dp-space-8) var(--dp-space-12);
+    }
+}
+
+/* ============================================================ */
+/* Top bar (desktop / tablet)                                    */
+/* ============================================================ */
+
+.dp-topbar { display: none; }
+
+@media (min-width: 900px) {
+    .dp-topbar {
+        display: flex;
+        align-items: center;
+        gap: var(--dp-space-8);
+        padding: 0 var(--dp-space-8);
+        height: 68px;
+        border-bottom: 1px solid var(--dp-hairline);
+        background: rgba(250, 247, 241, 0.92);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .dp-topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        color: var(--dp-ink);
+        white-space: nowrap;
+    }
+
+    .dp-topbar-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: var(--dp-radius-sm);
+        background: var(--dp-accent-hero);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .dp-topbar-nav {
+        display: flex;
+        gap: var(--dp-space-2);
+        flex: 1;
+    }
+
+    .dp-topbar-nav a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--dp-ink-secondary);
+        padding: 9px 14px;
+        border-radius: var(--dp-radius-pill);
+    }
+
+    .dp-topbar-nav a svg { width: 17px; height: 17px; }
+
+    .dp-topbar-nav a.dp-active {
+        color: var(--dp-accent-hero);
+        background: var(--dp-surface-sunken);
+    }
+
+    .dp-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--dp-space-3);
+    }
+
+    .dp-topbar-icon-btn {
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--dp-ink-secondary);
+        background: transparent;
+    }
+
+    .dp-topbar-icon-btn:hover { background: var(--dp-surface-sunken); }
+
+    .dp-topbar-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--color-primary-soft);
+        color: var(--dp-accent-hero);
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 800;
+    }
+}
+
+/* ============================================================ */
+/* Bottom navigation (mobile primary nav)                        */
+/* ============================================================ */
+
+.dp-bottomnav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    display: flex;
+    background: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid var(--dp-hairline);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 8px var(--dp-space-3) calc(8px + var(--dp-safe-bottom));
+}
+
+@media (min-width: 900px) {
+    .dp-bottomnav { display: none; }
+}
+
+.dp-bottomnav-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: var(--dp-tap-min);
+    padding: 6px 2px 4px;
+    color: var(--dp-text-muted);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.dp-bottomnav-icon {
+    width: 34px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+}
+
+.dp-bottomnav-icon svg { width: 20px; height: 20px; }
+
+.dp-bottomnav-item.dp-active { color: var(--dp-accent-hero); }
+
+.dp-bottomnav-item.dp-active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--dp-accent-hero);
+}
+
+/* ============================================================ */
+/* Page / section structure                                      */
+/* ============================================================ */
+
+.dp-eyebrow {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--dp-ink-secondary);
+    margin: 0 0 8px;
+}
+
+.dp-page-title {
+    font: var(--dp-text-page-title);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+    color: var(--dp-ink);
+}
+
+.dp-page-sub {
+    font: var(--dp-text-body);
+    color: var(--dp-ink-secondary);
+    margin: 0 0 var(--dp-space-6);
+}
+
+/* ============================================================ */
+/* Page header — ONE bound zone (context line + title + a bottom   */
+/* hairline that closes the zone), reused on all 4 screens. A       */
+/* caption sitting above a heading is still "two lines of text"     */
+/* unless something marks where the header ENDS and content         */
+/* BEGINS — the divider is that boundary, not decoration.           */
+/* ============================================================ */
+
+.dp-page-header {
+    margin-bottom: var(--dp-space-6);
+    padding-bottom: var(--dp-space-5);
+    border-bottom: 1px solid var(--dp-hairline);
+}
+
+.dp-page-context {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--dp-text-muted);
+    margin-bottom: 6px;
+}
+
+.dp-page-context svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+.dp-page-heading {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--dp-ink);
+    margin: 0;
+    line-height: 1.25;
+}
+
+@media (min-width: 900px) {
+    .dp-page-heading { font-size: 28px; }
+}
+
+/* MyPage identity: the header zone carries the avatar row too, so
+   the divider closes AFTER identity, not after the title alone. */
+.dp-page-header-identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: var(--dp-space-4);
+}
+
+/* ============================================================ */
+/* Metadata text-as-component — small UI strings (sort dropdown,  */
+/* prev/next date range) get a real control treatment instead of  */
+/* bare styled text.                                               */
+/* ============================================================ */
+
+/* Higher-specificity element+class selector so this wins over the base
+   .dp-select rules regardless of source order. */
+select.dp-select-inline {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    min-height: 36px;
+    padding: 0 30px 0 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--dp-ink-secondary);
+    background-color: var(--dp-surface-sunken);
+    border-radius: var(--dp-radius-pill);
+    border: 1px solid transparent;
+    transition: border-color 140ms ease;
+}
+
+select.dp-select-inline:hover,
+select.dp-select-inline:focus {
+    border-color: var(--dp-hairline-strong);
+    background-color: var(--dp-surface-sunken);
+    box-shadow: none;
+}
+
+.dp-section {
+    padding: var(--dp-space-6) 0;
+    border-bottom: 1px solid var(--dp-hairline);
+}
+
+.dp-section:last-child { border-bottom: none; }
+
+.dp-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--dp-space-3);
+    margin-bottom: var(--dp-space-4);
+}
+
+.dp-section-title {
+    font: var(--dp-text-section-title);
+    margin: 0;
+    color: var(--dp-ink);
+}
+
+.dp-section-link {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dp-accent-dark);
+    white-space: nowrap;
+}
+
+.dp-divider {
+    border: none;
+    border-top: 1px solid var(--dp-hairline);
+    margin: var(--dp-space-4) 0;
+}
+
+/* ============================================================ */
+/* Card — a real, visible grouping surface. Used deliberately:    */
+/* one "today" card, one quick-action grid, one settings group —  */
+/* never a repeated 8-tile grid of identical cards.                */
+/* ============================================================ */
+
+.dp-card {
+    background: var(--dp-surface);
+    border: 1px solid var(--dp-hairline);
+    border-radius: var(--dp-radius-md);
+    box-shadow: var(--dp-elevation-card);
+    padding: var(--dp-space-5);
+}
+
+
+.dp-card-flat {
+    background: var(--dp-surface);
+    border: 1px solid var(--dp-hairline);
+    border-radius: var(--dp-radius-md);
+    padding: var(--dp-space-5);
+}
+
+.dp-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dp-ink-secondary);
+    margin: 0 0 var(--dp-space-4);
+}
+
+/* Two-zone desktop layout: "today" card + quick actions/next-up column.
+   Below 900px this collapses to a natural single column (no override
+   needed — it's simply not applied). */
+.dp-zone-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--dp-space-5);
+}
+
+@media (min-width: 900px) {
+    .dp-zone-grid {
+        grid-template-columns: 1.7fr 1fr;
+        align-items: start;
+        gap: var(--dp-space-6);
+    }
+}
+
+.dp-zone-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dp-space-5);
+}
+
+/* ============================================================ */
+/* Hero surface — neutral large-radius placeholder (map) and the  */
+/* bottom-sheet radius. Not a colored dashboard-metric card.       */
+/* ============================================================ */
+
+.dp-hero {
+    border-radius: var(--dp-radius-hero);
+    padding: var(--dp-space-6);
+    box-shadow: none;
+}
+
+/* ============================================================ */
+/* Today card content — weight, delta, trend, and the day's three */
+/* key numbers grouped inside ONE card (see .dp-card in Dashboard) */
+/* ============================================================ */
+
+.dp-record-primary {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--dp-space-5);
+    flex-wrap: wrap;
+}
+
+.dp-record-value {
+    font: var(--dp-text-metric-hero);
+    color: var(--dp-accent-hero);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dp-record-value small {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dp-ink-secondary);
+}
+
+.dp-record-delta {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dp-success-text);
+    padding-bottom: 6px;
+}
+
+.dp-record-secondary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    gap: var(--dp-space-4) var(--dp-space-5);
+    margin-top: var(--dp-space-5);
+    padding-top: var(--dp-space-4);
+    border-top: 1px solid var(--dp-hairline);
+}
+
+/* Each stat carries the SAME icon used to log it (quick actions below,
+   nav elsewhere) — one consistent icon language ties "today's numbers"
+   to "how you recorded them" instead of three disconnected label/value
+   pairs glued together. */
+.dp-record-stat {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+    min-width: 100px;
+}
+
+.dp-record-stat-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--dp-surface-sunken);
+    color: var(--dp-ink-secondary);
+    margin-top: 1px;
+}
+
+.dp-record-stat-icon svg { width: 14px; height: 14px; }
+
+.dp-record-stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dp-record-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dp-ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.dp-record-stat-value small {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dp-ink-secondary);
+    margin-left: 2px;
+}
+
+/* ============================================================ */
+/* Metrics                                                        */
+/* ============================================================ */
+
+.dp-metric-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: var(--dp-space-5);
+}
+
+.dp-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.dp-metric-label {
+    font: var(--dp-text-helper);
+    color: var(--dp-text-muted);
+}
+
+.dp-metric-value {
+    font: var(--dp-text-metric);
+    font-variant-numeric: tabular-nums;
+    color: var(--dp-ink);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.dp-metric-value small {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dp-ink-secondary);
+}
+
+.dp-metric-hero {
+    font: var(--dp-text-metric-hero);
+    color: var(--dp-accent-hero);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dp-metric-hero small { font-size: 15px; font-weight: 600; opacity: 0.75; }
+
+.dp-metric-delta {
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.dp-metric-delta.dp-down { color: var(--dp-success-text); }
+.dp-metric-delta.dp-up { color: var(--dp-danger-text); }
+.dp-metric-delta.dp-flat { color: var(--dp-text-muted); }
+
+/* ============================================================ */
+/* Avatar ring — MyPage identity only. A small ring of progress   */
+/* around the profile photo (à la profile-completion rings), not   */
+/* the fitness-activity-ring cliché reserved for a data-dense       */
+/* dashboard — this is identity-scoped, used once, on one screen.  */
+/* ============================================================ */
+
+.dp-avatar-ring {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.dp-avatar-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+
+.dp-avatar-ring-photo {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: var(--dp-accent-hero);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* ============================================================ */
+/* Progress rail — start → current → goal, one thin line          */
+/* ============================================================ */
+
+.dp-progress-track {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--dp-hairline-strong);
+}
+
+.dp-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--dp-accent-hero);
+}
+
+.dp-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--dp-text-muted);
+}
+
+/* ============================================================ */
+/* Buttons                                                        */
+/* ============================================================ */
+
+.dp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: var(--dp-tap-min);
+    padding: 0 20px;
+    font-size: 14.5px;
+    font-weight: 700;
+    border-radius: var(--dp-radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, opacity 140ms ease, transform 140ms ease;
+}
+
+.dp-btn-primary {
+    background: var(--dp-accent-hero);
+    color: #fff;
+}
+.dp-btn-primary:hover { background: var(--dp-accent-dark); }
+.dp-btn-primary:active { transform: scale(0.98); }
+
+.dp-btn-secondary {
+    background: var(--dp-surface);
+    color: var(--dp-ink);
+    border-color: var(--dp-hairline-strong);
+}
+.dp-btn-secondary:hover { background: var(--dp-surface-sunken); }
+
+.dp-btn-ghost {
+    background: transparent;
+    color: var(--dp-ink-secondary);
+}
+.dp-btn-ghost:hover { background: var(--dp-surface-sunken); color: var(--dp-ink); }
+
+.dp-btn-sm { min-height: 36px; padding: 0 14px; font-size: 13px; }
+.dp-btn-block { width: 100%; }
+.dp-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.dp-btn:focus-visible { outline: 2px solid var(--dp-accent); outline-offset: 2px; }
+
+.dp-quick-action:focus-visible,
+.dp-bottomnav-item:focus-visible,
+.dp-topbar-nav a:focus-visible,
+.dp-tab:focus-visible,
+.dp-section-link:focus-visible,
+.dp-record-primary a:focus-visible,
+.dp-list-row a:focus-visible,
+.dp-action-tile:focus-visible {
+    outline: 2px solid var(--dp-accent);
+    outline-offset: 2px;
+    border-radius: var(--dp-radius-sm);
+}
+
+/* ============================================================ */
+/* Inputs / Select                                                */
+/* ============================================================ */
+
+.dp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.dp-field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dp-ink-secondary);
+}
+
+.dp-input,
+.dp-select {
+    min-height: var(--dp-tap-min);
+    padding: 0 14px;
+    font-size: 15.5px;
+    color: var(--dp-ink);
+    background: var(--dp-surface-sunken);
+    border: 1px solid transparent;
+    border-radius: var(--dp-radius-sm);
+    width: 100%;
+}
+
+.dp-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--dp-text-muted) 50%),
+                       linear-gradient(135deg, var(--dp-text-muted) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 36px;
+}
+
+.dp-input:focus,
+.dp-select:focus {
+    outline: none;
+    background: var(--dp-surface);
+    border-color: var(--dp-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.dp-field-help {
+    font: var(--dp-text-helper);
+    color: var(--dp-text-muted);
+}
+
+.dp-field-reference {
+    font: var(--dp-text-helper);
+    color: var(--dp-ink-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.dp-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--dp-tap-min);
+    font-size: 14.5px;
+}
+.dp-check input { width: 20px; height: 20px; accent-color: var(--dp-accent); }
+
+/* ============================================================ */
+/* Tabs (segmented)                                               */
+/* ============================================================ */
+
+.dp-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--dp-surface-sunken);
+    border-radius: var(--dp-radius-sm);
+    padding: 3px;
+}
+
+.dp-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    text-align: center;
+    padding: 0 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--dp-ink-secondary);
+    border-radius: calc(var(--dp-radius-sm) - 2px);
+}
+
+.dp-tab.dp-active {
+    background: var(--dp-surface);
+    color: var(--dp-accent-hero);
+    box-shadow: 0 1px 2px rgba(20, 36, 28, 0.08);
+}
+
+/* Underline tabs — for identity-scoped navigation (MyPage) where a
+   segmented pill-group would look like the same filter control used
+   for search results elsewhere. Same list, different register. */
+.dp-tabs-underline {
+    display: flex;
+    gap: var(--dp-space-5);
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--dp-hairline);
+}
+
+.dp-tabs-underline .dp-tab {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 2px;
+    border-radius: 0;
+    color: var(--dp-text-muted);
+    position: relative;
+}
+
+.dp-tabs-underline .dp-tab.dp-active {
+    background: none;
+    box-shadow: none;
+    color: var(--dp-ink);
+}
+
+.dp-tabs-underline .dp-tab.dp-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--dp-accent-hero);
+}
+
+/* ============================================================ */
+/* Week nav — ONE calendar control (prev/next + range + day chips) */
+/* instead of two disconnected rows. A single tinted container so  */
+/* the eye reads it as one control; icon arrow buttons instead of  */
+/* text "이전/다음"; each day chip carries letter + date + status   */
+/* on a shared baseline grid so nothing looks hand-placed.          */
+/* ============================================================ */
+
+.dp-week-nav {
+    background: var(--dp-surface-sunken);
+    border-radius: var(--dp-radius-md);
+    padding: var(--dp-space-3);
+}
+
+.dp-week-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--dp-space-4);
+    margin-bottom: var(--dp-space-3);
+}
+
+.dp-week-nav-arrow {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--dp-ink-secondary);
+    background: transparent;
+}
+
+.dp-week-nav-arrow:hover { background: var(--dp-surface); }
+.dp-week-nav-arrow svg { width: 16px; height: 16px; }
+
+.dp-week-nav-range {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dp-ink);
+    font-variant-numeric: tabular-nums;
+    min-width: 110px;
+    text-align: center;
+}
+
+.dp-week-nav-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.dp-week-nav-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-height: 56px;
+    padding: 8px 2px 6px;
+    border-radius: var(--dp-radius-sm);
+    color: var(--dp-ink-secondary);
+    background: transparent;
+}
+
+.dp-week-nav-day-letter { font-size: 11.5px; font-weight: 700; }
+.dp-week-nav-day-num { font-size: 10.5px; font-weight: 600; color: var(--dp-text-muted); font-variant-numeric: tabular-nums; }
+
+.dp-week-nav-day.dp-active {
+    background: var(--dp-accent-hero);
+    color: #fff;
+}
+
+.dp-week-nav-day.dp-active .dp-week-nav-day-num { color: rgba(255, 255, 255, 0.72); }
+
+/* ============================================================ */
+/* Quick actions — a real 2x2 action grid (card tiles). A genuine  */
+/* set of 4 distinct actions is exactly the case cards are for;    */
+/* the anti-pattern is 8 IDENTICAL cards, not any card at all.     */
+/* ============================================================ */
+
+/* Not 4 identical bordered cards: one primary action (the one logged
+   most often) gets real visual weight, the other three stay quiet and
+   flat. This reads as a native "primary + shortcuts" action bar rather
+   than a repeated tile grid. */
+.dp-action-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--dp-space-2);
+}
+
+.dp-action-row {
+    display: flex;
+    gap: var(--dp-space-2);
+}
+
+/* Icon-over-label for the row of three: at card width, icon+label side
+   by side has no room and wraps mid-word. Stacked avoids that and
+   still reads as quiet/secondary next to the filled primary action. */
+.dp-action-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 64px;
+    padding: 8px 4px;
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-radius: var(--dp-radius-sm);
+    color: var(--dp-ink);
+    text-align: center;
+    transition: background-color 140ms ease;
+}
+
+.dp-action-tile span { white-space: nowrap; }
+
+.dp-action-tile:hover,
+.dp-action-tile:active {
+    background: var(--dp-surface-sunken);
+}
+
+.dp-action-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--dp-surface-sunken);
+    color: var(--dp-ink-secondary);
+}
+
+.dp-action-icon svg { width: 16px; height: 16px; }
+
+.dp-action-tile span { font-size: 13px; font-weight: 600; }
+
+.dp-action-primary {
+    flex-direction: row;
+    justify-content: flex-start;
+    background: var(--dp-accent-hero);
+    border-radius: var(--dp-radius-md);
+    padding: 14px;
+    min-height: 52px;
+}
+
+.dp-action-primary:hover,
+.dp-action-primary:active { background: var(--dp-accent-dark); }
+
+.dp-action-primary .dp-action-icon {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+}
+
+.dp-action-primary .dp-action-icon svg { width: 18px; height: 18px; }
+
+.dp-action-primary span { color: #fff; font-size: 14.5px; font-weight: 700; }
+
+/* Legacy horizontal quick-row (kept for Foundation reference only) */
+.dp-quick-row { display: flex; gap: var(--dp-space-2); overflow-x: auto; padding-bottom: 2px; }
+.dp-quick-action { position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; flex: 0 0 auto; width: 72px; min-height: var(--dp-tap-min); padding: var(--dp-space-3) 0; color: var(--dp-ink-secondary); }
+.dp-quick-icon { display: grid; place-items: center; color: var(--dp-ink-secondary); }
+.dp-quick-icon svg { width: 23px; height: 23px; }
+.dp-quick-action span { font-size: 12px; font-weight: 600; color: var(--dp-ink); }
+
+/* ============================================================ */
+/* Goal groups — spacing carries the sequence, not numbered        */
+/* circles + dividers (that read as a wizard/settings form).       */
+/* ============================================================ */
+
+.dp-flow-step {
+    padding: var(--dp-space-6) 0 0;
+}
+
+.dp-flow-step:first-child { padding-top: 0; }
+
+.dp-flow-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--dp-text-muted);
+    margin: 0 0 12px;
+}
+
+/* The health target itself — same visual register as the Dashboard's
+   weight number, so a calorie/protein goal reads as a health target,
+   not a form value. */
+.dp-target {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dp-target-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--dp-ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+.dp-target-unit {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dp-ink-secondary);
+}
+
+.dp-target-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--dp-text-muted);
+}
+
+.dp-target-suggestion button {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--dp-accent-dark);
+    cursor: pointer;
+    min-height: 32px;
+}
+
+/* ============================================================ */
+/* Activity timeline — a time+icon anchor column connected by a   */
+/* rail, not a divider-row list. The rail is what makes it read   */
+/* as "a sequence of things that happened today" rather than a    */
+/* table of rows. Capped to a readable measure at desktop so it   */
+/* doesn't stretch into a thin, mostly-empty full-width row.       */
+/* ============================================================ */
+
+.dp-timeline {
+    position: relative;
+    max-width: 560px;
+}
+
+.dp-timeline-item {
+    position: relative;
+    display: flex;
+    gap: 14px;
+    padding-bottom: var(--dp-space-5);
+}
+
+.dp-timeline-item:last-child { padding-bottom: 0; }
+
+.dp-timeline-item:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 34px;
+    bottom: -2px;
+    width: 1px;
+    background: var(--dp-hairline);
+}
+
+.dp-timeline-anchor {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--dp-surface-sunken);
+    color: var(--dp-accent-hero);
+    display: grid;
+    place-items: center;
+}
+
+.dp-timeline-anchor svg { width: 16px; height: 16px; }
+
+.dp-timeline-body { flex: 1; min-width: 0; padding-top: 2px; }
+
+.dp-timeline-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.dp-timeline-time {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--dp-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.dp-timeline-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--dp-ink);
+}
+
+.dp-timeline-meta {
+    font-size: 12.5px;
+    color: var(--dp-text-muted);
+    margin-top: 2px;
+}
+
+/* ============================================================ */
+/* Search result item — name + category icon anchor + distance +   */
+/* feature note + status, structured like a real place-search       */
+/* result. One badge max per row (partner flag); status is a plain  */
+/* marker (dot + word), not a second badge.                         */
+/* ============================================================ */
+
+.dp-result-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.dp-result-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--dp-surface-sunken);
+    color: var(--dp-ink-secondary);
+    display: grid;
+    place-items: center;
+}
+
+.dp-result-icon svg { width: 18px; height: 18px; }
+
+.dp-result-body { flex: 1; min-width: 0; }
+
+.dp-result-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+}
+
+.dp-result-name { font-size: 15px; font-weight: 700; color: var(--dp-ink); }
+
+.dp-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    color: var(--dp-text-muted);
+}
+
+.dp-result-status {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dp-ink-secondary);
+    padding-top: 8px;
+}
+
+.dp-result-status.dp-ok { color: var(--dp-success-text); }
+
+/* ============================================================ */
+/* Flat list row                                                  */
+/* ============================================================ */
+
+.dp-list-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 6px var(--dp-space-3);
+    min-height: var(--dp-tap-min);
+    padding: 14px 0;
+}
+
+.dp-list-row-main {
+    min-width: 0;
+    flex: 1 1 200px;
+}
+
+.dp-list-row-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dp-ink);
+}
+
+.dp-list-row-meta {
+    font-size: 12.5px;
+    color: var(--dp-text-muted);
+    margin-top: 2px;
+}
+
+.dp-list-row-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--dp-surface-sunken);
+    color: var(--dp-ink-secondary);
+    margin-right: 10px;
+}
+
+.dp-list-row-icon svg { width: 15px; height: 15px; }
+
+/* ============================================================ */
+/* Badge / Status                                                 */
+/* ============================================================ */
+
+.dp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    font-weight: 700;
+    border-radius: var(--dp-radius-pill);
+    background: var(--color-primary-soft);
+    color: var(--dp-accent-dark);
+}
+
+.dp-badge-neutral { background: var(--dp-surface-sunken); color: var(--dp-ink-secondary); }
+.dp-badge-warning { background: #f6ecd7; color: #8a5e13; }
+.dp-badge-danger { background: #f7e6e2; color: var(--dp-danger-text); }
+.dp-badge-info { background: var(--dp-state-sync-bg); color: var(--dp-state-sync); }
+.dp-badge-second { background: var(--dp-second-soft); color: var(--dp-second); }
+
+.dp-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.dp-status-dot.dp-ok { background: var(--color-success); }
+.dp-status-dot.dp-warn { background: var(--color-warning); }
+.dp-status-dot.dp-danger { background: var(--color-danger); }
+.dp-status-dot.dp-muted { background: var(--dp-neutral); }
+
+/* ============================================================ */
+/* PWA state banners                                              */
+/* ============================================================ */
+
+.dp-pwa-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px var(--dp-space-4);
+    margin: 0 calc(-1 * var(--dp-space-4)) var(--dp-space-3);
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+@media (min-width: 900px) {
+    .dp-pwa-banner { padding: 11px var(--dp-space-8); margin: 0 calc(-1 * var(--dp-space-8)) var(--dp-space-4); }
+}
+
+.dp-pwa-banner svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+.dp-pwa-banner.dp-offline { background: var(--dp-state-offline-bg); color: var(--dp-state-offline); }
+.dp-pwa-banner.dp-update { background: var(--dp-state-update-bg); color: var(--dp-accent-dark); }
+.dp-pwa-banner.dp-sync { background: var(--dp-state-sync-bg); color: var(--dp-state-sync); }
+
+.dp-pwa-banner button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-weight: 800;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* ============================================================ */
+/* Modal / Toast                                                  */
+/* ============================================================ */
+
+.dp-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 30, 24, 0.42);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 50;
+}
+
+@media (min-width: 640px) {
+    .dp-modal-backdrop { align-items: center; }
+}
+
+.dp-modal {
+    background: var(--dp-surface);
+    border-radius: var(--dp-radius-hero) var(--dp-radius-hero) 0 0;
+    padding: var(--dp-space-6) var(--dp-space-5) calc(var(--dp-space-6) + var(--dp-safe-bottom));
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--dp-elevation-sheet);
+}
+
+@media (min-width: 640px) {
+    .dp-modal { border-radius: var(--dp-radius-md); }
+}
+
+.dp-toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(100px + var(--dp-safe-bottom));
+    transform: translateX(-50%);
+    background: var(--dp-ink);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--dp-radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: 0 12px 32px rgba(20, 36, 28, 0.28);
+    z-index: 60;
+}
+
+/* ============================================================ */
+/* Empty / Loading / Error states                                 */
+/* ============================================================ */
+
+.dp-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: var(--dp-space-10) var(--dp-space-4);
+    color: var(--dp-ink-secondary);
+}
+
+.dp-state-mark {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dp-hairline-strong);
+    margin-bottom: 6px;
+}
+
+.dp-state-title { font-weight: 700; color: var(--dp-ink); font-size: 15px; }
+.dp-state-desc { font-size: 13.5px; color: var(--dp-text-muted); max-width: 320px; }
+
+.dp-skeleton {
+    background: linear-gradient(90deg, var(--dp-surface-sunken) 25%, var(--dp-hairline) 37%, var(--dp-surface-sunken) 63%);
+    background-size: 400% 100%;
+    animation: dp-shimmer 1.4s ease infinite;
+    border-radius: var(--dp-radius-sm);
+}
+
+@keyframes dp-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dp-skeleton { animation: none; }
+}
+
+/* ============================================================ */
+/* Line chart — the shared data-viz language. One series, one     */
+/* accent line, a muted dashed reference at the period's start     */
+/* value, the current point emphasized, hover/tap tooltip. This    */
+/* exact vocabulary (line / current dot / reference / tooltip /    */
+/* day labels) is meant to extend to future charts (calories,      */
+/* protein, exercise, injections, goal progress) without inventing */
+/* a new visual language each time. Deliberately NOT done: no       */
+/* gradient area fill, no axis numbers, no background grid, no      */
+/* decorative load animation — those read as a "fintech chart",     */
+/* not a restrained health metric.                                  */
+/* ============================================================ */
+
+.dp-chart-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--dp-space-3);
+    margin-top: var(--dp-space-4);
+    margin-bottom: 4px;
+}
+
+.dp-chart-period {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--dp-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.dp-linechart-wrap { max-width: 100%; }
+
+.dp-linechart {
+    display: block;
+    width: 100%;
+    height: 100px;
+    overflow: visible;
+}
+
+@media (min-width: 900px) {
+    .dp-linechart { height: 120px; }
+}
+
+.dp-linechart-reference {
+    stroke: var(--dp-hairline-strong);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+}
+
+.dp-linechart-line {
+    fill: none;
+    stroke: var(--dp-accent-hero);
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.dp-linechart-dot { fill: var(--dp-hairline-strong); }
+
+.dp-linechart-dot-current {
+    fill: var(--dp-accent-hero);
+    stroke: var(--dp-surface);
+    stroke-width: 2;
+}
+
+/* The hovered/tapped point, when it's not already the emphasized "today"
+   point — a lighter version of the current-point treatment so the two
+   stay visually distinct (today's dot is still the most prominent). */
+.dp-linechart-dot-active {
+    fill: var(--dp-surface);
+    stroke: var(--dp-accent-hero);
+    stroke-width: 2;
+}
+
+.dp-linechart-hit { fill: transparent; cursor: pointer; }
+
+/* Tooltip: font sizes here are read directly by WeightChart.jsx to derive
+   the text baselines and box height, so changing a size here means
+   updating TOOLTIP_DATE_SIZE/TOOLTIP_VALUE_SIZE in that file to match. */
+.dp-linechart-tooltip-bg {
+    fill: var(--dp-ink);
+    filter: drop-shadow(0 2px 5px rgba(20, 30, 24, 0.22));
+}
+.dp-linechart-tooltip-date { fill: rgba(255, 255, 255, 0.72); font-size: 10.5px; font-weight: 600; }
+.dp-linechart-tooltip-value { fill: #fff; font-size: 13.5px; font-weight: 700; }
+
+/* ============================================================ */
+/* Bar-style macro proportion bar (Planner) — a different, still  */
+/* legitimate pattern (a single stacked ratio, not a trend), kept  */
+/* separate from the line-chart language above.                    */
+/* ============================================================ */
+
+.dp-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 108px;
+    padding-top: var(--dp-space-2);
+}
+
+.dp-chart-bar {
+    flex: 1;
+    background: var(--dp-hairline-strong);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+}
+
+.dp-chart-bar.dp-highlight { background: var(--dp-accent-hero); }
+
+.dp-chart-labels {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.dp-chart-labels span {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: var(--dp-text-muted);
+}
+
+.dp-chart-labels span.dp-highlight { color: var(--dp-accent-hero); font-weight: 700; }
+
+/* ============================================================ */
+/* Hospital — search + map + result list as one interaction       */
+/* ============================================================ */
+
+/* Mobile: map first, then a horizontal preview strip that touches the
+   map (zero gap) so map+results read as one interaction, then the full
+   list. Desktop: classic split-pane, list left / map sticky right — the
+   preview strip is mobile-only (the full list already sits beside the
+   map at that width). */
+.dp-hospital-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.dp-hospital-layout > .dp-map-panel { order: 1; }
+.dp-hospital-layout > .dp-hospital-results { order: 2; margin-top: var(--dp-space-4); }
+
+@media (min-width: 900px) {
+    .dp-hospital-layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 380px) 1fr;
+        align-items: start;
+        gap: var(--dp-space-6);
+    }
+    .dp-hospital-layout > .dp-hospital-results { order: 1; margin-top: 0; }
+    .dp-hospital-layout > .dp-map-panel { order: 2; }
+}
+
+.dp-map-panel {
+    position: relative;
+}
+
+/* A dot-grid + scattered pin markers reads as "a map" even as a static
+   placeholder — a flat tinted box does not. Real map keeps its existing
+   Naver Maps implementation; this is presentation-only. */
+.dp-map-placeholder {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--dp-bg);
+    background-image: radial-gradient(var(--dp-hairline-strong) 1px, transparent 1px);
+    background-size: 18px 18px;
+    background-position: -4px -4px;
+}
+
+@media (min-width: 900px) {
+    .dp-map-panel { position: sticky; top: 88px; }
+    .dp-map-placeholder { height: 460px; }
+}
+
+.dp-map-pin {
+    position: absolute;
+    color: var(--dp-ink-secondary);
+    opacity: 0.55;
+}
+
+.dp-map-pin svg { width: 18px; height: 18px; }
+
+.dp-map-caption {
+    position: relative;
+    z-index: 1;
+    background: var(--dp-bg);
+    padding: 4px 10px;
+    border-radius: var(--dp-radius-pill);
+    max-width: 240px;
+}
+
+.dp-locate-btn {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--dp-surface);
+    border: 1px solid var(--dp-hairline-strong);
+    color: var(--dp-ink);
+    display: grid;
+    place-items: center;
+    box-shadow: var(--dp-elevation-card);
+}
+
+.dp-locate-btn svg { width: 18px; height: 18px; }
+
+/* Preview strip — visually docked under the map (negative top margin +
+   matching radius) so it reads as the map's own result tray, not a
+   separate section. Hidden at desktop where the full list already sits
+   next to the map. */
+.dp-hospital-carousel {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: var(--dp-space-3) 2px;
+    margin-top: -12px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (min-width: 900px) {
+    .dp-hospital-carousel { display: none; }
+}
+
+.dp-carousel-card {
+    flex: 0 0 auto;
+    width: 200px;
+    background: var(--dp-surface);
+    border: 1px solid var(--dp-hairline);
+    border-radius: var(--dp-radius-md);
+    box-shadow: var(--dp-elevation-card);
+    padding: 12px;
+}
+
+.dp-carousel-card-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--dp-ink);
+    margin-bottom: 3px;
+}
+
+.dp-carousel-card-meta {
+    font-size: 11.5px;
+    color: var(--dp-text-muted);
+}

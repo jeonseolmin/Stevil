@@ -12,6 +12,8 @@ import DietManagement from "../components/diet/DietManagement.jsx";
 import InjectionDiary from "../components/injectionDiary/InjectionDiary.jsx";
 import OAuthSuccessPage from "../pages/auth/OAuthSuccessPage.jsx";
 import HospitalMapPage from "../pages/hospitalMap/HospitalMapPage.jsx";
+import PharmacyMapPage from "../pages/pharmacyMap/PharmacyMapPage.jsx";
+import AdminPharmaciesPage from "../pages/admin/pharmacies/AdminPharmaciesPage.jsx";
 import CommunityList from "../pages/community/CommunityList.jsx";
 import CommunityDetail from "../pages/community/CommunityDetail.jsx";
 import CommunityWrite from "../pages/community/CommunityWrite.jsx";
@@ -33,6 +35,7 @@ import DoctorAdApplyPage from "../pages/doctor/doctorPage/DoctorAdApplyPage.jsx"
 import DoctorReportPage from "../pages/doctorReport/DoctorReportPage.jsx";
 import DoctorPatientListPage from "../pages/doctor/DoctorPatientListPage.jsx";
 import FeedbackPage from "../pages/feedback/FeedbackPage.jsx";
+import DesignPreviewApp from "../design-preview/DesignPreviewApp.jsx";
 
 export default function AppRouter() {
     return (
@@ -47,6 +50,7 @@ export default function AppRouter() {
                 <Route path="/diary" element={<InjectionDiary />} />
                 <Route path="/oauth-success" element={<OAuthSuccessPage />} />
                 <Route path="/hospitals" element={<HospitalMapPage />}/>                
+                <Route path="/pharmacies" element={<PharmacyMapPage />} />
                 <Route path="/community" element={<CommunityList />} />
                 <Route path="/community/write" element={<CommunityWrite />} />
                 <Route path="/community/:id" element={<CommunityDetail />} />
@@ -66,6 +70,7 @@ export default function AppRouter() {
                 <Route index element={<AdminDashboardPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="facilities" element={<AdminFacilitiesPage />} />
+                <Route path="pharmacies" element={<AdminPharmaciesPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="inquiries" element={<AdminInquiriesPage />} />
                 <Route path="contents" element={<AdminContentsPage />} />
@@ -81,6 +86,9 @@ export default function AppRouter() {
 
             {/* 최초 로그인 후 추가 정보 입력 */}
             <Route path="/onboarding" element={<OnboardingPage />} />
+
+            {/* 로컬 전용 디자인 시안 — production 네비게이션에서 연결되지 않음 */}
+            <Route path="/design-preview/*" element={<DesignPreviewApp />} />
         </Routes>
     );
 }

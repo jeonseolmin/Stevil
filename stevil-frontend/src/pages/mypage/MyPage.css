@@ -34,11 +34,11 @@
 }
 
 .mypage-card {
-    padding: 34px;
+    padding: var(--app-space-5);
     background: var(--color-surface);
     border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-large);
-    box-shadow: var(--shadow-small);
+    border-radius: var(--app-radius-md);
+    box-shadow: var(--app-elevation-1);
 }
 
 /* 상단 프로필 영역 (대시보드와 동일한 프로필 원형 스타일 적용) */
@@ -96,7 +96,7 @@
 /* 섹션 공통 헤더 */
 .mypage-section h3 {
     margin: 0 0 16px 0;
-    font-size: 21px;
+    font: var(--app-text-section-title);
     letter-spacing: -0.03em;
     color: var(--color-text-primary);
 }
@@ -114,13 +114,14 @@
 
 /* 버튼 스타일 (대시보드 버튼 테마) */
 .edit-btn {
+    min-height: var(--app-tap-min);
     padding: 8px 14px;
     color: var(--color-primary-dark);
     font-size: 14px;
     font-weight: 800;
     background: var(--color-primary-soft);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--app-radius-sm);
     cursor: pointer;
     transition: background-color 160ms ease;
 }
@@ -136,7 +137,7 @@
     background: var(--color-surface-soft);
     border: 1px solid var(--color-border-light);
     padding: 20px;
-    border-radius: var(--radius-medium);
+    border-radius: var(--app-radius-md);
     line-height: 1.6;
     font-style: italic;
     word-break: keep-all;
@@ -146,7 +147,7 @@
     width: 100%;
     padding: 16px;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-medium);
+    border-radius: var(--app-radius-sm);
     background: var(--color-surface-soft);
     font-size: 15px;
     margin-bottom: 16px;
@@ -167,10 +168,11 @@
 }
 
 .cancel-btn, .save-btn {
+    min-height: var(--app-tap-min);
     padding: 11px 18px;
     font-size: 14px;
     font-weight: 800;
-    border-radius: 10px;
+    border-radius: var(--app-radius-sm);
     cursor: pointer;
     border: none;
 }
@@ -197,7 +199,7 @@
     padding: 22px;
     background: var(--color-surface-soft);
     border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-medium);
+    border-radius: var(--app-radius-md);
     text-align: left;
 }
 
@@ -232,7 +234,7 @@
     padding: 16px 20px;
     background: var(--color-surface-soft);
     border: 1px solid transparent;
-    border-radius: 14px;
+    border-radius: var(--app-radius-md);
     cursor: pointer;
     transition:
             background-color 160ms ease,
@@ -288,7 +290,7 @@
     padding: 40px;
     color: var(--color-text-muted);
     background: var(--color-surface-soft);
-    border-radius: var(--radius-medium);
+    border-radius: var(--app-radius-md);
     font-size: 15px;
 }
 
@@ -306,7 +308,7 @@
 
     .mypage-card {
         padding: 24px 20px;
-        border-radius: 18px;
+        border-radius: var(--app-radius-md);
     }
 
     .mypage-header {
@@ -349,7 +351,7 @@
     padding: 8px 14px;
     background: var(--color-surface-soft);
     border: 1px solid var(--color-border-light);
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     color: var(--color-text-secondary);
     font-size: 14px;
     font-weight: 700;
@@ -381,7 +383,7 @@
     justify-content: center;
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     color: var(--color-text-secondary);
     font-size: 15px;
     font-weight: 700;
@@ -402,9 +404,9 @@
 
 /* --- 주치의 섹션 --- */
 .attending-doctor-box {
-    background: #f8fbfb;
-    border: 1px solid #dce9e6;
-    border-radius: 12px;
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--app-radius-md);
     padding: 20px;
     margin-top: 12px;
 }
@@ -417,17 +419,18 @@
 
 .unregistered-doctor p {
     margin: 0;
-    color: #657b78;
+    color: var(--color-text-secondary);
     font-size: 14px;
     line-height: 1.5;
 }
 
 .btn-register-doctor {
-    background: #20bfa9;
-    color: white;
+    min-height: var(--app-tap-min);
+    background: var(--color-primary);
+    color: var(--color-text-white);
     border: none;
     padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     font-weight: 700;
     font-size: 14px;
     cursor: pointer;
@@ -435,7 +438,7 @@
 }
 
 .btn-register-doctor:hover {
-    background: #199e8a;
+    background: var(--color-primary-dark);
 }
 
 .registered-doctor {
@@ -446,15 +449,15 @@
 
 .doctor-icon {
     font-size: 32px;
-    background: white;
+    background: var(--color-surface);
     padding: 12px;
     border-radius: 50%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-small);
 }
 
 .registered-doctor strong {
     font-size: 16px;
-    color: #183a37;
+    color: var(--color-text-primary);
     display: block;
     margin-bottom: 4px;
 }
@@ -462,5 +465,5 @@
 .registered-doctor p {
     margin: 0;
     font-size: 13px;
-    color: #657b78;
+    color: var(--color-text-secondary);
 }

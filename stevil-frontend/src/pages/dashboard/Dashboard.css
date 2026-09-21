@@ -1,8 +1,8 @@
 .dashboard-page {
     min-height: calc(100vh - 76px);
-    padding: 38px 24px 110px;
+    padding: var(--app-space-8) var(--app-space-5) 110px;
 
-    background: #f5f7f4;
+    background: var(--color-background);
 }
 
 .dashboard-container {
@@ -21,13 +21,13 @@
     justify-content: space-between;
 
     gap: 20px;
-    margin-bottom: 28px;
+    margin-bottom: var(--app-space-5);
 }
 
 .dashboard-eyebrow {
     display: inline-block;
 
-    margin-bottom: 12px;
+    margin-bottom: var(--app-space-3);
 
     color: #608879;
 
@@ -41,15 +41,8 @@
 
     color: #203e34;
 
-    font-size: clamp(
-        26px,
-        3.3vw,
-        37px
-    );
-
-    font-weight: 600;
-    line-height: 1.35;
-    letter-spacing: -0.04em;
+    font: var(--app-text-page-title);
+    letter-spacing: -0.03em;
 }
 
 .dashboard-welcome h1 br {
@@ -109,25 +102,18 @@
 .dashboard-weight-summary,
 .dashboard-panel,
 .dashboard-daily-section {
-    padding: 26px;
+    padding: var(--app-space-5);
 
     background: var(--color-surface);
 
     border: 1px solid #e6ece5;
-    border-radius: 22px;
+    border-radius: var(--app-radius-md);
 
-    box-shadow:
-        0 5px 24px
-        rgba(
-            35,
-            68,
-            51,
-            0.015
-        );
+    box-shadow: var(--app-elevation-1);
 }
 
 .dashboard-weight-summary {
-    margin-bottom: 24px;
+    margin-bottom: var(--app-space-5);
 }
 
 .dashboard-section-heading {
@@ -136,7 +122,7 @@
     justify-content: space-between;
 
     gap: 20px;
-    margin-bottom: 22px;
+    margin-bottom: var(--app-space-5);
 }
 
 .dashboard-section-heading span {
@@ -156,12 +142,12 @@
 
     color: #243e32;
 
-    font-size: 19px;
-    font-weight: 600;
+    font: var(--app-text-section-title);
     letter-spacing: -0.03em;
 }
 
 .dashboard-text-button {
+    min-height: var(--app-tap-min);
     padding: 10px 15px;
 
     color: #40795e;
@@ -194,12 +180,12 @@
 .weight-card {
     min-height: 162px;
 
-    padding: 23px;
+    padding: var(--app-space-5);
 
     background: #f4f6f1;
 
     border: 0;
-    border-radius: 17px;
+    border-radius: var(--app-radius-md);
 }
 
 .weight-card:nth-child(3) {
@@ -287,13 +273,19 @@
 .weight-card strong {
     display: block;
 
-    font-size: 38px;
-    font-weight: 600;
+    font: var(--app-text-metric);
 
     font-variant-numeric:
         tabular-nums;
 
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
+}
+
+/* Exactly one hero number per screen (§ design-preview typography rule):
+   the primary card's current-weight value outranks the two secondary
+   metrics, which is why only this card gets the larger hero token. */
+.weight-card--primary strong {
+    font: var(--app-text-metric-hero);
 }
 
 .weight-card strong small {
@@ -306,7 +298,7 @@
 }
 
 .weight-card p {
-    margin: 12px 0 0;
+    margin: var(--app-space-3) 0 0;
 
     color: var(--color-text-muted);
 
@@ -388,7 +380,7 @@
 
     gap: 20px;
 
-    margin-bottom: 24px;
+    margin-bottom: var(--app-space-5);
 }
 
 .dashboard-panel {
@@ -429,7 +421,7 @@
 }
 
 .dashboard-empty-chart strong {
-    margin-bottom: 8px;
+    margin-bottom: var(--app-space-2);
 
     font-size: 18px;
 }
@@ -446,6 +438,7 @@
 }
 
 .dashboard-empty-chart button {
+    min-height: var(--app-tap-min);
     padding: 11px 16px;
 
     color: #457553;
@@ -468,7 +461,7 @@
 .quick-action-list {
     display: grid;
 
-    gap: 8px;
+    gap: var(--app-space-2);
 }
 
 .quick-action-list > button {
@@ -479,6 +472,7 @@
     gap: 14px;
 
     width: 100%;
+    min-height: var(--app-tap-min);
 
     padding: 13px;
 
@@ -490,7 +484,7 @@
         1px solid
         #eef1e9;
 
-    border-radius: 14px;
+    border-radius: var(--app-radius-md);
 
     cursor: pointer;
 
@@ -538,7 +532,7 @@ button
     flex: 1;
     flex-direction: column;
 
-    gap: 4px;
+    gap: var(--app-space-1);
 }
 
 .quick-action-list strong {
@@ -566,7 +560,7 @@ button
    ========================================================= */
 
 .dashboard-daily-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--app-space-5);
 }
 
 .daily-card-grid {
@@ -587,7 +581,7 @@ button
         1px solid
         #eef1e9;
 
-    border-radius: 16px;
+    border-radius: var(--app-radius-md);
 }
 
 .daily-card-status {
@@ -609,7 +603,7 @@ button
 }
 
 .daily-card h3 {
-    margin-bottom: 8px;
+    margin-bottom: var(--app-space-2);
 
     font-size: 16px;
 }
@@ -628,6 +622,7 @@ button
 }
 
 .daily-card button {
+    min-height: var(--app-tap-min);
     padding: 11px 16px;
 
     color: #457553;
@@ -726,6 +721,7 @@ button
 }
 
 .dashboard-state--error button {
+    min-height: var(--app-tap-min);
     padding: 12px 18px;
 
     color: #ffffff;
@@ -753,7 +749,7 @@ button
    ========================================================= */
 
 .dashboard-premium-banner {
-    margin-bottom: 32px;
+    margin-bottom: var(--app-space-6);
 
     overflow: hidden;
 
@@ -803,9 +799,9 @@ button
 
     align-items: center;
 
-    gap: 16px;
+    gap: var(--app-space-4);
 
-    padding: 24px;
+    padding: var(--app-space-5);
 }
 
 .banner-badge {
@@ -846,9 +842,9 @@ button
    ========================================================= */
 
 .dashboard-sponsor-section {
-    margin-top: 24px;
+    margin-top: var(--app-space-5);
 
-    padding: 16px;
+    padding: var(--app-space-4);
 
     text-align: center;
 
@@ -917,7 +913,7 @@ button
     width: 90%;
     max-width: 340px;
 
-    padding: 32px;
+    padding: var(--app-space-6);
 
     text-align: center;
 
@@ -973,7 +969,7 @@ button
 .popup-actions {
     display: flex;
 
-    gap: 8px;
+    gap: var(--app-space-2);
 }
 
 .popup-actions button {
@@ -1063,8 +1059,8 @@ button
 ) {
     .dashboard-page {
         padding:
-            26px
-            16px
+            var(--app-space-5)
+            var(--app-space-4)
             120px;
     }
 
@@ -1078,7 +1074,7 @@ button
     .dashboard-daily-section {
         padding: 19px;
 
-        border-radius: 18px;
+        border-radius: var(--app-radius-md);
     }
 
     .dashboard-section-heading {
@@ -1108,10 +1104,6 @@ button
 
     .weight-card > span {
         margin-bottom: 10px;
-    }
-
-    .weight-card strong {
-        font-size: 32px;
     }
 
     .dashboard-text-button {

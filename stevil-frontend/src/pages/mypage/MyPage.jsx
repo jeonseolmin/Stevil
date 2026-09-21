@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import ChatModal from '../chat/ChatModal'; 
 import AttendingDoctorModal from './AttendingDoctorModal';
-import './MyPage.css'; 
+import './MyPage.css';
+import { IconProfile } from '../../components/icons/Icons.jsx';
 
 export default function MyPage() {
     const navigate = useNavigate();
@@ -50,8 +51,8 @@ export default function MyPage() {
     const fetchMyChatRooms = async (nickname) => {
         if (!nickname) return;
         try {
-            const response = await axiosInstance.get(`/chat/rooms?myNickname=${nickname}`); 
-            setChatRooms(response.data);
+            const response = await axiosInstance.get(`/chat/rooms?myNickname=${nickname}`);
+            setChatRooms(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("채팅방 목록 로드 실패", error);
         }
@@ -60,8 +61,8 @@ export default function MyPage() {
     const fetchMyPosts = async (page) => {
         try {
             const response = await axiosInstance.get(`/users/me/posts?page=${page}`);
-            setMyPosts(response.data.content);
-            setTotalPages(response.data.totalPages);
+            setMyPosts(Array.isArray(response.data?.content) ? response.data.content : []);
+            setTotalPages(response.data?.totalPages ?? 0);
         } catch (error) {
             console.error("게시글 로드 실패", error);
         }
@@ -98,7 +99,7 @@ export default function MyPage() {
                             {profile.profileImage ? (
                                 <img src={profile.profileImage} alt="프로필" />
                             ) : (
-                                <span>👤</span>
+                                <span><IconProfile width={36} height={36} /></span>
                             )}
                         </div>
                         <div className="mypage-info">
@@ -178,15 +179,15 @@ export default function MyPage() {
                         <div className="activity-stats">
                             <div className="stat-box">
                                 <span className="stat-label">작성한 글</span>
-                                <span className="stat-number">{profile.postCount}</span>
+                                <span className="stat-number">{profile.postCount ?? 0}</span>
                             </div>
                             <div className="stat-box">
                                 <span className="stat-label">작성한 댓글</span>
-                                <span className="stat-number">{profile.commentCount}</span>
+                                <span className="stat-number">{profile.commentCount ?? 0}</span>
                             </div>
                             <div className="stat-box">
                                 <span className="stat-label">약 투여일</span>
-                                <span className="stat-number">{profile.medicationDays}일</span>
+                                <span className="stat-number">{profile.medicationDays ?? 0}일</span>
                             </div>
                         </div>
                     </div>

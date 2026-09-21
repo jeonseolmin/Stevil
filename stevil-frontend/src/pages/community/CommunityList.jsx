@@ -8,6 +8,7 @@ const CommunityList = () => {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [posts, setPosts] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -45,9 +46,11 @@ const CommunityList = () => {
         setPosts(response.data || []);
         setTotalPages(1);
       }
+      setLoadError(false);
     } catch (error) {
       console.error("게시글 조회 실패", error);
       setPosts([]);
+      setLoadError(true);
     }
   };
 
@@ -116,7 +119,13 @@ const CommunityList = () => {
                 <span className="col-date">{post.createdAt ? post.createdAt.substring(0, 10) : ''}</span>
               </div>
             ))}
-            {posts.length === 0 && <div className="ste-empty">등록된 게시글이 없습니다.</div>}
+            {posts.length === 0 && loadError && (
+              <div className="ste-empty">
+                게시글을 불러오지 못했습니다.{' '}
+                <button className="ste-page-nav-btn" onClick={() => fetchPosts(currentPage)}>다시 시도</button>
+              </div>
+            )}
+            {posts.length === 0 && !loadError && <div className="ste-empty">등록된 게시글이 없습니다.</div>}
           </div>
 
           {totalPages > 0 && (

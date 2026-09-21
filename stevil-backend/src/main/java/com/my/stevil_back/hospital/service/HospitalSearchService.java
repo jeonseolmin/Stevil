@@ -3,6 +3,9 @@ package com.my.stevil_back.hospital.service;
 import com.my.stevil_back.hospital.config.NaverSearchProperties;
 import com.my.stevil_back.hospital.dto.response.HospitalResponse;
 import com.my.stevil_back.hospital.dto.response.NaverLocalSearchResponse;
+import com.my.stevil_back.hospital.entity.enumType.FacilityApprovalStatus;
+import com.my.stevil_back.hospital.entity.enumType.FacilityType;
+import com.my.stevil_back.hospital.repository.MedicalFacilityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,9 @@ import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,7 @@ public class HospitalSearchService {
     private final RestClient naverSearchRestClient;
     private final NaverSearchProperties properties;
     private final ObjectMapper objectMapper;
+    private final MedicalFacilityRepository medicalFacilityRepository;
 
     public List<HospitalResponse> search(
             String keyword,
@@ -48,6 +54,7 @@ public class HospitalSearchService {
         }
 
         String normalizedKeyword = normalizeKeyword(keyword);
+        Set<String> partnerRoadAddresses = fetchPartnerRoadAddresses();
 
         try {
             String responseBody =
@@ -102,7 +109,8 @@ public class HospitalSearchService {
                     .map(item -> toHospital(
                             item,
                             currentLatitude,
-                            currentLongitude
+                            currentLongitude,
+                            partnerRoadAddresses
                     ))
                     .sorted(comparator)
                     .toList();
@@ -157,7 +165,8 @@ public class HospitalSearchService {
     private HospitalResponse toHospital(
             NaverLocalSearchResponse.Item item,
             Double currentLatitude,
-            Double currentLongitude
+            Double currentLongitude,
+            Set<String> partnerRoadAddresses
     ) {
         Double longitude =
                 parseCoordinate(item.mapx(), 180);
@@ -173,6 +182,10 @@ public class HospitalSearchService {
                         longitude
                 );
 
+        boolean isPartner = partnerRoadAddresses.contains(
+                normalizeAddress(item.roadAddress())
+        );
+
         return new HospitalResponse(
                 stripHtml(item.title()),
                 item.category(),
@@ -182,8 +195,39 @@ public class HospitalSearchService {
                 latitude,
                 longitude,
                 distanceKm,
-                blankToNull(item.link())
+                blankToNull(item.link()),
+                isPartner
         );
+    }
+
+    /*
+     * 승인된(APPROVED) 병원 시설의 도로명 주소를 1회 조회해
+     * 정규화된 값의 Set으로 반환한다. 검색 결과 병원마다 DB를
+     * 조회하는 N+1을 피하기 위한 목적이며, 검색 1회당 1쿼리만 발생한다.
+     */
+    private Set<String> fetchPartnerRoadAddresses() {
+        return medicalFacilityRepository
+                .findByFacilityTypeAndApprovalStatus(
+                        FacilityType.HOSPITAL,
+                        FacilityApprovalStatus.APPROVED
+                )
+                .stream()
+                .map(facility -> normalizeAddress(
+                        facility.getRoadAddress()
+                ))
+                .collect(Collectors.toSet());
+    }
+
+    /*
+     * 네이버 검색 결과의 도로명 주소와 관리자가 직접 입력한
+     * MedicalFacility.roadAddress는 서로 다른 경로로 만들어진 문자열이라
+     * 공백 차이 정도만 최소한으로 보정한다. 표기 방식 자체가 다른 경우
+     * (예: 지번 축약, 건물명 유무)는 이 로직으로 매칭되지 않는다 — 알려진 한계.
+     */
+    private String normalizeAddress(String value) {
+        return value == null
+                ? ""
+                : value.trim().replaceAll("\\s+", "");
     }
 
     private Double parseCoordinate(

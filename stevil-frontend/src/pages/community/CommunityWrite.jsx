@@ -333,7 +333,7 @@ const CommunityWrite = () => {
               {selectedFiles.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', marginTop: '20px' }}>
                   {selectedFiles.map(item => (
-                    <div key={item.id} style={{ background: '#fff', border: '1px solid var(--color-border-light)', borderRadius: '12px', padding: '16px', boxShadow: 'var(--shadow-small)' }}>
+                    <div key={item.id} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border-light)', borderRadius: '12px', padding: '16px', boxShadow: 'var(--app-elevation-1)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontWeight: '700', fontSize: '14px', color: 'var(--color-text-primary)' }}>
                           {item.file.name} <span style={{ color: 'var(--color-text-muted)', fontWeight: '600' }}>({formatFileSize(item.file.size)})</span>
@@ -364,7 +364,7 @@ const CommunityWrite = () => {
                                 {excelPreviews[item.id].map((row, rowIdx) => (
                                   <tr key={rowIdx}>
                                     {row.map((cell, colIdx) => (
-                                      <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '6px 10px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : '#fff', fontWeight: rowIdx === 0 ? '700' : 'normal', color: 'var(--color-text-primary)' }}>
+                                      <td key={colIdx} style={{ border: '1px solid var(--color-border-light)', padding: '6px 10px', background: rowIdx === 0 ? 'var(--color-surface-soft)' : 'var(--color-surface)', fontWeight: rowIdx === 0 ? '700' : 'normal', color: 'var(--color-text-primary)' }}>
                                         {cell}
                                       </td>
                                     ))}

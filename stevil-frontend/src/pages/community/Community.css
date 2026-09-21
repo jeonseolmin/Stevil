@@ -29,11 +29,10 @@
 }
 
 .ste-title {
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 800;
+  font: var(--app-text-page-title);
   color: var(--color-text-primary);
   margin: 0 0 8px 0;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
 }
 
 .ste-subtitle {
@@ -45,8 +44,8 @@
 /* 카드 박스 스타일 */
 .ste-card {
   background: var(--color-surface);
-  border-radius: var(--radius-large);
-  box-shadow: var(--shadow-small);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-elevation-1);
   border: 1px solid var(--color-border-light);
   padding: 30px;
   box-sizing: border-box;
@@ -84,17 +83,17 @@
 }
 
 .ste-btn-danger {
-  background: #ef4444;
+  background: var(--color-danger);
   color: #ffffff;
   border: none;
   padding: 11px 22px;
-  border-radius: 12px;
+  border-radius: var(--app-radius-sm);
   font-size: 14px;
   font-weight: 800;
   cursor: pointer;
 }
 .ste-btn-danger:hover {
-  background: #dc2626;
+  filter: brightness(0.92);
 }
 
 /* 작은 사이즈 버튼 */
@@ -113,7 +112,7 @@
   color: var(--color-primary-dark);
 }
 .ste-text-btn.danger {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
 /* 툴바 & 탭 */
@@ -147,7 +146,7 @@
   background: var(--color-surface);
   color: var(--color-primary-dark);
   border-color: var(--color-primary);
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--app-elevation-1);
 }
 
 .ste-search {
@@ -197,7 +196,7 @@
   color: var(--color-text-secondary);
   font-size: 13px;
   background: var(--color-surface-soft);
-  border-radius: var(--radius-medium);
+  border-radius: var(--app-radius-md);
   margin-bottom: 8px;
   border-bottom: none;
 }
@@ -208,7 +207,7 @@
 }
 .ste-tr:hover {
   background: var(--color-primary-soft);
-  border-radius: var(--radius-medium);
+  border-radius: var(--app-radius-md);
 }
 
 .col-cat { width: 100px; text-align: center; }
@@ -228,6 +227,56 @@
 .ste-badge.자유 { background: #e0f2fe; color: #0369a1; }
 .ste-badge.정보 { background: var(--color-primary-soft); color: var(--color-primary-dark); }
 .ste-badge.질문 { background: #fef3c7; color: #b45309; }
+
+/* 375px 등 좁은 화면: 4-column table row는 폭이 부족해 줄바꿈이 깨짐.
+   같은 데이터를 "[분류] 제목" 1줄 + "작성자 · 날짜" 1줄의 flat row로
+   재배치한다 — 새 정보를 만들지 않고 기존 4개 필드만 재배치. */
+@media (max-width: 600px) {
+  .ste-th {
+    display: none;
+  }
+
+  .ste-tr {
+    flex-wrap: wrap;
+    row-gap: 6px;
+    padding: 14px 4px;
+  }
+
+  .col-cat {
+    order: 1;
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .col-title {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 0 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .col-author,
+  .col-date {
+    order: 3;
+    width: auto;
+    flex: 0 0 auto;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .col-author {
+    flex-basis: 100%;
+  }
+
+  .col-date::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--color-text-muted);
+  }
+}
 
 .ste-empty {
   text-align: center;
@@ -381,7 +430,7 @@
   cursor: pointer;
 }
 .action-btn:hover { color: var(--color-primary-dark); }
-.action-btn.danger:hover { color: #ef4444; }
+.action-btn.danger:hover { color: var(--color-danger); }
 
 .ste-comment-input-wrapper.reply-mode {
   margin-top: 16px;
@@ -457,7 +506,7 @@
   background: var(--color-surface);
   width: 400px;
   padding: 30px;
-  border-radius: var(--radius-large);
+  border-radius: var(--app-radius-md);
   box-shadow: var(--shadow-medium);
   border: 1px solid var(--color-border);
 }
@@ -520,16 +569,16 @@
 
 .ste-file-clear-btn {
   background: transparent;
-  border: 1px solid #ef4444;
-  color: #ef4444;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--app-radius-sm);
   font-size: 12px;
   cursor: pointer;
   font-weight: 800;
 }
 .ste-file-clear-btn:hover {
-  background: #fef2f2;
+  background: var(--color-danger-soft);
 }
 
 /* 상세페이지: 첨부파일 표시 영역 */
@@ -538,7 +587,7 @@
   margin-bottom: 40px;
   padding: 20px;
   background: var(--color-surface-soft);
-  border-radius: var(--radius-medium);
+  border-radius: var(--app-radius-md);
   border: 1px solid var(--color-border-light);
 }
 
@@ -553,7 +602,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--app-elevation-1);
 }
 
 .ste-file-link {
@@ -632,5 +681,5 @@
 .ste-page-num-btn.active {
   background: var(--color-primary);
   color: #ffffff;
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--app-elevation-1);
 }

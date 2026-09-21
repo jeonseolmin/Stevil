@@ -21,7 +21,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${app.frontend.base-url}")
+    @Value("${app.frontend-url}")
     private String frontendBaseUrl;
 
     public void sendFeedbackRequestEmail(String toEmail, String nickname) {

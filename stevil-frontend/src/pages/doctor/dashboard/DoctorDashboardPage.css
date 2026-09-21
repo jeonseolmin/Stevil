@@ -13,7 +13,7 @@
 }
 
 .doctor-dashboard-heading span {
-    color: #3abdb1;
+    color: var(--color-primary);
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.1em;
@@ -27,20 +27,20 @@
 
 .doctor-dashboard-heading p {
     margin: 0;
-    color: #657b78;
+    color: var(--color-text-secondary);
 }
 
 .doctor-dashboard-heading > small {
-    color: #849692;
+    color: var(--color-text-muted);
     font-size: 12px;
 }
 
 .doctor-dashboard-error {
     margin-bottom: 18px;
     padding: 13px 16px;
-    color: #a63232;
-    background: #fff1f1;
-    border: 1px solid #f4caca;
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-soft-border);
     border-radius: 12px;
 }
 
@@ -60,8 +60,8 @@
 
     text-align: left;
 
-    background: #fff;
-    border: 1px solid #dce9e6;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
     border-radius: 17px;
     box-shadow: 0 8px 24px rgba(24, 58, 55, 0.06);
 }
@@ -76,19 +76,19 @@
 }
 
 .doctor-stat-card > span {
-    color: #657b78;
+    color: var(--color-text-secondary);
     font-size: 13px;
     font-weight: 700;
 }
 
 .doctor-stat-card > strong {
     margin: 18px 0 12px;
-    color: #154e48;
+    color: var(--color-primary-dark);
     font-size: 34px;
 }
 
 .doctor-stat-card > small {
-    color: #8b9b98;
+    color: var(--color-text-muted);
     line-height: 1.5;
 }
 
@@ -103,7 +103,7 @@
 
 .doctor-section-title p {
     margin: 0;
-    color: #718582;
+    color: var(--color-text-muted);
     font-size: 14px;
 }
 
@@ -168,11 +168,21 @@
     .doctor-dashboard-grid {
         grid-template-columns: 1fr;
     }
+
+    .doctor-code-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .btn-copy-code {
+        width: 100%;
+    }
 }
 
 /* 의사 고유 코드 배너 */
 .doctor-code-banner {
-    background: linear-gradient(135deg, #154e48 0%, #20bfa9 100%);
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
     border-radius: 16px;
     padding: 24px 32px;
     margin-bottom: 32px;
@@ -204,7 +214,7 @@
 
 .btn-copy-code {
     background: white;
-    color: #154e48;
+    color: var(--color-primary-dark);
     border: none;
     padding: 14px 24px;
     border-radius: 12px;

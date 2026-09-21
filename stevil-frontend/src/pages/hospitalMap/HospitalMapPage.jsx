@@ -1,8 +1,53 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../api/axiosInstance";
 import { loadNaverMap } from "../../api/naverMapLoader";
 import "./HospitalMapPage.css";
+
+/*
+ * axiosInstance(XHR) 대신 fetch를 직접 쓴다.
+ *
+ * 로그인 직후처럼 axios 요청이 여러 개 동시에 몰리는 상황에서 backend가
+ * 순간적으로 500을 내는 현상이 관찰됐는데(원인 미확정, 별도 이슈), 같은
+ * 요청을 fetch로 보내면 재현되지 않는다(OAuthSuccessPage.jsx에서 이미
+ * 같은 방식으로 확인/적용함). 이 페이지는 마운트 시 광고 목록 조회 +
+ * 병원 검색이 거의 동시에 나가서 그 증상과 정확히 맞아떨어져, 이 두
+ * 호출에 한해 fetch로 우회한다. axios 응답과 동일한 { data } 모양,
+ * 동일한 error.response.status/data 모양을 유지해 호출부는 그대로 둔다.
+ */
+async function apiGet(path, params) {
+    const token = localStorage.getItem("accessToken");
+
+    const entries = params
+        ? Object.entries(params).filter(
+            ([, value]) => value !== undefined && value !== null
+        )
+        : [];
+
+    const query = entries.length
+        ? `?${new URLSearchParams(entries).toString()}`
+        : "";
+
+    const response = await fetch(`/api${path}${query}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        const error = new Error(
+            `${path} failed with ${response.status}`
+        );
+
+        error.response = {
+            status: response.status,
+            data,
+        };
+
+        throw error;
+    }
+
+    return { data };
+}
 
 const DEFAULT_POSITION = {
     latitude: 37.5666103,
@@ -61,6 +106,11 @@ export default function HospitalMapPage() {
     const mapsRef = useRef(null);
     const markersRef = useRef([]);
     const currentMarkerRef = useRef(null);
+    // 마커 재생성 effect는 selectedIndex를 의존성에 넣지 않는다(넣으면 카드
+    // 클릭마다 지도가 fitBounds로 다시 확대/축소됨) — 대신 재생성 시점의
+    // 선택 상태를 ref로 읽어, 위치 갱신 등으로 마커가 다시 그려져도 이미
+    // 선택돼 있던 마커의 강조 표시가 사라지지 않게 한다.
+    const selectedIndexRef = useRef(null);
 
     const [keyword, setKeyword] = useState("");
     const [hospitals, setHospitals] = useState([]);
@@ -82,7 +132,7 @@ export default function HospitalMapPage() {
     useEffect(() => {
         const fetchActiveAds = async () => {
             try {
-                const response = await axiosInstance.get("/ads/active");
+                const response = await apiGet("/ads/active");
                 setActiveAds(response.data);
             } catch (error) {
                 console.error("광고 목록을 불러오지 못했습니다.", error);
@@ -96,25 +146,31 @@ export default function HospitalMapPage() {
         if (!hospitals || hospitals.length === 0) return [];
 
         // 1. SEARCH_TOP(지역 검색 최상단 고정) 광고가 걸린 병원 이름 추출
+        // 빈 이름은 제외한다 — "".includes 매칭은 모든 병원을 광고로 만든다.
         const topAdNames = activeAds
             .filter(ad => ad.adType === "SEARCH_TOP")
-            .map(ad => ad.doctorName?.trim());
+            .map(ad => ad.doctorName?.trim())
+            .filter(Boolean);
 
         // 2. HIGHLIGHT(시각적 강조) 광고가 걸린 병원 이름 추출
         const highlightAdNames = activeAds
             .filter(ad => ad.adType === "HIGHLIGHT")
-            .map(ad => ad.doctorName?.trim());
+            .map(ad => ad.doctorName?.trim())
+            .filter(Boolean);
 
         // 3. 데이터에 광고 정보 매핑 및 정렬 (SEARCH_TOP인 병원을 맨 위로 이동)
+        // isPartner는 백엔드(/hospitals/search)가 판정해 내려주는 값을 그대로 신뢰한다.
+        // 프론트에서 병원명으로 제휴 여부를 다시 계산하지 않는다.
         const mapped = hospitals.map(hospital => {
-            const hName = hospital.name?.trim();
+            const hName = hospital.name?.trim() || "";
             const isTop = topAdNames.some(name => hName.includes(name));
             const isHighlight = highlightAdNames.some(name => hName.includes(name));
 
             return {
                 ...hospital,
                 isSearchTop: isTop,
-                isHighlight: isHighlight
+                isHighlight: isHighlight,
+                isPartner: Boolean(hospital.isPartner)
             };
         });
 
@@ -132,12 +188,10 @@ export default function HospitalMapPage() {
             setSearchError("");
             setSelectedIndex(null);
 
-            const response = await axiosInstance.get("/hospitals/search", {
-                params: {
-                    query: query?.trim() || "병원",
-                    latitude: position?.latitude,
-                    longitude: position?.longitude,
-                },
+            const response = await apiGet("/hospitals/search", {
+                query: query?.trim() || "병원",
+                latitude: position?.latitude,
+                longitude: position?.longitude,
             });
 
             setHospitals(response.data);
@@ -275,48 +329,108 @@ export default function HospitalMapPage() {
         markersRef.current.forEach((marker) => marker.setMap(null));
         markersRef.current = [];
 
-        const bounds = new maps.LatLngBounds();
-        let hasPosition = false;
+        // Naver Maps can report the SDK as loaded (loadNaverMap() resolves,
+        // isMapReady becomes true) while its auth callback still failed —
+        // internal constructors like LatLngBounds then throw synchronously
+        // inside this effect. There is no error boundary in this app, so an
+        // uncaught throw here unmounts the entire React tree, not just the
+        // map. Guard it so a broken/unauthenticated SDK degrades to "no
+        // markers" instead of a blank screen.
+        try {
+            const bounds = new maps.LatLngBounds();
+            let hasPosition = false;
 
-        processedHospitals.forEach((hospital, index) => {
-            if (hospital.latitude === null || hospital.longitude === null) {
-                return;
+            processedHospitals.forEach((hospital, index) => {
+                if (hospital.latitude === null || hospital.longitude === null) {
+                    return;
+                }
+
+                const position = new maps.LatLng(
+                    hospital.latitude,
+                    hospital.longitude
+                );
+                const isAd = hospital.isSearchTop || hospital.isHighlight;
+                // "is-selected"는 여기서 넣지 않는다 — 선택은 이 마커 재생성
+                // effect와 별개로(아래 selectedIndex effect에서 marker.setIcon만
+                // 호출해) 갱신해서, 카드를 클릭할 때마다 지도가 다시 fitBounds
+                // 되며 확대/축소가 튀는 일이 없게 한다.
+                const baseClassName = [
+                    "hospital-map-marker",
+                    isAd ? "is-ad" : "",
+                    hospital.isPartner ? "is-partner" : "",
+                    index + 1 >= 10 ? "is-double-digit" : "",
+                ].filter(Boolean).join(" ");
+
+                const isInitiallySelected = index === selectedIndexRef.current;
+                const initialClassName = isInitiallySelected
+                    ? `${baseClassName} is-selected`
+                    : baseClassName;
+                // marker는 완전한 원이라 anchor를 항상 정중앙(size/2)으로 잡아야
+                // 좌표 위치가 원 중심에 오고, selected(44px)일 때도 커진 만큼만
+                // 살짝 더 커 보일 뿐 위치가 튀지 않는다.
+                const markerSize = isInitiallySelected ? 44 : 40;
+
+                const marker = new maps.Marker({
+                    map,
+                    position,
+                    title: hospital.name,
+                    icon: {
+                        content: `<span class="${initialClassName}"><b>${index + 1}</b></span>`,
+                        anchor: new maps.Point(markerSize / 2, markerSize / 2),
+                    },
+                });
+
+                marker.stevilBaseClassName = baseClassName;
+                marker.stevilLabel = index + 1;
+
+                maps.Event.addListener(marker, "click", () => {
+                    setSelectedIndex(index);
+                });
+
+                markersRef.current.push(marker);
+                bounds.extend(position);
+                hasPosition = true;
+            });
+
+            if (currentPosition) {
+                bounds.extend(new maps.LatLng(
+                    currentPosition.latitude,
+                    currentPosition.longitude
+                ));
             }
 
-            const position = new maps.LatLng(
-                hospital.latitude,
-                hospital.longitude
-            );
-            const marker = new maps.Marker({
-                map,
-                position,
-                title: hospital.name,
-                icon: {
-                    content: `<span class="hospital-map-marker ${hospital.isSearchTop ? 'is-top' : ''}"><b>${index + 1}</b></span>`,
-                    anchor: new maps.Point(18, 42),
-                },
-            });
-
-            maps.Event.addListener(marker, "click", () => {
-                setSelectedIndex(index);
-            });
-
-            markersRef.current.push(marker);
-            bounds.extend(position);
-            hasPosition = true;
-        });
-
-        if (currentPosition) {
-            bounds.extend(new maps.LatLng(
-                currentPosition.latitude,
-                currentPosition.longitude
-            ));
-        }
-
-        if (hasPosition) {
-            map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
+            if (hasPosition) {
+                map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
+            }
+        } catch (error) {
+            console.error("지도 마커 표시 실패", error);
         }
     }, [currentPosition, processedHospitals, isMapReady]);
+
+    // 선택된 마커만 강조 표시로 다시 그린다(마커를 전부 재생성하는 effect와
+    // 분리 — 그러면 카드를 클릭할 때마다 지도가 fitBounds로 다시 확대/축소되는
+    // 일 없이, 이미 만들어진 marker의 아이콘만 setIcon으로 교체한다).
+    useEffect(() => {
+        selectedIndexRef.current = selectedIndex;
+        const maps = mapsRef.current;
+
+        if (!maps) {
+            return;
+        }
+
+        markersRef.current.forEach((marker, index) => {
+            const isNowSelected = index === selectedIndex;
+            const className = isNowSelected
+                ? `${marker.stevilBaseClassName} is-selected`
+                : marker.stevilBaseClassName;
+            const markerSize = isNowSelected ? 44 : 40;
+
+            marker.setIcon({
+                content: `<span class="${className}"><b>${marker.stevilLabel}</b></span>`,
+                anchor: new maps.Point(markerSize / 2, markerSize / 2),
+            });
+        });
+    }, [selectedIndex]);
 
     useEffect(() => {
         if (selectedIndex === null || !mapRef.current) {
@@ -399,10 +513,11 @@ export default function HospitalMapPage() {
                         {processedHospitals.map((hospital, index) => (
                             <li key={`${hospital.name}-${hospital.address}-${index}`}>
                                 <div
-                                    className={`hospital-card 
+                                    className={`hospital-card
                                         ${selectedIndex === index ? "hospital-card--selected" : ""}
                                         ${hospital.isSearchTop ? "hospital-card--search-top" : ""}
                                         ${hospital.isHighlight ? "hospital-card--highlight" : ""}
+                                        ${hospital.isPartner ? "hospital-card--partner" : ""}
                                     `}
                                     role="button"
                                     tabIndex={0}
@@ -414,13 +529,22 @@ export default function HospitalMapPage() {
                                         }
                                     }}
                                 >
-                                    <span className="hospital-card-number">{index + 1}</span>
+                                    <span
+                                        className={`hospital-card-number
+                                            ${hospital.isPartner ? "is-partner" : ""}
+                                            ${hospital.isSearchTop || hospital.isHighlight ? "is-ad" : ""}
+                                            ${selectedIndex === index ? "is-selected" : ""}
+                                        `}
+                                    >
+                                        {index + 1}
+                                    </span>
                                     <span className="hospital-card-body">
                                         <span className="hospital-card-title-row">
                                             <div>
-                                                {/* 광고 뱃지 노출 영역 */}
-                                                {hospital.isSearchTop && <span className="ad-badge-top">추천 1위</span>}
-                                                {hospital.isHighlight && <span className="ad-badge-highlight">프리미엄</span>}
+                                                {/* 제휴/광고 뱃지 노출 영역 — 의료 품질을 암시하지 않는 중립적 표기만 사용 */}
+                                                {hospital.isPartner && <span className="partner-badge">제휴</span>}
+                                                {hospital.isSearchTop && <span className="ad-badge-top">광고</span>}
+                                                {hospital.isHighlight && <span className="ad-badge-highlight">광고</span>}
                                                 <strong>{hospital.name}</strong>
                                             </div>
                                             {formatDistance(hospital.distanceKm) && (

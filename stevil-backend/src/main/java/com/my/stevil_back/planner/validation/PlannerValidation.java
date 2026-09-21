@@ -12,8 +12,13 @@ public final class PlannerValidation {
         if(p.nutritionGoal()!=null) {
             var goal=p.nutritionGoal();
             if(!goal.confirmed()) fail("영양 목표와 적용 대상 확인이 필요합니다.");
-            if(!Double.isFinite(goal.weightKg()) || !Double.isFinite(goal.proteinPerKg()) || goal.weightKg()*goal.proteinPerKg()*4>goal.calories()*.35)
-                fail("단백질 목표를 확인해 주세요. 목표 열량의 35%를 넘을 수 없습니다.");
+            if(!Double.isFinite(goal.weightKg()) || !Double.isFinite(goal.proteinPerKg()))
+                fail("단백질 목표를 확인해 주세요.");
+            /*
+             * 단백질이 열량의 35%를 넘는 것은 Stevil 내부 관리 기준(soft warning)이며
+             * 의료적 상한이 아니다. 하드 차단하지 않는다.
+             * (NutritionPolicy.isProteinWithinCalorieLimit()로 판정만 가능하게 유지)
+             */
         }
         if(p.weekStart().getDayOfWeek()!=DayOfWeek.MONDAY) fail("시작일은 월요일로 선택해 주세요.");
         if(!p.wakeTime().isBefore(p.sleepTime())) fail("기상·취침은 같은 날 기준으로 입력해 주세요.");

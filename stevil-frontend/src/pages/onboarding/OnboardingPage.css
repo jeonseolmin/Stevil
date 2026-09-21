@@ -347,12 +347,12 @@
     padding: 11px 14px;
     margin: 20px 0 0;
 
-    color: #b33c50;
+    color: var(--color-danger);
     font-size: 12px;
     font-weight: 600;
 
     background: #fff1f3;
-    border-radius: 11px;
+    border-radius: var(--app-radius-sm);
 }
 
 .onboarding-actions {
@@ -386,7 +386,7 @@
 .onboarding-button--primary {
     color: #ffffff;
     background: var(--color-primary);
-    box-shadow: var(--shadow-primary);
+    box-shadow: var(--app-elevation-1);
 }
 
 .onboarding-button--primary:hover {

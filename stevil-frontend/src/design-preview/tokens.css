@@ -1,0 +1,122 @@
+/*
+ * Design Preview — Premium Redesign, v4.
+ *
+ * Scoped entirely under `.dp-app` so nothing here can leak into or
+ * override the production theme (src/styles/theme.css). Brand green is
+ * NOT redefined — read directly from --color-primary/--color-* on :root
+ * (see "Stevil Green" rule in the brief: green stays a scarce accent,
+ * not a background color).
+ *
+ * v4 (2026-09-15): v3's serif-numeral signature is gone. Two verified
+ * problems drove this: (1) production has no @font-face for
+ * "Pretendard" anywhere — the old --dp-font-display stack was a name
+ * with nothing behind it, silently falling back to the OS default the
+ * whole time (confirmed live via Playwright: canvas text-width for the
+ * declared stack matched plain Arial exactly); (2) Noto Serif KR at 700
+ * for Korean UI text reads as a certificate/document face, not a health
+ * app. Fix: one real, verified-loading Korean sans (Noto Sans KR, same
+ * Google Fonts path proven to load) for everything. Hierarchy comes
+ * from weight/size/color, not a second typeface.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+.dp-app {
+    /* ---- surfaces: warm paper, not cool light-gray ---- */
+    --dp-bg: #faf7f1;
+    --dp-surface: #ffffff;
+    --dp-surface-sunken: #f2ede2;
+    --dp-hairline: #e7e0d2;
+    --dp-hairline-strong: #d9cfb8;
+
+    /* ---- ink: one neutral scale instead of many ad hoc grays ---- */
+    --dp-ink: #1f2b23;
+    --dp-ink-secondary: #55625a;
+    /* #6b7266 (not the lighter #8b9086 first tried) — ~5:1 against
+       --dp-bg, so 13px helper text still clears WCAG AA. */
+    --dp-text-muted: #6b7266;
+    --dp-neutral: #9aa199;
+
+    /* kept for back-compat with anything still reading the old names */
+    --dp-text: var(--dp-ink);
+    --dp-text-secondary: var(--dp-ink-secondary);
+    --dp-border: var(--dp-hairline);
+    --dp-border-strong: var(--dp-hairline-strong);
+
+    /* ---- brand: read from production tokens, never redefined ---- */
+    --dp-accent: var(--color-primary);
+    --dp-accent-dark: var(--color-primary-dark);
+    --dp-accent-soft: var(--color-primary-soft);
+    --dp-accent-hero: #1c3e30; /* deep ink-green, hero-surface only */
+
+    /* ---- second accent: warm clay, injection/medication moments ONLY */
+    --dp-second: #a8683f;
+    --dp-second-soft: #f2e6d8;
+
+    /* ---- text-safe semantic colors: --color-success/--color-danger from
+       the production theme are ~3.5-4:1 on this paper background, which
+       fails WCAG AA (4.5:1) for small bold text like delta labels. Reuse
+       the darker shade the badge system already uses for on-tint text
+       (danger) and the existing ink-green accent (success), rather than
+       inventing new colors. Fine for dots/bars/badge-tint text where the
+       3:1 non-text or larger-surface threshold applies. */
+    --dp-success-text: var(--dp-accent-hero);
+    --dp-danger-text: #a13f2c;
+
+    /* ---- radius: small utility, card, and sheet. No 20px+ radius on
+       everything — cards get the smaller of the two, sheets/modals the
+       larger. Card radius is deliberately modest (not the "excessive
+       radius everywhere" AI tell). */
+    --dp-radius-sm: 8px;
+    --dp-radius-md: 14px;
+    --dp-radius-hero: 24px;
+    --dp-radius-pill: 999px;
+
+    /* ---- spacing (4px base, slightly more generous top end) ---- */
+    --dp-space-1: 4px;
+    --dp-space-2: 8px;
+    --dp-space-3: 12px;
+    --dp-space-4: 16px;
+    --dp-space-5: 24px;
+    --dp-space-6: 32px;
+    --dp-space-8: 40px;
+    --dp-space-10: 56px;
+    --dp-space-12: 72px;
+
+    /* ---- elevation: card (subtle, real boundary) + sheet (modal) ---- */
+    --dp-elevation-0: none;
+    --dp-elevation-card: 0 1px 2px rgba(31, 43, 35, 0.04), 0 8px 20px -12px rgba(31, 43, 35, 0.12);
+    --dp-elevation-sheet: 0 -8px 32px rgba(20, 36, 28, 0.12);
+
+    /* ---- typography: one real, verified-loading Korean sans. No serif
+       "signature" — that formula (serif numerals = premium) is banned
+       per the design review. Hierarchy = weight + size + color only. */
+    --dp-font-display: "Noto Sans KR", -apple-system, "Malgun Gothic", sans-serif;
+
+    --dp-text-eyebrow: 700 11px/1 var(--dp-font-display);
+    --dp-text-page-title: 700 26px/1.25 var(--dp-font-display);
+    --dp-text-section-title: 700 16px/1.3 var(--dp-font-display);
+    --dp-text-metric-hero: 900 40px/1 var(--dp-font-display);
+    --dp-text-metric: 700 22px/1.15 var(--dp-font-display);
+    --dp-text-body: 400 15.5px/1.6 var(--dp-font-display);
+    --dp-text-helper: 400 13px/1.55 var(--dp-font-display);
+
+    /* ---- touch target ---- */
+    --dp-tap-min: 44px;
+
+    /* ---- safe area (PWA / native shell) ---- */
+    --dp-safe-top: env(safe-area-inset-top, 0px);
+    --dp-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* ---- PWA state colors ---- */
+    --dp-state-offline: #8a6d3b;
+    --dp-state-offline-bg: #f5ecd9;
+    --dp-state-update-bg: var(--color-primary-soft);
+    --dp-state-sync-bg: #eef2fb;
+    --dp-state-sync: var(--color-info);
+
+    color: var(--dp-ink);
+    background: var(--dp-bg);
+    font-family: var(--dp-font-display);
+    -webkit-font-smoothing: antialiased;
+}

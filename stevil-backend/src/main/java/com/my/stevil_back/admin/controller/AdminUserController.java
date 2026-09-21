@@ -4,7 +4,10 @@ import com.my.stevil_back.admin.dto.response.AdminUserResponse;
 import com.my.stevil_back.admin.dto.request.AdminUserRoleRequest;
 import com.my.stevil_back.admin.dto.request.AdminUserSuspensionRequest;
 import com.my.stevil_back.admin.service.AdminUserService;
+import com.my.stevil_back.common.notification.service.NotificationService;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
+import com.my.stevil_back.user.entity.User;
+import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +27,8 @@ public class AdminUserController {
 
     private final AdminUserService adminUserService;
     private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @GetMapping
     public ResponseEntity<Page<AdminUserResponse>> getUsers(
@@ -90,13 +95,12 @@ public class AdminUserController {
     }
 
     @PostMapping("/{userId}/feedback-email")
-    public ResponseEntity<Void> sendFeedbackEmail(@PathVariable Long userId) {
-        // 유저 정보 조회
-        AdminUserResponse user = adminUserService.getUser(userId);
+    public ResponseEntity<Void> sendFeedbackRequest(@PathVariable Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
 
-        // 해당 유저의 이메일로 피드백 요청 발송
-        String nickname = user.nickname() != null ? user.nickname() : "고객";
-        emailService.sendFeedbackRequestEmail(user.email(), nickname);
+        // 카카오톡 또는 이메일로 자동 라우팅되는 통합 서비스 호출
+        notificationService.sendFeedbackRequest(user);
 
         return ResponseEntity.ok().build();
     }

@@ -3,19 +3,30 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     z-index: 10000;
     backdrop-filter: blur(2px);
 }
 
 .doc-modal-content {
-    background: white;
+    background: var(--color-surface);
     width: 100%;
     max-width: 400px;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border-radius: var(--app-radius-hero) var(--app-radius-hero) 0 0;
+    padding: 24px 24px calc(24px + var(--app-safe-bottom));
+    box-shadow: var(--app-elevation-2);
+}
+
+@media (min-width: 640px) {
+    .doc-modal-overlay {
+        align-items: center;
+    }
+
+    .doc-modal-content {
+        border-radius: var(--app-radius-hero);
+        padding: 24px;
+    }
 }
 
 .doc-modal-header {
@@ -28,29 +39,30 @@
 .doc-modal-header h2 {
     margin: 0;
     font-size: 20px;
-    color: #183a37;
+    color: var(--color-text-primary);
 }
 
 .doc-close-btn {
     background: none;
     border: none;
     font-size: 24px;
-    color: #8b9b98;
+    color: var(--color-text-muted);
     cursor: pointer;
 }
 
 .doc-modal-desc {
     font-size: 14px;
-    color: #657b78;
+    color: var(--color-text-secondary);
     line-height: 1.5;
     margin-bottom: 24px;
 }
 
 .doc-modal-form input {
     width: 100%;
+    min-height: var(--app-tap-min);
     padding: 14px;
-    border: 2px solid #e2e8e8;
-    border-radius: 8px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--app-radius-sm);
     font-size: 16px;
     font-weight: 600;
     text-align: center;
@@ -61,15 +73,15 @@
 
 .doc-modal-form input:focus {
     outline: none;
-    border-color: #20bfa9;
+    border-color: var(--color-primary);
 }
 
 .doc-modal-form input.input-error {
-    border-color: #ef4444;
+    border-color: var(--color-danger);
 }
 
 .doc-error-text {
-    color: #ef4444;
+    color: var(--color-danger);
     font-size: 12px;
     display: block;
     margin-bottom: 16px;
@@ -84,8 +96,9 @@
 
 .doc-modal-actions button {
     flex: 1;
+    min-height: var(--app-tap-min);
     padding: 14px;
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     font-size: 14px;
     font-weight: 700;
     border: none;
@@ -93,13 +106,13 @@
 }
 
 .doc-btn-cancel {
-    background: #f1f5f5;
-    color: #657b78;
+    background: var(--color-surface-soft);
+    color: var(--color-text-secondary);
 }
 
 .doc-btn-submit {
-    background: #20bfa9;
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-text-white);
 }
 
 .doc-btn-submit:disabled {

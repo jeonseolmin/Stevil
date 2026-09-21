@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import './ProfileCardModal.css';
 import ChatModal from '../chat/ChatModal';
-import axiosInstance from '../../api/axiosInstance'; 
+import axiosInstance from '../../api/axiosInstance';
+import { IconProfile } from '../../components/icons/Icons.jsx';
 
 export default function ProfileCardModal({ targetUserEmail, onClose }) {
     const [profile, setProfile] = useState(null);
@@ -40,7 +41,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
             await axiosInstance.post('/reports', {
                 targetType: 'USER', // 유저 신고 타입
                 targetId: profile.id, // 유저 ID
-                category: 'ETC',
+                category: 'OTHER',
                 reason: reportReason
             });
             alert('사용자 신고가 정상적으로 접수되었습니다.');
@@ -90,7 +91,7 @@ export default function ProfileCardModal({ targetUserEmail, onClose }) {
                         {profile.profileImage ? (
                             <img src={profile.profileImage} alt="프로필" />
                         ) : (
-                            <div className="profile-placeholder">👤</div>
+                            <div className="profile-placeholder"><IconProfile width={44} height={44} /></div>
                         )}
                     </div>
                     <div className="profile-info">

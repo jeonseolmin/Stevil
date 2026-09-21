@@ -19,4 +19,5 @@ export const saveWeek = (plan) => axiosInstance.put("/planner", plan).then(r => 
 });
 
 export const loadPlannerProfile = () => axiosInstance.get("/planner/profile").then(r => r.data);
+export const updatePlannerActivityLevel = (activityLevel) => axiosInstance.patch("/planner/profile/activity-level", { activityLevel }).then(r => r.data);
 export const loadSnackCatalog = () => axiosInstance.get("/planner/snacks").then(r => r.data);

@@ -1,0 +1,144 @@
+/*
+ * 약국 찾기 전용 스타일. 레이아웃/marker/badge는 HospitalMapPage.css를 재사용하므로
+ * 여기에는 약국에만 있는 요소(샘플 안내, 필터 칩, 재고/영업 배지, 상세 표)만 둔다.
+ */
+
+.pharmacy-region {
+    margin-right: 6px;
+    color: var(--color-primary-dark);
+    font-weight: 800;
+}
+
+.pharmacy-sample-notice {
+    margin-bottom: 14px;
+    padding: 12px 16px;
+    color: #8a5e13;
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--color-warning-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-md);
+}
+
+.pharmacy-sample-notice strong {
+    margin-right: 8px;
+}
+
+.pharmacy-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.pharmacy-chip {
+    min-height: 38px;
+    padding: 0 14px;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.pharmacy-chip:hover {
+    border-color: var(--color-primary);
+}
+
+.pharmacy-chip.is-active {
+    color: var(--color-primary-dark);
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+}
+
+.pharmacy-status-row,
+.pharmacy-glp1-summary,
+.pharmacy-detail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+}
+
+.pharmacy-detail {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 10px;
+    margin-top: 4px;
+    border-top: 1px dashed var(--color-border);
+}
+
+.pharmacy-glp1-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.pharmacy-open {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--color-text-muted);
+}
+
+.pharmacy-open.is-open {
+    color: var(--color-success);
+}
+
+/* 재고 상태는 색 + 텍스트를 함께 쓴다(색만으로 구분하지 않음). */
+.pharmacy-stock {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    border-radius: var(--app-radius-sm);
+}
+
+.pharmacy-stock--in_stock {
+    color: var(--color-success);
+    background: var(--color-success-soft);
+}
+
+.pharmacy-stock--low_stock {
+    color: #8a5e13;
+    background: var(--color-warning-soft);
+}
+
+.pharmacy-stock--out_of_stock {
+    color: var(--color-danger);
+    background: var(--color-danger-soft);
+}
+
+.pharmacy-stock--none {
+    color: var(--color-text-muted);
+    background: var(--color-surface-soft);
+}
+
+.pharmacy-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.pharmacy-detail-table th,
+.pharmacy-detail-table td {
+    padding: 6px 4px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.pharmacy-detail-table th {
+    color: var(--color-text-muted);
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .pharmacy-chip {
+        min-height: 44px;
+    }
+}
