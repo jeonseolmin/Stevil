@@ -153,8 +153,10 @@ export default function AdminPharmaciesPage() {
         setFormError("");
     };
 
-    const setField = (name, value) =>
+    const setField = (name, value) => {
+        setFormError("");
         setEditing((current) => ({ ...current, form: { ...current.form, [name]: value } }));
+    };
 
     const handleSave = (event) => {
         event.preventDefault();
@@ -252,7 +254,7 @@ export default function AdminPharmaciesPage() {
                     </div>
                 ) : (
                     <div className="admin-facilities-table-wrapper">
-                        <table className="admin-facilities-table">
+                        <table className="admin-facilities-table admin-pharmacies-table">
                             <thead>
                                 <tr>
                                     <th>약국</th>
@@ -264,7 +266,7 @@ export default function AdminPharmaciesPage() {
                                         <th key={product}>{displayName} 재고 · 가격</th>
                                     ))}
                                     <th>최근 수정</th>
-                                    <th>관리</th>
+                                    <th className="admin-pharmacy-sticky">관리</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -278,14 +280,14 @@ export default function AdminPharmaciesPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{pharmacy.phone || "-"}</td>
+                                        <td className="admin-pharmacy-nowrap">{pharmacy.phone || "-"}</td>
                                         <td>
                                             <span className={`admin-facility-status admin-facility-status--${pharmacy.active ? "approved" : "rejected"}`}>
                                                 {pharmacy.active ? "활성" : "비활성"}
                                             </span>
                                         </td>
-                                        <td>{pharmacy.partnership ? "제휴" : "-"}</td>
-                                        <td>{pharmacy.advertised ? `광고 (${pharmacy.adPriority})` : "-"}</td>
+                                        <td className="admin-pharmacy-nowrap">{pharmacy.partnership ? "제휴" : "-"}</td>
+                                        <td className="admin-pharmacy-nowrap">{pharmacy.advertised ? `광고 (${pharmacy.adPriority})` : "-"}</td>
                                         {PRODUCT_CATALOG.map(({ product }) => {
                                             const status = summarizeStock(pharmacy, product);
 
@@ -301,7 +303,7 @@ export default function AdminPharmaciesPage() {
                                             );
                                         })}
                                         <td>{formatUpdatedAt(pharmacy.updatedAt)}</td>
-                                        <td>
+                                        <td className="admin-pharmacy-sticky">
                                             <div className="admin-facility-actions">
                                                 <button type="button" onClick={() => setEditing({ id: pharmacy.id, form: toForm(pharmacy) })}>
                                                     수정

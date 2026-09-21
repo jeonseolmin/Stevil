@@ -9,6 +9,38 @@
     border-radius: var(--app-radius-md);
 }
 
+/*
+ * 표: 공용 시설 표의 min-width(1150px)/셀 여백을 이 표에서만 줄이고, 관리(수정) 열은 가로 스크롤이 생겨도
+ * 오른쪽에 고정해 항상 접근할 수 있게 한다.
+ */
+.admin-facilities-table.admin-pharmacies-table {
+    min-width: 880px;
+}
+
+.admin-pharmacies-table th,
+.admin-pharmacies-table td {
+    padding: 14px 10px;
+}
+
+/* 전화번호처럼 짧고 끊기면 안 되는 열, 헤더, 상태 배지, 수정 버튼은 줄바꿈하지 않는다. */
+.admin-pharmacy-nowrap,
+.admin-pharmacies-table th,
+.admin-pharmacies-table .admin-facility-status,
+.admin-pharmacies-table .admin-facility-actions button {
+    white-space: nowrap;
+}
+
+.admin-pharmacies-table .admin-pharmacy-sticky {
+    position: sticky;
+    right: 0;
+    background: var(--color-surface);
+    box-shadow: -8px 0 8px -8px rgba(13, 35, 32, 0.18);
+}
+
+.admin-pharmacies-table th.admin-pharmacy-sticky {
+    background: #f5faf9;
+}
+
 .admin-pharmacy-sub {
     display: block;
     color: var(--color-text-muted);
@@ -26,6 +58,7 @@
     align-items: center;
     gap: 10px 20px;
     margin-top: 16px;
+    padding: 0 26px;
     font-size: 14px;
 }
 
@@ -47,7 +80,7 @@
     gap: 14px;
     min-width: 0;
     padding: 14px;
-    margin: 18px 0 0;
+    margin: 18px 26px 0;
     border: 1px solid var(--color-border);
     border-radius: var(--app-radius-md);
 }
@@ -117,7 +150,7 @@
 }
 
 .admin-pharmacy-error {
-    margin: 14px 0 0;
+    margin: 14px 26px 0;
     color: var(--color-danger);
     font-size: 13px;
     font-weight: 700;
