@@ -38,10 +38,10 @@
 .wegovy-chat--embedded .wegovy-chat__composer { padding:16px 20px; border-top:1px solid #e8eee1; }
 .wegovy-chat--embedded .wegovy-chat__question { background:#28654f; }
 .wegovy-chat--embedded .wegovy-chat__send-row button { background:#28654f; }
-/* BottomNav is fixed + visible below 900px and reserves calc(56px + var(--app-safe-bottom))
+/* BottomNav is fixed + visible up to 980px and reserves calc(56px + var(--app-safe-bottom))
    of space (see main.has-bottom-nav in BottomNav.css) — the launcher must clear that same
    reserved strip plus a small gap, or it sits on top of BottomNav/the last card's CTA. */
-@media (max-width: 899px) {
+@media (max-width: 980px) {
     .dashboard-chat-launcher { bottom: calc(56px + var(--app-safe-bottom) + var(--app-space-3)); }
 }
 
