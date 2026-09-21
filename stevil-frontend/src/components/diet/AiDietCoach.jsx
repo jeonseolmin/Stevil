@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { backendUrl } from "../../api/backendUrl";
 import "./AiDietCoach.css";
 
 const EXAMPLES = [
@@ -102,7 +103,7 @@ export default function AiDietCoach() {
       const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
       
       const response = await axios.post(
-        "/diet-api/chat",
+        backendUrl("/diet-api/chat"),
         { question: text },
         {
           headers: {

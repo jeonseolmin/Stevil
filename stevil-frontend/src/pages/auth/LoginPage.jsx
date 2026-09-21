@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { backendUrl } from "../../api/backendUrl";
 
 import googleIcon from "../../assets/social/google.svg";
 import kakaoButton from "../../assets/social/kakao.png";
@@ -10,7 +11,7 @@ import "./LoginPage.css";
 export default function LoginPage() {
     const handleSocialLogin = (provider) => {
         window.location.assign(
-            `/oauth2/authorization/${provider}`
+            backendUrl(`/oauth2/authorization/${provider}`)
         );
     };
 

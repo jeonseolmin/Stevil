@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance'; 
+import { backendUrl } from '../../api/backendUrl';
 import * as XLSX from 'xlsx';
 
 
@@ -59,7 +60,7 @@ const CommunityEdit = () => {
             file: null, // 서버에 이미 저장된 파일은 File 객체가 없으므로 null
             name: file.originalFileName,
             size: file.fileSize || 0,
-            url: file.fileUrl,
+            url: backendUrl(file.fileUrl),
           }));
           setSelectedFiles(existingFiles);
 

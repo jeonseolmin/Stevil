@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { backendUrl } from "../../api/backendUrl";
 import {
     useNavigate,
     useSearchParams,
@@ -54,7 +55,7 @@ function OAuthSuccessPage() {
              * 직후 이 최초 확인 호출만 fetch로 보낸다.
              */
             const fetchMe = () =>
-                fetch("/api/users/me", {
+                fetch(backendUrl("/api/users/me"), {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

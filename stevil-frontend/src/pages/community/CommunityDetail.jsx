@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Community.css';
 import axiosInstance from '../../api/axiosInstance';
+import { backendUrl } from '../../api/backendUrl';
 import * as XLSX from 'xlsx';
 import ProfileCardModal from '../profile/ProfileCardModal';
 
@@ -56,7 +57,7 @@ const CommunityDetail = () => {
   const loadExcelPreview = async (file, idx) => {
     setLoadingPreviews(prev => ({ ...prev, [idx]: true }));
     try {
-      const fileUrl = file.fileUrl;
+      const fileUrl = backendUrl(file.fileUrl);
       const response = await fetch(fileUrl);
       const blob = await response.blob();
       const buffer = await blob.arrayBuffer();
@@ -381,7 +382,7 @@ const CommunityDetail = () => {
               {currentPost.files.map((file, idx) => {
                 const isImage = file.originalFileName.match(/\.(jpeg|jpg|gif|png)$/i) != null;
                 const isExcel = file.originalFileName.match(/\.(xlsx|xls|csv)$/i) != null;
-                const fileDownloadUrl = file.fileUrl;
+                const fileDownloadUrl = backendUrl(file.fileUrl);
                 const fileSizeFormatted = formatFileSize(file.fileSize || file.size);
                 
                 return (

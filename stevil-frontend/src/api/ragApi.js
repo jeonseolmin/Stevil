@@ -1,10 +1,11 @@
 import axiosInstance from "./axiosInstance";
+import { backendUrl } from "./backendUrl";
 
 // Reuse the login token and refresh flow; no Gemini credentials in the browser.
 async function request(path, options = {}) {
     try {
         const response = await axiosInstance({
-            baseURL: "/rag-api", url: `/${path}`, timeout: 100000,
+            baseURL: backendUrl("/rag-api"), url: `/${path}`, timeout: 100000,
             method: options.method || "GET",
             data: options.body ? JSON.parse(options.body) : undefined,
         });
