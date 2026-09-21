@@ -7,6 +7,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,12 +40,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authorization.substring(7);
 
-        if (jwtUtil.isExpired(token)) {
+        // 토큰은 한 번만 파싱한다. 만료·형식 오류·서명 불일치·미지원(alg=none)은 JwtException,
+        // 빈 토큰은 IllegalArgumentException — 어느 쪽이든 500이 아니라 인증 실패(401)다.
+        // (이 필터는 ExceptionTranslationFilter보다 앞이라 여기서 던지면 /error로 빠져 500이 된다.)
+        Claims claims;
+
+        try {
+            claims = jwtUtil.parseClaims(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        String userEmail = jwtUtil.getEmail(token);
+        String userEmail = claims.get("email", String.class);
+
+        if (userEmail == null || userEmail.isBlank()) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
         User user = userRepository.findByEmail(userEmail)
                 .orElse(null);
