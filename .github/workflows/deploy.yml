@@ -11,6 +11,7 @@ on:
       - "stevil-backend/**"
       - "stevil-frontend/**"
       - "compose.yaml"
+      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 concurrency:
