@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadNaverMap } from "../../api/naverMapLoader";
+import { MAP_FAILURE_MESSAGE, createMapGuard } from "../../api/naverMapSafe";
 // 지도 marker / 카드 번호 / 제휴·광고 badge 스타일은 병원 지도 CSS를 그대로 재사용한다
 // (HospitalMapPage 파일은 수정하지 않고 클래스만 공유). 약국 전용 스타일만 아래 CSS에 둔다.
 import "../hospitalMap/HospitalMapPage.css";
@@ -56,6 +57,12 @@ export default function PharmacyMapPage() {
         navigator.geolocation
             ? "현재 위치를 확인하면 가까운 순으로 볼 수 있습니다."
             : "이 브라우저에서는 현재 위치를 사용할 수 없어 팔달구 중심 기준으로 표시합니다."
+    );
+
+    // SDK를 직접 건드리는 호출은 모두 guard를 거친다(지도 오류가 React 트리를 죽이지 않게).
+    const guard = useMemo(
+        () => createMapGuard(() => setMapError((current) => current || MAP_FAILURE_MESSAGE)),
+        []
     );
 
     const origin = currentPosition ?? PHARMACY_DEFAULT_POSITION;
@@ -135,8 +142,8 @@ export default function PharmacyMapPage() {
 
         const maps = mapsRef.current;
 
-        currentMarkerRef.current?.setMap(null);
-        currentMarkerRef.current = new maps.Marker({
+        guard.setMap(currentMarkerRef.current, null);
+        currentMarkerRef.current = guard.call(() => new maps.Marker({
             map: mapRef.current,
             position: new maps.LatLng(currentPosition.latitude, currentPosition.longitude),
             title: "현재 위치",
@@ -144,8 +151,8 @@ export default function PharmacyMapPage() {
                 content: '<span class="hospital-current-marker" aria-label="현재 위치"></span>',
                 anchor: new maps.Point(10, 10),
             },
-        });
-    }, [currentPosition, isMapReady]);
+        }), null);
+    }, [currentPosition, isMapReady, guard]);
 
     // marker 재생성 — 병원 지도와 동일한 클래스 규칙(is-ad / is-partner / is-selected)과 anchor 계산.
     useEffect(() => {
@@ -154,11 +161,11 @@ export default function PharmacyMapPage() {
         const maps = mapsRef.current;
         const map = mapRef.current;
 
-        markersRef.current.forEach((marker) => marker.setMap(null));
+        guard.clearMarkers(markersRef.current, maps);
         markersRef.current = [];
 
-        // SDK 인증 실패 시 LatLngBounds 등이 동기 throw 할 수 있어 페이지 전체가 죽지 않게 막는다.
-        try {
+        // SDK 인증 실패 시 LatLngBounds/Marker 등이 동기 throw 할 수 있어 통째로 가드 안에서 실행한다.
+        guard.call(() => {
             const bounds = new maps.LatLngBounds();
 
             visible.forEach((pharmacy, index) => {
@@ -185,20 +192,18 @@ export default function PharmacyMapPage() {
                 marker.stevilBaseClassName = baseClassName;
                 marker.stevilLabel = index + 1;
                 marker.stevilId = pharmacy.id;
-
-                maps.Event.addListener(marker, "click", () => setSelectedId(pharmacy.id));
-
+                // 리스너 등록이 실패해도 marker는 정리 대상이 되도록 먼저 ref에 넣는다.
                 markersRef.current.push(marker);
+
+                marker.stevilListener = maps.Event.addListener(marker, "click", () => setSelectedId(pharmacy.id));
                 bounds.extend(position);
             });
 
             if (visible.length > 0) {
                 map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
             }
-        } catch (error) {
-            console.error("지도 마커 표시 실패", error);
-        }
-    }, [visible, isMapReady]);
+        });
+    }, [visible, isMapReady, guard]);
 
     // 선택 강조만 setIcon으로 갱신 — marker 재생성/fitBounds 없이.
     useEffect(() => {
@@ -211,12 +216,12 @@ export default function PharmacyMapPage() {
             const isSelected = marker.stevilId === selectedId;
             const size = isSelected ? 44 : 40;
 
-            marker.setIcon({
+            guard.setIcon(marker, () => ({
                 content: `<span class="${isSelected ? `${marker.stevilBaseClassName} is-selected` : marker.stevilBaseClassName}"><b>${marker.stevilLabel}</b></span>`,
                 anchor: new maps.Point(size / 2, size / 2),
-            });
+            }));
         });
-    }, [selectedId]);
+    }, [selectedId, guard]);
 
     // 선택 시 지도 이동 + 목록에서 해당 카드가 보이도록 스크롤(marker 클릭 → 리스트 동기화).
     useEffect(() => {
@@ -225,11 +230,11 @@ export default function PharmacyMapPage() {
         const pharmacy = visible.find((item) => item.id === selectedId);
 
         if (pharmacy && mapRef.current) {
-            mapRef.current.panTo(new mapsRef.current.LatLng(pharmacy.latitude, pharmacy.longitude));
+            guard.call(() => mapRef.current.panTo(new mapsRef.current.LatLng(pharmacy.latitude, pharmacy.longitude)));
         }
 
         document.getElementById(`pharmacy-card-${selectedId}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }, [selectedId, visible]);
+    }, [selectedId, visible, guard]);
 
     const toggleProduct = (product) =>
         setFilters((current) => ({

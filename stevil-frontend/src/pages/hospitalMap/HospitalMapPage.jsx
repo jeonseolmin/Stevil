@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { loadNaverMap } from "../../api/naverMapLoader";
+import { MAP_FAILURE_MESSAGE, createMapGuard } from "../../api/naverMapSafe";
 import "./HospitalMapPage.css";
 
 /*
@@ -124,6 +125,12 @@ export default function HospitalMapPage() {
     const [isSearching, setIsSearching] = useState(false);
     const [mapError, setMapError] = useState("");
     const [searchError, setSearchError] = useState("");
+
+    // SDK를 직접 건드리는 호출은 모두 guard를 거친다(지도 오류가 React 트리를 죽이지 않게).
+    const guard = useMemo(
+        () => createMapGuard(() => setMapError((current) => current || MAP_FAILURE_MESSAGE)),
+        []
+    );
     const [locationMessage, setLocationMessage] = useState(
         "현재 위치를 허용하면 가까운 병원 순으로 볼 수 있습니다."
     );
@@ -300,23 +307,28 @@ export default function HospitalMapPage() {
         }
 
         const maps = mapsRef.current;
-        const position = new maps.LatLng(
-            currentPosition.latitude,
-            currentPosition.longitude
-        );
 
-        currentMarkerRef.current?.setMap(null);
-        currentMarkerRef.current = new maps.Marker({
-            map: mapRef.current,
-            position,
-            title: "현재 위치",
-            icon: {
-                content: '<span class="hospital-current-marker" aria-label="현재 위치"></span>',
-                anchor: new maps.Point(10, 10),
-            },
+        guard.setMap(currentMarkerRef.current, null);
+        currentMarkerRef.current = null;
+
+        guard.call(() => {
+            const position = new maps.LatLng(
+                currentPosition.latitude,
+                currentPosition.longitude
+            );
+
+            currentMarkerRef.current = new maps.Marker({
+                map: mapRef.current,
+                position,
+                title: "현재 위치",
+                icon: {
+                    content: '<span class="hospital-current-marker" aria-label="현재 위치"></span>',
+                    anchor: new maps.Point(10, 10),
+                },
+            });
+            mapRef.current.setCenter(position);
         });
-        mapRef.current.setCenter(position);
-    }, [currentPosition, isMapReady]);
+    }, [currentPosition, isMapReady, guard]);
 
     useEffect(() => {
         if (!isMapReady || !mapRef.current) {
@@ -326,7 +338,7 @@ export default function HospitalMapPage() {
         const maps = mapsRef.current;
         const map = mapRef.current;
 
-        markersRef.current.forEach((marker) => marker.setMap(null));
+        guard.clearMarkers(markersRef.current, maps);
         markersRef.current = [];
 
         // Naver Maps can report the SDK as loaded (loadNaverMap() resolves,
@@ -336,7 +348,7 @@ export default function HospitalMapPage() {
         // uncaught throw here unmounts the entire React tree, not just the
         // map. Guard it so a broken/unauthenticated SDK degrades to "no
         // markers" instead of a blank screen.
-        try {
+        guard.call(() => {
             const bounds = new maps.LatLngBounds();
             let hasPosition = false;
 
@@ -382,12 +394,13 @@ export default function HospitalMapPage() {
 
                 marker.stevilBaseClassName = baseClassName;
                 marker.stevilLabel = index + 1;
+                // 리스너 등록이 실패해도 marker는 정리 대상이 되도록 먼저 ref에 넣는다.
+                markersRef.current.push(marker);
 
-                maps.Event.addListener(marker, "click", () => {
+                marker.stevilListener = maps.Event.addListener(marker, "click", () => {
                     setSelectedIndex(index);
                 });
 
-                markersRef.current.push(marker);
                 bounds.extend(position);
                 hasPosition = true;
             });
@@ -402,10 +415,8 @@ export default function HospitalMapPage() {
             if (hasPosition) {
                 map.fitBounds(bounds, { top: 70, right: 60, bottom: 70, left: 60 });
             }
-        } catch (error) {
-            console.error("지도 마커 표시 실패", error);
-        }
-    }, [currentPosition, processedHospitals, isMapReady]);
+        });
+    }, [currentPosition, processedHospitals, isMapReady, guard]);
 
     // 선택된 마커만 강조 표시로 다시 그린다(마커를 전부 재생성하는 effect와
     // 분리 — 그러면 카드를 클릭할 때마다 지도가 fitBounds로 다시 확대/축소되는
@@ -425,12 +436,12 @@ export default function HospitalMapPage() {
                 : marker.stevilBaseClassName;
             const markerSize = isNowSelected ? 44 : 40;
 
-            marker.setIcon({
+            guard.setIcon(marker, () => ({
                 content: `<span class="${className}"><b>${marker.stevilLabel}</b></span>`,
                 anchor: new maps.Point(markerSize / 2, markerSize / 2),
-            });
+            }));
         });
-    }, [selectedIndex]);
+    }, [selectedIndex, guard]);
 
     useEffect(() => {
         if (selectedIndex === null || !mapRef.current) {
@@ -440,12 +451,12 @@ export default function HospitalMapPage() {
         const hospital = processedHospitals[selectedIndex];
 
         if (hospital?.latitude !== null && hospital?.longitude !== null) {
-            mapRef.current.panTo(new mapsRef.current.LatLng(
+            guard.call(() => mapRef.current.panTo(new mapsRef.current.LatLng(
                 hospital.latitude,
                 hospital.longitude
-            ));
+            )));
         }
-    }, [processedHospitals, selectedIndex]);
+    }, [processedHospitals, selectedIndex, guard]);
 
     const handleSubmit = (event) => {
         event.preventDefault();
