@@ -48,6 +48,9 @@ public class SecurityUrls {
             "/api/mypage",
             "/api/mypage/**",
 
+            "/api/notifications",
+            "/api/notifications/**",
+
             "/api/question",
             "/api/question/**",
 
