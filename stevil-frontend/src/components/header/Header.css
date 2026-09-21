@@ -91,6 +91,18 @@
     background: var(--color-primary-soft);
 }
 
+/* 데스크톱 폭이 좁을 때(관리자·의사 버튼이 추가된 경우 포함) 메뉴 간격만 줄여 한 줄을 유지한다 */
+
+@media (min-width: 981px) and (max-width: 1120px) {
+    .header-navigation {
+        gap: 8px;
+    }
+
+    .header-navigation > a {
+        padding: 9px 10px;
+    }
+}
+
 /* 로그인 및 시작 버튼 */
 
 .desktop-header-actions {
@@ -108,6 +120,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
 
     min-height: var(--app-tap-min);
     padding: 0 18px;
@@ -208,7 +221,7 @@
 
 /* 태블릿 및 모바일 */
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
     .header-inner {
         width: min(calc(100% - 32px), 1200px);
         min-height: 66px;
@@ -291,6 +304,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
 
     min-height: var(--app-tap-min);
     padding: 0 18px;
@@ -377,7 +391,7 @@
     background: var(--color-primary-soft);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
     .mobile-header-actions:has(
         .header-admin-button
     ) {

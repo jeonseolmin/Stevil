@@ -1,0 +1,163 @@
+/* 약국 관리 전용 보충 스타일 — 기본 레이아웃은 AdminFacilitiesPage.css 재사용. */
+
+.admin-pharmacy-notice {
+    padding: 10px 16px;
+    color: #8a5e13;
+    font-size: 13px;
+    background: var(--color-warning-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-md);
+}
+
+/*
+ * 표: 공용 시설 표의 min-width(1150px)/셀 여백을 이 표에서만 줄이고, 관리(수정) 열은 가로 스크롤이 생겨도
+ * 오른쪽에 고정해 항상 접근할 수 있게 한다.
+ */
+.admin-facilities-table.admin-pharmacies-table {
+    min-width: 880px;
+}
+
+.admin-pharmacies-table th,
+.admin-pharmacies-table td {
+    padding: 14px 10px;
+}
+
+/* 전화번호처럼 짧고 끊기면 안 되는 열, 헤더, 상태 배지, 수정 버튼은 줄바꿈하지 않는다. */
+.admin-pharmacy-nowrap,
+.admin-pharmacies-table th,
+.admin-pharmacies-table .admin-facility-status,
+.admin-pharmacies-table .admin-facility-actions button {
+    white-space: nowrap;
+}
+
+.admin-pharmacies-table .admin-pharmacy-sticky {
+    position: sticky;
+    right: 0;
+    background: var(--color-surface);
+    box-shadow: -8px 0 8px -8px rgba(13, 35, 32, 0.18);
+}
+
+.admin-pharmacies-table th.admin-pharmacy-sticky {
+    background: #f5faf9;
+}
+
+.admin-pharmacy-sub {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.admin-pharmacy-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.admin-pharmacy-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-top: 16px;
+    padding: 0 26px;
+    font-size: 14px;
+}
+
+.admin-pharmacy-toggles label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-pharmacy-priority input {
+    width: 72px;
+    padding: 6px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-sm);
+}
+
+.admin-glp1-editor {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+    padding: 14px;
+    margin: 18px 26px 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-md);
+}
+
+.admin-glp1-editor legend {
+    padding: 0 6px;
+    color: var(--color-primary-dark);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.admin-glp1-group h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+}
+
+.admin-glp1-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.admin-glp1-row input,
+.admin-glp1-row select {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-sm);
+    background: var(--color-surface);
+}
+
+.admin-glp1-row button {
+    padding: 0 12px;
+    color: var(--color-danger);
+    font-weight: 700;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-soft-border);
+    border-radius: var(--app-radius-sm);
+    cursor: pointer;
+}
+
+.admin-glp1-add {
+    padding: 6px 12px;
+    color: var(--color-primary-dark);
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--color-primary-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--app-radius-sm);
+    cursor: pointer;
+}
+
+.admin-glp1-add-product {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+.admin-glp1-empty {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.admin-pharmacy-error {
+    margin: 14px 26px 0;
+    color: var(--color-danger);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+@media (max-width: 560px) {
+    .admin-glp1-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
