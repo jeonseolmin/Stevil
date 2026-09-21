@@ -61,8 +61,10 @@ services:
       - backend
     volumes:
       - /var/www/certbot:/var/www/certbot:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
+      - "443:443"
 
 volumes:
   postgres-data:
