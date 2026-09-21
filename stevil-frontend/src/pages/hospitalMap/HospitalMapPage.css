@@ -306,6 +306,7 @@
  * (marker와 result card의 번호 배지가 같은 값을 참조 — 색이 어긋나지 않음).
  */
 .hospital-map-marker {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -444,6 +445,40 @@
 .hospital-map-marker.is-ad.is-partner {
     background: var(--map-marker-ad);
     box-shadow: 0 0 0 3px var(--map-marker-partner), 0 3px 10px rgba(194, 65, 12, 0.45);
+}
+
+/*
+ * 색만으로 등급을 구분하지 않도록(색각 이상 대응) 우측 상단에 작은 원형 표식을
+ * 얹는다: 제휴 = 흰 원 + 파란 점, 광고 = "AD" 원. 부모가 원형이라 표식은
+ * 박스 밖으로 살짝 걸쳐도 되며, overflow는 기본값(visible)이라 잘리지 않는다.
+ */
+.hospital-map-marker.is-partner::after,
+.hospital-map-marker.is-ad::after {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1;
+    background: white;
+    box-shadow: 0 1px 3px rgba(24, 58, 55, 0.35);
+}
+
+.hospital-map-marker.is-partner::after {
+    content: "";
+    border: 4px solid var(--map-marker-partner);
+}
+
+.hospital-map-marker.is-ad::after {
+    content: "AD";
+    color: var(--map-marker-ad);
 }
 
 /*

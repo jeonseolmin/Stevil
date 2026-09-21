@@ -146,20 +146,23 @@ export default function HospitalMapPage() {
         if (!hospitals || hospitals.length === 0) return [];
 
         // 1. SEARCH_TOP(지역 검색 최상단 고정) 광고가 걸린 병원 이름 추출
+        // 빈 이름은 제외한다 — "".includes 매칭은 모든 병원을 광고로 만든다.
         const topAdNames = activeAds
             .filter(ad => ad.adType === "SEARCH_TOP")
-            .map(ad => ad.doctorName?.trim());
+            .map(ad => ad.doctorName?.trim())
+            .filter(Boolean);
 
         // 2. HIGHLIGHT(시각적 강조) 광고가 걸린 병원 이름 추출
         const highlightAdNames = activeAds
             .filter(ad => ad.adType === "HIGHLIGHT")
-            .map(ad => ad.doctorName?.trim());
+            .map(ad => ad.doctorName?.trim())
+            .filter(Boolean);
 
         // 3. 데이터에 광고 정보 매핑 및 정렬 (SEARCH_TOP인 병원을 맨 위로 이동)
         // isPartner는 백엔드(/hospitals/search)가 판정해 내려주는 값을 그대로 신뢰한다.
         // 프론트에서 병원명으로 제휴 여부를 다시 계산하지 않는다.
         const mapped = hospitals.map(hospital => {
-            const hName = hospital.name?.trim();
+            const hName = hospital.name?.trim() || "";
             const isTop = topAdNames.some(name => hName.includes(name));
             const isHighlight = highlightAdNames.some(name => hName.includes(name));
 
