@@ -35,6 +35,15 @@ public class JwtUtil {
                 .compact();
     }
 
+    /*
+     * 토큰을 한 번만 파싱해 Claims를 돌려준다. 만료/형식 오류/서명 불일치/미지원(alg=none)은
+     * JwtException, 빈 문자열은 IllegalArgumentException으로 던지므로 호출부(JwtAuthenticationFilter)가
+     * 둘 다 인증 실패(401)로 처리해야 한다.
+     */
+    public Claims parseClaims(String token) {
+        return getClaims(token);
+    }
+
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
