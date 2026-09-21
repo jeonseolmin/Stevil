@@ -59,6 +59,8 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - backend
+    volumes:
+      - /var/www/certbot:/var/www/certbot:ro
     ports:
       - "80:80"
 
