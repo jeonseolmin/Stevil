@@ -111,18 +111,39 @@ export async function syncPushToken() {
     }
 }
 
-/** register() 는 onRegistered 를 동기로 호출하므로, 끝난 뒤 그 업로드를 기다리면 백엔드 등록까지 완료된다. */
+const REGISTER_TIMEOUT_MS = 20000;
+
+/*
+ * register() 는 onRegistered 를 동기로 호출하므로, 끝난 뒤 그 업로드를 기다리면 백엔드 등록까지 완료된다.
+ * register() 는 getToken() 과 달리 서비스 워커 활성화를 기다리지 않으므로, 활성화된 registration(ready)을 넘긴다.
+ * 어느 단계든 멈추면 UI 가 "설정 중"에 갇히지 않도록 전체에 타임아웃을 둔다.
+ */
 async function registerFid(messaging) {
-    const registration = await navigator.serviceWorker.register(SW_URL);
-    messaging.lastUpload = null;
-    await messaging.module.register(messaging.instance, {
-        vapidKey,
-        serviceWorkerRegistration: registration,
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error("FCM registration timed out")), REGISTER_TIMEOUT_MS);
     });
-    if (!messaging.lastUpload) {
-        throw new Error("FCM registration did not report an FID");
+
+    try {
+        await Promise.race([timeout, (async () => {
+            await navigator.serviceWorker.register(SW_URL);
+            const registration = await navigator.serviceWorker.ready;
+            messaging.lastUpload = null;
+            await messaging.module.register(messaging.instance, {
+                vapidKey,
+                serviceWorkerRegistration: registration,
+            });
+            if (!messaging.lastUpload) {
+                throw new Error("FCM registration did not report an FID");
+            }
+            await messaging.lastUpload;
+        })()]);
+    } catch (error) {
+        console.warn("Push registration failed:", error?.code || error?.name, error?.message);
+        throw error;
+    } finally {
+        clearTimeout(timer);
     }
-    await messaging.lastUpload;
 }
 
 /*

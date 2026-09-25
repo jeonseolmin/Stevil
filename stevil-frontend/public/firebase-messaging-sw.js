@@ -14,6 +14,10 @@ function safeTargetUrl(value) {
     return url.origin === self.location.origin ? url.href : "/";
 }
 
+// 새 버전이 바로 활성화되고, 등록 전에 열려 있던 탭도 제어하게 한다(그래야 클릭 시 navigate 가 가능하다).
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+
 self.addEventListener("push", (event) => {
     let payload;
     try {
@@ -43,8 +47,12 @@ self.addEventListener("notificationclick", (event) => {
         const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
         const existing = windows.find((client) => new URL(client.url).origin === self.location.origin);
         if (existing) {
-            await existing.focus();
-            return existing.navigate(target);
+            try {
+                const focused = await existing.focus();
+                return await focused.navigate(target);
+            } catch {
+                // 이 워커가 제어하지 않는 탭은 navigate 가 거부된다 -> 새 창으로 연다.
+            }
         }
         return self.clients.openWindow(target);
     })());
