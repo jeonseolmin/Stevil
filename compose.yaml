@@ -43,6 +43,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       STEVIL_FIREBASE_ENABLED: ${STEVIL_FIREBASE_ENABLED:-false}
       FIREBASE_CREDENTIALS_PATH: /run/secrets/firebase-service-account.json
+      STEVIL_REMINDER_SCHEDULER_ENABLED: ${STEVIL_REMINDER_SCHEDULER_ENABLED:-false}
     secrets:
       - source: firebase_service_account
         target: firebase-service-account.json
