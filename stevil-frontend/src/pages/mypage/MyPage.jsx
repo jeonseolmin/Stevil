@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
 import ChatModal from '../chat/ChatModal'; 
 import AttendingDoctorModal from './AttendingDoctorModal';
+import PushSetting from './PushSetting';
 import './MyPage.css';
 import { IconProfile } from '../../components/icons/Icons.jsx';
 
@@ -170,6 +171,8 @@ export default function MyPage() {
                             </p>
                         )}
                     </div>
+
+                    <PushSetting />
 
                     <hr className="mypage-divider" />
 

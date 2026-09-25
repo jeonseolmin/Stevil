@@ -88,7 +88,7 @@ class FcmPushServiceTest {
         verify(messaging).sendEachForMulticast(captor.capture());
         MulticastMessage sent = captor.getValue();
 
-        assertThat((List<String>) ReflectionTestUtils.getField(sent, "tokens")).containsExactly("tok-1");
+        assertThat((List<String>) ReflectionTestUtils.getField(sent, "fids")).containsExactly("tok-1");
         Object notification = ReflectionTestUtils.getField(sent, "notification");
         assertThat(ReflectionTestUtils.getField(notification, "title")).isEqualTo("제목");
         assertThat(ReflectionTestUtils.getField(notification, "body")).isEqualTo("내용");
@@ -117,7 +117,7 @@ class FcmPushServiceTest {
 
         ArgumentCaptor<MulticastMessage> captor = ArgumentCaptor.forClass(MulticastMessage.class);
         verify(messaging, times(1)).sendEachForMulticast(captor.capture());
-        assertThat((List<String>) ReflectionTestUtils.getField(captor.getValue(), "tokens")).containsExactly("a", "b", "c");
+        assertThat((List<String>) ReflectionTestUtils.getField(captor.getValue(), "fids")).containsExactly("a", "b", "c");
     }
 
     @Test
@@ -125,7 +125,7 @@ class FcmPushServiceTest {
         List<String> tokens = IntStream.range(0, 1201).mapToObj(i -> "t" + i).toList();
         when(messaging.sendEachForMulticast(any(MulticastMessage.class))).thenAnswer(inv -> {
             MulticastMessage m = inv.getArgument(0);
-            int size = ((List<?>) ReflectionTestUtils.getField(m, "tokens")).size();
+            int size = ((List<?>) ReflectionTestUtils.getField(m, "fids")).size();
             SendResponse[] all = new SendResponse[size];
             for (int i = 0; i < size; i++) all[i] = ok();
             return batch(all);
@@ -137,7 +137,7 @@ class FcmPushServiceTest {
         verify(messaging, times(3)).sendEachForMulticast(captor.capture());
         List<Integer> sizes = new ArrayList<>();
         for (MulticastMessage m : captor.getAllValues()) {
-            sizes.add(((List<?>) ReflectionTestUtils.getField(m, "tokens")).size());
+            sizes.add(((List<?>) ReflectionTestUtils.getField(m, "fids")).size());
         }
         assertThat(sizes).containsExactly(500, 500, 201);
     }

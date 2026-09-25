@@ -79,7 +79,7 @@ class NotificationFcmEndToEndTest {
     private void firebaseAnswers(MessagingErrorCode deadCode, ErrorCode deadHttpCode) throws Exception {
         when(messaging.sendEachForMulticast(any(MulticastMessage.class))).thenAnswer(inv -> {
             MulticastMessage message = inv.getArgument(0);
-            List<String> tokens = (List<String>) ReflectionTestUtils.getField(message, "tokens");
+            List<String> tokens = (List<String>) ReflectionTestUtils.getField(message, "fids");
             List<SendResponse> responses = new ArrayList<>();
             for (String token : tokens) {
                 responses.add(token.startsWith("dead")
