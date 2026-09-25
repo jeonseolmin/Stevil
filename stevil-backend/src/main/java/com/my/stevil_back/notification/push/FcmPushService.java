@@ -119,10 +119,14 @@ public class FcmPushService implements PushSender {
         }
     }
 
-    /** notification(title/body) + data(notificationId, targetUrl). targetUrl 은 PR-A 에서 내부 경로로 검증된 값이다. */
+    /*
+     * notification(title/body) + data(notificationId, targetUrl). targetUrl 은 PR-A 에서 내부 경로로 검증된 값이다.
+     * 대상은 Firebase Installation ID(FID)다. 웹 클라이언트는 register()/onRegistered() 로 받은 FID 를 등록하며,
+     * registration token 방식(addAllTokens)은 firebase-admin 9.10.0 에서 deprecated 다. (UserDevice.fcmToken 컬럼에 FID 를 저장)
+     */
     static MulticastMessage buildMessage(PushPayload payload, List<String> tokens) {
         MulticastMessage.Builder builder = MulticastMessage.builder()
-                .addAllTokens(tokens)
+                .addAllFids(tokens)
                 .setNotification(Notification.builder()
                         .setTitle(payload.title())
                         .setBody(payload.body())

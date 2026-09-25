@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import axiosInstance from "../../../api/axiosInstance";
+import { logout } from "../../../api/logout";
 import "./DoctorLayout.css";
 
 const DOCTOR_MENU = [
@@ -75,9 +76,8 @@ export default function DoctorLayout() {
         setSidebarOpen(false);
     }, [location.pathname]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("userRole");
+    const handleLogout = async () => {
+        await logout();
 
         navigate("/", {
             replace: true,

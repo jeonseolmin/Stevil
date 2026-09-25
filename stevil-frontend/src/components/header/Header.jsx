@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 
 import axiosInstance from "../../api/axiosInstance";
+import { logout } from "../../api/logout";
 
 import "./Header.css";
 
@@ -47,14 +48,9 @@ export default function Header() {
         setIsMenuOpen(false);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem(
-            "accessToken"
-        );
-
-        localStorage.removeItem(
-            "userRole"
-        );
+    const handleLogout = async () => {
+        // 푸시 토큰 해제(JWT 필요) 후 로컬 인증 정보를 지운다.
+        await logout();
 
         setIsLoggedIn(false);
         setUserRole(null);
