@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner;
 
+import org.springframework.context.ApplicationEventPublisher;
 import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.entity.WeeklyPlan;
@@ -50,7 +51,7 @@ class PlannerExerciseContractTest {
         try (var factory = Validation.buildDefaultValidatorFactory()) {
             var repository = mock(WeeklyPlanRepository.class);
             var users = mock(UserRepository.class);
-            var service = new PlannerService(repository, users, mock(UserDietGoalRepository.class), new NutritionPolicy(), json, factory.getValidator(),
+            var service = new PlannerService(repository, users, mock(UserDietGoalRepository.class), new NutritionPolicy(), json, factory.getValidator(), mock(ApplicationEventPublisher.class),
                     "http://127.0.0.1:" + server.getAddress().getPort() + "/plan");
             var p = preferences();
             var draft = service.generate(17L,p);

@@ -10,5 +10,6 @@ public enum NotificationType {
     COMMENT,
     INQUIRY,
     REPORT,
-    AD
+    AD,
+    REMINDER
 }

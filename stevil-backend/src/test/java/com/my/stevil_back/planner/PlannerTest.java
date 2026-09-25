@@ -1,4 +1,5 @@
 package com.my.stevil_back.planner;
+import org.springframework.context.ApplicationEventPublisher;
 import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.validation.PlannerValidation;
@@ -66,7 +67,7 @@ class PlannerTest {
     }
     @Test void savesOnlyUnderAuthenticatedUserAndRejectsStaleRevision() {
         var repository=mock(WeeklyPlanRepository.class);var users=mock(UserRepository.class);var json=mock(ObjectMapper.class);
-        var service=new PlannerService(repository,users,mock(UserDietGoalRepository.class),new NutritionPolicy(),json,mock(Validator.class),"http://127.0.0.1:8091/api/plan");
+        var service=new PlannerService(repository,users,mock(UserDietGoalRepository.class),new NutritionPolicy(),json,mock(Validator.class),mock(ApplicationEventPublisher.class),"http://127.0.0.1:8091/api/plan");
         var p=prefs(List.of());
         when(users.findByIdForUpdate(17L)).thenReturn(Optional.of(User.builder().id(17L).build()));
         when(repository.findByUserIdAndWeekStart(17L,p.weekStart())).thenReturn(Optional.empty());
@@ -81,7 +82,7 @@ class PlannerTest {
     }
     @Test void readsOnlyRequestedUsersWeek() {
         var repository=mock(WeeklyPlanRepository.class);
-        var service=new PlannerService(repository,mock(UserRepository.class),mock(UserDietGoalRepository.class),new NutritionPolicy(),mock(ObjectMapper.class),mock(Validator.class),"http://127.0.0.1:8091/api/plan");
+        var service=new PlannerService(repository,mock(UserRepository.class),mock(UserDietGoalRepository.class),new NutritionPolicy(),mock(ObjectMapper.class),mock(Validator.class),mock(ApplicationEventPublisher.class),"http://127.0.0.1:8091/api/plan");
         when(repository.findByUserIdAndWeekStart(29L,LocalDate.of(2026,9,7))).thenReturn(Optional.empty());
         assertNull(service.get(29L,LocalDate.of(2026,9,7)));
         verify(repository).findByUserIdAndWeekStart(29L,LocalDate.of(2026,9,7));
