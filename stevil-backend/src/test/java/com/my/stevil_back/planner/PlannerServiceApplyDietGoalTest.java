@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner;
 
+import org.springframework.context.ApplicationEventPublisher;
 import com.my.stevil_back.diet.entity.UserDietGoal;
 import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
@@ -38,6 +39,7 @@ class PlannerServiceApplyDietGoalTest {
                 nutritionPolicy,
                 new ObjectMapper(),
                 Validation.buildDefaultValidatorFactory().getValidator(),
+                mock(ApplicationEventPublisher.class),
                 "http://127.0.0.1:8091/api/plan"
         );
     }

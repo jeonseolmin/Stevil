@@ -1,5 +1,6 @@
 package com.my.stevil_back.planner;
 
+import org.springframework.context.ApplicationEventPublisher;
 import com.my.stevil_back.diet.policy.NutritionPolicy;
 import com.my.stevil_back.diet.repository.UserDietGoalRepository;
 import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
@@ -44,7 +45,7 @@ class PlannerGeneratorContractTest {
         server.start();
         try(var factory=Validation.buildDefaultValidatorFactory()) {
             var service=new PlannerService(mock(WeeklyPlanRepository.class),mock(UserRepository.class),mock(UserDietGoalRepository.class),new NutritionPolicy(),new ObjectMapper(),
-                factory.getValidator(),"http://127.0.0.1:"+server.getAddress().getPort()+"/plan");
+                factory.getValidator(),mock(ApplicationEventPublisher.class),"http://127.0.0.1:"+server.getAddress().getPort()+"/plan");
             var p=new Preferences(LocalDate.of(2026,9,7),LocalTime.of(7,0),LocalTime.of(23,0),
                 LocalTime.of(8,0),LocalTime.of(12,30),LocalTime.of(18,30),LocalTime.of(19,30),30,
                 List.of(0,2,4),"초보","가볍게","","","",List.of(),true);

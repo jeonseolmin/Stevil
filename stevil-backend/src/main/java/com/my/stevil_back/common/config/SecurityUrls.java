@@ -51,6 +51,9 @@ public class SecurityUrls {
             "/api/notifications",
             "/api/notifications/**",
 
+            "/api/reminders",
+            "/api/reminders/**",
+
             "/api/question",
             "/api/question/**",
 
