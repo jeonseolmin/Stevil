@@ -111,3 +111,15 @@ app:
   upload-dir: ${UPLOAD_DIR:./uploads}
   frontend:
     base-url: ${FRONTEND_URL:http://localhost:3000}
+
+# =========================================================
+# Firebase Cloud Messaging (push delivery)
+# enabled=false (default) -> NoopPushSender. enabled=true with an unusable credential file
+# degrades to NoopPushSender with an ERROR log; it never stops the backend from starting.
+# The credential is a file path only; never put the JSON itself in an environment variable.
+# =========================================================
+
+stevil:
+  firebase:
+    enabled: ${STEVIL_FIREBASE_ENABLED:false}
+    credentials-path: ${FIREBASE_CREDENTIALS_PATH:}

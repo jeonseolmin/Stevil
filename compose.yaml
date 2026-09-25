@@ -41,6 +41,11 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      STEVIL_FIREBASE_ENABLED: ${STEVIL_FIREBASE_ENABLED:-false}
+      FIREBASE_CREDENTIALS_PATH: /run/secrets/firebase-service-account.json
+    secrets:
+      - source: firebase_service_account
+        target: firebase-service-account.json
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,6 +70,14 @@ services:
     ports:
       - "80:80"
       - "443:443"
+
+# FCM service-account key, mounted read-only at /run/secrets/firebase-service-account.json.
+# The real key lives outside the repo (e.g. /etc/stevil/firebase-service-account.json, root:root 600); set
+# FIREBASE_SERVICE_ACCOUNT_FILE in the server .env to that path. The default is an empty tracked placeholder
+# so `docker compose` works on any OS without a key (FCM then stays off / falls back to NoopPushSender).
+secrets:
+  firebase_service_account:
+    file: ${FIREBASE_SERVICE_ACCOUNT_FILE:-./deploy/firebase-credentials.placeholder}
 
 volumes:
   postgres-data:

@@ -54,6 +54,23 @@ public class UserDeviceService {
         this.registerTransaction.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRES_NEW);
     }
 
+    /**
+     * FCM 이 영구 무효(UNREGISTERED 등)로 알린 토큰을 지운다. userId 조건 때문에, 그 사이 다른 사용자에게 소유권이 넘어간 토큰은 지워지지 않는다.
+     * 푸시 스레드(트랜잭션 없음)에서 호출되므로 자체 트랜잭션을 연다. 지운 행 수를 돌려준다.
+     */
+    @Transactional
+    public int removeInvalidTokens(Long userId, java.util.Collection<String> tokens) {
+        int removed = 0;
+
+        for (String token : tokens) {
+            removed += userDeviceRepository.deleteByFcmTokenAndUserId(token, userId);
+        }
+
+        log.info("Removed invalid device tokens: userId={}, requested={}, removed={}", userId, tokens.size(), removed);
+
+        return removed;
+    }
+
     /** 이 메서드 자체는 트랜잭션을 열지 않는다 — 시도마다 독립 트랜잭션을 쓴다. */
     public void register(Long userId, String token, DevicePlatform platform, String userAgent) {
         for (int attempt = 1; ; attempt++) {
