@@ -34,9 +34,18 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'com.h2database:h2'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	implementation 'org.apache.pdfbox:pdfbox:2.0.30'
+
+	// FCM delivery. Firestore/Storage are excluded (unused, +44MB); the jackson2 http-client module
+	// must then be declared explicitly or FirebaseApp fails with NoClassDefFoundError (JacksonFactory).
+	implementation('com.google.firebase:firebase-admin:9.10.0') {
+		exclude group: 'com.google.cloud', module: 'google-cloud-firestore'
+		exclude group: 'com.google.cloud', module: 'google-cloud-storage'
+	}
+	implementation 'com.google.http-client:google-http-client-jackson2:2.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	// JWT 설정

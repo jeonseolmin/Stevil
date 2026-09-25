@@ -941,3 +941,7 @@ data-collection/ai-services/diet/chroma_db/
 data-collection/ai-services/diet/data/
 *.xlsx
 *.csv
+
+# Firebase / Google Cloud service-account keys - never commit
+*firebase-adminsdk*.json
+*service-account*.json

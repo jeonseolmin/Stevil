@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import axiosInstance from "../../../api/axiosInstance";
+import { logout } from "../../../api/logout";
 import "./AdminLayout.css";
 
 const ADMIN_MENU = [
@@ -84,9 +85,8 @@ export default function AdminLayout() {
         setSidebarOpen(false);
     }, [location.pathname]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("userRole");
+    const handleLogout = async () => {
+        await logout();
 
         navigate("/", {
             replace: true,

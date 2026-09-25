@@ -8,6 +8,7 @@ import com.my.stevil_back.planner.dto.request.Save;
 import com.my.stevil_back.planner.dto.response.Draft;
 import com.my.stevil_back.planner.dto.response.Saved;
 import com.my.stevil_back.planner.entity.WeeklyPlan;
+import com.my.stevil_back.planner.event.PlannerSavedEvent;
 import com.my.stevil_back.planner.repository.WeeklyPlanRepository;
 import com.my.stevil_back.planner.validation.PlannerValidation;
 import com.my.stevil_back.user.repository.UserRepository;
@@ -15,6 +16,7 @@ import com.my.stevil_back.user.repository.UserRepository;
 import jakarta.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,12 @@ public class PlannerService {
 
     private final Validator validator;
 
+    /**
+     * 저장 커밋 후 리마인더 동기화용(PlannerSavedEvent).
+     * Planner는 리마인더를 직접 호출하지 않는다.
+     */
+    private final ApplicationEventPublisher events;
+
     private final URI generator;
 
     private final HttpClient client =
@@ -78,6 +86,7 @@ public class PlannerService {
             NutritionPolicy nutritionPolicy,
             ObjectMapper json,
             Validator validator,
+            ApplicationEventPublisher events,
             @Value(
                     "${planner.generator-url:http://127.0.0.1:8091/api/plan}"
             )
@@ -90,6 +99,7 @@ public class PlannerService {
         this.nutritionPolicy = nutritionPolicy;
         this.json = json;
         this.validator = validator;
+        this.events = events;
         this.generator = URI.create(url);
     }
 
@@ -683,6 +693,19 @@ public class PlannerService {
 
         repository.save(
                 plan
+        );
+
+        /*
+         * 커밋 후(AFTER_COMMIT)에만 리마인더가 동기화된다.
+         * 동기화 실패는 이 저장을 롤백하지 않는다.
+         */
+        events.publishEvent(
+                new PlannerSavedEvent(
+                        userId,
+                        effectivePreferences
+                                .weekStart(),
+                        request.events()
+                )
         );
 
         return result;
