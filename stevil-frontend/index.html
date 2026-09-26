@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stevil</title>
+    <!-- PWA: 홈 화면 설치(특히 iOS 웹 푸시는 홈 화면에 추가한 앱에서만 동작) -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#39876a" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Stevil" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <script>
       if (typeof global === 'undefined') {
         window.global = window;
