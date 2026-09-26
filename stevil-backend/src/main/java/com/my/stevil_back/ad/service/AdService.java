@@ -119,7 +119,7 @@ public class AdService {
                 ad.getStartDate(),
                 ad.getEndDate(),
                 ad.getAdminFeedback(),
-                ad.getRequestedAt()
+                KoreaTime.fromServer(ad.getRequestedAt())
         );
     }
 }

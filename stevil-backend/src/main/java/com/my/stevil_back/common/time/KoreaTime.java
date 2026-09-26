@@ -38,6 +38,15 @@ public final class KoreaTime {
         return serverTime == null ? null : serverTime.atZone(serverZone).withZoneSameInstant(ZONE).toLocalDateTime();
     }
 
+    /* 한국 시각(예: KST 자정 경계)을 서버 저장 기준(JVM 기본 시간대)으로 바꾼다. 저장값과 비교하는 쿼리 경계에 쓴다. */
+    public static LocalDateTime toServer(LocalDateTime koreaTime) {
+        return toServer(koreaTime, ZoneId.systemDefault());
+    }
+
+    public static LocalDateTime toServer(LocalDateTime koreaTime, ZoneId serverZone) {
+        return koreaTime == null ? null : koreaTime.atZone(ZONE).withZoneSameInstant(serverZone).toLocalDateTime();
+    }
+
     public static LocalTime now() {
         return now(Clock.systemUTC());
     }

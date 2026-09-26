@@ -44,4 +44,13 @@ class KoreaTimeTest {
                 .isEqualTo(LocalDate.of(2026, 9, 27)); // 날짜만 보여 주는 화면도 KST 날짜
         assertThat(KoreaTime.fromServer(null)).isNull();
     }
+
+    @Test
+    void koreaDayBoundaryMapsToServerZoneForQueries() {
+        LocalDateTime kstMidnight = LocalDateTime.of(2026, 9, 26, 0, 0);
+
+        assertThat(KoreaTime.toServer(kstMidnight, ZoneOffset.UTC)).isEqualTo(LocalDateTime.of(2026, 9, 25, 15, 0));
+        assertThat(KoreaTime.toServer(kstMidnight, ZoneId.of("Asia/Seoul"))).isEqualTo(kstMidnight);
+        assertThat(KoreaTime.fromServer(KoreaTime.toServer(kstMidnight, ZoneOffset.UTC), ZoneOffset.UTC)).isEqualTo(kstMidnight);
+    }
 }
