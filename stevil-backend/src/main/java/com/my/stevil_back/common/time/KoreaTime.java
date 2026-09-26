@@ -2,6 +2,7 @@ package com.my.stevil_back.common.time;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
@@ -23,6 +24,18 @@ public final class KoreaTime {
 
     public static LocalDate today(Clock clock) {
         return LocalDate.now(clock.withZone(ZONE));
+    }
+
+    /*
+     * 서버가 LocalDateTime.now() 로 저장한 시각(JVM 기본 시간대 = 운영 UTC)을 한국 시각으로 바꾼다.
+     * 화면에 그대로 보여 주는 응답 값에만 쓴다(null 이면 null).
+     */
+    public static LocalDateTime fromServer(LocalDateTime serverTime) {
+        return fromServer(serverTime, ZoneId.systemDefault());
+    }
+
+    public static LocalDateTime fromServer(LocalDateTime serverTime, ZoneId serverZone) {
+        return serverTime == null ? null : serverTime.atZone(serverZone).withZoneSameInstant(ZONE).toLocalDateTime();
     }
 
     public static LocalTime now() {
