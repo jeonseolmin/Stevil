@@ -2,6 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { enablePush, getPushStatus, syncPushToken, watchPushPermission } from "../../firebase/messaging";
 
+// iOS Safari 는 홈 화면에 추가한 앱(standalone)에서만 웹 푸시를 지원한다(iOS 16.4+).
+const isIos = () =>
+    /iPhone|iPad|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () =>
+    window.matchMedia?.("(display-mode: standalone)").matches || navigator.standalone === true;
+
+const IOS_INSTALL_HINT =
+    "iPhone에서는 Safari의 공유 버튼 → '홈 화면에 추가' 후, 홈 화면의 Stevil 앱에서 알림을 켤 수 있어요. (iOS 16.4 이상)";
+
 const MESSAGES = {
     unsupported: "이 브라우저에서는 푸시 알림을 사용할 수 없습니다.",
     denied: "알림이 차단되어 있습니다. 브라우저 사이트 설정에서 알림을 허용해 주세요.",
@@ -82,7 +92,7 @@ export default function PushSetting() {
                         {busy ? "설정 중..." : "알림 켜기"}
                     </button>
                 ) : (
-                    <p>{MESSAGES[status]}</p>
+                    <p>{status === "unsupported" && isIos() && !isStandalone() ? IOS_INSTALL_HINT : MESSAGES[status]}</p>
                 )}
                 {busy && waiting && (
                     <p role="status">브라우저 주소창의 알림 요청(종 아이콘)을 확인해 주세요.</p>
