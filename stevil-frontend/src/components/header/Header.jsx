@@ -12,6 +12,7 @@ import {
 
 import axiosInstance from "../../api/axiosInstance";
 import { logout } from "../../api/logout";
+import NotificationBell from "../notification/NotificationBell";
 
 import "./Header.css";
 
@@ -647,6 +648,9 @@ export default function Header() {
                     )}
                 </div>
 
+                <div className="header-trailing">
+                {isLoggedIn && !isPartnershipPage && <NotificationBell />}
+
                 <button
                     type="button"
                     className={`header-menu-button ${
@@ -674,6 +678,7 @@ export default function Header() {
                     <span />
                     <span />
                 </button>
+                </div>
             </div>
         </header>
     );

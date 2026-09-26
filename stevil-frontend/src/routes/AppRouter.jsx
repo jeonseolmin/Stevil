@@ -36,6 +36,8 @@ import DoctorReportPage from "../pages/doctorReport/DoctorReportPage.jsx";
 import DoctorPatientListPage from "../pages/doctor/DoctorPatientListPage.jsx";
 import FeedbackPage from "../pages/feedback/FeedbackPage.jsx";
 import DesignPreviewApp from "../design-preview/DesignPreviewApp.jsx";
+import NotificationsPage from "../pages/notification/NotificationsPage";
+import RemindersPage from "../pages/notification/RemindersPage";
 
 export default function AppRouter() {
     return (
@@ -58,6 +60,8 @@ export default function AppRouter() {
                 <Route path="/weight" element={<WeightRecordPage />}/>
                 <Route path="/partnership" element={<PartnershipGuidePage />}/>
                 <Route path="/mypage" element={<MyPage />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
+                <Route path="/reminders" element={<RemindersPage />} />
                 <Route path="/feedback" element={<FeedbackPage />} />
             </Route>
 

@@ -25,6 +25,15 @@ export function IconHome(props) {
     );
 }
 
+export function IconBell(props) {
+    return (
+        <svg {...base} {...props}>
+            <path d="M5.5 8.5a4.5 4.5 0 0 1 9 0c0 4 1.5 5.5 1.5 5.5H4s1.5-1.5 1.5-5.5" />
+            <path d="M8.5 16.5a1.6 1.6 0 0 0 3 0" />
+        </svg>
+    );
+}
+
 export function IconRecord(props) {
     return (
         <svg {...base} {...props}>
