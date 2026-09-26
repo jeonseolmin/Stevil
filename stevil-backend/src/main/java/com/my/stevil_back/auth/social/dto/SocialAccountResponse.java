@@ -1,5 +1,6 @@
 package com.my.stevil_back.auth.social.dto;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.auth.social.entity.enumType.ProviderType;
 import com.my.stevil_back.auth.social.entity.SocialAccount;
 
@@ -17,7 +18,7 @@ public record SocialAccountResponse(
                 socialAccount.getId(),
                 socialAccount.getProvider(),
                 socialAccount.getProviderEmail(),
-                socialAccount.getCreatedAt()
+                KoreaTime.fromServer(socialAccount.getCreatedAt())
         );
     }
 }

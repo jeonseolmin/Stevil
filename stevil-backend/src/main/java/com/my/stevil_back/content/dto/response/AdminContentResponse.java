@@ -1,5 +1,6 @@
 package com.my.stevil_back.content.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.content.entity.HealthContent;
 import com.my.stevil_back.content.entity.enumType.ContentCategory;
 import com.my.stevil_back.content.entity.enumType.ContentStatus;
@@ -48,8 +49,8 @@ public record AdminContentResponse(
                 content.getStatus(),
                 content.getAuthor().getId(),
                 content.getAuthor().getNickname(),
-                content.getCreatedAt(),
-                content.getUpdatedAt()
+                KoreaTime.fromServer(content.getCreatedAt()),
+                KoreaTime.fromServer(content.getUpdatedAt())
         );
     }
 }

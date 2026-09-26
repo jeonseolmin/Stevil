@@ -1,5 +1,6 @@
 package com.my.stevil_back.post.dto;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -99,7 +100,7 @@ public class PostResponse {
                 .commentCount(post.getCommentCount())
                 .likeCount(post.getLikeCount())
                 .notice(post.isNotice())
-                .createdAt(post.getCreatedAt())
+                .createdAt(KoreaTime.fromServer(post.getCreatedAt()))
                 .files(post.getFiles() != null ? post.getFiles().stream()
                                                  .map(file -> new FileResponse(file.getOriginalFileName(), file.getFileUrl()))
                                                  .collect(Collectors.toList()) : null)
