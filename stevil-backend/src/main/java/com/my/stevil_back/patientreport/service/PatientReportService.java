@@ -66,7 +66,7 @@ public class PatientReportService {
                             "patientName", p.getNickname(),
                             "patientAge", age,
                             "patientGender", genderCode,
-                            "sentAt", r.getCreatedAt().toLocalDate().toString(),
+                            "sentAt", KoreaTime.fromServer(r.getCreatedAt()).toLocalDate().toString(),
                             "aiSummary", r.getAiSummary(),
                             "status", r.getStatus()
                     );
@@ -95,7 +95,7 @@ public class PatientReportService {
                         "id", f.getId(),
                         "doctorName", f.getDoctor().getNickname(),
                         "content", f.getContent(),
-                        "sentAt", f.getCreatedAt().toLocalDate().toString()
+                        "sentAt", KoreaTime.fromServer(f.getCreatedAt()).toLocalDate().toString()
                 )).collect(Collectors.toList());
     }
 }
