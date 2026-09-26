@@ -212,13 +212,14 @@ function PlannerReminder({ reminder, onChanged, onError }) {
 }
 
 export default function RemindersPage() {
-    if (!localStorage.getItem("accessToken")) {
+    const [expired, setExpired] = useState(false);
+    if (expired || !localStorage.getItem("accessToken")) {
         return <LoginRequired title="알림 시간 설정" />;
     }
-    return <Reminders />;
+    return <Reminders onUnauthorized={setExpired} />;
 }
 
-function Reminders() {
+function Reminders({ onUnauthorized }) {
     const [reminders, setReminders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -229,12 +230,21 @@ function Reminders() {
         let alive = true;
         fetchReminders()
             .then((data) => alive && setReminders(data))
-            .catch(() => alive && setError("알림 목록을 불러오지 못했어요."))
+            .catch((e) => {
+                if (!alive) {
+                    return;
+                }
+                if (e?.response?.status === 401) {
+                    onUnauthorized(true);
+                    return;
+                }
+                setError("알림 목록을 불러오지 못했어요.");
+            })
             .finally(() => alive && setLoading(false));
         return () => {
             alive = false;
         };
-    }, []);
+    }, [onUnauthorized]);
 
     const replace = (updated) => setReminders((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
 
