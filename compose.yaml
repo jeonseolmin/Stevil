@@ -9,7 +9,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       TZ: Asia/Seoul
     ports:
-      - "5434:5432"
+      # host-only: DB access from outside goes through an SSH tunnel
+      - "127.0.0.1:5434:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -51,7 +52,8 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      # host-only: public traffic reaches the backend through nginx (backend:8080 on the compose network)
+      - "127.0.0.1:8080:8080"
 
   frontend:
     build:
