@@ -165,6 +165,14 @@
     transform: translateY(-1px);
 }
 
+/* 알림 벨 + 모바일 메뉴 버튼 묶음 (모바일에서 오른쪽 끝에 함께 붙는다) */
+
+.header-trailing {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* 모바일 메뉴 버튼 */
 
 .header-menu-button {
