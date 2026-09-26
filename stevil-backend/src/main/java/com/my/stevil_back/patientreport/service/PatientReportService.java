@@ -1,5 +1,6 @@
 package com.my.stevil_back.patientreport.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.patientreport.entity.Feedback;
 import com.my.stevil_back.patientreport.entity.PatientReport;
 import com.my.stevil_back.patientreport.repository.FeedbackRepository;
@@ -51,7 +52,7 @@ public class PatientReportService {
         return patientReportRepository.findByDoctorIdOrderByIdDesc(doctorId).stream()
                 .map(r -> {
                     User p = r.getPatient();
-                    int age = p.getBirthDate() != null ? Period.between(p.getBirthDate(), LocalDate.now()).getYears() : 0;
+                    int age = p.getBirthDate() != null ? Period.between(p.getBirthDate(), KoreaTime.today()).getYears() : 0;
 
                     String genderCode = "UNKNOWN";
                     if (p.getSex() != null) {
