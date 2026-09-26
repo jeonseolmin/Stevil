@@ -69,20 +69,48 @@ export async function getPushStatus() {
     return Notification.permission;
 }
 
+const PERMISSION_HINT_MS = 3000;
+const PERMISSION_TIMEOUT_MS = 60000;
+
+/*
+ * Chrome 은 권한 요청을 팝업 대신 주소창의 "조용한 알림"으로 띄우기도 해서 promise 가 오래 걸린다.
+ * 3초 뒤 onWaiting 으로 안내를 띄우고, 60초가 지나면 "timeout" 으로 대기를 끝낸다.
+ * requestPermission 자체는 취소할 수 없지만 race 로 버리므로, 늦게 응답이 와도 여기 흐름은 이어지지 않는다
+ * (그 경우는 watchPushPermission -> syncPushToken 이 처리한다).
+ */
+async function askPermission(onWaiting) {
+    if (Notification.permission !== "default") {
+        return Notification.permission;
+    }
+    let hintTimer;
+    let timeoutTimer;
+    try {
+        hintTimer = setTimeout(() => onWaiting?.(), PERMISSION_HINT_MS);
+        return await Promise.race([
+            Notification.requestPermission(),
+            new Promise((resolve) => {
+                timeoutTimer = setTimeout(() => resolve("timeout"), PERMISSION_TIMEOUT_MS);
+            }),
+        ]);
+    } finally {
+        clearTimeout(hintTimer);
+        clearTimeout(timeoutTimer);
+    }
+}
+
 /**
  * 사용자 클릭에서만 호출한다. 권한 요청 -> 서비스 워커 등록 -> FCM register(FID) -> 백엔드 등록.
- * 결과 상태 문자열을 돌려준다(getPushStatus 와 같은 값). 실패는 예외로 던진다.
+ * 결과 상태 문자열을 돌려준다(getPushStatus 와 같은 값, 권한 응답이 60초 안에 없으면 "timeout").
+ * onWaiting 은 권한 응답이 늦어질 때 한 번 호출된다. 실패는 예외로 던진다.
  */
-export async function enablePush() {
+export async function enablePush(onWaiting) {
     const messaging = await getMessagingIfSupported();
     if (!messaging) {
         return isPushConfigured() ? "unsupported" : "unconfigured";
     }
 
     // denied 면 브라우저가 다시 묻지 않는다. 설정에서 직접 허용해야 한다.
-    const permission = Notification.permission === "default"
-        ? await Notification.requestPermission()
-        : Notification.permission;
+    const permission = await askPermission(onWaiting);
     if (permission !== "granted") {
         return permission;
     }
@@ -118,6 +146,35 @@ const REGISTER_TIMEOUT_MS = 20000;
  * register() 는 getToken() 과 달리 서비스 워커 활성화를 기다리지 않으므로, 활성화된 registration(ready)을 넘긴다.
  * 어느 단계든 멈추면 UI 가 "설정 중"에 갇히지 않도록 전체에 타임아웃을 둔다.
  */
+/**
+ * 주소창 등에서 알림 권한이 바뀌면 onChange 를 호출한다. Permissions API 가 없으면 창 포커스로 대신한다.
+ * 해제 함수를 돌려준다.
+ */
+export function watchPushPermission(onChange) {
+    let permissionStatus = null;
+    let stopped = false;
+    const notify = () => onChange();
+
+    navigator.permissions?.query({ name: "notifications" })
+        .then((status) => {
+            if (stopped) {
+                return;
+            }
+            permissionStatus = status;
+            status.onchange = notify;
+        })
+        .catch(() => {});
+    window.addEventListener("focus", notify);
+
+    return () => {
+        stopped = true;
+        if (permissionStatus) {
+            permissionStatus.onchange = null;
+        }
+        window.removeEventListener("focus", notify);
+    };
+}
+
 async function registerFid(messaging) {
     let timer;
     const timeout = new Promise((_, reject) => {
