@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { enablePush, getPushStatus, syncPushToken, watchPushPermission } from "../../firebase/messaging";
 
 const MESSAGES = {
@@ -75,6 +76,7 @@ export default function PushSetting() {
             <hr className="mypage-divider" />
             <div className="mypage-section">
                 <h3>푸시 알림</h3>
+                <p><Link to="/reminders">알림 시간 설정</Link> · <Link to="/notifications">받은 알림 보기</Link></p>
                 {status === "default" ? (
                     <button type="button" className="edit-btn" onClick={handleEnable} disabled={busy}>
                         {busy ? "설정 중..." : "알림 켜기"}

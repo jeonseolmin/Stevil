@@ -29,14 +29,17 @@ self.addEventListener("push", (event) => {
     const notification = payload.notification || {};
     const data = payload.data || {};
 
-    event.waitUntil(
+    event.waitUntil(Promise.all([
         self.registration.showNotification(notification.title || "Stevil", {
             body: notification.body || "",
             icon: "/favicon.svg",
             tag: data.notificationId ? `notification-${data.notificationId}` : undefined,
             data: { targetUrl: safeTargetUrl(data.targetUrl) },
-        })
-    );
+        }),
+        // 열린 탭의 알림 벨이 바로 다시 세도록 알린다(탭 쪽에서 debounce).
+        self.clients.matchAll({ type: "window" })
+            .then((windows) => windows.forEach((client) => client.postMessage({ type: "stevil-push" }))),
+    ]));
 });
 
 self.addEventListener("notificationclick", (event) => {
