@@ -1,5 +1,6 @@
 package com.my.stevil_back.admin.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.user.entity.User;
 import com.my.stevil_back.user.entity.enumType.UserRole;
 
@@ -26,10 +27,10 @@ public record AdminUserResponse(
                 user.getRole(),
                 user.isOnboardingCompleted(),
                 user.isSuspended(),
-                user.getSuspendedAt(),
+                KoreaTime.fromServer(user.getSuspendedAt()),
                 user.getSuspensionReason(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
+                KoreaTime.fromServer(user.getCreatedAt()),
+                KoreaTime.fromServer(user.getUpdatedAt())
         );
     }
 }
