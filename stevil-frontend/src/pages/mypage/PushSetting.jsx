@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { enablePush, getPushStatus } from "../../firebase/messaging";
+import { useEffect, useRef, useState } from "react";
+import { enablePush, getPushStatus, syncPushToken, watchPushPermission } from "../../firebase/messaging";
 
 const MESSAGES = {
     unsupported: "이 브라우저에서는 푸시 알림을 사용할 수 없습니다.",
@@ -12,12 +12,36 @@ export default function PushSetting() {
     const [status, setStatus] = useState(null);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
+    const [waiting, setWaiting] = useState(false);
+    const busyRef = useRef(false);
 
+    // 주소창에서 권한을 바꾸면 새로고침 없이 반영한다. granted 로 바뀌면 등록까지 한다.
+    // "알림 켜기" 진행 중에는 그 흐름이 끝을 책임지므로 여기서 건드리지 않는다.
     useEffect(() => {
         let alive = true;
-        getPushStatus().then((value) => alive && setStatus(value));
+        let last = null;
+        const refresh = async () => {
+            if (busyRef.current) {
+                return;
+            }
+            const value = await getPushStatus();
+            if (!alive) {
+                return;
+            }
+            if (value === "granted" && last !== null && last !== "granted") {
+                await syncPushToken();
+            }
+            last = value;
+            setStatus(value);
+            if (value !== "default") {
+                setError("");
+            }
+        };
+        refresh();
+        const stop = watchPushPermission(refresh);
         return () => {
             alive = false;
+            stop();
         };
     }, []);
 
@@ -26,14 +50,23 @@ export default function PushSetting() {
     }
 
     const handleEnable = async () => {
+        busyRef.current = true;
         setBusy(true);
+        setWaiting(false);
         setError("");
         try {
-            setStatus(await enablePush());
+            const result = await enablePush(() => setWaiting(true));
+            if (result === "timeout") {
+                setError("알림 요청에 응답이 없어요. 주소창의 알림 요청(종 아이콘)에서 허용한 뒤 다시 눌러 주세요.");
+            } else {
+                setStatus(result);
+            }
         } catch {
             setError("알림을 켜지 못했습니다. 잠시 후 다시 시도해 주세요.");
         } finally {
+            busyRef.current = false;
             setBusy(false);
+            setWaiting(false);
         }
     };
 
@@ -48,6 +81,9 @@ export default function PushSetting() {
                     </button>
                 ) : (
                     <p>{MESSAGES[status]}</p>
+                )}
+                {busy && waiting && (
+                    <p role="status">브라우저 주소창의 알림 요청(종 아이콘)을 확인해 주세요.</p>
                 )}
                 {error && <p role="alert">{error}</p>}
             </div>
