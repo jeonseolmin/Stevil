@@ -6,10 +6,25 @@
 
 ---
 
-## 1. 한눈에 보는 현재 상태
+## 1. 한눈에 보는 현재 상태 (2026-09-26 갱신)
 
 | 단계 | 내용 | 상태 |
 |---|---|---|
+| PR-A | 알림/기기 등록 기반 (Notification, UserDevice, PushSender, AFTER_COMMIT 리스너, `/api/notifications/**`) | **운영 반영** (#30) |
+| PR-B | Firebase Admin FCM 발송 | **운영 반영** (#31). 이후 FID 전환(`addAllFids`)은 #34 |
+| PR-C | Personal Reminder Scheduler (§5) | **운영 반영** (#33, compose 전달 누락 수정 #36) |
+| PR-D1 | 웹푸시 기반: Firebase Web SDK(FID `register/onRegistered/unregister`), SDK 없는 raw push service worker, 알림 켜기/로그아웃 해제 | **운영 반영** (#34, 권한 대기 안내 #38) |
+| PR-D2 | 헤더 알림 벨, `/notifications`, `/reminders` 화면 | **운영 반영** (#40) |
+| 후속 | 로그인 안내·간식 표기 수정, iOS PWA(manifest/아이콘), 이 문서 갱신 | PR 진행 중 |
+
+운영 상태:
+- `main` 자동 배포(`deploy.yml`, main push만). main 은 보호 브랜치(리뷰 1건 필요) — merge 는 사람이 한다.
+- 서버 `~/Stevil/.env`: `VITE_FIREBASE_*` 6개, `FIREBASE_SERVICE_ACCOUNT_FILE=/etc/stevil/firebase-service-account.json`, `STEVIL_FIREBASE_ENABLED=true`, `STEVIL_REMINDER_SCHEDULER_ENABLED=true` (변경 때마다 `.env.bak.<timestamp>` 백업).
+- 서비스 계정 키: `/etc/stevil/firebase-service-account.json` (600 root). **현재는 기본 `firebase-adminsdk-fbsvc` 계정 키** — FCM 전용 계정 키로 교체 예정(§6).
+- Firebase 프로젝트: `stevil-61a4a` (웹 앱 `stevil`, VAPID 키 등록됨, FCM API v1 enabled).
+- 운영 smoke 완료: 기기 등록 → 리마인더(직접 추가·Planner 동기화·timeOverride) → Notification → FCM `success=1` → 클릭 이동 → 로그아웃 해제.
+
+---|---|---|
 | PR-A | 알림/기기 토큰 기반 (Notification, UserDevice, PushSender/Noop, AFTER_COMMIT 리스너, `/api/notifications/**`) | **머지됨** (PR #30, `a77ea1a`) |
 | PR-B | Firebase Admin FCM 전송 (기본 OFF) | **PR #31 오픈, 머지 대기** (`feature/fcm-delivery`, 커밋 `d9c2f8e`) |
 | PR-C | Personal Reminder Scheduler | **설계 확정 대기** (코드 없음, 아래 §5) |
@@ -81,7 +96,7 @@
 
 ---
 
-## 5. PR-C 최종 설계 (Personal Reminder Scheduler) — **구현 전, 확정 답변 대기**
+## 5. PR-C 설계 (Personal Reminder Scheduler) — **구현·운영 반영 완료**
 
 ### 5.1 확정된 결정
 - grace window **10분** (`stevil.reminder.grace-minutes=10`): 10분 이내 catch-up, 초과 `SKIPPED_MISSED`. Reminder당 1회만 처리 후 `nextFireAt`을 미래로 전진 (몰아서 발송 금지).
@@ -183,70 +198,63 @@
 6. `PlannerSavedEvent`, `PlannerSlotMapper`, `ReminderSyncService`, 리스너, `PlannerService` 수정(+테스트 4개)
 7. 보관 정리 job, 전체 빌드/test base 비교, 로컬 커밋 후 보고 (승인 전 push 금지)
 
-### 5.11 구현 시작 전에 사용자에게 확인받을 것 (제안값)
+### 5.11 확정된 값 (2026-09-26, 제안값 그대로 확정)
 1. PLANNER Reminder는 지난주 패턴을 반복하지 않고 **저장된 계획의 날짜만** 따른다 (계획 없는 주에는 알림 없음) — 맞는지
 2. 순번 상한 MEAL 6 / SNACK 4 / EXERCISE 2
 3. override는 `timeOverride` 하나만 (N분 전 lead 방식은 후속)
-4. 동기화 리스너 동기 실행(PUT 응답 지연 수 ms) vs `@Async`
+4. 동기화 리스너는 AFTER_COMMIT **동기 실행** (지연이 커지면 `@Async` 검토)
 5. 기존 사용자 backfill은 다음 Planner 저장 시점부터 (즉시 backfill 엔드포인트 없음)
 
 ---
 
-## 6. Firebase / 운영 활성화 체크리스트 (사람이 해야 하는 일)
+## 6. 운영 설정 / 남은 운영 작업
 
-**아직 하지 않았고, 일치 확인 전에는 절대 `STEVIL_FIREBASE_ENABLED=true`로 바꾸지 않는다.**
+완료:
+- Firebase 프로젝트 일치 확인(`stevil-61a4a`), FCM API v1 enabled, 키 배치, `.env` 설정, FCM·scheduler 활성화, 운영 smoke.
+- 기동 로그 확인: `FCM push: ENABLED (projectId=stevil-61a4a)`. 설정이 잘못되면 `FAILED ... falling back to NoopPushSender`.
 
-1. Firebase Console에서 **service account가 속한 프로젝트 ID가 Stevil이 실제로 쓰는 Firebase(Hosting) 프로젝트와 같은지 확인**. (개발 PC 바탕화면에 FCM 전용 service account 키(JSON)를 발급해 둔 상태. 파일명/내용은 이 문서에 적지 않음.)
-   - 다르면 SENDER_ID_MISMATCH / 인증 오류가 난다.
-2. 해당 Google Cloud 프로젝트에 Firebase가 활성화되어 있고 **Firebase Cloud Messaging API**가 Enabled인지 확인.
-3. IAM에서 해당 서비스 계정 역할이 **"Firebase Cloud Messaging API Admin"만** 있는지 확인 (기본 `firebase-adminsdk` 계정이 아닌 FCM 전용 계정을 쓰기로 함).
-4. 키 파일을 EC2로 `scp` 후 배치:
+남음 — **FCM 전용 서비스 계정으로 교체** (최소 권한):
+1. Google Cloud Console(`stevil-61a4a`) → IAM → 서비스 계정 만들기(예: `stevil-fcm-sender`), 역할은 **Firebase Cloud Messaging API Admin** 하나만.
+2. 그 계정의 JSON 키 발급 → OneDrive 밖에 보관(예: `C:\Users\<user>\.stevil\`). 내용은 채팅/메일/저장소에 붙이지 않는다.
+3. 서버에 배치(기존 파일 교체):
    ```bash
-   sudo install -d -m 755 /etc/stevil
-   sudo install -m 600 -o root -g root ./<키파일>.json /etc/stevil/firebase-service-account.json
-   sudo stat -c '%a %U %n' /etc/stevil/firebase-service-account.json   # 600 root ...
+   scp -i <EC2키.pem> <새키>.json ubuntu@<EC2_HOST>:/tmp/fcm-key.json
+   sudo install -m 600 -o root -g root /tmp/fcm-key.json /etc/stevil/firebase-service-account.json && rm -f /tmp/fcm-key.json
+   cd ~/Stevil && docker compose up -d --force-recreate backend
+   docker compose logs backend --since 2m | grep "FCM push"
    ```
-5. 로컬 사본은 안전하게 삭제. (바탕화면 위치는 상속 권한 때문에 다른 로컬 계정이 읽을 수 있음. 키 내용을 채팅/메일/저장소에 붙이지 말 것.)
-6. 서버 `~/Stevil/.env` 에 **경로/토글만** 추가 (JSON 내용을 env에 넣지 않음):
-   ```
-   FIREBASE_SERVICE_ACCOUNT_FILE=/etc/stevil/firebase-service-account.json
-   STEVIL_FIREBASE_ENABLED=true   # ← 1~3 확인 + PR-C/PR-D 배포 + 테스트 기기 smoke 이후에만
-   ```
-7. 재기동 후 확인: `docker exec stevil-backend ls -l /run/secrets/` (내용 `cat` 금지), 기동 로그에서 `FCM push: ENABLED (projectId=...)` 확인. `FAILED ... falling back to NoopPushSender` 가 보이면 설정 문제.
-8. 실제 발송 검증은 PR-D(토큰 발급) 이후 테스트 기기 토큰으로. 알림 생성 경로는 PR-C(Reminder) 이후 가능.
-
-운영 활성화 시점은 **PR-B → PR-C → PR-D 배포 후, 테스트 기기 smoke 확인 뒤**로 확정.
+4. 테스트 알림 1건으로 `FCM sent: ... success=1` 확인.
+5. 확인 후 기본 `firebase-adminsdk-fbsvc` 계정의 기존 키 삭제(Console → 서비스 계정 → 키). 작업 PC 바탕화면의 예전 키도 폐기.
 
 ---
 
-## 7. 이어서 시작하는 방법
+## 7. 이어서 작업하는 방법
 
 ```bash
 git fetch --prune
-git log --oneline -3 origin/local/design-preview        # PR-B(#31) 머지 여부 확인
+git worktree add -b <branch> C:/Users/<user>/stevil-<name> origin/local/design-preview
+git -C C:/Users/<user>/stevil-<name> branch --unset-upstream   # design-preview 로 잘못 push 방지
 ```
-- #31이 아직 오픈이면: 머지 여부를 사용자와 확정. **머지 전에는 PR-C 브랜치를 만들지 않는다** (base가 달라짐).
-- 머지 후 PR-C 시작:
-  ```bash
-  git worktree add -b feature/reminder-scheduler ../stevil-reminder origin/local/design-preview
-  git -C ../stevil-reminder branch --unset-upstream feature/reminder-scheduler   # 실수로 design-preview에 push 방지
-  cd ../stevil-reminder/stevil-backend
-  .\gradlew.bat compileJava compileTestJava
-  ```
-- 먼저 §5.11의 확인 항목을 사용자에게 받은 뒤 구현 시작.
-- 검증 명령: `.\gradlew.bat compileJava compileTestJava` → 관련 테스트 → `.\gradlew.bat test` → `.\gradlew.bat bootJar`. 알려진 실패 2건(§3) 외 신규 실패가 없어야 한다.
+- 흐름: `feature/*` → PR → `local/design-preview` → PR → `main`(자동 배포, 보호 브랜치라 사람이 merge).
+- **한글 OneDrive 경로의 worktree 에서는 Gradle test worker 가 ClassNotFound** → worktree 는 ASCII 경로(`C:\Users\<user>\...`)에 만든다.
+- 백엔드: `.\gradlew.bat compileJava compileTestJava` → 관련 테스트 → `.\gradlew.bat test` (알려진 실패 2건 외 신규 실패 없어야 함).
+- 프론트: `npm run build`, eslint(신규 지적 0). 테스트 러너는 없음.
+- lockfile 은 npm 11 로 갱신(`npx npm@11 install ...`) — npm 10 은 `libc` 필드를 지운다.
+- 로컬 FCM 테스트: 로컬 `.env`/`stevil-frontend/.env` 에 `VITE_FIREBASE_*`, 백엔드는 `STEVIL_FIREBASE_ENABLED=true` + `FIREBASE_CREDENTIALS_PATH=<키 경로>` 를 **실행 환경변수로만** 준다. 알림 권한은 일반 Chrome 에서(앱 내장 브라우저는 차단).
+- 주의: 로컬 `stevil-frontend/.env` 의 `VITE_API_BASE_URL` 이 운영 서버를 가리키면 로컬 dev 가 운영 API 를 호출한다.
 
-## 8. 로컬 worktree 상태 (작업 PC 기준, 정리는 사용자 지시가 있을 때만)
-- `C:\Users\human-01\Desktop\stevil` — 메인 worktree (`local/design-preview` 오래된 로컬 ref, 미추적 파일 있음, 건드리지 않음)
-- `...\stevil-fcm` — PR-A 브랜치 `feature/fcm-notification-core` worktree (PR #30 머지됨, 현재 detached, 정리 대기)
-- `...\stevil-fcm-delivery` — PR-B `feature/fcm-delivery` (PR #31)
-- `...\stevil-handoff` — 이 문서용 `docs/fcm-handoff`
+## 8. 알아 둘 동작
+- 웹푸시는 브라우저(기기)마다 "알림 켜기" 가 필요하다. 사용자당 최대 10대.
+- Chrome 이 권한 요청을 주소창 "조용한 알림"으로 띄우면 화면에 안내가 나오고, 주소창에서 허용하면 새로고침 없이 등록된다.
+- iOS 는 홈 화면에 추가한(PWA) Stevil 에서만 웹푸시 가능(iOS 16.4+).
+- Planner 리마인더: sourceKey `PLANNER:{KIND}:{ordinal}`, 날짜별 실제 시각 저장. 순번이 사라졌다가 다른 일정이 같은 순번을 쓰면 예전 `timeOverride` 가 이어질 수 있다(알려진 한계).
+- Planner 저장에는 영양 목표 확인 체크가 필요하고, 운동 일정은 선택한 운동 요일·시간 안이어야 한다.
+- API 에러 본문에는 메시지가 없다(`server.error.include-message` 기본값) → 화면은 상태코드로 안내.
 
-## 9. 남은 후속 항목 (다음 PR 후보)
+## 9. 남은 후속 항목
+- FCM 전용 서비스 계정 교체(§6)
 - HOSPITAL 1회성 날짜 Reminder (scheduledDate / one-shot)
-- Planner `Event.mealType` 제공 → Reminder subtype 동기화 (생성기 변경)
-- PLANNER Reminder "N분 전" lead 방식 override
-- FCM 재시도/outbox (일시 오류 재전송)
-- 관리자 발송 API + `notification_broadcasts` (미착수, 필요 시)
-- PR-D 프론트: Firebase Web SDK, service worker(`firebase-messaging-sw.js`), VAPID 키(프론트 전용), 토큰 등록/삭제(`POST/DELETE /api/notifications/token`), 알림 벨/목록/읽음 UI, Android·Desktop Chrome/Edge 우선(iOS는 제외)
-- 알려진 기존 실패 2건의 원인 정리(별개 작업)
+- Planner `Event.mealType` 제공 → Reminder subtype 동기화, 안정 이벤트 ID
+- PLANNER Reminder "N분 전" lead 방식 override, 리마인더 시간대 선택 UI
+- FCM 재시도/outbox, 관리자 발송 API
+- 알려진 기존 테스트 실패 2건의 원인 정리(별개 작업)
