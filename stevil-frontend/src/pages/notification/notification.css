@@ -259,3 +259,12 @@
     display: flex;
     gap: 8px;
 }
+
+.noti-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 240px;
+    margin: 0 auto;
+    text-decoration: none;
+}

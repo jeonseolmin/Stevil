@@ -6,6 +6,7 @@ import {
     markNotificationRead,
     notifyNotificationsChanged,
 } from "../../api/notificationApi";
+import LoginRequired from "./LoginRequired";
 import "./notification.css";
 
 const PAGE_SIZE = 20;
@@ -22,6 +23,13 @@ function formatTime(value) {
 
 /* 알림 목록. 항목을 누르면 읽음 처리 후 targetUrl(앱 내부 경로)로 이동한다. */
 export default function NotificationsPage() {
+    if (!localStorage.getItem("accessToken")) {
+        return <LoginRequired title="알림" />;
+    }
+    return <Notifications />;
+}
+
+function Notifications() {
     const navigate = useNavigate();
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(0);

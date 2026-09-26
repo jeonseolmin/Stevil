@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import LoginRequired from "./LoginRequired";
 import {
     createReminder,
     deleteReminder,
@@ -41,6 +42,9 @@ const dayLabel = (day) => DAYS.find(([key]) => key === day)?.[1] || day;
 const hhmm = (time) => (time ? String(time).slice(0, 5) : "");
 
 function title(reminder) {
+    if (reminder.type === "MEAL" && reminder.mealType === "SNACK") {
+        return "간식";
+    }
     const meal = mealLabel(reminder.mealType);
     return reminder.type === "MEAL" && meal ? `${meal} 식사` : typeLabel(reminder.type);
 }
@@ -208,6 +212,13 @@ function PlannerReminder({ reminder, onChanged, onError }) {
 }
 
 export default function RemindersPage() {
+    if (!localStorage.getItem("accessToken")) {
+        return <LoginRequired title="알림 시간 설정" />;
+    }
+    return <Reminders />;
+}
+
+function Reminders() {
     const [reminders, setReminders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
