@@ -1,5 +1,6 @@
 package com.my.stevil_back.diet.controller;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.diet.dto.DietDashboardResponse;
 import com.my.stevil_back.diet.dto.DietRecordRequest;
@@ -25,7 +26,7 @@ public class DietController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         // 날짜가 안 넘어오면 오늘 날짜로 세팅
-        LocalDate targetDate = (date != null) ? date : LocalDate.now();
+        LocalDate targetDate = (date != null) ? date : KoreaTime.today();
         return ResponseEntity.ok(dietService.getDashboardData(userDetails.getUserId(), targetDate));
     }
 
