@@ -8,4 +8,7 @@ import java.util.List;
 public interface DietRecordRepository extends JpaRepository<DietRecord, Long> {
     // 특정 유저의 "특정 날짜(예: 오늘)" 식단 기록을 전부 가져오기
     List<DietRecord> findByUserIdAndRecordDate(Long userId, LocalDate recordDate);
+
+    // 해당 주에 Planner 완료 체크로 자동 생성된 기록만(직접 입력한 기록 제외)
+    List<DietRecord> findByUserIdAndPlannerEventKeyIsNotNullAndRecordDateBetween(Long userId, LocalDate from, LocalDate to);
 }

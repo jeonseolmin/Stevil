@@ -56,6 +56,6 @@ export default function SavedPlanPanel({ kind }) {
                 <label className="saved-plan-check"><input type="checkbox" checked={event.completed} disabled={saving} onChange={e => complete(event.id, e.target.checked)} aria-label={`${event.title} 계획 완료`} />완료</label>
             </article>;
         })}</div> : !error && <p className="saved-plan-empty">이 날짜에 저장한 {food ? "식단·간식" : "운동"} 계획이 없어요. 대시보드에서 계획을 확정하고 저장해 주세요.</p>}
-        <footer><span>계획 완료 체크는 실제 {food ? "섭취량" : "운동량"} 기록과 별도로 관리합니다.</span><Link to="/dashboard#planner-title">대시보드에서 계획 편집 ↗</Link></footer>
+        <footer><span>{food ? "식사·간식 완료 체크는 영양정보가 있으면 섭취 기록에 자동으로 더해지고, 해제하면 빠집니다." : "계획 완료 체크는 실제 운동량 기록과 별도로 관리합니다."}</span><Link to="/dashboard#planner-title">대시보드에서 계획 편집 ↗</Link></footer>
     </section>;
 }
