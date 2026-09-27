@@ -1,5 +1,6 @@
 package com.my.stevil_back.admin.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.admin.dto.response.AdminDashboardResponse;
 import com.my.stevil_back.exercise.repository.UserExerciseLogRepository;
 import com.my.stevil_back.medical.repository.InjectionLogRepository;
@@ -26,8 +27,9 @@ public class AdminDashboardService {
 
     public AdminDashboardResponse getDashboard() {
         LocalDate today = LocalDate.now(KOREA_ZONE);
-        LocalDateTime startOfToday = today.atStartOfDay();
-        LocalDateTime startOfTomorrow = today.plusDays(1).atStartOfDay();
+        // created_at 은 서버 시간대(운영 UTC)로 저장되므로 KST 하루 경계를 그 기준으로 바꿔 비교한다.
+        LocalDateTime startOfToday = KoreaTime.toServer(today.atStartOfDay());
+        LocalDateTime startOfTomorrow = KoreaTime.toServer(today.plusDays(1).atStartOfDay());
 
         long totalUsers = userRepository.count();
 

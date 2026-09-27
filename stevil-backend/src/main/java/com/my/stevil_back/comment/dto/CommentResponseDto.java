@@ -1,5 +1,6 @@
 package com.my.stevil_back.comment.dto;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.my.stevil_back.comment.entity.Comment;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class CommentResponseDto {
                 .author(comment.getAuthor() != null ? comment.getAuthor() : "익명")
                 .authorEmail(comment.getAuthorEmail())
 
-                .createdAt(comment.getCreatedAt())
+                .createdAt(KoreaTime.fromServer(comment.getCreatedAt()))
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.my.stevil_back.hospital.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.hospital.entity.enumType.FacilityApprovalStatus;
 import com.my.stevil_back.hospital.entity.enumType.FacilityType;
 import com.my.stevil_back.hospital.entity.MedicalFacility;
@@ -39,10 +40,10 @@ public record AdminFacilityResponse(
                 facility.getBusinessNumber(),
                 facility.getApprovalStatus(),
                 facility.getRejectionReason(),
-                facility.getApprovedAt(),
+                KoreaTime.fromServer(facility.getApprovedAt()),
                 facility.getApprovedBy(),
-                facility.getCreatedAt(),
-                facility.getUpdatedAt()
+                KoreaTime.fromServer(facility.getCreatedAt()),
+                KoreaTime.fromServer(facility.getUpdatedAt())
         );
     }
 }

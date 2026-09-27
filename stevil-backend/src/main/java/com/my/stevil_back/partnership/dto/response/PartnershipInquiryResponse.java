@@ -1,5 +1,6 @@
 package com.my.stevil_back.partnership.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.hospital.entity.enumType.FacilityType;
 import com.my.stevil_back.partnership.entity.PartnershipInquiry;
 import com.my.stevil_back.partnership.entity.enumType.PartnershipInquiryStatus;
@@ -37,8 +38,8 @@ public record PartnershipInquiryResponse(
                 inquiry.getMessage(),
                 inquiry.getStatus(),
                 inquiry.getRejectionReason(),
-                inquiry.getCreatedAt(),
-                inquiry.getUpdatedAt()
+                KoreaTime.fromServer(inquiry.getCreatedAt()),
+                KoreaTime.fromServer(inquiry.getUpdatedAt())
         );
     }
 }

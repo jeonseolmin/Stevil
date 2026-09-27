@@ -1,5 +1,6 @@
 package com.my.stevil_back.chat.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.chat.dto.*;
 import com.my.stevil_back.chat.entity.*;
 import com.my.stevil_back.chat.repository.*;
@@ -47,7 +48,7 @@ public class ChatService {
                 .chatRoom(room)
                 .senderNickname(messageDto.getSenderNickname())
                 .content(messageDto.getContent()).build());
-        messageDto.setCreatedAt(message.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm")));
+        messageDto.setCreatedAt(KoreaTime.fromServer(message.getCreatedAt()).format(DateTimeFormatter.ofPattern("HH:mm")));
         return messageDto;
     }
 
@@ -58,7 +59,7 @@ public class ChatService {
                         .roomId(msg.getChatRoom().getId())
                         .senderNickname(msg.getSenderNickname())
                         .content(msg.getContent())
-                        .createdAt(msg.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm")))
+                        .createdAt(KoreaTime.fromServer(msg.getCreatedAt()).format(DateTimeFormatter.ofPattern("HH:mm")))
                         .build()).toList();
     }
 

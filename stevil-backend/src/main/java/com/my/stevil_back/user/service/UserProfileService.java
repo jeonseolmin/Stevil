@@ -1,5 +1,6 @@
 package com.my.stevil_back.user.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.comment.repository.CommentRepository;
 import com.my.stevil_back.post.repository.PostRepository;
 import com.my.stevil_back.medical.repository.InjectionLogRepository;
@@ -31,7 +32,7 @@ public class UserProfileService {
 
         LocalDate joinDate = user.getCreatedAt() != null
                 ? user.getCreatedAt().toLocalDate()
-                : LocalDate.now();
+                : KoreaTime.today();
 
         int medicationDays = (int) injectionLogRepository.countByUserId(user.getId());
 

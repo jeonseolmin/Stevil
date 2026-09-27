@@ -1,5 +1,6 @@
 package com.my.stevil_back.ad.controller;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.common.security.oauth.entity.CustomUserDetails;
 import com.my.stevil_back.patientreport.repository.PatientReportRepository;
 import com.my.stevil_back.user.entity.User;
@@ -57,7 +58,7 @@ public class DoctorDashboardController {
         java.util.List<User> patients = userRepository.findByAttendingDoctorId(doctorId);
 
         java.util.List<Map<String, Object>> response = patients.stream().map(p -> {
-            int age = p.getBirthDate() != null ? java.time.Period.between(p.getBirthDate(), java.time.LocalDate.now()).getYears() : 0;
+            int age = p.getBirthDate() != null ? java.time.Period.between(p.getBirthDate(), KoreaTime.today()).getYears() : 0;
 
             String genderStr = p.getSex() != null ? p.getSex().name() : "UNKNOWN";
 

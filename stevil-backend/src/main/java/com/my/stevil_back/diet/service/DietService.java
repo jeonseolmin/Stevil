@@ -1,5 +1,6 @@
 package com.my.stevil_back.diet.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.diet.dto.DietDashboardResponse;
 import com.my.stevil_back.diet.dto.DietRecordRequest;
 import com.my.stevil_back.diet.entity.DietRecord;
@@ -88,7 +89,7 @@ public class DietService {
          */
         LocalDate date = targetDate != null
                 ? targetDate
-                : LocalDate.now();
+                : KoreaTime.today();
 
         List<DietRecord> dailyRecords =
                 dietRecordRepository
@@ -954,13 +955,13 @@ public class DietService {
                         .recordDate(
                                 request.getRecordDate() != null
                                         ? request.getRecordDate()
-                                        : LocalDate.now()
+                                        : KoreaTime.today()
                         )
 
                         .recordTime(
                                 request.getRecordTime() != null
                                         ? request.getRecordTime()
-                                        : LocalTime.now()
+                                        : KoreaTime.now()
                         )
 
                         .mealType(

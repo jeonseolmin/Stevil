@@ -1,5 +1,6 @@
 package com.my.stevil_back.support.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.support.entity.Inquiry;
 import com.my.stevil_back.support.entity.enumType.InquiryCategory;
 import com.my.stevil_back.support.entity.enumType.InquiryStatus;
@@ -30,9 +31,9 @@ public record AdminInquiryResponse(
                 inquiry.getStatus(),
                 inquiry.getAnswer(),
                 inquiry.getAnsweredBy(),
-                inquiry.getAnsweredAt(),
-                inquiry.getCreatedAt(),
-                inquiry.getUpdatedAt()
+                KoreaTime.fromServer(inquiry.getAnsweredAt()),
+                KoreaTime.fromServer(inquiry.getCreatedAt()),
+                KoreaTime.fromServer(inquiry.getUpdatedAt())
         );
     }
 }

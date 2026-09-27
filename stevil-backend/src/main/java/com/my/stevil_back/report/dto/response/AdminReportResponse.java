@@ -1,5 +1,6 @@
 package com.my.stevil_back.report.dto.response;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.report.entity.*;
 import com.my.stevil_back.report.entity.enumType.ReportAction;
 import com.my.stevil_back.report.entity.enumType.ReportCategory;
@@ -35,8 +36,8 @@ public record AdminReportResponse(
                 report.getAdminAction(),
                 report.getAdminNote(),
                 report.getProcessedBy(),
-                report.getProcessedAt(),
-                report.getCreatedAt()
+                KoreaTime.fromServer(report.getProcessedAt()),
+                KoreaTime.fromServer(report.getCreatedAt())
         );
     }
 }

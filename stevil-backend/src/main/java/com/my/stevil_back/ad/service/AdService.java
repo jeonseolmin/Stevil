@@ -1,5 +1,6 @@
 package com.my.stevil_back.ad.service;
 
+import com.my.stevil_back.common.time.KoreaTime;
 import com.my.stevil_back.ad.dto.AdDto;
 import com.my.stevil_back.ad.entity.AdRequest;
 import com.my.stevil_back.ad.enums.AdStatus;
@@ -84,7 +85,7 @@ public class AdService {
     // 6. 활성화된 전체 광고 조회
     @Transactional(readOnly = true)
     public List<AdDto.Response> getActiveAds() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = KoreaTime.today();
         return adRequestRepository.findActiveAds(today).stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
@@ -93,7 +94,7 @@ public class AdService {
     // 7. 대시보드용 광고를 유형(AdType)별로 그룹화하여 반환
     @Transactional(readOnly = true)
     public Map<String, List<AdDto.Response>> getDashboardAds() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = KoreaTime.today();
         List<AdRequest> activeAds = adRequestRepository.findActiveAds(today);
 
         Map<String, List<AdDto.Response>> adMap = new HashMap<>();
@@ -118,7 +119,7 @@ public class AdService {
                 ad.getStartDate(),
                 ad.getEndDate(),
                 ad.getAdminFeedback(),
-                ad.getRequestedAt()
+                KoreaTime.fromServer(ad.getRequestedAt())
         );
     }
 }

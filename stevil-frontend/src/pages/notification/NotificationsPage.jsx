@@ -23,13 +23,14 @@ function formatTime(value) {
 
 /* 알림 목록. 항목을 누르면 읽음 처리 후 targetUrl(앱 내부 경로)로 이동한다. */
 export default function NotificationsPage() {
-    if (!localStorage.getItem("accessToken")) {
+    const [expired, setExpired] = useState(false);
+    if (expired || !localStorage.getItem("accessToken")) {
         return <LoginRequired title="알림" />;
     }
-    return <Notifications />;
+    return <Notifications onUnauthorized={setExpired} />;
 }
 
-function Notifications() {
+function Notifications({ onUnauthorized }) {
     const navigate = useNavigate();
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(0);
@@ -47,12 +48,21 @@ function Notifications() {
                 setItems(data.content || []);
                 setLast(data.last !== false);
             })
-            .catch(() => alive && setError("알림을 불러오지 못했어요."))
+            .catch((e) => {
+                if (!alive) {
+                    return;
+                }
+                if (e?.response?.status === 401) {
+                    onUnauthorized(true);
+                    return;
+                }
+                setError("알림을 불러오지 못했어요.");
+            })
             .finally(() => alive && setLoading(false));
         return () => {
             alive = false;
         };
-    }, []);
+    }, [onUnauthorized]);
 
     const loadMore = async () => {
         const next = page + 1;
