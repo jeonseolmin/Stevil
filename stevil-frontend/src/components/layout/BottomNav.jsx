@@ -14,12 +14,13 @@ const NAV_ITEMS = [
     { key: "home", label: "홈", Icon: IconHome, to: "/dashboard" },
     { key: "records", label: "기록", Icon: IconRecord, to: "/dashboard#daily-records" },
     { key: "planner", label: "Planner", Icon: IconPlanner, to: "/dashboard#weekly-planner" },
-    { key: "hospital", label: "병원", Icon: IconHospital, to: "/hospitals" },
+    { key: "hospital", label: "병원·약국", Icon: IconHospital, to: "/hospitals", also: ["/pharmacies"] },
     { key: "my", label: "MY", Icon: IconProfile, to: "/mypage" },
 ];
 
 function isActive(item, pathname, hash) {
     const [itemPath, itemHash] = item.to.split("#");
+    if (item.also?.includes(pathname)) return true;
     if (pathname !== itemPath) return false;
     if (item.key === "home") return !hash;
     return hash === `#${itemHash}`;
