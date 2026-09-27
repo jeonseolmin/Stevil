@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { loadNaverMap } from "../../api/naverMapLoader";
 import { MAP_FAILURE_MESSAGE, createMapGuard } from "../../api/naverMapSafe";
 import "./HospitalMapPage.css";
@@ -465,6 +465,10 @@ export default function HospitalMapPage() {
 
     return (
         <div className="hospital-page">
+            <nav className="finder-switch" aria-label="찾기 종류">
+                <NavLink to="/hospitals">병원 찾기</NavLink>
+                <NavLink to="/pharmacies">약국 찾기</NavLink>
+            </nav>
             <section className="hospital-heading">
                 <div>
                     <span className="hospital-eyebrow">HOSPITAL FINDER</span>

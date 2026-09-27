@@ -15,6 +15,31 @@
     padding: 48px 0 72px;
 }
 
+/* 병원 찾기 / 약국 찾기 전환 (하단 탭은 병원·약국 한 칸이라 여기서 오간다) */
+.finder-switch {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border-radius: 999px;
+    background: var(--color-surface-soft);
+}
+
+.finder-switch a {
+    padding: 8px 16px;
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.finder-switch a.active {
+    background: var(--color-surface);
+    color: var(--color-primary-dark);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+}
+
 .hospital-heading {
     display: flex;
     align-items: flex-end;

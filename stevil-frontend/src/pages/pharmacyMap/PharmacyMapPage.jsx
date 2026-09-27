@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { loadNaverMap } from "../../api/naverMapLoader";
 import { MAP_FAILURE_MESSAGE, createMapGuard } from "../../api/naverMapSafe";
 // 지도 marker / 카드 번호 / 제휴·광고 badge 스타일은 병원 지도 CSS를 그대로 재사용한다
@@ -264,6 +265,10 @@ export default function PharmacyMapPage() {
 
     return (
         <div className="hospital-page pharmacy-page">
+            <nav className="finder-switch" aria-label="찾기 종류">
+                <NavLink to="/hospitals">병원 찾기</NavLink>
+                <NavLink to="/pharmacies">약국 찾기</NavLink>
+            </nav>
             <section className="hospital-heading">
                 <div>
                     <span className="hospital-eyebrow">PHARMACY FINDER</span>
