@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "planner_event_key"}))
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class DietRecord {
@@ -33,4 +34,8 @@ public class DietRecord {
     private double calcium;
     private double vitaminC;
     private double sodium;
+
+    // Planner 식사/간식 완료 체크로 자동 생성된 기록의 Planner event id. 직접 입력한 기록은 null.
+    @Column(name = "planner_event_key", length = 80)
+    private String plannerEventKey;
 }

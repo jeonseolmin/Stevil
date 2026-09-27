@@ -52,6 +52,10 @@ const DietManagement = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    // 계획 식사·간식 완료 체크는 서버에서 섭취 기록으로 반영되므로 저장 후 다시 불러온다.
+    const refresh = () => fetchDashboardData(false);
+    window.addEventListener('planner:saved', refresh);
+    return () => window.removeEventListener('planner:saved', refresh);
   }, []);
 
   useEffect(() => {
@@ -86,16 +90,16 @@ const DietManagement = () => {
     }
   }, [dashboardData]);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (showLoading = true) => {
     try {
-      setIsLoading(true);
+      if (showLoading) setIsLoading(true);
       const response = await axiosInstance.get('/diet/dashboard');
       setDashboardData(response.data);
     } catch (error) {
       console.error('식단 대시보드 조회 실패', error);
-      setDashboardData(null);
+      if (showLoading) setDashboardData(null);
     } finally {
-      setIsLoading(false);
+      if (showLoading) setIsLoading(false);
     }
   };
 
