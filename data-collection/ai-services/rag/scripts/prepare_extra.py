@@ -1,11 +1,14 @@
-"""Hash-bound extraction cache; run using Python with pypdf installed."""
+"""Hash-bound extraction cache; run with the deps in requirements-dev.txt installed
+(pip install -r ../requirements-dev.txt from this scripts/ directory)."""
 import hashlib
 from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+import sys
 
-ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from app import ROOT, CACHE_DIR
 
 class RegionParser(HTMLParser):
     def __init__(self, target):
@@ -64,7 +67,7 @@ if __name__ == '__main__':
     latest = {}
     for report in sorted((ROOT / 'runs').glob('*.json')):
         for result in json.loads(report.read_text(encoding='utf-8')).get('results', []): latest[result['source_id']] = result
-    output = Path(__file__).with_name('cache') / 'extracted'
+    output = CACHE_DIR / 'extracted'
     output.mkdir(parents=True, exist_ok=True)
     for source_id in ('us-pi','eu-pi','select','ema-naion'):
         result = latest[source_id]

@@ -34,9 +34,9 @@ jobs:
         working-directory: stevil-backend
         run: chmod +x gradlew
 
-      - name: Backend compile check
+      - name: Backend tests
         working-directory: stevil-backend
-        run: ./gradlew compileJava compileTestJava --no-daemon
+        run: ./gradlew test --no-daemon
 
       - uses: actions/setup-node@v4
         with:

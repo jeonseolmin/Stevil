@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "../header/Header";
 import BottomNav from "./BottomNav";
+import Footer from "./Footer";
 import "./BottomNav.css";
 
 export default function RootLayout() {
@@ -34,7 +35,7 @@ export default function RootLayout() {
                 <Outlet />
             </main>
 
-            {isLoggedIn && <BottomNav />}
+            {isLoggedIn ? <BottomNav /> : <Footer />}
         </>
     );
 }
