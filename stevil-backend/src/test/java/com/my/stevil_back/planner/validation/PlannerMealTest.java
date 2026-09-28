@@ -17,7 +17,7 @@ class PlannerMealTest {
         try(var stream=getClass().getResourceAsStream("/planner/snacks.json");
             var factory=jakarta.validation.Validation.buildDefaultValidatorFactory()) {
             var items=mapper.readTree(stream);
-            assertTrue(items.size()>=3 && items.size()<=6);
+            assertEquals(60, items.size());
             var categories=new java.util.HashSet<String>();
             for(var item:items) {
                 categories.add(item.get("category").asText());
@@ -29,7 +29,7 @@ class PlannerMealTest {
                 assertTrue(factory.getValidator().validate(event).isEmpty());
                 assertEquals(event,mapper.readValue(mapper.writeValueAsString(event),Event.class));
             }
-            assertEquals(java.util.Set.of("shake","chicken","egg"),categories);
+            assertEquals(java.util.Set.of("shake","chicken","egg","greek_yogurt","soy_milk","banana","apple","sweet_potato","cheese"),categories);
         }
     }
     private static final String SOURCE="https://www.data.go.kr/data/15127578/openapi.do";
