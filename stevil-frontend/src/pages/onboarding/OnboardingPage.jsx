@@ -197,14 +197,6 @@ export default function OnboardingPage() {
                 >
                     Stevil
                 </button>
-
-                <button
-                    type="button"
-                    className="onboarding-skip"
-                    onClick={() => navigate("/dashboard")}
-                >
-                    나중에 입력
-                </button>
             </header>
 
             <main className="onboarding-main">

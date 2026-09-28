@@ -70,7 +70,8 @@ class NotificationEndpointSecurityTest {
 
     @BeforeEach
     void user() {
-        User me = User.builder().email(JwtTestTokens.EMAIL).nickname("u").role(UserRole.ROLE_USER).build();
+        User me = User.builder().email(JwtTestTokens.EMAIL).nickname("u").role(UserRole.ROLE_USER)
+                .onboardingCompleted(true).build();
         ReflectionTestUtils.setField(me, "id", ME_ID);
         when(userRepository.findByEmail(JwtTestTokens.EMAIL)).thenReturn(Optional.of(me));
     }

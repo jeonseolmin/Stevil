@@ -43,7 +43,11 @@ class JwtAuthenticationFilterTest {
 
     /** authorization == null 이면 헤더를 아예 보내지 않는다. 예외가 전파되면 테스트가 실패한다(= 500 회귀). */
     private Result run(String authorization) {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/users/me");
+        return run("GET", "/api/users/me", authorization);
+    }
+
+    private Result run(String method, String path, String authorization) {
+        MockHttpServletRequest request = new MockHttpServletRequest(method, path);
         if (authorization != null) {
             request.addHeader("Authorization", authorization);
         }
@@ -144,6 +148,68 @@ class JwtAuthenticationFilterTest {
 
     @Test void unknownUserIs401() {
         assertUnauthorized("Bearer " + JwtTestTokens.valid("ghost@example.com"));
+    }
+
+    @Test void onboardingIncompleteUserBlockedFromMemberOnlyPath() {
+        // knownUser()는 onboardingCompleted 를 지정하지 않으므로 기본값(false).
+        Result result = run("GET", "/api/dashboard", "Bearer " + JwtTestTokens.valid(JwtTestTokens.EMAIL));
+
+        assertEquals(403, result.status());
+        assertFalse(result.chainContinued());
+        assertTrue(result.body().contains("온보딩을 먼저 완료해주세요."));
+        assertFalse(result.authenticated());
+    }
+
+    @Test void onboardingIncompleteUserCanStillSubmitOnboardingAndReadOwnProfile() {
+        Result me = run("GET", "/api/users/me", "Bearer " + JwtTestTokens.valid(JwtTestTokens.EMAIL));
+        assertEquals(200, me.status());
+        assertTrue(me.chainContinued());
+
+        Result submit = run("POST", "/api/onboarding", "Bearer " + JwtTestTokens.valid(JwtTestTokens.EMAIL));
+        assertEquals(200, submit.status());
+        assertTrue(submit.chainContinued());
+    }
+
+    @Test void onboardingIncompleteUserCanStillReachPublicPath() {
+        // /api/community 는 permitAll — 온보딩 미완료라고 비회원보다 더 막혀서는 안 된다.
+        Result result = run("GET", "/api/community", "Bearer " + JwtTestTokens.valid(JwtTestTokens.EMAIL));
+
+        assertEquals(200, result.status());
+        assertTrue(result.chainContinued());
+    }
+
+    @Test void adminBypassesOnboardingGate() {
+        User admin = User.builder().email("admin@example.com").role(UserRole.ROLE_ADMIN).build();
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(Optional.of(admin));
+
+        Result result = run("GET", "/api/dashboard", "Bearer " + JwtTestTokens.valid("admin@example.com"));
+
+        assertEquals(200, result.status());
+        assertTrue(result.chainContinued());
+        assertTrue(result.authenticated());
+    }
+
+    @Test void doctorBypassesOnboardingGate() {
+        User doctor = User.builder().email("doctor@example.com").role(UserRole.ROLE_DOCTOR).build();
+        when(userRepository.findByEmail("doctor@example.com")).thenReturn(Optional.of(doctor));
+
+        Result result = run("GET", "/api/dashboard", "Bearer " + JwtTestTokens.valid("doctor@example.com"));
+
+        assertEquals(200, result.status());
+        assertTrue(result.chainContinued());
+        assertTrue(result.authenticated());
+    }
+
+    @Test void onboardingCompleteUserReachesMemberOnlyPath() {
+        User onboarded = User.builder().email("onboarded@example.com").role(UserRole.ROLE_USER)
+                .onboardingCompleted(true).build();
+        when(userRepository.findByEmail("onboarded@example.com")).thenReturn(Optional.of(onboarded));
+
+        Result result = run("GET", "/api/dashboard", "Bearer " + JwtTestTokens.valid("onboarded@example.com"));
+
+        assertEquals(200, result.status());
+        assertTrue(result.chainContinued());
+        assertTrue(result.authenticated());
     }
 
     @Test void suspendedUserKeeps403WithJsonMessage() {
